@@ -1,17 +1,11 @@
 import streamlit as st
 import asyncio
 import json
-import ast
+import openai
 import nest_asyncio
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
-from llama_index.core.workflow import (
-    Context,
-    Workflow,
-    StartEvent,
-    StopEvent,
-    step,
-    Event
-)
+
+
 import os
 from llama_index.core import (
     SimpleDirectoryReader,
@@ -20,23 +14,7 @@ from llama_index.core import (
     load_index_from_storage,
 )
 
-from llama_index.llms.openai import OpenAI
-from llama_index.core.schema import (
-    NodeWithScore,
-    TextNode,
-)
-from llama_index.core.response_synthesizers import (
-    get_response_synthesizer,
-    ResponseMode
-)
-from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 
-
-from llama_index.core import Document
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.extractors import TitleExtractor
-from llama_index.core.ingestion import IngestionPipeline, IngestionCache
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from llama_index.core.retrievers import QueryFusionRetriever
 
@@ -44,270 +22,13 @@ from llama_index.core.retrievers import QueryFusionRetriever
 from llama_index.core import VectorStoreIndex
 import qdrant_client
 
+from archi import DalleWorkflow
 
 
-from typing import Any, List
 
 # Apply nest_asyncio to allow running asyncio event loops within Streamlit's event loop
 nest_asyncio.apply()
 
-# --- Mock Objects and Data (for speed and simplicity) ---
-# To make the app fast and avoid local file dependencies, we'll mock the retriever.
-# In a real-world scenario, you would replace this with your actual index loading and retrieval logic.
-
-class MockRetriever:
-    """A mock retriever to simulate the behavior of the real one for speed."""
-    def retrieve(self, query):
-        st.info(f"🔍 Mock Retriever received query: '{query}'")
-        # Creating a few dummy nodes to simulate the retrieval process.
-        # The content of these nodes would normally come from your documents.
-        mock_nodes = [
-            NodeWithScore(node=TextNode(text="Context point 1: An API Gateway is a good pattern for managing requests."), score=0.9),
-            NodeWithScore(node=TextNode(text="Context point 2: Use a Service Registry for dynamic service discovery."), score=0.88),
-            NodeWithScore(node=TextNode(text="Context point 3: The Saga pattern is ideal for managing distributed transactions across services."), score=0.85),
-            NodeWithScore(node=TextNode(text="Context point 4: CQRS is useful for separating read and write operations, improving performance."), score=0.82),
-            NodeWithScore(node=TextNode(text="Context point 5: Event Sourcing can be used to capture all changes to an application state as a sequence of events."), score=0.80),
-            NodeWithScore(node=TextNode(text="Context point 6: A Transactional Outbox ensures reliable messaging between services."), score=0.78),
-        ]
-        return mock_nodes
-
-# --- Workflow Events ---
-
-class RetrieverEvent(Event):
-    """Result of running retrieval"""
-    nodes: list[NodeWithScore]
-
-class CreateCitationsEvent(Event):
-    """Add citations to the nodes."""
-    nodes: list[NodeWithScore]
-
-class MicroservicesExtractedEvent(Event):
-    """Get list of microservices from specs and user stories"""
-    microservices_list: list[str]
-
-class ContextRetrievedEvent(Event):
-    """Get ready to generate final output with context and ms. list"""
-    context: Any
-
-# --- Prompts ---
-
-EXTRACT_MICROSERVICES_TEXT = """
-You will be asked to extract a list of microservices from specifications and user stories.
-Report the list in a format like this:
-['Microservice1',  'Mircoservice2', ...]
-
-The context is:
-Specifications:
---------------------
-{{specs}}
---------------------
-User Stories:
---------------------
-{{user_stories}}
---------------------
-
-The microservice list is:
-"""
-
-FIND_CONTEXT_TEXT = """
-What are the best microservices patterns to use for this microservices list {{microservices_list}} given these user stories: {{user_stories}} and descriptions:{{specs}}?
-"""
-
-USE_CONTEXT_TEXT = """
-Given a microservice list, text specifications and user stories of a software,
-use context to find the best implementation pattern for each microservice.
-Include an explaination on what source made you make a certain choice.
-Add also what endpoints are implemented if needed for each microservice, with a corresponding description of inputs and outputs.
-Add for every micorservice what user stories it implements, indicating it with their corresponding number, and only the number. All user stories must be implemented.
-Find also which microservices require a dataset and provide a brief description of it by saying what user stories influenced your choices.
-Output data in a json format like this:
-
-{
-    microservices: [
-        { 
-            name: "name1",
-            endpoints: [],
-            user_stories: ["story1"]
-        }, 
-        {
-            name: "name2",
-            endpoints: [
-                { 
-                    name: "/login",
-                    description: "takes user email and password as inputs and outputs the login result"
-                }, 
-                {
-                    name:"/register"
-                    description: "takes user email and password as inputs and outputs the registration result"
-                }
-            ]
-            user_stories: ["story2", "story3"]
-        } 
-    ],
-    patterns: [
-            {
-                group_name : "meaningful name",
-                implementation_pattern: "saga",
-                involved_microservices: ["name1", "name2"],
-                explaination: "xyz"
-                
-            },
-            {
-                group_name : "meaningful name",
-                implementation_pattern: "api gateway",
-                involved_microservices: ["name3"],
-                explaination: "vwq"
-            }
-    ],
-    datasets: [
-            {
-                dataset_name: "meaningful name",
-                associtated_microservice: "name3",
-                description: "desc"
-            },
-    ]
-
-}
-
-
-
-The context is:
-
-Retrieved Context
---------------------
-{{context}}
---------------------
-
-Microservice List
---------------------
-{{microservice_list}}
---------------------
-
-Specifications:
---------------------
-{{specs}}
---------------------
-
-User Stories:
---------------------
-{{user_stories}}
---------------------
-
-The output json is:
-"""
-
-CITATION_QA_TEMPLATE = PromptTemplate(
-    "Please provide an answer based solely on the provided sources. "
-    "When referencing information from a source, "
-    "cite the appropriate User Story(ies) using their corresponding numbers. "
-    "Every answer should include at least one source citation. "
-    "Only cite a source when you are explicitly referencing it. "
-    "If none of the sources are helpful, you should indicate that. "
-    "\n------\n"
-    "{context_str}"
-    "\n------\n"
-    "Query: {query_str}\n"
-    "Answer: "
-)
-
-# --- Workflow Definitions ---
-
-class CitationQueryEngineWorkflow(Workflow):
-    @step
-    async def retrieve(self, ctx: Context, ev: StartEvent) -> RetrieverEvent | None:
-        query = ev.get("query")
-        if not query:
-            return None
-        await ctx.set("query", query)
-
-        retriever = ev.retriever
-        if retriever is None:
-            print("Retriever is empty!")
-            return None
-
-        nodes = retriever.retrieve(query)
-        st.write(f"✅ Retrieved {len(nodes)} nodes for context.")
-        return RetrieverEvent(nodes=nodes)
-
-    @step
-    async def create_citation_nodes(self, ev: RetrieverEvent) -> CreateCitationsEvent:
-        return CreateCitationsEvent(nodes=ev.nodes)
-
-    @step
-    async def synthesize(self, ctx: Context, ev: CreateCitationsEvent) -> StopEvent:
-        llm = OpenAI(model="gpt-4o-mini")
-        query = await ctx.get("query", default=None)
-        synthesizer = get_response_synthesizer(
-            llm=llm,
-            text_qa_template=CITATION_QA_TEMPLATE,
-            response_mode=ResponseMode.TREE_SUMMARIZE,
-            use_async=True,
-        )
-        response = await synthesizer.asynthesize(query, nodes=ev.nodes)
-        return StopEvent(result=response)
-
-
-class DalleWorkflow(Workflow):
-    @step
-    async def extract_microservices(self, ctx: Context, ev: StartEvent) -> MicroservicesExtractedEvent:
-        llm = OpenAI(model="gpt-4o-mini")
-        await ctx.set("llm", llm)
-        await ctx.set("specs", ev.specs)
-        await ctx.set("user_stories", ev.user_stories)
-        await ctx.set("retriever", ev.retriever)
-
-        extract_template = RichPromptTemplate(EXTRACT_MICROSERVICES_TEXT)
-        extract_query = extract_template.format(specs=ev.specs, user_stories=ev.user_stories)
-
-        resp = llm.complete(extract_query).text
-        try:
-            resp_list = ast.literal_eval(resp)
-        except (ValueError, SyntaxError):
-            st.error("Could not parse the list of microservices from the LLM response.")
-            resp_list = []
-            
-        st.write("✅ Extracted Microservices List.")
-        return MicroservicesExtractedEvent(microservices_list=resp_list)
-
-    @step
-    async def retrieve_context(self, ctx: Context, ev: MicroservicesExtractedEvent) -> ContextRetrievedEvent:
-        print("Retrieving context for microservices:", ev.microservices_list)
-        specs = await ctx.get("specs")
-        user_stories = await ctx.get("user_stories")
-        retriever = await ctx.get("retriever")
-        llm = await ctx.get("llm")
-
-        find_context_template = RichPromptTemplate(FIND_CONTEXT_TEXT)
-        context_query = find_context_template.format(
-            specs=specs,
-            user_stories=user_stories,
-            microservices_list=ev.microservices_list
-        )
-
-        citation_workflow = CitationQueryEngineWorkflow(timeout=None)
-        context_response = await citation_workflow.run(query=context_query, retriever=retriever)
-
-        print("Context response:", context_response)
-        
-        st.write("✅ Retrieved Context from Retriever.")
-
-        use_context_template = RichPromptTemplate(USE_CONTEXT_TEXT)
-        final_query = use_context_template.format(
-            specs=specs,
-            context=str(context_response),
-            user_stories=user_stories,
-            microservice_list=ev.microservices_list
-        )
-        
-        resp = llm.complete(final_query).text
-
-        print("Final query response:", resp)
-        st.write("✅ Generated Final Architecture.")
-        return ContextRetrievedEvent(context=resp)
-
-    @step
-    async def format_output(self, ctx: Context, ev: ContextRetrievedEvent) -> StopEvent:
-        return StopEvent(result=ev.context)
 
 
 # --- Streamlit UI ---
@@ -406,8 +127,9 @@ async def main():
             st.error("Please provide both a project description and user stories.")
         else:
             # Set the API key for OpenAI
-            import os
             os.environ["OPENAI_API_KEY"] = api_key
+            openai.api_key = os.environ["OPENAI_API_KEY"]
+
 
             with st.spinner("🧠 Running the architecture generation workflow... Please wait."):
                 try:
@@ -424,7 +146,7 @@ async def main():
                     # Attempt to parse and display the JSON result
                     try:
                         # The result is now directly the JSON string from the last step
-                        json_result = json.loads(result_event[7:-3])
+                        json_result = json.loads(result_event)
                         st.json(json_result)
                     except (json.JSONDecodeError, TypeError) as e:
                         st.error(f"Failed to parse the final result as JSON. Error: {e}")
