@@ -1,6 +1,7 @@
 from langchain.prompts import PromptTemplate
 # --- Prompts ---
 
+# Prompt for microservices extraction agent (1)
 EXTRACT_MICROSERVICES_TEXT = """
 You will be asked to extract a list of microservices from specifications and user stories.
 Report the list in a format like this:
@@ -29,11 +30,13 @@ User Stories:
 The microservice list is:
 """
 
+# Prompt for context retrieval agent (3)
 FIND_CONTEXT_TEXT = """
 What are the best microservices patterns to use for this microservices list {{microservices_list}} given these user stories: {{user_stories}} and descriptions:{{specs}}?
 Only these patterns are allowed: Communication style patterns (shared database, database per service) and Data style patterns (api composition, cqrs, saga, aggregate, event sourcing, domain event) and DO NOT USE OTHER PATTERNS.
 """
 
+# Prompt for output parsing agent (4)
 USE_CONTEXT_TEXT = """
 Given a microservice list, text specifications and user stories of a software,
 use context to find the best implementation pattern for each microservice. Not all microservices will have an implementation pattern.
