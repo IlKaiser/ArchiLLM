@@ -1,0 +1,11 @@
+# SYSTEM DESCRIPTION
+This microservice application is a demo designed to showcase a payment service within a larger ecosystem of microservices. It utilizes key technologies such as Kubernetes for orchestration, gRPC for inter-service communication, Istio for service mesh capabilities, and OpenCensus for tracing and monitoring. The application is instrumented for performance profiling, tracing, and debugging, and it integrates with tools like Prometheus and Grafana for metrics visualization, as well as Jaeger for distributed tracing.
+
+# USER STORIES
+- 1. As a customer, I want to make a payment so that I can complete my purchase.
+- 2. As a developer, I want to monitor payment transactions so that I can ensure the service is functioning correctly.
+- 3. As a system administrator, I want to view performance metrics so that I can optimize the application’s performance.
+- 4. As a user, I want to receive confirmation of my payment so that I know my transaction was successful.
+- 5. As a developer, I want to debug payment processing issues so that I can resolve them quickly.
+- 6. As a customer, I want to validate my payment information so that I can avoid errors during the transaction.
+- 7. As a product manager, I want to analyze usage patterns so that I can improve the user experience.

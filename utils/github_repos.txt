@@ -1,0 +1,6 @@
+https://github.com/AITestingOrg/microservices-sandbox.git
+https://github.com/FudanSELab/train-ticket.git
+https://github.com/DescartesResearch/TeaStore.git
+https://github.com/microservices-demo/microservices-demo.git
+https://github.com/GoogleCloudPlatform/microservices-demo.git
+https://github.com/census-ecosystem/opencensus-microservices-demo.git
