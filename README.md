@@ -89,10 +89,10 @@ Contributions are welcome! Please read our contributing guidelines:
 If you use this project in your research, please cite:
 
 ```bibtex
-@misc{calamo2024archillm,
+@misc{calamo2025archillm,
   title={ArchiLLM: Architecture Modeling with Large Language Models},
   author={Calamo, Marco and others},
-  year={2024},
+  year={2025},
   institution={DIAG-Sapienza-BPM-Smart-Spaces},
   url={https://github.com/IlKaiser/ArchiLLM}
 }
@@ -110,17 +110,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **ORCID**: [0009-0006-2602-9604](https://orcid.org/0009-0006-2602-9604)
 - **GitHub**: [@IlKaiser](https://github.com/IlKaiser)
 
-## Related Projects
-
-- [text2uml](https://github.com/IlKaiser/text2uml) - Companion repository for assessing LLM suitability in generating UML Class Diagrams
-- [Cicero](https://github.com/DIAG-Sapienza-BPM-Smart-Spaces/Cicero) - Related research project
 
 ## Acknowledgments
 
 - DIAG-Sapienza-BPM-Smart-Spaces research group
 - Sapienza University of Rome
 - Contributors and collaborators
-
----
-
-*This README was generated based on typical project structure. Please update with actual project details, features, and usage instructions specific to your ArchiLLM implementation.*
