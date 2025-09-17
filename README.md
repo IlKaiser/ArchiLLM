@@ -62,7 +62,7 @@ This will start the ArchiLLM web interface, typically accessible at `http://loca
 
 Configuration options can be set through environment variables or a configuration file:
 
-- `OPENAI_KEY`: API key for LLM services
+- `OPENAI_API_KEY`: API key for LLM services
 
 
 ## Research Context
