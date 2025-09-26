@@ -1,0 +1,18 @@
+# SYSTEM DESCRIPTION:
+TeaStore is a microservices-based demonstration of an online tea retail platform. It includes features for browsing and managing teas, receiving personalized recommendations, tracking store readiness, and handling tea orders.
+
+# USER STORIES:
+- As a customer, I want to browse available teas so that I can choose my favorite blends.
+- As a customer, I want to receive personalized tea recommendations so I can discover new products.
+- As a customer, I want to view details about a specific tea so I can make an informed decision.
+- As a customer, I want to add teas to my shopping cart to purchase multiple items in one order.
+- As a customer, I want to check the availability of teas before ordering.
+- As a customer, I want to see if the store is ready to process orders before I checkout.
+- As a customer, I want to purchase teas and receive confirmation of my order.
+- As a system, I want to track and update the timestamp of each order for traceability.
+- As an admin, I want to add or update tea products in the catalog.
+- As a customer, I want to review past orders so I can reorder my favorite teas.
+- As a system, I want to process single and multiple recommendation requests for users.
+- As an admin, I want to delete discontinued tea products from the catalog.
+- As a customer, I want to rate and review teas I have purchased.
+- As a customer, I want to receive notifications about special offers and new arrivals.

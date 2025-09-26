@@ -1,0 +1,20 @@
+# SYSTEM DESCRIPTION:
+Train Ticket is a distributed microservices-based ticketing system for railways. It allows users to search for train schedules, book tickets, manage personal and contact information, and receive notifications about bookings and train status.
+
+# USER STORIES:
+- As a passenger, I want to search for available trains so that I can plan my journey.
+- As a passenger, I want to book a train ticket so that I can secure my travel in advance.
+- As a passenger, I want to receive notifications about my booking and schedule changes.
+- As a user, I want to manage my contact information for smoother bookings.
+- As an admin, I want to manage user accounts and their roles for secure access.
+- As a passenger, I want to view and cancel my bookings if my plans change.
+- As a system, I want to notify users about delays or train status updates.
+- As an admin, I want to view and manage all ticket bookings in the system.
+- As a passenger, I want to receive booking confirmation emails or messages.
+- As a user, I want to update my profile and personal data.
+- As a system, I want to validate train availability before confirming a booking.
+- As a passenger, I want to check ticket prices and payment options.
+- As an admin, I want to generate reports about ticket sales and usage.
+- As a passenger, I want to select preferred seating or coach class.
+- As a user, I want to save frequent contacts for faster bookings.
+- As a system, I want to ensure secure and encrypted transactions during booking.

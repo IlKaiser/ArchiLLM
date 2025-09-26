@@ -1,0 +1,10 @@
+# SYSTEM DESCRIPTION:
+This microservice application repository is designed to deploy the AIST Microservices Sandbox, which facilitates the development and testing of microservices. The main purpose is to provide a configurable environment for running microservices with integrated logging capabilities using Elasticsearch and Fluentd. Key technologies used include Docker for containerization, Kubernetes for orchestration, and EFK (Elasticsearch, Fluentd, Kibana) for logging and monitoring.
+
+# USER STORIES:
+- 1. As a developer, I want to deploy microservices quickly using Docker so that I can focus on building features without worrying about the underlying infrastructure.
+- 2. As a system administrator, I want to monitor logs in real-time using Kibana so that I can troubleshoot issues effectively.
+- 3. As a user, I want to access the FrontEnd Microservices web UI so that I can interact with the application easily.
+- 4. As a developer, I want to configure logging for my microservices so that I can track and analyze application behavior.
+- 5. As a QA engineer, I want to run tests on the deployed microservices so that I can ensure the application meets quality standards.
+- 6. As a product owner, I want to visualize the performance metrics of the microservices so that I can make informed decisions about scaling and improvements.

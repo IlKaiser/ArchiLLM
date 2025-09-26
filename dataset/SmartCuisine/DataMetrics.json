@@ -1,0 +1,52 @@
+[
+    {
+        "set_id": 1,
+        "set_name": "auth client",
+        "user_stories": [1, 2],
+        "links": [2, 3],
+        "db": "false"
+    },
+    {
+        "set_id": 2,
+        "set_name": "user profile",
+        "user_stories": [3, 4, 5, 6, 7, 11, 13],
+        "links": [1, 4],
+        "db": "true"
+    },
+    {
+        "set_id": 3,
+        "set_name": "notifications",
+        "user_stories": [18],
+        "links": [2],
+        "db": "true"
+    },
+    {
+        "set_id": 4,
+        "set_name": "shopping list",
+        "user_stories": [12, 16, 20, 21, 22],
+        "links": [2, 5],
+        "db": "true"
+    },
+    {
+        "set_id": 5,
+        "set_name": "recipes and ingredients",
+        "user_stories": [10, 12, 14],
+        "links": [4, 6],
+        "db": "true"
+    },
+    {
+        "set_id": 6,
+        "set_name": "storage",
+        "user_stories": [8, 9, 15, 17, 19],
+        "links": [4],
+        "db": "true"
+    },
+    {
+        "set_id": 7,
+        "set_name": "frontend",
+        "user_stories": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+        "links": [1, 2, 3, 4, 5, 6],
+        "db": "false"
+    }
+]
+

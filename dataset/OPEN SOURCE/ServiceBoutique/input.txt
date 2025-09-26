@@ -1,0 +1,18 @@
+# SYSTEM DESCRIPTION:
+Service Shop is a cloud-native microservices demo for an online shopping platform. It includes services for managing product catalog, recommendations, shopping assistant, shipping, email notifications, and other supporting infrastructure.
+
+# USER STORIES:
+- As a customer, I want to browse the product catalog so that I can choose items to purchase.
+- As a customer, I want to add items to my cart with help from a shopping assistant service.
+- As a customer, I want to receive product recommendations so that I can discover relevant items.
+- As a customer, I want to check out and place orders for the items in my cart.
+- As a customer, I want to receive confirmation emails after placing orders.
+- As a customer, I want to choose from various shipping options during checkout.
+- As a system, I want to manage inventory for each product in the catalog.
+- As a customer, I want to view my order history and track the status of shipments.
+- As an admin, I want to update product details and manage catalog listings.
+- As a system, I want to send personalized promotional emails based on user preferences.
+- As a system, I want to handle customer inquiries using the shopping assistant service.
+- As a customer, I want to review products and provide feedback after purchase.
+- As an admin, I want to monitor order trends and generate sales reports.
+- As a customer, I want to apply discount codes during checkout.

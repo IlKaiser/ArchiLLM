@@ -1,0 +1,18 @@
+# SYSTEM DESCRIPTION:
+ExamRush is a mobile application designed to help students study interactively through multiple-choice quizzes. 
+The application allows users to create a profile, choose a question deck, and answer questions using both touch and the phone's motion sensor. 
+The application supports multi-user functionality, an interactive and animated UI, and utilizes the phone's accelerometer for navigation between questions.
+
+# USER STORIES:
+1) As a new user, I want to register an account using my email and password so that I can access the application.
+2) As a user, I want to log in using my credentials so that I can resume using the application.
+3) As a user, I want to upload and edit my profile picture so that I can personalize my account.
+4) As a user, I want to apply a cartoon filter to my profile picture so that it looks fun and unique.
+5) As a user, I want an interactive and animated user interface so that the application is engaging and easy to use.
+6) As a student, I want to browse and select from multiple question decks so that I can choose a topic to study.
+7) As a student, I want to answer multiple-choice questions interactively so that I can test my knowledge.
+8) As a student, I want to search for decks using a search bar so that I can quickly find decks by topic, subject, or keyword.
+9) As a student, I want to see statistics about my performance (e.g., average score, strengths, weaknesses, progress over time) so that I can track my knowledge and identify areas for improvement.
+10) As a teacher, I want to create and upload multiple-choice question decks so that my students can use them for studying.
+11) As a teacher, I want to test the decks I upload by answering the questions myself so that I can ensure they are accurate and functional.
+

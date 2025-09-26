@@ -1,0 +1,44 @@
+[
+    {
+        "set_id": 1,
+        "set_name": "user_service",
+        "user_stories": [1, 3, 4, 5],
+        "links": [2, 3, 4, 5, 6],
+        "db": "true"
+    },
+    {
+        "set_id": 2,
+        "set_name": "monitoring_sustainability",
+        "user_stories": [6, 7, 8, 9, 18],
+        "links": [1, 3],
+        "db": "true"
+    },
+    {
+        "set_id": 3,
+        "set_name": "central_node_service",
+        "user_stories": [2, 10, 13],
+        "links": [2, 4, 5],
+        "db": "true"
+    },
+    {
+        "set_id": 4,
+        "set_name": "energy_deposit_service",
+        "user_stories": [14],
+        "links": [3, 6],
+        "db": "true"
+    },
+    {
+        "set_id": 5,
+        "set_name": "bills_and_provider",
+        "user_stories": [12, 15, 16, 17, 19],
+        "links": [1, 5],
+        "db": "true"
+    },
+    {
+        "set_id": 6,
+        "set_name": "trading_and_payment",
+        "user_stories": [11, 20, 21, 22, 23],
+        "links": [5, 6],
+        "db": "true"
+    }
+]

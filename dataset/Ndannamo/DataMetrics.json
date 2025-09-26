@@ -1,0 +1,79 @@
+[
+          {
+            "set_id": 1,
+            "set_name": "User Authentication",
+            "user_stories": [1, 2, 3],
+            "links": [],
+            "db": true
+          },
+          {
+            "set_id": 2,
+            "set_name": "User Profile Management",
+            "user_stories": [4, 5, 6],
+            "links": [1],
+            "db": true
+          },
+          {
+            "set_id": 3,
+            "set_name": "Trip Management",
+            "user_stories": [7, 8, 10, 11, 12, 16, 17, 18, 19, 20],
+            "links": [],
+            "db": true
+          },
+          {
+            "set_id": 4,
+            "set_name": "Trip Invitations",
+            "user_stories": [9, 13, 14, 15],
+            "links": [3],
+            "db": true
+          },
+          {
+            "set_id": 5,
+            "set_name": "Trip Schedule & Activities",
+            "user_stories": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+            "links": [3],
+            "db": true
+          },
+          {
+            "set_id": 6,
+            "set_name": "Travel Management",
+            "user_stories": [32, 33, 34, 35, 36, 37, 38, 39],
+            "links": [3],
+            "db": true
+          },
+          {
+            "set_id": 7,
+            "set_name": "Accommodation Management",
+            "user_stories": [40, 41, 42, 43, 44, 45, 46, 47],
+            "links": [3],
+            "db": true
+          },
+          {
+            "set_id": 8,
+            "set_name": "Expense Management",
+            "user_stories": [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58],
+            "links": [],
+            "db": true
+          },
+          {
+            "set_id": 9,
+            "set_name": "Chat and Communication",
+            "user_stories": [59, 60, 61, 62, 63],
+            "links": [],
+            "db": false
+          },
+          {
+            "set_id": 10,
+            "set_name": "Photo Sharing",
+            "user_stories": [64, 65, 66],
+            "links": [],
+            "db": true
+          },
+          {
+            "set_id": 11,
+            "set_name": "City Information",
+            "user_stories": [67],
+            "links": [],
+            "db": true
+          }
+]
