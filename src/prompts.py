@@ -1,4 +1,3 @@
-from langchain.prompts import PromptTemplate
 # --- Prompts ---
 
 # Prompt for microservices extraction agent (1)

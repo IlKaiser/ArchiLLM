@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-from sklearn.metrics import precision_score, recall_score, f1_score
 
 # Load Excel
 df = pd.read_excel("/Users/marcocalamo/DALLE/judged_outputs_open.xlsx")
