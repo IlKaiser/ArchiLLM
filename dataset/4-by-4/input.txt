@@ -1,0 +1,41 @@
+# SYSTEM DESCRIPTION:
+4-by-4 is an online platform that allows users to play the classic adversarial (m, n, k) games with gravity in a digital environment. The website features a standard login system, enabling users to create accounts, log in, and track their game statistics. Players can customize their gaming experience by adjusting board sizes and implementing chess-like timing settings to add a competitive edge. The platform is designed to provide a seamless and engaging experience for enthusiasts of all skill levels.
+
+# USER STORIES:
+1. As a Connect Four fan, I want to play Connect Four online against other users so that I can enjoy the game more or less competitively.
+2. As a player, I want to be able to register to the site so that I can customize my username.
+3. As a player, I want to be able to log in the site so that I can access the same account every time.
+4. As a user, I want to my credentials to be remembered so that I can access the site without typing them every time.
+5. As a user, I want to be able to logout, so that other people on the same computer can't access my account.
+6. As a user, I want to have helpful navigation buttons on all pages, so that it's easy to find my way around the site.
+7. As a user, I want to look at my own profile, so that I can see details about my account.
+8. As a user, I want to be able to change my username, so that I am not bound to a single name option forever.
+9. As a user, I want to be able to change my password, so that I can be sure it is secure.
+10. As a casual player, I want to be able to look at my aggregate statistics, so that I can estimate my skills and track my performance over time.
+11. As a competitive player, I want to look at the winners of my previous games, so that I can see if there are common patterns between losses/wins.
+12. As a competitive player, I want to look at replays of my previous matches, so that I can improve my gameplay.
+13. As a player, I want to look at the settings (dimension and timing) of previous games, so that I can easily filter novel games.
+14. As a competitive player, I want to look at the replays of other player's previous games, so that I can learn study their gameplay.
+15. As a competitive player, I want to be able to know who created previous matches, to learn patterns in the games used.
+16. As a player, I want to be able to look at active challenges, so that I can see if there's any open match I can join.
+17. As a casual player, I want to be able to see who created a challenge, so that I can choose to play only with people I know.
+18. As a competitive player, I want to look at a challenge creator's profile, so that I can check out whether they are a good player.
+19. As a player, I want to be able to set varying board sizes when creating the challenge, to have a more novel experience
+20. As a competitive player, I want to set chess-like timing settings (e.g., blitz, rapid, or custom time limits) so that I can challenge myself and others under time pressure.
+21. As a player, I want all of the game logic to be handled automatically and fairly so that it isn't possible to cheat.
+22. As a player, I want to be able to see whose turn it is, so that I am not waiting aimlessly.
+23. As a player, I want to be able to chat with my opponent, so that I can have a conversation with them about the game.
+24. As a competitive player, I want to view how much time me or my opponent have left, so that I can manage my time-per-move more effectively.
+25. As a player, I want to click on the grid, so that I can place a piece during my turn.
+26. As a player, I want to have the option to concede, so that I can end a losing gaming without having to wait.
+27. As a player, I want to be able to offer a and accept a draw, so that I end a drawing game without having to wait.
+28. As a competitive player, I want to be able to retire a draw offer if the opponent doesn't accept it, so that I can still try to win the game if they miss-play.
+29. As a player, I want to be able to deny a draw offer, so that I can go for a win instead of settling for a draw.
+30. As a player, I want to be able to immediately look at the match replay once it ends, so that I can review what happened.
+31. As a beginner player, I want to be able to easily read who won the game and how it ended, so that I have a clear situation of whether I have won or not and how.
+32. As a avid player, I want to have a button to exit the game once it ends, so that I can quickly start another one.
+33. As a player, I want to have a button to go back to the profile from a replay, so that I am not forced to go through the entire replay.
+34. As a player, I want to know how many moves there were in a previous match, so that I know how long it's going to take.
+35. As a player, I want to be able to go through the replay move-by-move, so that I can see what happened gradually.
+36. As a competitive Player, I want to be able to go back to the previous move in the replay, so that I can better analyse what happened more carefully.
+37. As a beginner player, I want to be able to easily read who won the game and how it ended, so that I have a clear situation of who won and how.

@@ -1,0 +1,84 @@
+,path_or_url,file,line,text
+0,/v1alpha2,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,15,apiVersion: skaffold/v1alpha2
+1,/opencensus-microservices-demo/emailservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,21,- imageName: gcr.io/opencensus-microservices-demo/emailservice
+2,/emailservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,22,workspace: src/emailservice
+3,/opencensus-microservices-demo/productcatalogservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,23,- imageName: gcr.io/opencensus-microservices-demo/productcatalogservice
+4,/productcatalogservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,24,workspace: src/productcatalogservice
+5,/opencensus-microservices-demo/recommendationservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,25,- imageName: gcr.io/opencensus-microservices-demo/recommendationservice
+6,/recommendationservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,26,workspace: src/recommendationservice
+7,/opencensus-microservices-demo/shippingservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,27,- imageName: gcr.io/opencensus-microservices-demo/shippingservice
+8,/shippingservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,28,workspace: src/shippingservice
+9,/opencensus-microservices-demo/checkoutservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,29,- imageName: gcr.io/opencensus-microservices-demo/checkoutservice
+10,/checkoutservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,30,workspace: src/checkoutservice
+11,/opencensus-microservices-demo/paymentservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,31,- imageName: gcr.io/opencensus-microservices-demo/paymentservice
+12,/paymentservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,32,workspace: src/paymentservice
+13,/opencensus-microservices-demo/currencyservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,33,- imageName: gcr.io/opencensus-microservices-demo/currencyservice
+14,/currencyservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,34,workspace: src/currencyservice
+15,/opencensus-microservices-demo/cartservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,35,- imageName: gcr.io/opencensus-microservices-demo/cartservice
+16,/cartservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,36,workspace: src/cartservice
+17,/opencensus-microservices-demo/frontend,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,37,- imageName: gcr.io/opencensus-microservices-demo/frontend
+18,/frontend,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,38,workspace: src/frontend
+19,/opencensus-microservices-demo/loadgenerator,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,39,- imageName: gcr.io/opencensus-microservices-demo/loadgenerator
+20,/loadgenerator,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,40,workspace: src/loadgenerator
+21,/opencensus-microservices-demo/adservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,41,- imageName: gcr.io/opencensus-microservices-demo/adservice
+22,/adservice,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,42,workspace: src/adservice
+23,/opencensus-microservices-demo/grafana,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,43,- imageName: gcr.io/opencensus-microservices-demo/grafana
+24,/grafana,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,44,workspace: src/grafana
+25,/opencensus-microservices-demo/prometheus,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,45,- imageName: gcr.io/opencensus-microservices-demo/prometheus
+26,/prometheus,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,46,workspace: src/prometheus
+27,/opencensus-microservices-demo/jaeger,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,47,- imageName: gcr.io/opencensus-microservices-demo/jaeger
+28,/jaeger,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,48,workspace: src/jaeger
+29,/kubernetes-manifests/,/mnt/data/hipster-shop/opencensus-microservices-demo/skaffold.yaml,52,- ./kubernetes-manifests/**.yaml
+30,https://storage.googleapis.com/skaffold/releases/v0.12.0/skaffold-linux-amd64,/mnt/data/hipster-shop/opencensus-microservices-demo/.travis.yml,7,- curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/v0.12.0/skaffold-linux-amd64
+31,/usr/local/bin,/mnt/data/hipster-shop/opencensus-microservices-demo/.travis.yml,9,- sudo mv skaffold /usr/local/bin
+32,/v1alpha3,/mnt/data/hipster-shop/opencensus-microservices-demo/istio-manifests/frontend-gateway.yaml,15,apiVersion: networking.istio.io/v1alpha3
+34,/v1alpha3,/mnt/data/hipster-shop/opencensus-microservices-demo/istio-manifests/whitelist-egress-currencyprovider.yaml,15,apiVersion: networking.istio.io/v1alpha3
+35,/v1alpha3,/mnt/data/hipster-shop/opencensus-microservices-demo/istio-manifests/frontend.yaml,15,apiVersion: networking.istio.io/v1alpha3
+36,/v1alpha3,/mnt/data/hipster-shop/opencensus-microservices-demo/istio-manifests/whitelist-egress-googleapis.yaml,15,apiVersion: networking.istio.io/v1alpha3
+37,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/emailservice.yaml,15,apiVersion: extensions/v1beta1
+38,/opencensus-microservices-demo/emailservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/emailservice.yaml,28,image: gcr.io/opencensus-microservices-demo/emailservice
+39,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/emailservice.yaml,34,"command: [""/bin/grpc_health_probe"", ""-addr=:8080""]"
+41,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/jaeger.yaml,15,apiVersion: extensions/v1beta1
+42,/opencensus-microservices-demo/jaeger,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/jaeger.yaml,27,image: gcr.io/opencensus-microservices-demo/jaeger
+43,/data,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/jaeger.yaml,61,- mountPath: /data
+44,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/checkoutservice.yaml,15,apiVersion: extensions/v1beta1
+45,/opencensus-microservices-demo/checkoutservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/checkoutservice.yaml,27,image: gcr.io/opencensus-microservices-demo/checkoutservice
+46,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/checkoutservice.yaml,32,"command: [""/bin/grpc_health_probe"", ""-addr=:5050""]"
+48,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/recommendationservice.yaml,15,apiVersion: extensions/v1beta1
+49,/opencensus-microservices-demo/recommendationservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/recommendationservice.yaml,28,image: gcr.io/opencensus-microservices-demo/recommendationservice
+50,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/recommendationservice.yaml,34,"command: [""/bin/grpc_health_probe"", ""-addr=:8080""]"
+52,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/prometheus.yaml,15,apiVersion: extensions/v1beta1
+53,/opencensus-microservices-demo/prometheus,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/prometheus.yaml,27,image: gcr.io/opencensus-microservices-demo/prometheus
+54,/data,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/prometheus.yaml,39,- mountPath: /data
+55,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/frontend.yaml,15,apiVersion: extensions/v1beta1
+56,/opencensus-microservices-demo/frontend,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/frontend.yaml,27,image: gcr.io/opencensus-microservices-demo/frontend
+57,/_healthz,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/frontend.yaml,36,"path: ""/_healthz"""
+58,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/paymentservice.yaml,15,apiVersion: extensions/v1beta1
+59,/opencensus-microservices-demo/paymentservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/paymentservice.yaml,28,image: gcr.io/opencensus-microservices-demo/paymentservice
+60,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/paymentservice.yaml,33,"command: [""/bin/grpc_health_probe"", ""-addr=:50051""]"
+62,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/grafana.yaml,15,apiVersion: extensions/v1beta1
+63,/opencensus-microservices-demo/grafana,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/grafana.yaml,27,image: gcr.io/opencensus-microservices-demo/grafana
+64,/var/lib/grafana,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/grafana.yaml,39,- mountPath: /var/lib/grafana
+65,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/productcatalogservice.yaml,15,apiVersion: extensions/v1beta1
+66,/opencensus-microservices-demo/productcatalogservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/productcatalogservice.yaml,28,image: gcr.io/opencensus-microservices-demo/productcatalogservice
+67,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/productcatalogservice.yaml,33,"command: [""/bin/grpc_health_probe"", ""-addr=:3550""]"
+69,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/cartservice.yaml,15,apiVersion: extensions/v1beta1
+70,/opencensus-microservices-demo/cartservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/cartservice.yaml,28,image: gcr.io/opencensus-microservices-demo/cartservice
+71,/cartservice_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/cartservice.yaml,48,"command: [""/cartservice_probe""]"
+73,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/loadgenerator.yaml,15,apiVersion: extensions/v1beta1
+74,http://${FRONTEND_ADDR},/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/loadgenerator.yaml,32,"until timeout -t 2 curl -f ""http://${FRONTEND_ADDR}""; do"
+76,/opencensus-microservices-demo/loadgenerator,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/loadgenerator.yaml,41,image: gcr.io/opencensus-microservices-demo/loadgenerator
+77,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/currencyservice.yaml,15,apiVersion: extensions/v1beta1
+78,/opencensus-microservices-demo/currencyservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/currencyservice.yaml,28,image: gcr.io/opencensus-microservices-demo/currencyservice
+79,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/currencyservice.yaml,34,"command: [""/bin/grpc_health_probe"", ""-addr=:7000""]"
+81,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/shippingservice.yaml,15,apiVersion: extensions/v1beta1
+82,/opencensus-microservices-demo/shippingservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/shippingservice.yaml,27,image: gcr.io/opencensus-microservices-demo/shippingservice
+83,/bin/grpc_health_probe,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/shippingservice.yaml,33,"command: [""/bin/grpc_health_probe"", ""-addr=:50051""]"
+85,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/redis.yaml,15,apiVersion: extensions/v1beta1
+86,/data,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/redis.yaml,39,- mountPath: /data
+87,/v1beta1,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/adservice.yaml,15,apiVersion: extensions/v1beta1
+88,/opencensus-microservices-demo/adservice,/mnt/data/hipster-shop/opencensus-microservices-demo/kubernetes-manifests/adservice.yaml,28,image: gcr.io/opencensus-microservices-demo/adservice
+89,/update,/mnt/data/hipster-shop/opencensus-microservices-demo/src/grafana/provisioning/datasources/prometheus.yaml,4,# list of datasources to insert/update depending
+90,http://prometheus:9090,/mnt/data/hipster-shop/opencensus-microservices-demo/src/grafana/provisioning/datasources/prometheus.yaml,16,url: http://prometheus:9090
+91,/etc/grafana/provisioning/dashboards/,/mnt/data/hipster-shop/opencensus-microservices-demo/src/grafana/provisioning/dashboards/prometheus.yml,11,path: /etc/grafana/provisioning/dashboards/
+92,/metrics,/mnt/data/hipster-shop/opencensus-microservices-demo/src/prometheus/prometheus.yml,25,# metrics_path defaults to '/metrics'

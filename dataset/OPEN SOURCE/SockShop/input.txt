@@ -1,0 +1,19 @@
+# SYSTEM DESCRIPTION:
+Sock Shop is a microservices-based demonstration application for an online sock retailer. It provides features such as product browsing, shopping cart management, checkout, order processing, and monitoring/logging capabilities.
+
+# USER STORIES:
+- As a customer, I want to browse available socks so that I can find styles I like.
+- As a customer, I want to add socks to my shopping cart so that I can purchase multiple pairs.
+- As a customer, I want to view my shopping cart and update item quantities before checkout.
+- As a customer, I want to securely check out and pay for my order.
+- As a customer, I want to receive order confirmation and status updates.
+- As an admin, I want to add or update sock listings so that the catalog stays current.
+- As a system, I want to track orders and their status through the fulfillment process.
+- As a system, I want to log important events for monitoring and debugging.
+- As a system, I want to monitor service health and performance using Prometheus.
+- As a customer, I want to see order history and reorder previous purchases.
+- As a system, I want to detect and alert admins to potential issues in real time.
+- As a customer, I want to rate my purchase experience.
+- As an admin, I want to review logs for failed transactions or errors.
+- As a system, I want to ensure product availability and prevent ordering out-of-stock items.
+- As a customer, I want to track my shipment status after completing my purchase.

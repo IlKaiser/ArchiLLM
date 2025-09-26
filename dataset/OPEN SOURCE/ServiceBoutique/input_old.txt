@@ -1,0 +1,12 @@
+# SYSTEM DESCRIPTION:
+This microservice application is an e-commerce demo called Online Boutique, designed to showcase how developers can modernize enterprise applications using Google Cloud products. It allows users to browse items, add them to a shopping cart, and complete purchases. The application is built using 11 microservices, each developed in different programming languages, and communicates over gRPC. Key technologies include Google Kubernetes Engine (GKE), Cloud Service Mesh (CSM), gRPC, and various Google Cloud services like Spanner and Memorystore.
+
+# USER STORIES:
+- 1. As a shopper, I want to browse a list of products so that I can find items I want to purchase.
+- 2. As a shopper, I want to add items to my shopping cart so that I can review my selections before buying.
+- 3. As a shopper, I want to view my shopping cart so that I can see the items I have selected.
+- 4. As a shopper, I want to check out using a pre-populated form so that I can complete my purchase quickly.
+- 5. As a shopper, I want to receive an order confirmation email so that I have a record of my purchase.
+- 6. As a shopper, I want to see shipping cost estimates based on my cart so that I can understand the total cost before checking out.
+- 7. As a shopper, I want to receive product recommendations based on my cart so that I can discover related items I might like.
+- 8. As a developer, I want to deploy the application on a Kubernetes cluster so that I can test and demonstrate its functionality.

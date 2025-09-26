@@ -1,0 +1,54 @@
+# SYSTEM DESCRIPTION:
+
+Our distributed application concerns energy (electricity) management, both on the user’s side and on the energy grid level. 
+The energy grid is the system that allows the distribution of electricity from the power stations to the final consumers. An important role in this process is done by the grid control center (we call it the central node). This structure manages the distribution of energy, in order to always ensure the stability and availability of energy. Each central node covers a certain area with the users residing in it. It is also linked to other adjacent central nodes, and (possibly) to a power station.
+A crucial element in the energy grid system are the energy storages, since they allow storage of energy for later use; this improves the stability of the system. Usually they are batteries or some other similar method of storing energy. 
+
+
+# USER STORIES:
+
+1) As a user, I want to register an account with my personal information, so that I can be a registered user.
+
+2) As a central node manager, I want to register a new central node and link it to providers and users, so that I can ensure proper energy distribution.
+
+3) As a user, I want to log in with username and password so that I can access all the website functionalities.
+
+4) As a user, I want to have a home page, so that I can quickly access all the areas of the website.
+
+5) As a user, I want to be able to access my personal information, so that I can change my password
+
+6) As a user, I want to be able to register my devices, so that I can monitor their consumption.
+
+7) As a user, I want to have a page where I can see all the notifications that are sent me so that I can be aware of the changes that are happening.
+
+8) As a user, I want to monitor my energy consumption and production through a dashboard, so that I can track my energy usage and make informed decisions. 
+
+9) As a user, I want to receive personalized energy-saving tips and sustainability recommendations, so that I can reduce my costs and environmental impact. 
+
+10) As a central node manager, I want to monitor the real-time energy usage of all users in my grid, so that I can efficiently distribute energy and maintain grid stability.
+
+11) As a renewable energy producer, I want to sell my surplus energy to the central node, so that I can earn revenue from my production.
+
+12) As a user, I want to receive energy bills sent by the central node based on my provider’s rates and my consumption, so that I can track my expenses.
+
+13) As a central node manager, I want to be able to see the energy storage levels within my grid, so that I can ensure energy availability during peak demand.
+
+14) As a user I want to be able to access my energy storage in order to see my stored energy level.
+
+15) As a user, I want to compare different energy providers within my central node, so that I can choose the most convenient and sustainable option.
+
+16) As a user, I want to insert/update my current provider contract, so that I can adjust my account to fit my changing energy needs.
+
+17) As a user, I want to access a history of my past energy bills, so that I can review my previous payments and budget accordingly.
+
+18) As a user, I want to receive notification when a new bill is produced by the central node, so that I can know when to pay it.
+
+19) As a user, I want to select my energy source (renewable or traditional) when signing up with a provider, so that I can align my consumption with my sustainability goals.
+
+20) As a user, I want to buy additional energy from the central node when my energy needs exceed my provider’s supply, so that I can avoid power shortages.
+
+21) As a user, I want to be able to pay through an integrated payment gateway (Stripe), so that I can manage transactions efficiently.
+
+22) As a user, I want to insert and change my payment method, so that I can pay bills or energy.
+
+23) As a user, I want to receive real-time transaction confirmations when buying or selling energy, so that I have a clear record of my energy trades.

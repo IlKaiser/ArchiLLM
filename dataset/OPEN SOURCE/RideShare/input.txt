@@ -1,0 +1,24 @@
+# SYSTEM DESCRIPTION:
+RideShare is a microservices-based ride hailing application. It supports core functionality such as user ride requests, notifications, real-time location using map adapters, and service discovery for robust microservice communication.
+
+# USER STORIES:
+- As a rider, I want to request a ride so that I can travel to my destination.
+- As a rider, I want to receive notifications about my ride status so that I stay informed.
+- As a driver, I want to accept or decline ride requests so that I have control over my schedule.
+- As a rider, I want to track my driver in real-time on a map so that I know when to expect pickup.
+- As a driver, I want to see my upcoming ride requests in my app.
+- As a system, I want to send notifications to users when their ride is arriving.
+- As a rider, I want to rate my driver after a trip so that feedback can be collected.
+- As a system, I want to integrate with external map services for accurate navigation and routing.
+- As an admin, I want to monitor all rides in progress for safety and support.
+- As a driver, I want to update my location so that riders see my ETA in real time.
+- As a system, I want to balance ride requests among available drivers.
+- As a rider, I want to pay for my ride securely in the app.
+- As a driver, I want to receive payment for completed rides.
+- As a system, I want to send receipts to users via email or notification after each trip.
+- As a rider, I want to see a history of my previous rides.
+- As a rider, I want to schedule a ride in advance.
+- As a driver, I want to set my availability status.
+- As a system, I want to handle lost-and-found requests for items left in vehicles.
+- As an admin, I want to manage users and drivers in the platform.
+- As a system, I want to provide customer support messaging for users experiencing issues.

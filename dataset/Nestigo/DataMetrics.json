@@ -1,0 +1,51 @@
+﻿[
+  {
+    "set_id": 1,
+    "set_name": "auth_user",
+    "user_stories": [1, 2, 3, 4],
+    "links": [5, 8],
+    "db": "true"
+  },
+  {
+     "set_id": 2,
+     "set_name": "profile_user",
+     "user_stories": [8],
+     "links": [1, 2],
+     "db": "true"
+   },
+   {
+     "set_id": 3,
+     "set_name": "view_bedspaces",
+     "user_stories": [5, 6, 7],
+     "links": [1, 8],
+     "db": "true"
+   },
+   {
+     "set_id": 4,
+     "set_name": "contact_owner",
+     "user_stories": [9],
+     "links": [5],
+     "db": "false"
+   },
+   {
+     "set_id": 5,
+     "set_name": "auth_bed_owner",
+     "user_stories": [10, 11],
+     "links": [12, 13],
+     "db": "true"
+   },
+   {
+     "set_id": 6,
+     "set_name": "bedspace_management",
+     "user_stories": [12, 13, 14, 15],
+     "links": [5, 11],
+     "db": "true"
+   },
+   {
+     "set_id": 7,
+     "set_name": "admin_controls",
+     "user_stories": [16, 17],
+     "links": [],
+     "db": "true"
+   }
+]

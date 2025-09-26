@@ -1,0 +1,28 @@
+# SYSTEM DESCRIPTION:
+Hipster Shop is a cloud-native microservices-based e-commerce application. It simulates an online retail platform with services for product catalog, shopping cart, checkout, recommendations, user email notifications, and shipping management.
+
+# USER STORIES:
+- As a customer, I want to browse a catalog of products so that I can discover items to purchase.
+- As a customer, I want to add products to my shopping cart so that I can buy multiple items in one transaction.
+- As a customer, I want to view recommendations based on my browsing or purchase history so that I can discover related products.
+- As a customer, I want to view detailed information about a product so that I can make informed purchase decisions.
+- As a customer, I want to proceed to checkout and purchase the items in my cart so that I can complete my order.
+- As a customer, I want to receive email confirmations for my orders so that I have a record of my purchase.
+- As a customer, I want to select shipping options so that I can choose how my products are delivered.
+- As a customer, I want to track the shipping status of my order so that I know when to expect delivery.
+- As a customer, I want to pay using different payment methods so that I have flexibility at checkout.
+- As a customer, I want to see prices in my local currency so that I understand the cost.
+- As a system, I want to provide product recommendations based on user preferences and behaviors.
+- As a system, I want to send order confirmation emails after successful purchases.
+- As a system, I want to manage inventory levels to prevent overselling of products.
+- As an admin, I want to add new products to the catalog so that new merchandise is available to customers.
+- As a customer, I want to remove items from my cart so that I can adjust my intended purchase.
+- As a system, I want to display targeted ads to users based on their browsing habits.
+- As a system, I want to calculate tax and shipping costs at checkout for each order.
+- As an admin, I want to update product information so that the catalog remains accurate.
+- As a customer, I want to update my shipping address before my order is shipped.
+- As a system, I want to provide currency conversion based on user's selected currency.
+- As a customer, I want to review my past orders so that I can reorder items if desired.
+- As a system, I want to prevent duplicate orders in case of network issues.
+- As an admin, I want to generate sales reports to analyze business performance.
+- As a customer, I want to receive promotional emails about discounts and offers.
