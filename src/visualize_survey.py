@@ -59,10 +59,10 @@ def plot_likert(filename, sheet, full_range=False, as_percentage=True):
         ax.barh(to_plot.index, to_plot[col_label], left=left, color=colorlist[i], label=str(label))
         left += to_plot[col_label].values
 
-    ax.set_xlabel("Percentage of Responses" if as_percentage else "Count of Responses")
+    ax.set_xlabel("Percentage of Responses" if as_percentage else "Count of Responses per Individual Pattern")
     ax.set_ylabel("Pattern")
-    ax.set_title("Likert Distribution per Question" + (" (Full 1-7 scale)" if full_range else " (Grouped)"))
-    ax.legend(title="Grade", bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.set_title("Likert Distribution per Pattern")
+    ax.legend(title="Grade (1 Lowest, 7 Highest)", bbox_to_anchor=(1.05, 1), loc='upper left')
     if as_percentage:
         ax.set_xlim(0, 100)
     plt.tight_layout()
