@@ -77,24 +77,26 @@ def get_retrievers():
     # assume you have a persist_dir or vector_store prepared
     # e.g.:
     # index_sito = VectorStoreIndex.from_vector_store(my_vector_store)
-    lock_file = os.path.join("/Users/marcocalamo/home/archi", ".lock")
+    lock_file = os.path.join("~/archi", ".lock")
     if os.path.exists(lock_file):
         os.remove(lock_file)
 
-    os.makedirs("/Users/marcocalamo/home/archi", exist_ok=True)
-    client = qdrant_client.AsyncQdrantClient(path="/Users/marcocalamo/home/archi")
+    os.makedirs("~/archi", exist_ok=True)
+    client = qdrant_client.AsyncQdrantClient(path="~/archi")
     vector_store = QdrantVectorStore(aclient=client, collection_name="micro", use_async=True)
     index_sito = VectorStoreIndex.from_vector_store(vector_store)
 
     # load or build the “libro” index from disk
-    persist_dir = "/Users/marcocalamo/Downloads/micro/persist"
+    persist_dir = "~/archi/persist"
     if os.path.exists(persist_dir):
         storage = StorageContext.from_defaults(persist_dir=persist_dir)
         index_libro = load_index_from_storage(storage)
     else:
-        docs = SimpleDirectoryReader("/Users/marcocalamo/Downloads/micro/").load_data()
+        book_dir = os.environ.get("BOOK_DIR", "./book")
+        docs = SimpleDirectoryReader(book_dir).load_data()
         index_libro = VectorStoreIndex.from_documents(docs)
-        index_libro.storage_context.persist(persist_dir=persist_dir)
+        #available or not should be irrelevant here
+        index_libro.storage_context.persist(persist_dir=persist_dir) 
 
     retriever = QueryFusionRetriever(
         [
