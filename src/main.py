@@ -77,22 +77,22 @@ def get_retrievers():
     # assume you have a persist_dir or vector_store prepared
     # e.g.:
     # index_sito = VectorStoreIndex.from_vector_store(my_vector_store)
-    lock_file = os.path.join("~/archi", ".lock")
+    lock_file = os.path.join("../archi", ".lock")
     if os.path.exists(lock_file):
         os.remove(lock_file)
 
-    os.makedirs("~/archi", exist_ok=True)
-    client = qdrant_client.AsyncQdrantClient(path="~/archi")
+    os.makedirs("../archi", exist_ok=True)
+    client = qdrant_client.AsyncQdrantClient(path="../archi")
     vector_store = QdrantVectorStore(aclient=client, collection_name="micro", use_async=True)
     index_sito = VectorStoreIndex.from_vector_store(vector_store)
 
     # load or build the “libro” index from disk
-    persist_dir = "~/archi/persist"
+    persist_dir = "../archi/persist"
     if os.path.exists(persist_dir):
         storage = StorageContext.from_defaults(persist_dir=persist_dir)
         index_libro = load_index_from_storage(storage)
     else:
-        book_dir = os.environ.get("BOOK_DIR", "./book")
+        book_dir = os.environ.get("BOOK_DIR", "../book")
         docs = SimpleDirectoryReader(book_dir).load_data()
         index_libro = VectorStoreIndex.from_documents(docs)
         #available or not should be irrelevant here
@@ -124,7 +124,10 @@ async def main():
 
     if st.button("🚀 Generate Architecture", use_container_width=True):
         if not api_key:
-            st.error("Please enter your OpenAI API Key to proceed.")
+            try:
+                api_key = os.environ["OPENAI_API_KEY"]
+            except KeyError:    
+                st.error("Please enter your OpenAI API Key to proceed.")
         elif not specs_input or not user_stories_input:
             st.error("Please provide both a project description and user stories.")
         else:
@@ -132,33 +135,34 @@ async def main():
             os.environ["OPENAI_API_KEY"] = api_key
             openai.api_key = os.environ["OPENAI_API_KEY"]
 
-
-            with st.spinner("🧠 Running the architecture generation workflow... Please wait."):
-                try:
+        print(openai.api_key)
+        with st.spinner("🧠 Running the architecture generation workflow... Please wait."):
+            try:
+            
+                # With nest_asyncio applied, we can use asyncio.run directly
+                retriever = get_retrievers()
+                wf = DalleWorkflow(timeout=None)
+                res = await wf.run(specs=specs_input, user_stories=user_stories_input, retriever=retriever)
                 
-                    # With nest_asyncio applied, we can use asyncio.run directly
-                    retriever = get_retrievers()
-                    wf = DalleWorkflow(timeout=None)
-                    result_event = await wf.run(specs=specs_input, user_stories=user_stories_input, retriever=retriever)
-                    
-                    st.success("🎉 Workflow completed successfully!")
-                    
-                    st.subheader("Generated Architecture (JSON)")
-                    
-                    # Attempt to parse and display the JSON result
-                    try:
-                        # The result is now directly the JSON string from the last step
-                        json_result = json.loads(result_event)
-                        st.json(json_result)
-                    except (json.JSONDecodeError, TypeError) as e:
-                        st.error(f"Failed to parse the final result as JSON. Error: {e}")
-                        st.text("Raw output:")
-                        st.code(result_event[1], language='text')
-
-                except Exception as e:
-                    st.error(f"An error occurred during the workflow execution: {e}")
-                    import traceback
-                    st.code(traceback.format_exc())
+                st.success("🎉 Workflow completed successfully!")
+                
+                st.subheader("Generated Architecture")
+                
+                print(res)
+                
+                if isinstance(res, dict) and "zip_base64" in res:
+                    import base64
+                    st.download_button(
+                        "Download ZIP",
+                        data=base64.b64decode(res["zip_base64"]),
+                        file_name=res.get("filename", "project.zip"),
+                        mime="application/zip",
+                    )
+                
+            except Exception as e:
+                st.error(f"An error occurred during the workflow execution: {e}")
+                import traceback
+                st.code(traceback.format_exc())
 
 if __name__ == "__main__":
     asyncio.run(main())
