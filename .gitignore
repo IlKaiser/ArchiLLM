@@ -27,3 +27,9 @@ node_modules
 # Cache files
 .mypy_cache
 .pytest_cache
+
+# Book folder
+book/*
+
+# output_projects folder
+output_project/*

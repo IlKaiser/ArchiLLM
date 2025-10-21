@@ -1,0 +1,25 @@
+from gen import extract_sections
+
+print(extract_sections("""# SYSTEM DESCRIPTION:
+
+
+# USER STORIES:
+
+1) As a user, I want to register on the platform so I can book bed spaces.
+2) As a user, I want to log in to my account to access personalized features.
+3) As a user, I want to stay logged in across sessions for convenience.
+4) As a user, I want to log out so my data remains secure.
+5) As a user, I want to view available bed spaces to choose a suitable one.
+6) As a user, I want to search for bed spaces by name or location.
+7) As a user, I want to view detailed information about a bed space.
+8) As a user, I want to view my profile information.
+9) As a user, I want to contact the bed owner via WhatsApp for clarifications.
+10) As a bed owner, I want to register so I can list available bed spaces.
+11) As a bed owner, I want to log in and manage my listings.
+12) As a bed owner, I want to add a new bed space with all necessary details.
+13) As a bed owner, I want to view all my posted bed spaces.
+14) As a bed owner, I want to edit or update my listings.
+15) As a bed owner, I want to remove a listing if it's no longer available.
+16) As an admin, I want to view all users for monitoring.
+17) As an admin, I want to delete inappropriate listings or users.
+""")[1])
