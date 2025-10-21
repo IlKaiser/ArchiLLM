@@ -19,6 +19,7 @@ from llama_index.core.response_synthesizers import (
 # from llama_index.llms.anthropic import Anthropic
 # from llama_index.llms.groq import Groq
 # from llama_index.llms.gemini import Gemini
+from llama_index.llms.mistralai import MistralAI
 
 
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
@@ -112,7 +113,7 @@ class CitationQueryEngineWorkflow(Workflow):
 
     @step
     async def synthesize(self, ctx: Context, ev: CreateCitationsEvent) -> StopEvent:
-        llm = OpenAI(model="gpt-4.1")
+        llm = MistralAI(model="mistral-large-2411", max_tokens=9000, temperature=0, timeout=9999.0)
         query = await ctx.store.get("query", default=None)
         synthesizer = get_response_synthesizer(
             llm=llm,
@@ -126,7 +127,7 @@ class CitationQueryEngineWorkflow(Workflow):
 class DalleWorkflow(Workflow):
     @step
     async def extract_microservices(self, ctx: Context, ev: StartEvent) -> MicroservicesExtractedEvent:
-        llm = OpenAI(model="gpt-4.1") #, reasoning_effort="low", temperature=0, timeout=9999.0)
+        llm = MistralAI(model="mistral-large-2411")
         await ctx.store.set("llm", llm)
         await ctx.store.set("specs", ev.specs)
         await ctx.store.set("user_stories", ev.user_stories)
@@ -154,7 +155,7 @@ class DalleWorkflow(Workflow):
         
         
         #llm = await ctx.store.get("llm")
-        llm = OpenAI(model="gpt-4.1" , reasoning_effort="low", temperature=0, timeout=9999.0)
+        llm = MistralAI(model="mistral-large-2411", max_tokens=9000, temperature=0, timeout=9999.0)
         #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
         #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
 
@@ -202,13 +203,14 @@ class DalleWorkflow(Workflow):
         st.write("✅ Generated Final Architecture.")
         st.json(single_quote_to_double(str(to_dict(output))))
         return ContextRetrievedEvent(context=single_quote_to_double(str(to_dict(output))))
+    
     @step
     async def generate_code(self, ctx: Context, ev: ContextRetrievedEvent) -> CodeGeneratedEvent:
         """Generate code snippets for each microservice based on the architecture."""
         
         #llm = await ctx.store.get("llm")
 
-        llm = OpenAI(model="gpt-4.1" , reasoning_effort="medium", temperature=0, timeout=9999.0)
+        llm = MistralAI(model="codestral-2508", max_tokens=9000, temperature=0, timeout=9999.0)
         #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
         #llm = Groq(model="openai/gpt-oss-120b", temperature=0, max_tokens=19_000, timeout=9999.0)
 
