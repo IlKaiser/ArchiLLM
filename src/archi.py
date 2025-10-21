@@ -7,7 +7,9 @@ from llama_index.core.workflow import (
     Event
 )
 
+from llama_index.llms.mistralai import MistralAI
 from llama_index.llms.openai import OpenAI
+
 from llama_index.core.schema import (
     NodeWithScore,
 )
@@ -15,11 +17,6 @@ from llama_index.core.response_synthesizers import (
     get_response_synthesizer,
     ResponseMode
 )
-
-# from llama_index.llms.anthropic import Anthropic
-# from llama_index.llms.groq import Groq
-# from llama_index.llms.gemini import Gemini
-
 
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 from llama_index.core.program import LLMTextCompletionProgram
@@ -67,9 +64,6 @@ class CodeGeneratedEvent(Event):
     code: Any
 
 
-
-
-
 CITATION_QA_TEMPLATE = PromptTemplate(
     "Please provide an answer based solely on the provided sources. "
     "When referencing information from a source, "
@@ -92,6 +86,7 @@ assert load_dotenv()
 class CitationQueryEngineWorkflow(Workflow):
     @step
     async def retrieve(self, ctx: Context, ev: StartEvent) -> RetrieverEvent:
+        await ctx.store.set("model", ev.model)
         query = ev.get("query")
         if not query:
             return None
@@ -112,7 +107,12 @@ class CitationQueryEngineWorkflow(Workflow):
 
     @step
     async def synthesize(self, ctx: Context, ev: CreateCitationsEvent) -> StopEvent:
-        llm = OpenAI(model="gpt-4.1")
+        model = await ctx.store.get("model")
+        if model == "mistral":
+            llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        else:
+            llm = OpenAI(model="gpt-4.1", temperature=0, timeout=9999.0)
+
         query = await ctx.store.get("query", default=None)
         synthesizer = get_response_synthesizer(
             llm=llm,
@@ -126,11 +126,17 @@ class CitationQueryEngineWorkflow(Workflow):
 class DalleWorkflow(Workflow):
     @step
     async def extract_microservices(self, ctx: Context, ev: StartEvent) -> MicroservicesExtractedEvent:
-        llm = OpenAI(model="gpt-4.1") #, reasoning_effort="low", temperature=0, timeout=9999.0)
-        await ctx.store.set("llm", llm)
         await ctx.store.set("specs", ev.specs)
         await ctx.store.set("user_stories", ev.user_stories)
         await ctx.store.set("retriever", ev.retriever)
+        await ctx.store.set("model", ev.model)
+
+        model = await ctx.store.get("model")
+        if model == "mistral":
+            llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        else:
+            llm = OpenAI(model="gpt-4.1", temperature=0, timeout=9999.0)
+        await ctx.store.set("llm", llm)
 
         extract_template = RichPromptTemplate(EXTRACT_MICROSERVICES_TEXT)
         extract_query = extract_template.format(specs=ev.specs, user_stories=ev.user_stories)
@@ -151,13 +157,13 @@ class DalleWorkflow(Workflow):
         specs = await ctx.store.get("specs")
         user_stories = await ctx.store.get("user_stories")
         retriever = await ctx.store.get("retriever")
-        
-        
-        #llm = await ctx.store.get("llm")
-        llm = OpenAI(model="gpt-4.1" , reasoning_effort="low", temperature=0, timeout=9999.0)
-        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
-        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
 
+        model = await ctx.store.get("model")
+        if model == "mistral":
+            llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        else:
+            llm = OpenAI(model="gpt-4.1", reasoning_effort="low", temperature=0, timeout=9999.0)
+        
         #sllm = llm.as_structured_llm(output_cls=DalleOutput)
 
         find_context_template = RichPromptTemplate(FIND_CONTEXT_TEXT)
@@ -168,24 +174,20 @@ class DalleWorkflow(Workflow):
             microservices_list=ev.microservices_list
         )
 
-
         citation_workflow = CitationQueryEngineWorkflow(timeout=None)
-        context_response = await citation_workflow.run(query=context_query, retriever=retriever)
-
+        context_response = await citation_workflow.run(model=model, query=context_query, retriever=retriever)
         print("Context response:", context_response)
         
         st.write("✅ Retrieved Context from Retriever.")
 
         #use_context_template = RichPromptTemplate(USE_CONTEXT_TEXT)
     
-
         program = LLMTextCompletionProgram.from_defaults(
             output_cls=DalleOutput,
             prompt_template_str=USE_CONTEXT_TEXT,
             llm=llm,
             verbose=True,
         )
-
         
         output = program(
             specs=specs,
@@ -202,18 +204,15 @@ class DalleWorkflow(Workflow):
         st.write("✅ Generated Final Architecture.")
         st.json(single_quote_to_double(str(to_dict(output))))
         return ContextRetrievedEvent(context=single_quote_to_double(str(to_dict(output))))
+    
     @step
     async def generate_code(self, ctx: Context, ev: ContextRetrievedEvent) -> CodeGeneratedEvent:
         """Generate code snippets for each microservice based on the architecture."""
-        
-        #llm = await ctx.store.get("llm")
-
-        llm = OpenAI(model="gpt-4.1" , reasoning_effort="medium", temperature=0, timeout=9999.0)
-        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
-        #llm = Groq(model="openai/gpt-oss-120b", temperature=0, max_tokens=19_000, timeout=9999.0)
-
-        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
-
+        model = await ctx.store.get("model")
+        if model == "mistral":
+            llm = MistralAI(model="codestral-2508", temperature=0, timeout=9999.0, max_tokens=9000)
+        else:
+            llm = OpenAI(model="gpt-4.1", reasoning_effort="medium", temperature=0, timeout=9999.0)
 
         program = LLMTextCompletionProgram.from_defaults(
             output_cls=DalleOutputCode,
@@ -221,7 +220,6 @@ class DalleWorkflow(Workflow):
             llm=llm,
             verbose=True,
         )
-
         
         output = program(
             input_json=ev.context,
