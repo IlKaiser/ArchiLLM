@@ -16,11 +16,6 @@ from llama_index.core.response_synthesizers import (
     ResponseMode
 )
 
-from llama_index.llms.anthropic import Anthropic
-from llama_index.llms.groq import Groq
-from llama_index.llms.gemini import Gemini
-
-
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 from llama_index.core.program import LLMTextCompletionProgram
 
@@ -226,6 +221,7 @@ class DalleWorkflow(Workflow):
         output = program(
             input_json=ev.context,
         )
+
         print("Code Output from LLM:", to_dict(output))
         st.write("✅  Generated code snippets for microservices.")
         return CodeGeneratedEvent(code=single_quote_to_double_with_content(str(to_dict(output))))

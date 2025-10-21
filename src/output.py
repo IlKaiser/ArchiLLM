@@ -129,9 +129,20 @@ class Folder(BaseModel):
             "files": [file.__dict__() for file in self.files],
         }
 
-class DalleOutputCode(BaseModel):
+class DalleOutputCode2(BaseModel):
     """Output model for the Dalle workflow."""
     code : Any
 
 
 
+class DalleOutputCode(BaseModel):
+    """Output model for the Dalle workflow."""
+    folders: List[Folder] = Field(..., description="List of folders in the generated code")
+    files: List[File] = Field(..., description="List of files in the generated code")
+
+    def __dict__(self, *args, **kwargs):
+        """Override dict method to return a dictionary representation of the output."""
+        return {
+            "folders": [folder.__dict__() for folder in self.folders],
+            "files": [file.__dict__() for file in self.files],
+        }
