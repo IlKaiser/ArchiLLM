@@ -239,7 +239,8 @@ The output json is:
 GENERATE_CODE_TEXT = """
 You are an expert software developer. You will be asked to generate java code for a list of microservices based on a given json architecture.
 Given a microservice list in json format, generate code snippets for each microservice based on the architecture.
-You are implementing a microservices architecture in Java with Spring Boot.
+You are implementing a microservices architecture in Java with Spring Boot. Add a simple frontend to test the microservices.
+Create the proper Dockerfile and docker-compose.yml files to deploy the microservices in the indicated patterns.
 Output files in a json format like this and add no other text:
 {
     folders: [
@@ -290,7 +291,7 @@ The output json is:
 GENERATE_PATTERN_CODE_TEXT = """
 You are an expert software developer. You will be asked to generate java code for a list of microservices based on a given json architecture.
 Given a microservice file list in json format, generate code snippets specifically for implementing patterns from the input json.
-You are implementing a microservices architecture in Java with Spring Boot.
+You are implementing a microservices architecture in Java with Spring Boot. 
 Output files in a json format like this and add no other text:  
 {
     folders: [
