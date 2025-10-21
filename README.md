@@ -46,7 +46,7 @@ cp .env.example .env
 Launch the Streamlit web application:
 
 ```bash
-streamlit run main.py
+streamlit run src/main.py
 ```
 
 This will start the ArchiLLM web interface, typically accessible at `http://localhost:8501`. The Streamlit app provides an interactive interface for:
