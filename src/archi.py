@@ -15,6 +15,12 @@ from llama_index.core.response_synthesizers import (
     get_response_synthesizer,
     ResponseMode
 )
+
+from llama_index.llms.anthropic import Anthropic
+from llama_index.llms.groq import Groq
+from llama_index.llms.gemini import Gemini
+
+
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 from llama_index.core.program import LLMTextCompletionProgram
 
@@ -23,15 +29,20 @@ import json
 
 from typing import Any
 
-from output import DalleOutput
-from utils import single_quote_to_double, to_dict
+from output import DalleOutput, DalleOutputCode
+from utils import single_quote_to_double, single_quote_to_double_with_content, to_dict
 from prompts import (
     EXTRACT_MICROSERVICES_TEXT,
     FIND_CONTEXT_TEXT,
     USE_CONTEXT_TEXT,
+    GENERATE_CODE_TEXT
 )   
 
-
+# add near the top with your other imports
+import io
+import zipfile
+import base64
+import posixpath
 
 # --- Workflow Events ---
 
@@ -50,6 +61,10 @@ class MicroservicesExtractedEvent(Event):
 class ContextRetrievedEvent(Event):
     """Get ready to generate final output with context and ms. list"""
     context: Any
+
+class CodeGeneratedEvent(Event):
+    """Get ready to generate final output with context and ms. list"""
+    code: Any
 
 
 
@@ -70,13 +85,17 @@ CITATION_QA_TEMPLATE = PromptTemplate(
     "Answer: "
 )
 # --- Workflow Definitions ---
+
+from dotenv import load_dotenv
+assert load_dotenv()
+
 class CitationQueryEngineWorkflow(Workflow):
     @step
-    async def retrieve(self, ctx: Context, ev: StartEvent) -> RetrieverEvent | None:
+    async def retrieve(self, ctx: Context, ev: StartEvent) -> RetrieverEvent:
         query = ev.get("query")
         if not query:
             return None
-        await ctx.set("query", query)
+        await ctx.store.set("query", query)
 
         retriever = ev.retriever
         if retriever is None:
@@ -94,7 +113,7 @@ class CitationQueryEngineWorkflow(Workflow):
     @step
     async def synthesize(self, ctx: Context, ev: CreateCitationsEvent) -> StopEvent:
         llm = OpenAI(model="gpt-4.1")
-        query = await ctx.get("query", default=None)
+        query = await ctx.store.get("query", default=None)
         synthesizer = get_response_synthesizer(
             llm=llm,
             text_qa_template=CITATION_QA_TEMPLATE,
@@ -107,11 +126,11 @@ class CitationQueryEngineWorkflow(Workflow):
 class DalleWorkflow(Workflow):
     @step
     async def extract_microservices(self, ctx: Context, ev: StartEvent) -> MicroservicesExtractedEvent:
-        llm = OpenAI(model="gpt-4.1")
-        await ctx.set("llm", llm)
-        await ctx.set("specs", ev.specs)
-        await ctx.set("user_stories", ev.user_stories)
-        await ctx.set("retriever", ev.retriever)
+        llm = OpenAI(model="gpt-4.1") #, reasoning_effort="low", temperature=0, timeout=9999.0)
+        await ctx.store.set("llm", llm)
+        await ctx.store.set("specs", ev.specs)
+        await ctx.store.set("user_stories", ev.user_stories)
+        await ctx.store.set("retriever", ev.retriever)
 
         extract_template = RichPromptTemplate(EXTRACT_MICROSERVICES_TEXT)
         extract_query = extract_template.format(specs=ev.specs, user_stories=ev.user_stories)
@@ -129,10 +148,16 @@ class DalleWorkflow(Workflow):
     @step
     async def retrieve_context(self, ctx: Context, ev: MicroservicesExtractedEvent) -> ContextRetrievedEvent:
         print("Retrieving context for microservices:", ev.microservices_list)
-        specs = await ctx.get("specs")
-        user_stories = await ctx.get("user_stories")
-        retriever = await ctx.get("retriever")
-        llm = await ctx.get("llm")
+        specs = await ctx.store.get("specs")
+        user_stories = await ctx.store.get("user_stories")
+        retriever = await ctx.store.get("retriever")
+        
+        
+        #llm = await ctx.store.get("llm")
+        llm = OpenAI(model="gpt-5-mini" , reasoning_effort="minimal", temperature=0, timeout=9999.0)
+        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
+        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
+
         #sllm = llm.as_structured_llm(output_cls=DalleOutput)
 
         find_context_template = RichPromptTemplate(FIND_CONTEXT_TEXT)
@@ -142,7 +167,6 @@ class DalleWorkflow(Workflow):
             user_stories=user_stories,
             microservices_list=ev.microservices_list
         )
-
 
 
         citation_workflow = CitationQueryEngineWorkflow(timeout=None)
@@ -176,11 +200,104 @@ class DalleWorkflow(Workflow):
         #print("Final response:", resp)
         
         st.write("✅ Generated Final Architecture.")
+        st.json(single_quote_to_double(str(to_dict(output))))
         return ContextRetrievedEvent(context=single_quote_to_double(str(to_dict(output))))
-
     @step
-    async def format_output(self, ctx: Context, ev: ContextRetrievedEvent) -> StopEvent:
-        """Format the final output into a structured JSON format."""
+    async def generate_code(self, ctx: Context, ev: ContextRetrievedEvent) -> CodeGeneratedEvent:
+        """Generate code snippets for each microservice based on the architecture."""
         
-        return StopEvent(result=json.dumps(ev.context, indent=2, ensure_ascii=False))
+        #llm = await ctx.store.get("llm")
+
+        llm = OpenAI(model="gpt-5-mini" , reasoning_effort="medium", temperature=0, timeout=9999.0)
+        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
+        #llm = Groq(model="openai/gpt-oss-120b", temperature=0, max_tokens=19_000, timeout=9999.0)
+
+        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
+
+
+        program = LLMTextCompletionProgram.from_defaults(
+            output_cls=DalleOutputCode,
+            prompt_template_str=GENERATE_CODE_TEXT,
+            llm=llm,
+            verbose=True,
+        )
+
+        
+        output = program(
+            input_json=ev.context,
+        )
+        print("Code Output from LLM:", to_dict(output))
+        st.write("✅  Generated code snippets for microservices.")
+        return CodeGeneratedEvent(code=single_quote_to_double_with_content(str(to_dict(output))))
+    
+    @step
+    async def package_zip(self, ctx: Context, ev: CodeGeneratedEvent) -> StopEvent:
+        """
+        Convert the generated microservices JSON into a ZIP archive.
+        The JSON is expected to follow the schema:
+        { "folders": [ { "name": str, "folders": [...], "files": [{"name": str, "content": str}] } ],
+          "files":   [ { "name": str (can include nested paths like 'a/b/c.txt'), "content": str } ] }
+        Returns: StopEvent(result={"filename": "...zip", "zip_base64": "<base64-zip>"})
+        """
+        # Parse the JSON produced by the previous step
+        try:
+            structure = ev.code
+            print("Generated code structure:", structure)
+            with open("debug_generated_code.txt", "w") as f:
+                f.write(str(structure))
+            if isinstance(structure, str):
+                structure = json.loads(structure)
+        except Exception as e:
+            st.error(f"❌ Could not parse generated code JSON: {e}")
+            return StopEvent(result={"error": f"Invalid JSON from CodeGeneratedEvent: {e}"})
+
+        # Helpers to write the file-tree directly into a ZIP (no temp files needed)
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+
+            def _write_files(files: list | None, base: str = ""):
+                if not files:
+                    return
+                for f in files:
+                    name = (f or {}).get("name", "")
+                    content = (f or {}).get("content", "")
+                    if not name:
+                        continue
+                    # Support names that already include nested paths (e.g., "src/main/.../User.java")
+                    arcpath = posixpath.join(base, name).lstrip("/")
+                    # Ensure directory placeholders for nicer unzip UX (optional)
+                    dirpart = posixpath.dirname(arcpath)
+                    if dirpart and not dirpart.endswith("/"):
+                        zf.writestr(dirpart + "/", "")
+                    zf.writestr(arcpath, content or "")
+
+            def _write_folders(folders: list | None, base: str = ""):
+                if not folders:
+                    return
+                for folder in folders:
+                    if not folder:
+                        continue
+                    folder_name = folder.get("name", "")
+                    folder_path = posixpath.join(base, folder_name).strip("/")
+                    # Add an explicit directory entry
+                    if folder_path:
+                        zf.writestr(folder_path + "/", "")
+                    # Write files in this folder
+                    _write_files(folder.get("files", []), folder_path)
+                    # Recurse into subfolders
+                    _write_folders(folder.get("folders", []), folder_path)
+
+            # Top-level files (may include full nested paths)
+            _write_files(structure.get("files", []), "")
+            # Foldered structure
+            _write_folders(structure.get("folders", []), "")
+
+        buf.seek(0)
+        zip_b64 = base64.b64encode(buf.read()).decode("ascii")
+        payload = {
+            "filename": "microservices_project.zip",
+            "zip_base64": zip_b64,
+        }
+        st.write("✅ Packaged microservices code as a ZIP.")
+        return StopEvent(result=payload)
 
