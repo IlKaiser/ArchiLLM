@@ -16,9 +16,9 @@ from llama_index.core.response_synthesizers import (
     ResponseMode
 )
 
-from llama_index.llms.anthropic import Anthropic
-from llama_index.llms.groq import Groq
-from llama_index.llms.gemini import Gemini
+# from llama_index.llms.anthropic import Anthropic
+# from llama_index.llms.groq import Groq
+# from llama_index.llms.gemini import Gemini
 
 
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
@@ -154,7 +154,7 @@ class DalleWorkflow(Workflow):
         
         
         #llm = await ctx.store.get("llm")
-        llm = OpenAI(model="gpt-5-mini" , reasoning_effort="low", temperature=0, timeout=9999.0)
+        llm = OpenAI(model="gpt-4.1" , reasoning_effort="low", temperature=0, timeout=9999.0)
         #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
         #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
 
@@ -208,7 +208,7 @@ class DalleWorkflow(Workflow):
         
         #llm = await ctx.store.get("llm")
 
-        llm = OpenAI(model="gpt-5-mini" , reasoning_effort="medium", temperature=0, timeout=9999.0)
+        llm = OpenAI(model="gpt-4.1" , reasoning_effort="medium", temperature=0, timeout=9999.0)
         #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
         #llm = Groq(model="openai/gpt-oss-120b", temperature=0, max_tokens=19_000, timeout=9999.0)
 
