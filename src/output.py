@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 from pydantic import BaseModel, Field
 
 class MicroserviceEndpoint(BaseModel):
@@ -76,4 +76,62 @@ class DalleOutput(BaseModel):
             "patterns": [pattern.__dict__() for pattern in self.patterns],
             "datasets": [dataset.__dict__() for dataset in self.datasets]
         }
+
+"""
+folders: [
+        {
+            name: "login_service",
+            folders: [],
+            files: [
+                {
+                    name: "LoginService.java",
+                    content: "public class LoginService { ... }"
+                },
+                {
+                    name: "RegisterService.java",
+                    content: "public class RegisterService { ... }"
+                }
+            ]
+        },
+    ],
+    files: [
+        {
+            name: "README.md",
+            content: "This is the README file for the project."
+        },
+        {
+            name: "pom.xml",
+            content: "<project> ... </project>"
+    ] 
+"""
+class File(BaseModel):
+    """Model for a file in the code generation output."""
+    name: str = Field(..., description="Name of the file")
+    content: str = Field(..., description="Content of the file")
+
+    def __dict__(self, *args, **kwargs):
+        """Override dict method to return a dictionary representation of the file."""
+        return {
+            "name": self.file_path,
+            "content": self.content
+        }
+class Folder(BaseModel):
+    """Model for a folder in the code generation output."""
+    name: str = Field(..., description="Path of the folder")
+    folders: List['Folder'] = Field(..., description="List of subfolders in the folder")
+    files: List[File] = Field(..., description="List of files in the folder")
+
+    def __dict__(self, *args, **kwargs):
+        """Override dict method to return a dictionary representation of the folder."""
+        return {
+            "name": self.name,
+            "folders": [folder.__dict__() for folder in self.folders],
+            "files": [file.__dict__() for file in self.files],
+        }
+
+class DalleOutputCode(BaseModel):
+    """Output model for the Dalle workflow."""
+    code : Any
+
+
 
