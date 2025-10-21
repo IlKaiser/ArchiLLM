@@ -3,4 +3,4 @@ openai==1.109.1
 nest-asyncio==1.6.0
 llama_index==0.14.5
 llama-index-vector-stores-qdrant==0.8.6
-llama-index-llms-anthropic==0.9.7
+llama-index-llms-mistralai==0.8.2
