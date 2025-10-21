@@ -15,7 +15,7 @@ ArchiLLM leverages the capabilities of Large Language Models to assist in archit
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.10
 - Streamlit
 - Required dependencies (see `requirements.txt`)
 - API access to LLM services (if applicable)
@@ -62,7 +62,8 @@ This will start the ArchiLLM web interface, typically accessible at `http://loca
 
 Configuration options can be set through environment variables or a configuration file:
 
-- `OPENAI_API_KEY`: API key for LLM services
+- `OPENAI_API_KEY`: API key for OpenAI LLM services
+- `MISTRAL_API_KEY`: API key for Mistral LLM services
 
 
 ## Research Context
