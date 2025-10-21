@@ -10,12 +10,6 @@ from llama_index.llms.openai import OpenAI
 
 
 
-
-from llama_index.llms.anthropic import Anthropic
-from llama_index.llms.groq import Groq
-from llama_index.llms.gemini import Gemini
-
-
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 from llama_index.core.program import LLMTextCompletionProgram
 from llama_index.core import SimpleDirectoryReader
@@ -35,7 +29,7 @@ from input import (
     ComposeCodeGeneratedEvent,
     FrontendCodeGeneratedEvent
 )
-from output import DalleOutput, DalleOutputCode
+from output import DalleOutput, DalleOutputCode22
 from utils import single_quote_to_double, single_quote_to_double_with_content, to_dict, _content
 from updates_utils import apply_project_update_from_json
 
@@ -95,7 +89,7 @@ class DalleCodeWorkflow2(Workflow):
         try:
 
             program = LLMTextCompletionProgram.from_defaults(
-                output_cls=DalleOutputCode,
+                output_cls=DalleOutputCode2,
                 prompt_template_str=GEN_CODE_FROM_MS,
                 llm=llm,
                 verbose=True,
@@ -158,7 +152,7 @@ class DalleCodeWorkflow2(Workflow):
 
         """
         program = LLMTextCompletionProgram.from_defaults(
-            output_cls=DalleOutputCode,  # code will contain the JSON string
+            output_cls=DalleOutputCode2,  # code will contain the JSON string
             prompt_template_str=(
                 "You are updating a microservices project with cross-cutting PATTERNS.\n"
                 "Project documents (truncated):\n{{project_documents}}\n\n"
@@ -262,7 +256,7 @@ class DalleCodeWorkflow2(Workflow):
         )
         """
         program = LLMTextCompletionProgram.from_defaults(
-            output_cls=DalleOutputCode,  # code will contain the JSON string
+            output_cls=DalleOutputCode2,  # code will contain the JSON string
             prompt_template_str=UPDATE_DATASTORE_PLAN_SPEC,
             llm=llm,
             verbose=True,
