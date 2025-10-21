@@ -116,7 +116,11 @@ def get_retrievers():
 
 async def main():
     # Get OpenAI API Key
-    api_key = st.text_input("Enter your OpenAI API Key:", type="password")
+    colmodel, colkey = st.columns(2)
+    with colkey:
+        api_key = st.text_input("Enter your API Key:", type="password")
+    with colmodel:
+        model_choice = st.selectbox("Select LLM Model:", ["openai", "mistral"])
 
     col1, col2 = st.columns(2)
     with col1:
@@ -144,7 +148,7 @@ async def main():
                 # With nest_asyncio applied, we can use asyncio.run directly
                 retriever = get_retrievers()
                 wf = DalleWorkflow(timeout=None)
-                res = await wf.run(specs=specs_input, user_stories=user_stories_input, retriever=retriever)
+                res = await wf.run(model=model_choice, specs=specs_input, user_stories=user_stories_input, retriever=retriever)
                 
                 st.success("🎉 Workflow completed successfully!")
                 
