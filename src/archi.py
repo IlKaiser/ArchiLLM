@@ -18,15 +18,7 @@ from llama_index.core.response_synthesizers import (
     ResponseMode
 )
 
-<<<<<<< HEAD
-=======
-# from llama_index.llms.anthropic import Anthropic
-# from llama_index.llms.groq import Groq
-# from llama_index.llms.gemini import Gemini
-from llama_index.llms.mistralai import MistralAI
 
-
->>>>>>> d042836c107ecb8716cf1db215893e3395b73b3c
 from llama_index.core.prompts import RichPromptTemplate, PromptTemplate
 from llama_index.core.program import LLMTextCompletionProgram
 
@@ -116,16 +108,12 @@ class CitationQueryEngineWorkflow(Workflow):
 
     @step
     async def synthesize(self, ctx: Context, ev: CreateCitationsEvent) -> StopEvent:
-<<<<<<< HEAD
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
         else:
             llm = OpenAI(model="gpt-4.1", temperature=0, timeout=9999.0)
 
-=======
-        llm = MistralAI(model="mistral-large-2411", max_tokens=9000, temperature=0, timeout=9999.0)
->>>>>>> d042836c107ecb8716cf1db215893e3395b73b3c
         query = await ctx.store.get("query", default=None)
         synthesizer = get_response_synthesizer(
             llm=llm,
@@ -139,11 +127,6 @@ class CitationQueryEngineWorkflow(Workflow):
 class DalleWorkflow(Workflow):
     @step
     async def extract_microservices(self, ctx: Context, ev: StartEvent) -> MicroservicesExtractedEvent:
-<<<<<<< HEAD
-=======
-        llm = MistralAI(model="mistral-large-2411")
-        await ctx.store.set("llm", llm)
->>>>>>> d042836c107ecb8716cf1db215893e3395b73b3c
         await ctx.store.set("specs", ev.specs)
         await ctx.store.set("user_stories", ev.user_stories)
         await ctx.store.set("retriever", ev.retriever)
@@ -175,15 +158,6 @@ class DalleWorkflow(Workflow):
         specs = await ctx.store.get("specs")
         user_stories = await ctx.store.get("user_stories")
         retriever = await ctx.store.get("retriever")
-<<<<<<< HEAD
-=======
-        
-        
-        #llm = await ctx.store.get("llm")
-        llm = MistralAI(model="mistral-large-2411", max_tokens=9000, temperature=0, timeout=9999.0)
-        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
-        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
->>>>>>> d042836c107ecb8716cf1db215893e3395b73b3c
 
         model = await ctx.store.get("model")
         if model == "mistral":
@@ -235,23 +209,11 @@ class DalleWorkflow(Workflow):
     @step
     async def generate_code(self, ctx: Context, ev: ContextRetrievedEvent) -> CodeGeneratedEvent:
         """Generate code snippets for each microservice based on the architecture."""
-<<<<<<< HEAD
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="codestral-2508", temperature=0, timeout=9999.0, max_tokens=9000)
         else:
             llm = OpenAI(model="gpt-4.1", reasoning_effort="medium", temperature=0, timeout=9999.0)
-=======
-        
-        #llm = await ctx.store.get("llm")
-
-        llm = MistralAI(model="codestral-2508", max_tokens=9000, temperature=0, timeout=9999.0)
-        #llm = Anthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=19_000, timeout=9999.0)
-        #llm = Groq(model="openai/gpt-oss-120b", temperature=0, max_tokens=19_000, timeout=9999.0)
-
-        #llm = Gemini(model="gemini-2.5-flash", temperature=0, timeout=9999.0)
-
->>>>>>> d042836c107ecb8716cf1db215893e3395b73b3c
 
         program = LLMTextCompletionProgram.from_defaults(
             output_cls=DalleOutputCode,
