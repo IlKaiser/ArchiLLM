@@ -228,7 +228,7 @@ class DalleWorkflow(Workflow):
 
         print("Code Output from LLM:", to_dict(output))
         st.write("✅  Generated code snippets for microservices.")
-        return CodeGeneratedEvent(code=single_quote_to_double_with_content(str(to_dict(output))))
+        return CodeGeneratedEvent(code=json.dumps(output, default=lambda o: o.__dict__))
     
     @step
     async def package_zip(self, ctx: Context, ev: CodeGeneratedEvent) -> StopEvent:
