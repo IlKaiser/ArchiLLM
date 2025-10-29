@@ -241,6 +241,7 @@ You are an expert software developer. You will be asked to generate java code fo
 Given a microservice list in json format, generate code snippets for each microservice based on the architecture.
 You are implementing a microservices architecture in Java with Spring Boot. Add a simple frontend to test the microservices.
 Create the proper Dockerfile and docker-compose.yml files to deploy the microservices in the indicated patterns.
+Add to the Readme.md file a simple explanation of the microservices implemented with the patterns used.
 Output files in a json format like this and add no other text:
 {
     folders: [
@@ -272,11 +273,16 @@ Output files in a json format like this and add no other text:
     files: [
         {
             name: "README.md",
-            content: "This is the README file for the project."
+            content: "# Title
+
+                      ## Microservices Implemented
+
+                      - **Service 1**: description of service 1. It uses pattern 1, pattern 2.
+                      - **Service 2**: description of service 2. It uses pattern 3
+                      
+                      ...
+
         },
-        {
-            name: "pom.xml",
-            content: "<project> ... </project>"
     ]
 }
 The input json is:

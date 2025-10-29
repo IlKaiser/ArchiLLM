@@ -5,6 +5,7 @@ import openai
 import nest_asyncio
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
 
+from pattern_workflow import add_pattern
 
 import os
 from llama_index.core import (
@@ -155,6 +156,8 @@ async def main():
                 st.subheader("Generated Architecture")
                 
                 print(res)
+
+                res = await add_pattern(res)
                 
                 if isinstance(res, dict) and "zip_base64" in res:
                     import base64
