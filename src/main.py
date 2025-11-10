@@ -121,7 +121,7 @@ async def main():
     with colkey:
         api_key = st.text_input("Enter your API Key:", type="password")
     with colmodel:
-        model_choice = st.selectbox("Select LLM Model:", ["openai", "mistral"])
+        model_choice = st.selectbox("Select LLM Model:", ["openai", "mistral", "claude"])
 
     col1, col2 = st.columns(2)
     with col1:
@@ -132,17 +132,27 @@ async def main():
     if st.button("🚀 Generate Architecture", use_container_width=True):
         if not api_key:
             try:
-                api_key = os.environ["OPENAI_API_KEY"]
-            except KeyError:    
-                st.error("Please enter your OpenAI API Key to proceed.")
+                # Try provider-specific env var first
+                if model_choice == "claude":
+                    api_key = os.environ["ANTHROPIC_API_KEY"]
+                else:
+                    api_key = os.environ["OPENAI_API_KEY"]
+            except KeyError:
+                st.error("Please enter your API Key to proceed.")
         elif not specs_input or not user_stories_input:
             st.error("Please provide both a project description and user stories.")
         else:
-            # Set the API key for OpenAI
-            os.environ["OPENAI_API_KEY"] = api_key
-            openai.api_key = os.environ["OPENAI_API_KEY"]
+            # Set the API key for the selected provider
+            if model_choice == "claude":
+                os.environ["ANTHROPIC_API_KEY"] = api_key
+            else:
+                os.environ["OPENAI_API_KEY"] = api_key
+                openai.api_key = os.environ["OPENAI_API_KEY"]
 
-        print(openai.api_key)
+        if model_choice == "openai":
+            print(openai.api_key)
+        else:
+            print(f"Selected model provider: {model_choice}")
         with st.spinner("🧠 Running the architecture generation workflow... Please wait."):
             try:
             
@@ -151,13 +161,15 @@ async def main():
                 wf = DalleWorkflow(timeout=None)
                 res = await wf.run(model=model_choice, specs=specs_input, user_stories=user_stories_input, retriever=retriever)
                 
+               
+                print(res)
+
+                res = await add_pattern(zip_json=res["result"], archi_payload=res["json"])
+
                 st.success("🎉 Workflow completed successfully!")
                 
                 st.subheader("Generated Architecture")
                 
-                print(res)
-
-                res = await add_pattern(res)
                 
                 if isinstance(res, dict) and "zip_base64" in res:
                     import base64

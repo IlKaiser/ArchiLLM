@@ -2,7 +2,9 @@
 
 # Prompt for microservices extraction agent (1)
 EXTRACT_MICROSERVICES_TEXT = """
+Imagine you are a software architect expert in microservices design, and you are designing a small scale new system.
 You will be asked to extract a list of microservices from specifications and user stories.
+Keep the microservices as small and focused as possible, trying to include the minimum number of microservices.
 Report the list in a format like this:
 {       
         {
@@ -48,6 +50,7 @@ For every microservice, include the following information:
 - Description of the microservice
 - User stories implemented by this microservice (All user stories must be implemented across the microservices)
 Only these patterns are allowed: Communication style patterns (shared database, database per service) and Data style patterns (api composition, cqrs, saga, aggregate, event sourcing, domain event) and DO NOT USE OTHER PATTERNS.
+Keep the patterns to the minimum necessary to have a coherent microservices architecture, not all services need to have a pattern.
 Make sure to include all necessary endpoints and parameters in microservices, even if not explicitly mentioned in the user stories or specifications.
 Find also which microservices require a datastore and provide a brief description of it by saying what user stories influenced your choices. Keep in mind what pattern require what kind of dataset.
 Note that the microservices can be grouped together in a pattern, so you can have a microservice that is part of a pattern and not have any endpoints.

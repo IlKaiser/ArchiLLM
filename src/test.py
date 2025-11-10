@@ -162,7 +162,7 @@ class DalleWorkflow(Workflow):
         return MicroservicesExtractedEvent(microservices_list=resp_list)
 
     @step
-    async def retrieve_context(self, ctx: Context, ev: MicroservicesExtractedEvent) -> ContextRetrievedEvent:
+    async def retrieve_context(self, ctx: Context, ev: MicroservicesExtractedEvent) -> StopEvent:
         print("Retrieving context for microservices:", ev.microservices_list)
         specs = await ctx.store.get("specs")
         user_stories = await ctx.store.get("user_stories")
@@ -218,103 +218,5 @@ class DalleWorkflow(Workflow):
         st.write("✅ Generated Final Architecture.")
         st.json(single_quote_to_double(str(to_dict(output))))
 
-
-        return ContextRetrievedEvent(context=single_quote_to_double(str(to_dict(output))))
-    
-    @step
-    async def generate_code(self, ctx: Context, ev: ContextRetrievedEvent) -> CodeGeneratedEvent:
-        """Generate code snippets for each microservice based on the architecture."""
-        model = await ctx.store.get("model")
-        if model == "mistral":
-            llm = MistralAI(model="codestral-2508", temperature=0, timeout=9999.0, max_tokens=9000)
-        elif model in ("claude", "anthropic"):
-            llm = Anthropic(model="claude-sonnet-4-5", temperature=1.0, max_tokens=64000, timeout=9999.0)
-        else:
-            llm = OpenAI(model="gpt-4.1", reasoning_effort="medium", temperature=0, timeout=9999.0)
-
-        program = LLMTextCompletionProgram.from_defaults(
-            output_cls=DalleOutputCode,
-            prompt_template_str=GENERATE_CODE_TEXT,
-            llm=llm,
-            verbose=True,
-        )
-        
-        output = program(
-            input_json=ev.context,
-        )
-
-        print("Code Output from LLM:", to_dict(output))
-        st.write("✅  Generated code snippets for microservices.")
-        return CodeGeneratedEvent(code=json.dumps(output, default=lambda o: o.__dict__))
-    
-    @step
-    async def package_zip(self, ctx: Context, ev: CodeGeneratedEvent) -> StopEvent:
-        """
-        Convert the generated microservices JSON into a ZIP archive.
-        The JSON is expected to follow the schema:
-        { "folders": [ { "name": str, "folders": [...], "files": [{"name": str, "content": str}] } ],
-          "files":   [ { "name": str (can include nested paths like 'a/b/c.txt'), "content": str } ] }
-        Returns: StopEvent(result={"filename": "...zip", "zip_base64": "<base64-zip>"})
-        """
-        # Parse the JSON produced by the previous step
-        try:
-            structure = ev.code
-            print("Generated code structure:", structure)
-            with open("debug_generated_code.txt", "w") as f:
-                f.write(str(structure))
-            if isinstance(structure, str):
-                structure = json.loads(structure)
-        except Exception as e:
-            st.error(f"❌ Could not parse generated code JSON: {e}")
-            return StopEvent(result={"error": f"Invalid JSON from CodeGeneratedEvent: {e}"})
-
-        # Helpers to write the file-tree directly into a ZIP (no temp files needed)
-        buf = io.BytesIO()
-        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-
-            def _write_files(files: list | None, base: str = ""):
-                if not files:
-                    return
-                for f in files:
-                    name = (f or {}).get("name", "")
-                    content = (f or {}).get("content", "")
-                    if not name:
-                        continue
-                    # Support names that already include nested paths (e.g., "src/main/.../User.java")
-                    arcpath = posixpath.join(base, name).lstrip("/")
-                    # Ensure directory placeholders for nicer unzip UX (optional)
-                    dirpart = posixpath.dirname(arcpath)
-                    if dirpart and not dirpart.endswith("/"):
-                        zf.writestr(dirpart + "/", "")
-                    zf.writestr(arcpath, content or "")
-
-            def _write_folders(folders: list | None, base: str = ""):
-                if not folders:
-                    return
-                for folder in folders:
-                    if not folder:
-                        continue
-                    folder_name = folder.get("name", "")
-                    folder_path = posixpath.join(base, folder_name).strip("/")
-                    # Add an explicit directory entry
-                    if folder_path:
-                        zf.writestr(folder_path + "/", "")
-                    # Write files in this folder
-                    _write_files(folder.get("files", []), folder_path)
-                    # Recurse into subfolders
-                    _write_folders(folder.get("folders", []), folder_path)
-
-            # Top-level files (may include full nested paths)
-            _write_files(structure.get("files", []), "")
-            # Foldered structure
-            _write_folders(structure.get("folders", []), "")
-
-        buf.seek(0)
-        zip_b64 = base64.b64encode(buf.read()).decode("ascii")
-        payload = {
-            "filename": "microservices_project.zip",
-            "zip_base64": zip_b64,
-        }
-        st.write("✅ Packaged microservices code as a ZIP.")
-        return StopEvent(result={"result": payload, "json": await ctx.store.get("archi_json")})
+        return StopEvent(result=to_dict(output))
 
