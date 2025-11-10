@@ -9,6 +9,7 @@ from llama_index.core.workflow import (
 
 from llama_index.llms.mistralai import MistralAI
 from llama_index.llms.openai import OpenAI
+from llama_index.llms.anthropic import Anthropic
 
 from llama_index.core.schema import (
     NodeWithScore,
@@ -80,7 +81,7 @@ CITATION_QA_TEMPLATE = PromptTemplate(
     "Answer: "
 )
 # --- Workflow Definitions ---
-
+import os 
 from dotenv import load_dotenv
 assert load_dotenv()
 
@@ -111,6 +112,8 @@ class CitationQueryEngineWorkflow(Workflow):
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        elif model in ("claude", "anthropic"):
+            llm = Anthropic(model="claude-sonnet-4-5", temperature=1.0, max_tokens=64000, timeout=9999.0)
         else:
             llm = OpenAI(model="gpt-4.1", temperature=0, timeout=9999.0)
 
@@ -135,9 +138,15 @@ class DalleWorkflow(Workflow):
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        elif model in ("claude", "anthropic"):
+            llm = Anthropic(model="claude-sonnet-4-5", temperature=1.0, max_tokens=64000, timeout=9999.0)
         else:
             llm = OpenAI(model="gpt-4.1", temperature=0, timeout=9999.0)
         await ctx.store.set("llm", llm)
+
+        print("The model being used is:", model)
+        # set env model MODEL
+        os.environ["MODEL"] = model
 
         extract_template = RichPromptTemplate(EXTRACT_MICROSERVICES_TEXT)
         extract_query = extract_template.format(specs=ev.specs, user_stories=ev.user_stories)
@@ -162,6 +171,8 @@ class DalleWorkflow(Workflow):
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="mistral-large-2411", temperature=0, timeout=9999.0, max_tokens=9000)
+        elif model in ("claude", "anthropic"):
+            llm = Anthropic(model="claude-sonnet-4-5", temperature=1.0, max_tokens=64000, timeout=9999.0)
         else:
             llm = OpenAI(model="gpt-4.1", reasoning_effort="low", temperature=0, timeout=9999.0)
         
@@ -199,11 +210,15 @@ class DalleWorkflow(Workflow):
 
         print("Output from LLM:", to_dict(output))
 
+        await ctx.store.set("archi_json", to_dict(output))
+
         #resp = single_quote_to_double(str(sllm.complete(final_query).raw.dict()))
         #print("Final response:", resp)
         
         st.write("✅ Generated Final Architecture.")
         st.json(single_quote_to_double(str(to_dict(output))))
+
+
         return ContextRetrievedEvent(context=single_quote_to_double(str(to_dict(output))))
     
     @step
@@ -212,6 +227,8 @@ class DalleWorkflow(Workflow):
         model = await ctx.store.get("model")
         if model == "mistral":
             llm = MistralAI(model="codestral-2508", temperature=0, timeout=9999.0, max_tokens=9000)
+        elif model in ("claude", "anthropic"):
+            llm = Anthropic(model="claude-sonnet-4-5", temperature=1.0, max_tokens=64000, timeout=9999.0)
         else:
             llm = OpenAI(model="gpt-4.1", reasoning_effort="medium", temperature=0, timeout=9999.0)
 
@@ -299,5 +316,5 @@ class DalleWorkflow(Workflow):
             "zip_base64": zip_b64,
         }
         st.write("✅ Packaged microservices code as a ZIP.")
-        return StopEvent(result=payload)
+        return StopEvent(result={"result": payload, "json": await ctx.store.get("archi_json")})
 
