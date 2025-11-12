@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  authentication_service:
+    build: ./authentication_service
+    ports:
+      - "8081:8080"
+  user_profile_service:
+    build: ./user_profile_service
+    ports:
+      - "8082:8080"
+  agricultural_company_service:
+    build: ./agricultural_company_service
+    ports:
+      - "8083:8080"
+  product_catalog_service:
+    build: ./product_catalog_service
+    ports:
+      - "8084:8080"
+  cart_service:
+    build: ./cart_service
+    ports:
+      - "8085:8080"
+  order_service:
+    build: ./order_service
+    ports:
+      - "8086:8080"
+  admin_management_service:
+    build: ./admin_management_service
+    ports:
+      - "8087:8080"
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - authentication_service
+      - user_profile_service
+      - agricultural_company_service
+      - product_catalog_service
+      - cart_service
+      - order_service
+      - admin_management_service
