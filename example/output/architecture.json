@@ -1,149 +1,306 @@
 {
     "microservices": [
         {
-            "name": "Catalog Service",
+            "name": "Authentication Service",
             "endpoints": [
                 {
-                    "name": "/products",
-                    "method": "GET",
-                    "inputs": [],
-                    "outputs": [
-                        "product list"
-                    ],
-                    "description": "Returns a list of available socks for browsing."
-                },
-                {
-                    "name": "/products/{productId}",
-                    "method": "GET",
-                    "inputs": [
-                        "productId"
-                    ],
-                    "outputs": [
-                        "product details"
-                    ],
-                    "description": "Returns details for a specific sock."
-                },
-                {
-                    "name": "/products",
+                    "name": "/register",
                     "method": "POST",
                     "inputs": [
+                        "user_type",
+                        "email",
+                        "password",
                         "name",
-                        "description",
-                        "price",
-                        "stock",
-                        "image"
+                        "other_registration_fields"
                     ],
                     "outputs": [
-                        "created product"
+                        "registration_result"
                     ],
-                    "description": "Adds a new sock to the catalog (admin only)."
+                    "description": "Registers a new user (Client, Agricultural Company, or Administrator) and returns the result."
                 },
                 {
-                    "name": "/products/{productId}",
-                    "method": "PUT",
+                    "name": "/login",
+                    "method": "POST",
                     "inputs": [
-                        "productId",
-                        "name",
-                        "description",
-                        "price",
-                        "stock",
-                        "image"
+                        "email",
+                        "password"
                     ],
                     "outputs": [
-                        "updated product"
+                        "login_result",
+                        "session_token"
                     ],
-                    "description": "Updates an existing sock listing (admin only)."
+                    "description": "Authenticates a user and returns a session token if successful."
                 },
                 {
-                    "name": "/products/{productId}/inventory",
-                    "method": "GET",
+                    "name": "/logout",
+                    "method": "POST",
                     "inputs": [
-                        "productId"
+                        "session_token"
                     ],
                     "outputs": [
-                        "stock"
+                        "logout_result"
                     ],
-                    "description": "Returns current inventory for a product."
+                    "description": "Logs out the user by invalidating the session token."
+                },
+                {
+                    "name": "/session/refresh",
+                    "method": "POST",
+                    "inputs": [
+                        "refresh_token"
+                    ],
+                    "outputs": [
+                        "new_session_token"
+                    ],
+                    "description": "Refreshes the session token to keep the user logged in."
                 }
             ],
             "user_stories": [
                 "1",
-                "6",
-                "14"
+                "2",
+                "3",
+                "4",
+                "17",
+                "18",
+                "19",
+                "20",
+                "22",
+                "23",
+                "24"
             ],
             "parameters": [
-                "productId",
-                "name",
-                "description",
-                "price",
-                "stock",
-                "image"
+                "user_id",
+                "user_type",
+                "email",
+                "password_hash",
+                "session_token",
+                "refresh_token"
             ],
-            "description": "Manages the sock product catalog, including browsing, listing, and inventory management."
+            "description": "Handles user registration, login, logout, and session management for all user types."
+        },
+        {
+            "name": "User Profile Service",
+            "endpoints": [
+                {
+                    "name": "/profile",
+                    "method": "GET",
+                    "inputs": [
+                        "user_id",
+                        "session_token"
+                    ],
+                    "outputs": [
+                        "profile_data"
+                    ],
+                    "description": "Retrieves the profile information for the authenticated user."
+                },
+                {
+                    "name": "/profile",
+                    "method": "PUT",
+                    "inputs": [
+                        "user_id",
+                        "session_token",
+                        "profile_updates"
+                    ],
+                    "outputs": [
+                        "update_result"
+                    ],
+                    "description": "Updates the profile information for the authenticated user."
+                }
+            ],
+            "user_stories": [
+                "5",
+                "21"
+            ],
+            "parameters": [
+                "user_id",
+                "profile_data"
+            ],
+            "description": "Manages user profile information for Clients and Agricultural Companies."
+        },
+        {
+            "name": "Agricultural Company Service",
+            "endpoints": [
+                {
+                    "name": "/companies",
+                    "method": "POST",
+                    "inputs": [
+                        "company_name",
+                        "location",
+                        "contact_info",
+                        "registration_data"
+                    ],
+                    "outputs": [
+                        "company_id",
+                        "registration_result"
+                    ],
+                    "description": "Registers a new agricultural company."
+                },
+                {
+                    "name": "/companies",
+                    "method": "GET",
+                    "inputs": [
+                        "area",
+                        "filters"
+                    ],
+                    "outputs": [
+                        "company_list"
+                    ],
+                    "description": "Lists agricultural companies in a given area."
+                },
+                {
+                    "name": "/companies/{company_id}/location",
+                    "method": "GET",
+                    "inputs": [
+                        "company_id"
+                    ],
+                    "outputs": [
+                        "location_url"
+                    ],
+                    "description": "Returns a Google Maps URL for the company's location."
+                }
+            ],
+            "user_stories": [
+                "7",
+                "13",
+                "17"
+            ],
+            "parameters": [
+                "company_id",
+                "company_name",
+                "location",
+                "contact_info"
+            ],
+            "description": "Manages Agricultural Company data, including registration, location, and listing companies in a given area."
+        },
+        {
+            "name": "Product Catalog Service",
+            "endpoints": [
+                {
+                    "name": "/products",
+                    "method": "POST",
+                    "inputs": [
+                        "company_id",
+                        "product_data"
+                    ],
+                    "outputs": [
+                        "product_id",
+                        "add_result"
+                    ],
+                    "description": "Adds a new product to the company's inventory."
+                },
+                {
+                    "name": "/products/{product_id}",
+                    "method": "PUT",
+                    "inputs": [
+                        "product_id",
+                        "product_updates"
+                    ],
+                    "outputs": [
+                        "update_result"
+                    ],
+                    "description": "Modifies an existing product in the inventory."
+                },
+                {
+                    "name": "/products/{product_id}",
+                    "method": "DELETE",
+                    "inputs": [
+                        "product_id"
+                    ],
+                    "outputs": [
+                        "delete_result"
+                    ],
+                    "description": "Removes a product from the inventory."
+                },
+                {
+                    "name": "/companies/{company_id}/products",
+                    "method": "GET",
+                    "inputs": [
+                        "company_id",
+                        "filters"
+                    ],
+                    "outputs": [
+                        "product_list"
+                    ],
+                    "description": "Lists all products for a given agricultural company."
+                },
+                {
+                    "name": "/products/hot",
+                    "method": "GET",
+                    "inputs": [
+                        "season",
+                        "area"
+                    ],
+                    "outputs": [
+                        "hot_product_list"
+                    ],
+                    "description": "Lists hot (seasonal) products."
+                }
+            ],
+            "user_stories": [
+                "6",
+                "8",
+                "14",
+                "15",
+                "16"
+            ],
+            "parameters": [
+                "product_id",
+                "company_id",
+                "product_data",
+                "season"
+            ],
+            "description": "Handles product inventory for Agricultural Companies, including adding, removing, modifying, and listing products, as well as highlighting seasonal products."
         },
         {
             "name": "Cart Service",
             "endpoints": [
                 {
-                    "name": "/cart/{userId}",
+                    "name": "/cart",
                     "method": "GET",
                     "inputs": [
-                        "userId"
+                        "user_id",
+                        "session_token"
                     ],
                     "outputs": [
-                        "cart contents"
+                        "cart_contents"
                     ],
-                    "description": "Returns the current contents of the user's shopping cart."
+                    "description": "Retrieves the current contents of the user's cart."
                 },
                 {
-                    "name": "/cart/{userId}/items",
+                    "name": "/cart/add",
                     "method": "POST",
                     "inputs": [
-                        "userId",
-                        "productId",
+                        "user_id",
+                        "product_id",
                         "quantity"
                     ],
                     "outputs": [
-                        "updated cart"
+                        "add_result"
                     ],
-                    "description": "Adds an item to the user's cart."
+                    "description": "Adds a product to the user's cart."
                 },
                 {
-                    "name": "/cart/{userId}/items/{productId}",
-                    "method": "PUT",
+                    "name": "/cart/remove",
+                    "method": "POST",
                     "inputs": [
-                        "userId",
-                        "productId",
-                        "quantity"
+                        "user_id",
+                        "product_id"
                     ],
                     "outputs": [
-                        "updated cart"
+                        "remove_result"
                     ],
-                    "description": "Updates the quantity of an item in the user's cart."
-                },
-                {
-                    "name": "/cart/{userId}/items/{productId}",
-                    "method": "DELETE",
-                    "inputs": [
-                        "userId",
-                        "productId"
-                    ],
-                    "outputs": [
-                        "updated cart"
-                    ],
-                    "description": "Removes an item from the user's cart."
+                    "description": "Removes a product from the user's cart."
                 }
             ],
             "user_stories": [
-                "2",
-                "3"
+                "9",
+                "10",
+                "11"
             ],
             "parameters": [
-                "userId",
-                "productId",
-                "quantity"
+                "user_id",
+                "cart_contents"
             ],
-            "description": "Handles shopping cart operations such as adding, updating, and viewing items in the cart."
+            "description": "Manages the shopping cart for Clients, including adding, removing, and viewing products in the cart."
         },
         {
             "name": "Order Service",
@@ -152,416 +309,227 @@
                     "name": "/orders",
                     "method": "POST",
                     "inputs": [
-                        "userId",
-                        "cart",
-                        "shippingAddress",
-                        "paymentInfo"
+                        "user_id",
+                        "cart_contents",
+                        "pickup_date"
                     ],
                     "outputs": [
-                        "order confirmation",
-                        "orderId"
+                        "order_id",
+                        "order_result"
                     ],
-                    "description": "Creates a new order and initiates the checkout process."
+                    "description": "Creates a new order for the user, reserving products and selecting a pickup date."
                 },
                 {
-                    "name": "/orders/{orderId}",
+                    "name": "/orders/{order_id}",
                     "method": "GET",
                     "inputs": [
-                        "orderId"
+                        "order_id",
+                        "user_id"
                     ],
                     "outputs": [
-                        "order details"
+                        "order_details"
                     ],
-                    "description": "Returns details and status of a specific order."
-                },
-                {
-                    "name": "/orders/user/{userId}",
-                    "method": "GET",
-                    "inputs": [
-                        "userId"
-                    ],
-                    "outputs": [
-                        "order history"
-                    ],
-                    "description": "Returns the order history for a user."
-                },
-                {
-                    "name": "/orders/{orderId}/status",
-                    "method": "GET",
-                    "inputs": [
-                        "orderId"
-                    ],
-                    "outputs": [
-                        "order status"
-                    ],
-                    "description": "Returns the current status of an order."
-                },
-                {
-                    "name": "/orders/{orderId}/reorder",
-                    "method": "POST",
-                    "inputs": [
-                        "orderId"
-                    ],
-                    "outputs": [
-                        "new order confirmation",
-                        "new orderId"
-                    ],
-                    "description": "Reorders a previous purchase."
-                }
-            ],
-            "user_stories": [
-                "4",
-                "5",
-                "7",
-                "10",
-                "15"
-            ],
-            "parameters": [
-                "orderId",
-                "userId",
-                "cart",
-                "shippingAddress",
-                "paymentInfo",
-                "order status"
-            ],
-            "description": "Processes orders, manages order history, and supports order confirmation and status updates."
-        },
-        {
-            "name": "Payment Service",
-            "endpoints": [
-                {
-                    "name": "/payments",
-                    "method": "POST",
-                    "inputs": [
-                        "orderId",
-                        "userId",
-                        "paymentInfo",
-                        "amount"
-                    ],
-                    "outputs": [
-                        "payment result",
-                        "transactionId"
-                    ],
-                    "description": "Processes payment for an order."
-                },
-                {
-                    "name": "/payments/{transactionId}",
-                    "method": "GET",
-                    "inputs": [
-                        "transactionId"
-                    ],
-                    "outputs": [
-                        "payment status"
-                    ],
-                    "description": "Returns the status of a payment transaction."
-                }
-            ],
-            "user_stories": [
-                "4"
-            ],
-            "parameters": [
-                "orderId",
-                "userId",
-                "paymentInfo",
-                "amount",
-                "transactionId",
-                "payment status"
-            ],
-            "description": "Handles secure payment processing during checkout."
-        },
-        {
-            "name": "Rating Service",
-            "endpoints": [
-                {
-                    "name": "/ratings",
-                    "method": "POST",
-                    "inputs": [
-                        "userId",
-                        "orderId",
-                        "rating",
-                        "comment"
-                    ],
-                    "outputs": [
-                        "rating confirmation"
-                    ],
-                    "description": "Submits a rating for a purchase experience."
-                },
-                {
-                    "name": "/ratings/{orderId}",
-                    "method": "GET",
-                    "inputs": [
-                        "orderId"
-                    ],
-                    "outputs": [
-                        "rating",
-                        "comment"
-                    ],
-                    "description": "Returns the rating for a specific order."
-                },
-                {
-                    "name": "/ratings/user/{userId}",
-                    "method": "GET",
-                    "inputs": [
-                        "userId"
-                    ],
-                    "outputs": [
-                        "user ratings"
-                    ],
-                    "description": "Returns all ratings submitted by a user."
+                    "description": "Retrieves details of a specific order."
                 }
             ],
             "user_stories": [
                 "12"
             ],
             "parameters": [
-                "userId",
-                "orderId",
-                "rating",
-                "comment"
+                "order_id",
+                "user_id",
+                "cart_contents",
+                "pickup_date"
             ],
-            "description": "Allows customers to rate their purchase experience."
+            "description": "Handles order creation and management, including selecting a pickup date for reserved products."
         },
         {
-            "name": "Logging Service",
+            "name": "Admin Management Service",
             "endpoints": [
                 {
-                    "name": "/logs",
-                    "method": "POST",
+                    "name": "/admin/users/{user_id}",
+                    "method": "DELETE",
                     "inputs": [
-                        "eventType",
-                        "service",
-                        "timestamp",
-                        "details"
+                        "admin_id",
+                        "user_id",
+                        "session_token"
                     ],
                     "outputs": [
-                        "log confirmation"
+                        "delete_result"
                     ],
-                    "description": "Records a log event from any service."
-                },
-                {
-                    "name": "/logs",
-                    "method": "GET",
-                    "inputs": [
-                        "filter",
-                        "dateRange",
-                        "service"
-                    ],
-                    "outputs": [
-                        "log entries"
-                    ],
-                    "description": "Returns logs for admin review, filtered by criteria."
+                    "description": "Deletes a user from the platform (admin only)."
                 }
             ],
             "user_stories": [
-                "8",
-                "13"
+                "25"
             ],
             "parameters": [
-                "eventType",
-                "service",
-                "timestamp",
-                "details"
+                "admin_id",
+                "user_id"
             ],
-            "description": "Collects and stores logs for monitoring, debugging, and admin review."
-        },
-        {
-            "name": "Monitoring Service",
-            "endpoints": [
-                {
-                    "name": "/metrics",
-                    "method": "GET",
-                    "inputs": [],
-                    "outputs": [
-                        "service metrics"
-                    ],
-                    "description": "Returns current health and performance metrics."
-                },
-                {
-                    "name": "/alerts",
-                    "method": "GET",
-                    "inputs": [],
-                    "outputs": [
-                        "active alerts"
-                    ],
-                    "description": "Returns current real-time alerts for admins."
-                }
-            ],
-            "user_stories": [
-                "9",
-                "11"
-            ],
-            "parameters": [
-                "service metrics",
-                "alerts"
-            ],
-            "description": "Monitors service health and performance, integrates with Prometheus, and provides real-time alerts."
+            "description": "Allows administrators to manage users, including deleting malicious users."
         }
     ],
     "patterns": [
         {
-            "group_name": "Catalog Data Consistency",
+            "group_name": "Authentication and Session Consistency",
             "implementation_pattern": "aggregate",
             "involved_microservices": [
-                "Catalog Service"
+                "Authentication Service"
             ],
-            "explaination": "Each product (sock) is treated as an aggregate to ensure consistency for inventory and product updates, as required by user stories 6 and 14."
+            "explaination": "Aggregate pattern is used to encapsulate user authentication and session logic, ensuring consistency and security within the service. This is based on the context recommendation for handling credentials and sessions as aggregates."
         },
         {
-            "group_name": "Catalog Read/Write Optimization",
-            "implementation_pattern": "cqrs",
+            "group_name": "User Profile Consistency",
+            "implementation_pattern": "aggregate",
             "involved_microservices": [
-                "Catalog Service"
+                "User Profile Service"
             ],
-            "explaination": "CQRS is used to separate read operations (browsing, listing) from write operations (admin updates), optimizing for both, as needed for user stories 1 and 6."
+            "explaination": "Aggregate pattern is used to ensure that user profile updates and retrievals are consistent and encapsulated, as recommended in the context."
         },
         {
-            "group_name": "Catalog Event Notification",
+            "group_name": "Company Data Consistency",
+            "implementation_pattern": "aggregate",
+            "involved_microservices": [
+                "Agricultural Company Service"
+            ],
+            "explaination": "Aggregate pattern is used to encapsulate company data and business rules, as per the context's recommendation for company registration and management."
+        },
+        {
+            "group_name": "Product Inventory and Events",
+            "implementation_pattern": "aggregate",
+            "involved_microservices": [
+                "Product Catalog Service"
+            ],
+            "explaination": "Aggregate pattern is used for product inventory management, ensuring consistency for add, remove, and modify operations."
+        },
+        {
+            "group_name": "Product Catalog Domain Events",
             "implementation_pattern": "domain event",
             "involved_microservices": [
-                "Catalog Service"
+                "Product Catalog Service"
             ],
-            "explaination": "Domain events are published when inventory changes or products are updated, so other services (like Order) can react, supporting user story 14."
+            "explaination": "Domain events are emitted when products are added, removed, or modified, to notify other services such as Cart or Order Service. This is based on the context's recommendation for decoupling and event-driven updates."
         },
         {
-            "group_name": "Cart Data Consistency",
+            "group_name": "Cart Consistency and Events",
             "implementation_pattern": "aggregate",
             "involved_microservices": [
                 "Cart Service"
             ],
-            "explaination": "The shopping cart is treated as an aggregate to ensure consistency when adding or updating items, as required by user stories 2 and 3."
+            "explaination": "Aggregate pattern is used to encapsulate cart logic for adding, removing, and viewing products, as recommended in the context."
         },
         {
-            "group_name": "Cart Read/Write Optimization",
-            "implementation_pattern": "cqrs",
+            "group_name": "Cart Domain Events",
+            "implementation_pattern": "domain event",
             "involved_microservices": [
                 "Cart Service"
             ],
-            "explaination": "CQRS allows efficient querying of cart contents and separate handling of cart updates, supporting user stories 2 and 3."
+            "explaination": "Domain events are emitted when cart contents change, supporting analytics or triggering workflows, as per the context."
         },
         {
-            "group_name": "Order Lifecycle Management",
+            "group_name": "Order Lifecycle and Coordination",
             "implementation_pattern": "aggregate",
             "involved_microservices": [
                 "Order Service"
             ],
-            "explaination": "Each order is an aggregate to manage its lifecycle and state transitions, as required by user stories 4, 5, 7, 10, and 15."
+            "explaination": "Aggregate pattern is used to encapsulate the order lifecycle and business rules, as recommended in the context."
         },
         {
-            "group_name": "Order Process Coordination",
+            "group_name": "Order Saga Coordination",
             "implementation_pattern": "saga",
             "involved_microservices": [
                 "Order Service",
-                "Payment Service"
+                "Product Catalog Service",
+                "Cart Service"
             ],
-            "explaination": "Saga coordinates the order process across services (e.g., payment, inventory, shipping) to ensure data consistency without distributed transactions, as required by user stories 4, 5, and 15."
+            "explaination": "Saga pattern is used to coordinate the order creation process, especially for reserving products and updating inventory, as recommended in the context."
         },
         {
-            "group_name": "Order Event Notification",
+            "group_name": "Order Domain Events",
             "implementation_pattern": "domain event",
             "involved_microservices": [
+                "Order Service"
+            ],
+            "explaination": "Domain events are published when orders are created or updated, allowing other services to react accordingly, as per the context."
+        },
+        {
+            "group_name": "Admin Actions Consistency and Events",
+            "implementation_pattern": "aggregate",
+            "involved_microservices": [
+                "Admin Management Service"
+            ],
+            "explaination": "Aggregate pattern is used to encapsulate administrative actions, such as user deletion, as recommended in the context."
+        },
+        {
+            "group_name": "Admin Domain Events",
+            "implementation_pattern": "domain event",
+            "involved_microservices": [
+                "Admin Management Service"
+            ],
+            "explaination": "Domain events are emitted when users are deleted or other significant admin actions occur, so other services can update their state if necessary, as per the context."
+        },
+        {
+            "group_name": "Cross-Service Data Queries",
+            "implementation_pattern": "api composition",
+            "involved_microservices": [
+                "Agricultural Company Service",
+                "Product Catalog Service",
                 "Order Service",
-                "Payment Service"
+                "User Profile Service"
             ],
-            "explaination": "Domain events are emitted for order status changes and payment results, enabling shipment tracking and notifications, as required by user stories 5, 7, and 15."
-        },
-        {
-            "group_name": "Payment Transaction Consistency",
-            "implementation_pattern": "aggregate",
-            "involved_microservices": [
-                "Payment Service"
-            ],
-            "explaination": "Each payment transaction is managed as an aggregate for consistency, as required by user story 4."
-        },
-        {
-            "group_name": "Rating Data Consistency",
-            "implementation_pattern": "aggregate",
-            "involved_microservices": [
-                "Rating Service"
-            ],
-            "explaination": "Each rating or review is an aggregate, ensuring consistency for each customer’s feedback, as required by user story 12."
-        },
-        {
-            "group_name": "Rating Read/Write Optimization",
-            "implementation_pattern": "cqrs",
-            "involved_microservices": [
-                "Rating Service"
-            ],
-            "explaination": "CQRS separates the process of submitting ratings from querying them for display, as required by user story 12."
-        },
-        {
-            "group_name": "Logging Event Storage",
-            "implementation_pattern": "event sourcing",
-            "involved_microservices": [
-                "Logging Service"
-            ],
-            "explaination": "Event sourcing captures a sequence of log events for auditing and debugging, as required by user stories 8 and 13."
-        },
-        {
-            "group_name": "Logging Event Reception",
-            "implementation_pattern": "domain event",
-            "involved_microservices": [
-                "Logging Service"
-            ],
-            "explaination": "Domain events are received from other services to record significant actions or errors, as required by user stories 8 and 13."
-        },
-        {
-            "group_name": "Monitoring Event Reception",
-            "implementation_pattern": "domain event",
-            "involved_microservices": [
-                "Monitoring Service"
-            ],
-            "explaination": "Domain events are consumed from other services for real-time monitoring and alerting, as required by user stories 9 and 11."
+            "explaination": "API composition is used for queries that require data from multiple services, such as showing a company's products or a user's orders, as recommended in the context."
         }
     ],
     "datastore": [
         {
-            "datastore_name": "Catalog Database",
+            "datastore_name": "AuthenticationDB",
             "associated_microservices": [
-                "Catalog Service"
+                "Authentication Service"
             ],
-            "description": "Stores product catalog data, including product details, inventory, and images. Required for browsing, admin updates, and inventory checks (user stories 1, 6, 14)."
+            "description": "Stores user credentials, session tokens, and authentication-related data. Required for user registration, login, and session management (user stories 1, 2, 3, 4, 17, 18, 19, 20, 22, 23, 24)."
         },
         {
-            "datastore_name": "Cart Database",
+            "datastore_name": "UserProfileDB",
+            "associated_microservices": [
+                "User Profile Service"
+            ],
+            "description": "Stores user profile information for Clients and Agricultural Companies. Needed for viewing and updating personal information (user stories 5, 21)."
+        },
+        {
+            "datastore_name": "CompanyDB",
+            "associated_microservices": [
+                "Agricultural Company Service"
+            ],
+            "description": "Stores agricultural company data, including registration, location, and company listings (user stories 7, 13, 17)."
+        },
+        {
+            "datastore_name": "ProductCatalogDB",
+            "associated_microservices": [
+                "Product Catalog Service"
+            ],
+            "description": "Stores product inventory for agricultural companies, including product details and seasonal product information (user stories 6, 8, 14, 15, 16)."
+        },
+        {
+            "datastore_name": "CartDB",
             "associated_microservices": [
                 "Cart Service"
             ],
-            "description": "Stores shopping cart data for each user session, supporting add, update, and view operations (user stories 2, 3)."
+            "description": "Stores shopping cart data for each client, including cart contents and product selections (user stories 9, 10, 11)."
         },
         {
-            "datastore_name": "Order Database",
+            "datastore_name": "OrderDB",
             "associated_microservices": [
                 "Order Service"
             ],
-            "description": "Stores order data, including order details, status, and history. Supports order processing, tracking, and reordering (user stories 4, 5, 7, 10, 15)."
+            "description": "Stores order data, including reserved products and pickup dates (user story 12)."
         },
         {
-            "datastore_name": "Payment Database",
+            "datastore_name": "AdminDB",
             "associated_microservices": [
-                "Payment Service"
+                "Admin Management Service"
             ],
-            "description": "Stores payment transaction data, including payment status and transaction IDs. Required for secure payment processing (user story 4)."
-        },
-        {
-            "datastore_name": "Rating Database",
-            "associated_microservices": [
-                "Rating Service"
-            ],
-            "description": "Stores customer ratings and comments for purchase experiences (user story 12)."
-        },
-        {
-            "datastore_name": "Logging Database",
-            "associated_microservices": [
-                "Logging Service"
-            ],
-            "description": "Stores log events for monitoring, debugging, and admin review (user stories 8, 13)."
-        },
-        {
-            "datastore_name": "Monitoring Database",
-            "associated_microservices": [
-                "Monitoring Service"
-            ],
-            "description": "Stores health and performance metrics, as well as real-time alerts for system monitoring (user stories 9, 11)."
+            "description": "Stores administrative actions and user management data, including user deletion logs (user story 25)."
         }
     ]
 }
