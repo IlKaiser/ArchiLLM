@@ -1,0 +1,13 @@
+{
+  "folder_name": "Nestigo",
+  "input_file": "/Users/marcocalamo/ArchiLLM/dataset/student_projects/Nestigo/input.txt",
+  "status": "success",
+  "specs": "",
+  "user_stories": "",
+  "output": {
+    "microservices": [],
+    "patterns": [],
+    "datastore": []
+  },
+  "error": null
+}

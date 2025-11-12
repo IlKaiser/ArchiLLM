@@ -1,6 +1,31 @@
 import pandas as pd
 import json
 
+def single_quote_to_double(str_in) -> str:
+    """
+    A function to parse a string and convert it into a valid JSON format.
+    It replaces single quotes with double quotes
+    """
+    # Replace single quotes with double quotes except when they are inside double quotes.
+    opend = False
+    str_out = ""
+    for c in str_in:
+        if c != "'":
+            if c == '"' and not opend:
+                opend = True
+            elif c == '"' and opend:
+                opend = False
+            str_out += c
+        else:
+            if opend:
+                str_out += c
+            else:
+                str_out += '"'
+    
+  
+    
+    return str_out
+
 def compute_microservice_lack(ms, num_params):
     inputs = ms.get("inputs", [])
     outputs = ms.get("outputs", [])
@@ -93,7 +118,10 @@ def compute_metrics_from_excel(excel_path: str, output_path: str = "with_lack_of
 
     for _, row in df.iterrows():
         try:
-            output_data = json.loads(row["Dalle Output"])
+            try:
+                output_data = json.loads(row["Dalle Output"])
+            except json.JSONDecodeError:
+                output_data = json.loads(single_quote_to_double(row["Dalle Output"]))
             microservices = output_data["microservices"]
             score = compute_system_lack_of_cohesion(microservices)
             asgm = compute_average_service_granularity(microservices)
@@ -112,4 +140,4 @@ def compute_metrics_from_excel(excel_path: str, output_path: str = "with_lack_of
 
 
 if __name__ == "__main__":
-    compute_metrics_from_excel("/Users/marcocalamo/DALLE/results_open.xlsx", output_path="open_metrics.xlsx")
+    compute_metrics_from_excel("/Users/marcocalamo/ARCHILLM/results_student.xlsx", output_path="stud_metrics.xlsx")

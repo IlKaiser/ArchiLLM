@@ -1,4 +1,4 @@
-from gen import extract_sections
+from gen_archi_excel import extract_sections
 
 print(extract_sections("""# SYSTEM DESCRIPTION:
 

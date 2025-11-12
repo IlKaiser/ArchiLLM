@@ -19,43 +19,6 @@ import qdrant_client
 from dotenv import load_dotenv
 load_dotenv()
 
-def get_retrievers():
-    # load or build the “sito” index
-    # assume you have a persist_dir or vector_store prepared
-    # e.g.:
-    # index_sito = VectorStoreIndex.from_vector_store(my_vector_store)
-    lock_file = os.path.join("/Users/marcocalamo/home/archi", ".lock")
-    if os.path.exists(lock_file):
-        os.remove(lock_file)
-
-    os.makedirs("/Users/marcocalamo/home/archi", exist_ok=True)
-    client = qdrant_client.AsyncQdrantClient(path="/Users/marcocalamo/home/archi")
-    vector_store = QdrantVectorStore(aclient=client, collection_name="micro", use_async=True)
-    index_sito = VectorStoreIndex.from_vector_store(vector_store)
-
-    # load or build the “libro” index from disk
-    persist_dir = "/Users/marcocalamo/Downloads/micro/persist"
-    if os.path.exists(persist_dir):
-        storage = StorageContext.from_defaults(persist_dir=persist_dir)
-        index_libro = load_index_from_storage(storage)
-    else:
-        docs = SimpleDirectoryReader("/Users/marcocalamo/Downloads/micro/").load_data()
-        index_libro = VectorStoreIndex.from_documents(docs)
-        index_libro.storage_context.persist(persist_dir=persist_dir)
-
-    retriever = QueryFusionRetriever(
-        [
-            index_sito.as_retriever(similarity_top_k=3),
-            index_libro.as_retriever(similarity_top_k=3),
-        ],
-        similarity_top_k=5,
-        num_queries=4,
-        mode="reciprocal_rerank",
-        use_async=True,
-        verbose=True,
-    )
-    return retriever
-
 
 def extract_sections(input_text):
     system_desc = ""
@@ -76,9 +39,9 @@ def extract_sections(input_text):
     
     return system_desc, user_stories
 
-async def process_folders(main_folder, output_excel_path):
+async def process_folders(main_folder, output_excel_path, results_path="results_claude"):
     data = []
-    retriever = get_retrievers()
+    
     
     
     for subfolder in os.listdir(main_folder):
@@ -94,8 +57,10 @@ async def process_folders(main_folder, output_excel_path):
         system_description, user_stories = extract_sections(content)
         
         
-        wf = DalleWorkflow(timeout=None)
-        result_event = await wf.run(specs=system_description, user_stories=user_stories, retriever=retriever)
+        # Open results from a folder
+        with open(os.path.join(results_path, f"{subfolder}.json"), "r", encoding="utf-8") as f:
+            result_event = f.read()
+
         output = json.loads(result_event)
         
 
@@ -103,7 +68,7 @@ async def process_folders(main_folder, output_excel_path):
             "Subfolder": subfolder,
             "System Description": system_description,
             "User Stories": user_stories,
-            "Dalle Output": output
+            "Dalle Output": output["output"]
         })
 
     df = pd.DataFrame(data)
@@ -114,7 +79,8 @@ async def process_folders(main_folder, output_excel_path):
 
 def main():
     import asyncio
-    asyncio.run(process_folders("/Users/marcocalamo/Downloads/docs/OPEN SOURCE", "results_open.xlsx"))
+    asyncio.run(process_folders(
+    "dataset/open_source_projects", "results_open.xlsx", results_path="results_claude"))
 
 if __name__ == "__main__":
     import nest_asyncio

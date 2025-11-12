@@ -1,0 +1,438 @@
+{
+  "folder_name": "chronopic",
+  "input_file": "/Users/marcocalamo/ArchiLLM/dataset/student_projects/chronopic/input.txt",
+  "status": "success",
+  "specs": "ChronoPic is a photo management platform where users can upload images and \nautomatically tag them based on age detection and optionally known persons. The \nsystem provides asynchronous processing using computer vision (face & age \ndetection), and supports secure user authentication. Users can view, filter, and \nmanage their personal image collections based on metadata and detection results.",
+  "user_stories": "1) As a User, I want to sign up so that I can access the application. \n2) As a User, I want to verify my account using an OTP so that I can activate my \naccount securely. \n3) As a User, I want to log in to the platform so that I can use its features. \n4) As a User, I want to remain logged in so I don\u2019t need to re-enter credentials \nrepeatedly. \n5) As a User, I want to reset my password so that I can recover access when I \nforget it. \n6) As a User, I want to upload a photo with optional metadata so that it can be \nprocessed and stored. \n7) As a User, I want the system to run face detection automatically so the image \ncan be cropped properly. \n8) As a User, I want age detection to run in the background so I get a result \nwithout waiting. \n9) As a User, I want to retrieve the detected age for a specific photo. \n10) As a User, I want to retrieve detected ages for multiple photos to avoid many \nseparate API calls. \n11) As a User, I want to delete one or more photos and their associated age \nrecords if desired. \n12) As a User, I want to view all my uploaded photos and tags by email. \n13) As a User, I want to retrieve photo content by ID so I can display it on the \nfrontend. \n14) As a User, I want to filter photos by email and tag to categorize and query \nthem easily. \n15) As a Developer, I want to containerize the age-detection-service so it can be \ndeployed easily.",
+  "output": {
+    "microservices": [
+      {
+        "name": "authentication-service",
+        "endpoints": [
+          {
+            "name": "/register",
+            "method": "POST",
+            "inputs": [
+              "email",
+              "password"
+            ],
+            "outputs": [
+              "user_id",
+              "registration_status"
+            ],
+            "description": "Registers a new user with email and password"
+          },
+          {
+            "name": "/verify-otp",
+            "method": "POST",
+            "inputs": [
+              "email",
+              "otp_code"
+            ],
+            "outputs": [
+              "verification_status"
+            ],
+            "description": "Verifies user account using OTP code"
+          },
+          {
+            "name": "/login",
+            "method": "POST",
+            "inputs": [
+              "email",
+              "password"
+            ],
+            "outputs": [
+              "session_token",
+              "user_id"
+            ],
+            "description": "Authenticates user and creates session"
+          },
+          {
+            "name": "/session/validate",
+            "method": "GET",
+            "inputs": [
+              "session_token"
+            ],
+            "outputs": [
+              "is_valid",
+              "user_id"
+            ],
+            "description": "Validates existing session token"
+          },
+          {
+            "name": "/password-reset/request",
+            "method": "POST",
+            "inputs": [
+              "email"
+            ],
+            "outputs": [
+              "reset_token"
+            ],
+            "description": "Initiates password reset process"
+          },
+          {
+            "name": "/password-reset/confirm",
+            "method": "POST",
+            "inputs": [
+              "reset_token",
+              "new_password"
+            ],
+            "outputs": [
+              "reset_status"
+            ],
+            "description": "Completes password reset with new password"
+          },
+          {
+            "name": "/logout",
+            "method": "POST",
+            "inputs": [
+              "session_token"
+            ],
+            "outputs": [
+              "logout_status"
+            ],
+            "description": "Terminates user session"
+          }
+        ],
+        "user_stories": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "parameters": [
+          "user_id",
+          "email",
+          "password_hash",
+          "otp_token",
+          "otp_expiry",
+          "session_token",
+          "session_expiry",
+          "reset_token",
+          "is_verified"
+        ],
+        "description": "Handles user registration, login, OTP verification, password reset, and session management"
+      },
+      {
+        "name": "photo-management-service",
+        "endpoints": [
+          {
+            "name": "/photos",
+            "method": "POST",
+            "inputs": [
+              "user_id",
+              "photo_file",
+              "tags",
+              "metadata"
+            ],
+            "outputs": [
+              "photo_id",
+              "upload_status"
+            ],
+            "description": "Uploads a photo with optional metadata and triggers face detection"
+          },
+          {
+            "name": "/photos/{photo_id}",
+            "method": "GET",
+            "inputs": [
+              "photo_id",
+              "user_id"
+            ],
+            "outputs": [
+              "photo_content",
+              "metadata"
+            ],
+            "description": "Retrieves photo content and metadata by photo ID"
+          },
+          {
+            "name": "/photos",
+            "method": "GET",
+            "inputs": [
+              "user_id"
+            ],
+            "outputs": [
+              "photo_list",
+              "metadata_list"
+            ],
+            "description": "Retrieves all photos and tags for a user by email"
+          },
+          {
+            "name": "/photos/filter",
+            "method": "GET",
+            "inputs": [
+              "user_id",
+              "tags"
+            ],
+            "outputs": [
+              "filtered_photo_list"
+            ],
+            "description": "Filters photos by email and tag"
+          },
+          {
+            "name": "/photos",
+            "method": "DELETE",
+            "inputs": [
+              "photo_ids",
+              "user_id"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Deletes one or more photos and triggers cascade deletion"
+          }
+        ],
+        "user_stories": [
+          "6",
+          "11",
+          "12",
+          "13",
+          "14"
+        ],
+        "parameters": [
+          "photo_id",
+          "user_id",
+          "storage_path",
+          "upload_timestamp",
+          "tags",
+          "metadata",
+          "face_detection_status",
+          "age_detection_status"
+        ],
+        "description": "Manages photo upload, storage, metadata, retrieval, deletion, and filtering operations"
+      },
+      {
+        "name": "face-detection-service",
+        "endpoints": [
+          {
+            "name": "/detect-faces",
+            "method": "POST",
+            "inputs": [
+              "photo_id",
+              "photo_content"
+            ],
+            "outputs": [
+              "detection_results",
+              "crop_coordinates"
+            ],
+            "description": "Performs face detection and returns crop coordinates"
+          },
+          {
+            "name": "/faces/{photo_id}",
+            "method": "GET",
+            "inputs": [
+              "photo_id"
+            ],
+            "outputs": [
+              "face_data",
+              "crop_coordinates"
+            ],
+            "description": "Retrieves face detection results for a photo"
+          },
+          {
+            "name": "/faces",
+            "method": "DELETE",
+            "inputs": [
+              "photo_ids"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Deletes face detection data for specified photos"
+          }
+        ],
+        "user_stories": [
+          "7"
+        ],
+        "parameters": [
+          "photo_id",
+          "face_count",
+          "crop_coordinates",
+          "detection_timestamp",
+          "confidence_scores"
+        ],
+        "description": "Performs face detection and image cropping using computer vision"
+      },
+      {
+        "name": "age-detection-service",
+        "endpoints": [
+          {
+            "name": "/detect-age",
+            "method": "POST",
+            "inputs": [
+              "photo_id",
+              "cropped_face_data"
+            ],
+            "outputs": [
+              "job_id",
+              "processing_status"
+            ],
+            "description": "Initiates asynchronous age detection processing"
+          },
+          {
+            "name": "/age/{photo_id}",
+            "method": "GET",
+            "inputs": [
+              "photo_id"
+            ],
+            "outputs": [
+              "detected_age",
+              "confidence"
+            ],
+            "description": "Retrieves detected age for a specific photo"
+          },
+          {
+            "name": "/ages",
+            "method": "POST",
+            "inputs": [
+              "photo_ids"
+            ],
+            "outputs": [
+              "age_results_list"
+            ],
+            "description": "Retrieves detected ages for multiple photos in batch"
+          },
+          {
+            "name": "/ages",
+            "method": "DELETE",
+            "inputs": [
+              "photo_ids"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Deletes age detection records for specified photos"
+          },
+          {
+            "name": "/age/status/{job_id}",
+            "method": "GET",
+            "inputs": [
+              "job_id"
+            ],
+            "outputs": [
+              "processing_status",
+              "progress"
+            ],
+            "description": "Checks status of age detection job"
+          }
+        ],
+        "user_stories": [
+          "8",
+          "9",
+          "10",
+          "15"
+        ],
+        "parameters": [
+          "photo_id",
+          "job_id",
+          "detected_age",
+          "confidence_score",
+          "processing_status",
+          "detection_timestamp",
+          "face_coordinates"
+        ],
+        "description": "Runs asynchronous age detection on faces and stores/retrieves age results using CQRS pattern"
+      }
+    ],
+    "patterns": [
+      {
+        "group_name": "Service Data Isolation",
+        "implementation_pattern": "database per service",
+        "involved_microservices": [
+          "authentication-service",
+          "photo-management-service",
+          "face-detection-service",
+          "age-detection-service"
+        ],
+        "explaination": "I chose this pattern because each microservice needs to maintain its own data independently to ensure loose coupling and service autonomy. The context explicitly recommends that each service should have its own database for user credentials, photo metadata, detection results, and age detection data respectively."
+      },
+      {
+        "group_name": "Photo Processing Workflow",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "photo-management-service",
+          "face-detection-service",
+          "age-detection-service"
+        ],
+        "explaination": "I chose the Saga pattern because the photo upload and processing workflow (User Stories 6, 7, 8) requires coordinated multi-step transactions across services. When a photo is uploaded, it must be stored, then face detection must run, then age detection must execute. If any step fails, compensating transactions must clean up previous steps. Similarly, photo deletion (User Story 11) requires cascade deletion across all three services."
+      },
+      {
+        "group_name": "Asynchronous Event Processing",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "photo-management-service",
+          "face-detection-service",
+          "age-detection-service"
+        ],
+        "explaination": "I chose the Domain Event pattern because the system requires asynchronous processing triggered by state changes. PhotoUploaded events trigger face detection (User Story 7), FaceDetected events trigger age detection (User Story 8), and PhotoDeleted events cascade deletion (User Story 11). This enables loose coupling and supports the background processing requirement."
+      },
+      {
+        "group_name": "Aggregated Photo Data Retrieval",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "photo-management-service",
+          "age-detection-service",
+          "face-detection-service"
+        ],
+        "explaination": "I chose the API Composition pattern because several user stories (9, 10, 12, 14) require aggregating data from multiple services. When retrieving photos with age data or filtering photos, the system must combine photo metadata from photo-management-service with age results from age-detection-service and potentially face data from face-detection-service."
+      },
+      {
+        "group_name": "Age Detection Read/Write Separation",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "age-detection-service"
+        ],
+        "explaination": "I chose the CQRS pattern for age-detection-service because it has distinct command and query responsibilities. The command side handles asynchronous age detection processing (User Story 8) which is write-intensive and time-consuming, while the query side provides optimized reads for retrieving age results (User Stories 9, 10). This separation improves performance and scalability."
+      },
+      {
+        "group_name": "Domain Boundaries",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "authentication-service",
+          "photo-management-service",
+          "face-detection-service",
+          "age-detection-service"
+        ],
+        "explaination": "I chose the Aggregate pattern to define clear domain boundaries and consistency rules. User aggregate in authentication-service, Photo aggregate in photo-management-service, Face Detection aggregate in face-detection-service, and Age Detection Result aggregate in age-detection-service ensure that related data is kept together and maintains consistency within each service."
+      }
+    ],
+    "datastore": [
+      {
+        "datastore_name": "authentication-db",
+        "associated_microservices": [
+          "authentication-service"
+        ],
+        "description": "Stores user credentials, email addresses, password hashes, OTP tokens, session tokens, and account verification status. Supports User Stories 1, 2, 3, 4, 5 for registration, login, OTP verification, session management, and password reset. Uses Database per Service pattern to maintain service autonomy."
+      },
+      {
+        "datastore_name": "photo-metadata-db",
+        "associated_microservices": [
+          "photo-management-service"
+        ],
+        "description": "Stores photo metadata including photo IDs, user IDs, storage paths, tags, upload timestamps, and processing status flags for face and age detection. Supports User Stories 6, 11, 12, 13, 14 for photo upload, retrieval, deletion, and filtering. Acts as orchestrator in Saga pattern and publishes Domain Events."
+      },
+      {
+        "datastore_name": "face-detection-db",
+        "associated_microservices": [
+          "face-detection-service"
+        ],
+        "description": "Stores face detection results including photo IDs, face counts, crop coordinates, confidence scores, and detection timestamps. Supports User Story 7 for automated face detection. Participates in Saga pattern and consumes/produces Domain Events."
+      },
+      {
+        "datastore_name": "age-detection-write-db",
+        "associated_microservices": [
+          "age-detection-service"
+        ],
+        "description": "Write-side database for CQRS pattern. Stores age detection processing jobs, statuses, and raw detection events. Supports User Story 8 for asynchronous age detection processing and User Story 15 for containerized deployment."
+      },
+      {
+        "datastore_name": "age-detection-read-db",
+        "associated_microservices": [
+          "age-detection-service"
+        ],
+        "description": "Read-side database for CQRS pattern. Stores optimized age detection results with photo IDs, detected ages, confidence scores, and timestamps. Supports User Stories 9 and 10 for efficient retrieval of single and multiple photo age results. Enables fast queries through denormalized data structure."
+      }
+    ]
+  },
+  "error": null
+}

@@ -33,3 +33,5 @@ book/*
 
 # output_projects folder
 output_project/*
+.ipynb_checkpoints
+.cache

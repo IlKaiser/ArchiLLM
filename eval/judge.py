@@ -113,7 +113,7 @@ class DalleJudge(Workflow):
 
 
 
-from gen import get_retrievers
+from gen_archi_excel import get_retrievers
 
 S = """
 4-by-4 is an online platform that allows users to play the classic adversarial (m, n, k) games with gravity in a digital environment. The website features a standard login system, enabling users to create accounts, log in, and track their game statistics. Players can customize their gaming experience by adjusting board sizes and implementing chess-like timing settings to add a competitive edge. The platform is designed to provide a seamless and engaging experience for enthusiasts of all skill levels.
