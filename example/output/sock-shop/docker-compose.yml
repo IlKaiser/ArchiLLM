@@ -1,0 +1,106 @@
+version: '3.8'
+services:
+  catalog-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: catalogdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+  cart-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: cartdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+  order-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: orderdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+  payment-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: paymentdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+  rating-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: ratingdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5437:5432"
+  logging-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: loggingdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5438:5432"
+  monitoring-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: monitoringdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5439:5432"
+  catalog-service:
+    build: ./catalog_service
+    depends_on:
+      - catalog-db
+    ports:
+      - "8081:8081"
+  cart-service:
+    build: ./cart_service
+    depends_on:
+      - cart-db
+    ports:
+      - "8082:8082"
+  order-service:
+    build: ./order_service
+    depends_on:
+      - order-db
+    ports:
+      - "8083:8083"
+  payment-service:
+    build: ./payment_service
+    depends_on:
+      - payment-db
+    ports:
+      - "8084:8084"
+  rating-service:
+    build: ./rating_service
+    depends_on:
+      - rating-db
+    ports:
+      - "8085:8085"
+  logging-service:
+    build: ./logging_service
+    depends_on:
+      - logging-db
+    ports:
+      - "8086:8086"
+  monitoring-service:
+    build: ./monitoring_service
+    depends_on:
+      - monitoring-db
+    ports:
+      - "8087:8087"
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8081
