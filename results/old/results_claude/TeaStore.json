@@ -1,0 +1,624 @@
+{
+  "folder_name": "TeaStore",
+  "input_file": "/Users/marcocalamo/ArchiLLM/dataset/open_source_projects/TeaStore/input.txt",
+  "status": "success",
+  "specs": "TeaStore is a microservices-based demonstration of an online tea retail platform. It includes features for browsing and managing teas, receiving personalized recommendations, tracking store readiness, and handling tea orders.",
+  "user_stories": "- As a customer, I want to browse available teas so that I can choose my favorite blends.\n- As a customer, I want to receive personalized tea recommendations so I can discover new products.\n- As a customer, I want to view details about a specific tea so I can make an informed decision.\n- As a customer, I want to add teas to my shopping cart to purchase multiple items in one order.\n- As a customer, I want to check the availability of teas before ordering.\n- As a customer, I want to see if the store is ready to process orders before I checkout.\n- As a customer, I want to purchase teas and receive confirmation of my order.\n- As a system, I want to track and update the timestamp of each order for traceability.\n- As an admin, I want to add or update tea products in the catalog.\n- As a customer, I want to review past orders so I can reorder my favorite teas.\n- As a system, I want to process single and multiple recommendation requests for users.\n- As an admin, I want to delete discontinued tea products from the catalog.\n- As a customer, I want to rate and review teas I have purchased.\n- As a customer, I want to receive notifications about special offers and new arrivals.",
+  "output": {
+    "microservices": [
+      {
+        "name": "catalog-service",
+        "endpoints": [
+          {
+            "name": "/teas",
+            "method": "GET",
+            "inputs": [
+              "filter",
+              "category"
+            ],
+            "outputs": [
+              "tea_list"
+            ],
+            "description": "Browse available teas with optional filters"
+          },
+          {
+            "name": "/teas/{tea_id}",
+            "method": "GET",
+            "inputs": [
+              "tea_id"
+            ],
+            "outputs": [
+              "tea_details"
+            ],
+            "description": "View details about a specific tea product"
+          },
+          {
+            "name": "/teas/{tea_id}/availability",
+            "method": "GET",
+            "inputs": [
+              "tea_id"
+            ],
+            "outputs": [
+              "availability_status"
+            ],
+            "description": "Check availability of a specific tea"
+          },
+          {
+            "name": "/teas",
+            "method": "POST",
+            "inputs": [
+              "tea_name",
+              "description",
+              "price",
+              "category",
+              "stock"
+            ],
+            "outputs": [
+              "tea_id",
+              "creation_status"
+            ],
+            "description": "Add a new tea product to the catalog"
+          },
+          {
+            "name": "/teas/{tea_id}",
+            "method": "PUT",
+            "inputs": [
+              "tea_id",
+              "tea_name",
+              "description",
+              "price",
+              "category",
+              "stock"
+            ],
+            "outputs": [
+              "update_status"
+            ],
+            "description": "Update an existing tea product"
+          },
+          {
+            "name": "/teas/{tea_id}",
+            "method": "DELETE",
+            "inputs": [
+              "tea_id"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Delete a discontinued tea product"
+          }
+        ],
+        "user_stories": [
+          "1",
+          "3",
+          "5",
+          "9",
+          "12"
+        ],
+        "parameters": [
+          "tea_id",
+          "tea_name",
+          "description",
+          "price",
+          "category",
+          "stock",
+          "availability_status"
+        ],
+        "description": "Manages the tea product catalog including browsing, viewing details, checking availability, and CRUD operations for tea products"
+      },
+      {
+        "name": "recommendation-service",
+        "endpoints": [
+          {
+            "name": "/recommendations/{customer_id}",
+            "method": "GET",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "recommended_teas"
+            ],
+            "description": "Get personalized tea recommendations for a customer"
+          },
+          {
+            "name": "/recommendations/batch",
+            "method": "POST",
+            "inputs": [
+              "customer_ids"
+            ],
+            "outputs": [
+              "batch_recommendations"
+            ],
+            "description": "Process multiple recommendation requests for multiple users"
+          }
+        ],
+        "user_stories": [
+          "2",
+          "11"
+        ],
+        "parameters": [
+          "customer_id",
+          "purchase_history",
+          "preferences",
+          "recommended_teas"
+        ],
+        "description": "Provides personalized tea recommendations to customers based on their preferences and purchase history"
+      },
+      {
+        "name": "cart-service",
+        "endpoints": [
+          {
+            "name": "/cart/{customer_id}",
+            "method": "GET",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "cart_items"
+            ],
+            "description": "Retrieve customer's shopping cart"
+          },
+          {
+            "name": "/cart/{customer_id}/items",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "tea_id",
+              "quantity"
+            ],
+            "outputs": [
+              "add_status"
+            ],
+            "description": "Add tea items to shopping cart"
+          },
+          {
+            "name": "/cart/{customer_id}/items/{tea_id}",
+            "method": "PUT",
+            "inputs": [
+              "customer_id",
+              "tea_id",
+              "quantity"
+            ],
+            "outputs": [
+              "update_status"
+            ],
+            "description": "Update quantity of tea items in cart"
+          },
+          {
+            "name": "/cart/{customer_id}/items/{tea_id}",
+            "method": "DELETE",
+            "inputs": [
+              "customer_id",
+              "tea_id"
+            ],
+            "outputs": [
+              "delete_status"
+            ],
+            "description": "Remove tea items from cart"
+          },
+          {
+            "name": "/cart/{customer_id}",
+            "method": "DELETE",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "clear_status"
+            ],
+            "description": "Clear entire shopping cart"
+          }
+        ],
+        "user_stories": [
+          "4"
+        ],
+        "parameters": [
+          "customer_id",
+          "cart_id",
+          "tea_id",
+          "quantity",
+          "cart_items"
+        ],
+        "description": "Handles shopping cart operations allowing customers to add, update, and manage items before checkout"
+      },
+      {
+        "name": "order-service",
+        "endpoints": [
+          {
+            "name": "/orders",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "cart_items",
+              "payment_info",
+              "shipping_address"
+            ],
+            "outputs": [
+              "order_id",
+              "confirmation_status",
+              "order_timestamp"
+            ],
+            "description": "Create a new order from cart items"
+          },
+          {
+            "name": "/orders/{order_id}",
+            "method": "GET",
+            "inputs": [
+              "order_id"
+            ],
+            "outputs": [
+              "order_details",
+              "order_status",
+              "timestamps"
+            ],
+            "description": "Get details of a specific order"
+          },
+          {
+            "name": "/orders/customer/{customer_id}",
+            "method": "GET",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "order_history"
+            ],
+            "description": "Retrieve past orders for a customer"
+          },
+          {
+            "name": "/orders/{order_id}/status",
+            "method": "PUT",
+            "inputs": [
+              "order_id",
+              "status"
+            ],
+            "outputs": [
+              "status_update_result",
+              "timestamp"
+            ],
+            "description": "Update order status and track timestamp"
+          }
+        ],
+        "user_stories": [
+          "7",
+          "8",
+          "10"
+        ],
+        "parameters": [
+          "order_id",
+          "customer_id",
+          "order_items",
+          "order_status",
+          "order_timestamp",
+          "created_at",
+          "updated_at",
+          "payment_info",
+          "shipping_address"
+        ],
+        "description": "Processes tea orders, manages order confirmation, tracks order timestamps, and maintains order history for customers"
+      },
+      {
+        "name": "review-service",
+        "endpoints": [
+          {
+            "name": "/reviews",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "tea_id",
+              "rating",
+              "review_text"
+            ],
+            "outputs": [
+              "review_id",
+              "submission_status"
+            ],
+            "description": "Submit a rating and review for a tea"
+          },
+          {
+            "name": "/reviews/tea/{tea_id}",
+            "method": "GET",
+            "inputs": [
+              "tea_id"
+            ],
+            "outputs": [
+              "reviews_list"
+            ],
+            "description": "Get all reviews for a specific tea"
+          },
+          {
+            "name": "/reviews/customer/{customer_id}",
+            "method": "GET",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "customer_reviews"
+            ],
+            "description": "Get all reviews submitted by a customer"
+          }
+        ],
+        "user_stories": [
+          "13"
+        ],
+        "parameters": [
+          "review_id",
+          "customer_id",
+          "tea_id",
+          "rating",
+          "review_text",
+          "review_timestamp"
+        ],
+        "description": "Enables customers to rate and review teas they have purchased"
+      },
+      {
+        "name": "notification-service",
+        "endpoints": [
+          {
+            "name": "/notifications/send",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "notification_type",
+              "message",
+              "channel"
+            ],
+            "outputs": [
+              "notification_id",
+              "send_status"
+            ],
+            "description": "Send notification to a customer"
+          },
+          {
+            "name": "/notifications/customer/{customer_id}",
+            "method": "GET",
+            "inputs": [
+              "customer_id"
+            ],
+            "outputs": [
+              "notifications_list"
+            ],
+            "description": "Get notification history for a customer"
+          },
+          {
+            "name": "/notifications/broadcast",
+            "method": "POST",
+            "inputs": [
+              "notification_type",
+              "message",
+              "customer_segment"
+            ],
+            "outputs": [
+              "broadcast_status"
+            ],
+            "description": "Broadcast notifications about special offers and new arrivals"
+          }
+        ],
+        "user_stories": [
+          "14"
+        ],
+        "parameters": [
+          "notification_id",
+          "customer_id",
+          "notification_type",
+          "message",
+          "channel",
+          "status",
+          "sent_at"
+        ],
+        "description": "Sends notifications to customers about special offers, new arrivals, and order updates"
+      },
+      {
+        "name": "health-service",
+        "endpoints": [
+          {
+            "name": "/health",
+            "method": "GET",
+            "inputs": [],
+            "outputs": [
+              "overall_status",
+              "service_statuses"
+            ],
+            "description": "Get overall health status of all services"
+          },
+          {
+            "name": "/health/{service_name}",
+            "method": "GET",
+            "inputs": [
+              "service_name"
+            ],
+            "outputs": [
+              "service_status",
+              "last_check"
+            ],
+            "description": "Get health status of a specific service"
+          },
+          {
+            "name": "/readiness",
+            "method": "GET",
+            "inputs": [],
+            "outputs": [
+              "readiness_status"
+            ],
+            "description": "Check if the store is ready to process orders"
+          }
+        ],
+        "user_stories": [
+          "6"
+        ],
+        "parameters": [
+          "service_name",
+          "service_status",
+          "overall_status",
+          "readiness_status",
+          "last_check_timestamp"
+        ],
+        "description": "Monitors and reports the readiness status of the store and its services to ensure the system is ready to process orders"
+      }
+    ],
+    "patterns": [
+      {
+        "group_name": "Order Processing Workflow",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "order-service",
+          "cart-service",
+          "catalog-service",
+          "notification-service"
+        ],
+        "explaination": "I chose the Saga pattern because the order processing workflow (user story 7) requires coordinating transactions across multiple services: reserving inventory in catalog-service, clearing the cart in cart-service, creating the order in order-service, and triggering notifications in notification-service. This ensures data consistency across services without distributed transactions."
+      },
+      {
+        "group_name": "Catalog Browse and Availability",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "catalog-service"
+        ],
+        "explaination": "I chose API Composition for catalog-service to support user stories 1, 3, and 5, where browsing teas needs to compose tea catalog data with real-time availability information in a single response to provide customers with complete information."
+      },
+      {
+        "group_name": "Personalized Recommendations",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "recommendation-service",
+          "order-service",
+          "catalog-service"
+        ],
+        "explaination": "I chose API Composition for recommendation-service to aggregate customer purchase history from order-service with current catalog data from catalog-service to generate personalized recommendations (user stories 2 and 11)."
+      },
+      {
+        "group_name": "Order History with Details",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "order-service",
+          "catalog-service"
+        ],
+        "explaination": "I chose API Composition to support user story 10, where customers view past orders. This requires combining order data from order-service with current tea product details from catalog-service to display complete order history."
+      },
+      {
+        "group_name": "Cross-Service Event Communication",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "order-service",
+          "cart-service",
+          "catalog-service",
+          "review-service",
+          "notification-service",
+          "recommendation-service"
+        ],
+        "explaination": "I chose Domain Event pattern to enable asynchronous communication between services: order placed events trigger notifications (user story 14), review submitted events update catalog ratings (user story 13), product updated events notify dependent services (user story 9), and cart updated events track customer behavior for recommendations (user story 2)."
+      },
+      {
+        "group_name": "Recommendation Read Model",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "recommendation-service"
+        ],
+        "explaination": "I chose CQRS for recommendation-service to maintain a read-optimized view of customer preferences and purchase patterns, enabling fast recommendation queries for user stories 2 and 11 while separating the complex read model from write operations."
+      },
+      {
+        "group_name": "Catalog Read-Write Separation",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "catalog-service"
+        ],
+        "explaination": "I chose CQRS for catalog-service to separate the read model for browsing teas (user story 1) from the write model for admin updates (user stories 9 and 12), optimizing both customer browsing performance and admin operations."
+      },
+      {
+        "group_name": "Order Event History",
+        "implementation_pattern": "event sourcing",
+        "involved_microservices": [
+          "order-service"
+        ],
+        "explaination": "I chose Event Sourcing for order-service to store all order state changes as events, supporting user story 8 (tracking timestamps), user story 10 (rebuilding complete order history), and maintaining a full audit trail of the order lifecycle."
+      },
+      {
+        "group_name": "Cart Consistency Boundary",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "cart-service"
+        ],
+        "explaination": "I chose the Aggregate pattern for cart-service to manage cart items as a single consistency boundary, ensuring that all cart operations (user story 4) maintain data integrity within the cart aggregate root."
+      },
+      {
+        "group_name": "Order Consistency Boundary",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "order-service"
+        ],
+        "explaination": "I chose the Aggregate pattern for order-service to ensure that orders and their items remain consistent as a single unit, supporting user stories 7, 8, and 10 by maintaining order integrity throughout its lifecycle."
+      },
+      {
+        "group_name": "Product Consistency Boundary",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "catalog-service"
+        ],
+        "explaination": "I chose the Aggregate pattern for catalog-service to maintain consistency between tea details, availability, and pricing as a single aggregate, supporting user stories 1, 3, 5, 9, and 12."
+      },
+      {
+        "group_name": "Service Isolation",
+        "implementation_pattern": "database per service",
+        "involved_microservices": [
+          "catalog-service",
+          "recommendation-service",
+          "cart-service",
+          "order-service",
+          "review-service",
+          "notification-service",
+          "health-service"
+        ],
+        "explaination": "I chose Database per Service pattern for all microservices to ensure loose coupling, independent deployment, and allow each service to choose appropriate database technologies for its specific needs, as recommended in the context for maintaining a proper microservices architecture."
+      }
+    ],
+    "datastore": [
+      {
+        "datastore_name": "catalog-db",
+        "associated_microservices": [
+          "catalog-service"
+        ],
+        "description": "Stores tea product information including name, description, price, category, stock levels, and availability. Supports both read-optimized views for browsing (user stories 1, 3, 5) and write operations for admin management (user stories 9, 12). Implements CQRS with separate read and write models."
+      },
+      {
+        "datastore_name": "recommendation-db",
+        "associated_microservices": [
+          "recommendation-service"
+        ],
+        "description": "Maintains a read-optimized denormalized view of customer preferences, purchase patterns, and aggregated data from order history for fast recommendation queries (user stories 2, 11). Uses CQRS pattern to optimize read performance."
+      },
+      {
+        "datastore_name": "cart-db",
+        "associated_microservices": [
+          "cart-service"
+        ],
+        "description": "Stores shopping cart data including cart items, quantities, and customer associations (user story 4). Maintains cart aggregates as consistency boundaries and participates in the order processing saga."
+      },
+      {
+        "datastore_name": "order-event-store",
+        "associated_microservices": [
+          "order-service"
+        ],
+        "description": "Event store that persists all order state changes as immutable events, supporting order creation (user story 7), timestamp tracking (user story 8), and order history reconstruction (user story 10). Implements event sourcing pattern for complete audit trail and order lifecycle management."
+      },
+      {
+        "datastore_name": "review-db",
+        "associated_microservices": [
+          "review-service"
+        ],
+        "description": "Stores customer ratings and reviews for purchased teas (user story 13). Contains review text, ratings, timestamps, and associations between customers and tea products. Publishes domain events when reviews are submitted to update catalog ratings."
+      },
+      {
+        "datastore_name": "notification-db",
+        "associated_microservices": [
+          "notification-service"
+        ],
+        "description": "Stores notification records, delivery status, and notification history for customers (user story 14). Tracks special offers, new arrivals, and order update notifications. Consumes domain events from other services to trigger notifications."
+      },
+      {
+        "datastore_name": "health-db",
+        "associated_microservices": [
+          "health-service"
+        ],
+        "description": "Stores health check results, service status information, and readiness metrics (user story 6). Aggregates status from all microservices to determine overall system readiness for order processing."
+      }
+    ]
+  },
+  "error": null
+}

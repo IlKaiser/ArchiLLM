@@ -1,0 +1,530 @@
+{
+  "folder_name": "RecipeCove",
+  "input_file": "/Users/marcocalamo/ArchiLLM/dataset/student_projects/RecipeCove/input.txt",
+  "status": "success",
+  "specs": "The RecipeCove project consists of a web application about recipes, food and cooking. \nThe main goal is to provide an easy-to-use tool to aid in recipe discovering, bookmarking as well as finding exhaustive information about recipes and ingredients.\nThe central focus of the system is therefore the discovery of a wide range of recipes, through the use of a search bar, or with the use of a Chat-BOT which will suggest recipes to the user, following a specific diet.\nAdditionally, the user has the ability to keep a personal profile within the system, which will allow him to see his basic information, but also the ability to save recipes in a favorite list and publish reminders in an application-created calendar.",
+  "user_stories": "1) As a visitor, I want to be able to register in the website with an external account, so that I can use an existing Google account\n2) As a visitor, I want to be able to search a recipe by its name, so that I can search only what interests me\n3) As a visitor, I want to be able to see the information of a recipe, so that I can learn more about it\n4) As a visitor, I want to be able to see the information of an ingredient, so that I can know the details of each ingredient in a recipe\n5) As a visitor, I want to be able to check the suggested recipes for a specific diet, so that I can be inspired in what to prepare each day\n6) As a registered user, I want to be able to perform the login, so that I can access other system's functionalities\n7) As a registered user, I want to be able to perform the logout, so that I can leave my information within the website\n8) As a registered user, I want to be able to access my profile page, so that I can check my personal information\n9) As a registered user, I want to be able to create a Calendar, so that I can populate it with events relating recipes \n10) As a registered user, I want to be able to delete a Calendar, so that I can remove the data gathered within the website \n11) As a registered user, I want to be able to add an event to my Calendar, so that I can be reminded on a specific day to prepare a particular recipe\n12) As a registered user, I want to be able to add a recipe to my favorite list, so that I can keep track of all the recipes I like \n13) As a registered user, I want to be able to remove a recipe from my favorite list, so that I can stop being interested in it\n14) As a registered user, I want to be able to see my favorite list, so that I can check my current interests in recipes",
+  "output": {
+    "microservices": [
+      {
+        "name": "Authentication Service",
+        "endpoints": [
+          {
+            "name": "/register",
+            "method": "POST",
+            "inputs": [
+              "google_oauth_token"
+            ],
+            "outputs": [
+              "user_id",
+              "registration_status"
+            ],
+            "description": "Registers a new user using Google OAuth token and publishes UserRegistered event"
+          },
+          {
+            "name": "/login",
+            "method": "POST",
+            "inputs": [
+              "google_oauth_token"
+            ],
+            "outputs": [
+              "session_token",
+              "user_id"
+            ],
+            "description": "Authenticates user with Google OAuth and returns session token"
+          },
+          {
+            "name": "/logout",
+            "method": "POST",
+            "inputs": [
+              "session_token"
+            ],
+            "outputs": [
+              "logout_status"
+            ],
+            "description": "Invalidates user session and logs out the user"
+          },
+          {
+            "name": "/validate",
+            "method": "GET",
+            "inputs": [
+              "session_token"
+            ],
+            "outputs": [
+              "validation_status",
+              "user_id"
+            ],
+            "description": "Validates session token for authenticated requests"
+          }
+        ],
+        "user_stories": [
+          "1",
+          "6",
+          "7"
+        ],
+        "parameters": [
+          "user_id",
+          "oauth_token",
+          "session_token",
+          "email",
+          "registration_date"
+        ],
+        "description": "Manages user authentication, registration with external providers (Google OAuth), login, and logout operations. Publishes domain events when users register."
+      },
+      {
+        "name": "Recipe Service",
+        "endpoints": [
+          {
+            "name": "/recipes/search",
+            "method": "GET",
+            "inputs": [
+              "recipe_name",
+              "filters"
+            ],
+            "outputs": [
+              "recipe_list"
+            ],
+            "description": "Searches recipes by name using optimized query model"
+          },
+          {
+            "name": "/recipes/{recipe_id}",
+            "method": "GET",
+            "inputs": [
+              "recipe_id"
+            ],
+            "outputs": [
+              "recipe_details",
+              "ingredient_ids"
+            ],
+            "description": "Retrieves detailed information about a specific recipe"
+          },
+          {
+            "name": "/recipes/diet-suggestions",
+            "method": "GET",
+            "inputs": [
+              "diet_type"
+            ],
+            "outputs": [
+              "suggested_recipes"
+            ],
+            "description": "Returns recipe suggestions based on specific diet using chatbot functionality"
+          },
+          {
+            "name": "/recipes/{recipe_id}/verify",
+            "method": "GET",
+            "inputs": [
+              "recipe_id"
+            ],
+            "outputs": [
+              "exists",
+              "recipe_name"
+            ],
+            "description": "Verifies if a recipe exists for saga orchestration"
+          }
+        ],
+        "user_stories": [
+          "2",
+          "3",
+          "5"
+        ],
+        "parameters": [
+          "recipe_id",
+          "recipe_name",
+          "description",
+          "instructions",
+          "diet_type",
+          "ingredient_ids",
+          "popularity_score",
+          "preparation_time"
+        ],
+        "description": "Handles recipe search, retrieval of recipe details, and diet-based recipe suggestions including chatbot functionality. Uses CQRS pattern with separate command and query models for optimized search and read operations."
+      },
+      {
+        "name": "Ingredient Service",
+        "endpoints": [
+          {
+            "name": "/ingredients/{ingredient_id}",
+            "method": "GET",
+            "inputs": [
+              "ingredient_id"
+            ],
+            "outputs": [
+              "ingredient_details"
+            ],
+            "description": "Retrieves detailed information about a specific ingredient including nutritional data"
+          },
+          {
+            "name": "/ingredients/batch",
+            "method": "POST",
+            "inputs": [
+              "ingredient_ids"
+            ],
+            "outputs": [
+              "ingredients_list"
+            ],
+            "description": "Retrieves multiple ingredient details for API composition"
+          }
+        ],
+        "user_stories": [
+          "4"
+        ],
+        "parameters": [
+          "ingredient_id",
+          "ingredient_name",
+          "nutritional_info",
+          "allergens",
+          "description"
+        ],
+        "description": "Manages ingredient information and provides detailed data about ingredients used in recipes"
+      },
+      {
+        "name": "User Profile Service",
+        "endpoints": [
+          {
+            "name": "/profiles/{user_id}",
+            "method": "GET",
+            "inputs": [
+              "user_id",
+              "session_token"
+            ],
+            "outputs": [
+              "profile_data"
+            ],
+            "description": "Retrieves user profile information and basic data"
+          },
+          {
+            "name": "/profiles/{user_id}",
+            "method": "POST",
+            "inputs": [
+              "user_id",
+              "profile_data"
+            ],
+            "outputs": [
+              "creation_status"
+            ],
+            "description": "Creates user profile when UserRegistered event is received"
+          },
+          {
+            "name": "/profiles/{user_id}/favorites",
+            "method": "GET",
+            "inputs": [
+              "user_id",
+              "session_token"
+            ],
+            "outputs": [
+              "favorite_recipe_ids"
+            ],
+            "description": "Retrieves list of favorite recipe IDs for the user"
+          },
+          {
+            "name": "/profiles/{user_id}/favorites",
+            "method": "POST",
+            "inputs": [
+              "user_id",
+              "recipe_id",
+              "session_token"
+            ],
+            "outputs": [
+              "add_status"
+            ],
+            "description": "Adds a recipe to favorites list after saga verification and publishes RecipeFavorited event"
+          },
+          {
+            "name": "/profiles/{user_id}/favorites/{recipe_id}",
+            "method": "DELETE",
+            "inputs": [
+              "user_id",
+              "recipe_id",
+              "session_token"
+            ],
+            "outputs": [
+              "removal_status"
+            ],
+            "description": "Removes a recipe from favorites list"
+          }
+        ],
+        "user_stories": [
+          "8",
+          "12",
+          "13",
+          "14"
+        ],
+        "parameters": [
+          "user_id",
+          "profile_data",
+          "favorite_recipe_ids",
+          "created_date",
+          "last_updated"
+        ],
+        "description": "Manages user profile data, favorite recipe lists, and personal information for registered users. Coordinates with Recipe Service for favorite operations."
+      },
+      {
+        "name": "Calendar Service",
+        "endpoints": [
+          {
+            "name": "/calendars",
+            "method": "POST",
+            "inputs": [
+              "user_id",
+              "calendar_name",
+              "session_token"
+            ],
+            "outputs": [
+              "calendar_id",
+              "creation_status"
+            ],
+            "description": "Creates a new calendar for the user and publishes CalendarCreated event"
+          },
+          {
+            "name": "/calendars/{calendar_id}",
+            "method": "DELETE",
+            "inputs": [
+              "calendar_id",
+              "user_id",
+              "session_token"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Deletes a calendar and all associated events using saga orchestration and publishes CalendarDeleted event"
+          },
+          {
+            "name": "/calendars/{calendar_id}/events",
+            "method": "POST",
+            "inputs": [
+              "calendar_id",
+              "recipe_id",
+              "event_date",
+              "reminder_time",
+              "session_token"
+            ],
+            "outputs": [
+              "event_id",
+              "creation_status"
+            ],
+            "description": "Adds a recipe event to calendar after saga validation with Recipe Service"
+          },
+          {
+            "name": "/calendars/{calendar_id}/events",
+            "method": "GET",
+            "inputs": [
+              "calendar_id",
+              "session_token"
+            ],
+            "outputs": [
+              "events_list"
+            ],
+            "description": "Retrieves all events in a calendar"
+          },
+          {
+            "name": "/calendars/user/{user_id}",
+            "method": "GET",
+            "inputs": [
+              "user_id",
+              "session_token"
+            ],
+            "outputs": [
+              "calendars_summary"
+            ],
+            "description": "Retrieves summary of user calendars for profile page composition"
+          }
+        ],
+        "user_stories": [
+          "9",
+          "10",
+          "11"
+        ],
+        "parameters": [
+          "calendar_id",
+          "user_id",
+          "calendar_name",
+          "event_id",
+          "recipe_id",
+          "event_date",
+          "reminder_time",
+          "created_date"
+        ],
+        "description": "Handles creation and deletion of user calendars and management of recipe-related events and reminders. Coordinates with Recipe Service for event validation."
+      }
+    ],
+    "patterns": [
+      {
+        "group_name": "Service Database Isolation",
+        "implementation_pattern": "database per service",
+        "involved_microservices": [
+          "Authentication Service",
+          "Recipe Service",
+          "Ingredient Service",
+          "User Profile Service",
+          "Calendar Service"
+        ],
+        "explaination": "I chose this pattern because each microservice manages distinct data domains (authentication, recipes, ingredients, user profiles, calendars) and needs independent scalability and loose coupling. This ensures service autonomy and prevents tight coupling through shared databases."
+      },
+      {
+        "group_name": "Recipe Details Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "Recipe Service",
+          "Ingredient Service"
+        ],
+        "explaination": "I chose this pattern because user story 3 requires displaying complete recipe information including ingredient details, which spans both Recipe and Ingredient services. The Recipe Service retrieves recipe data with ingredient IDs, then composes it with detailed ingredient information from the Ingredient Service."
+      },
+      {
+        "group_name": "Profile Page Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "User Profile Service",
+          "Calendar Service"
+        ],
+        "explaination": "I chose this pattern because user story 8 requires displaying profile information along with calendar summaries, which requires composing data from User Profile Service and Calendar Service to present a unified view of user information."
+      },
+      {
+        "group_name": "Favorite List Display Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "User Profile Service",
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because user story 14 requires displaying the favorite list with full recipe details. User Profile Service provides favorite recipe IDs, which are then composed with detailed recipe information from Recipe Service."
+      },
+      {
+        "group_name": "Add to Favorites Transaction",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "User Profile Service",
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because user story 12 requires coordinating between User Profile Service and Recipe Service to verify the recipe exists before adding it to favorites. This distributed transaction ensures data consistency across services."
+      },
+      {
+        "group_name": "Add Calendar Event Transaction",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "Calendar Service",
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because user story 11 requires validating that a recipe exists before creating a calendar event for it. This ensures referential integrity across services through orchestrated distributed transaction."
+      },
+      {
+        "group_name": "Delete Calendar Transaction",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "Calendar Service"
+        ],
+        "explaination": "I chose this pattern because user story 10 requires orchestrating the deletion of a calendar and all its associated events as a single logical transaction, ensuring all related data is properly removed."
+      },
+      {
+        "group_name": "User Lifecycle Events",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "Authentication Service",
+          "User Profile Service"
+        ],
+        "explaination": "I chose this pattern because when a user registers (user story 1), the Authentication Service publishes a UserRegistered event that the User Profile Service consumes to asynchronously create the user profile. This maintains loose coupling while ensuring eventual consistency."
+      },
+      {
+        "group_name": "Recipe Engagement Events",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "User Profile Service",
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because when users favorite recipes (user story 12), the User Profile Service publishes RecipeFavorited events that Recipe Service can consume to update popularity metrics, enabling asynchronous communication and analytics."
+      },
+      {
+        "group_name": "Calendar Lifecycle Events",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "Calendar Service"
+        ],
+        "explaination": "I chose this pattern because calendar creation and deletion (user stories 9 and 10) publish CalendarCreated and CalendarDeleted events for audit logging and potential analytics purposes, supporting event-driven architecture."
+      },
+      {
+        "group_name": "Recipe Query Optimization",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because the Recipe Service has distinct read and write patterns. User stories 2 and 5 require optimized search and query operations for recipe discovery and diet suggestions, while recipe updates use a separate command model. This separation enables efficient chatbot queries and search functionality."
+      },
+      {
+        "group_name": "User Account Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "Authentication Service"
+        ],
+        "explaination": "I chose this pattern because the Authentication Service manages the User Account aggregate with clear boundaries around authentication credentials, OAuth tokens, and session management, ensuring transactional consistency within the aggregate boundary."
+      },
+      {
+        "group_name": "Recipe Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "Recipe Service"
+        ],
+        "explaination": "I chose this pattern because Recipe is a clear aggregate root containing recipe details and references to ingredients, maintaining consistency boundaries for recipe-related operations in user stories 2, 3, and 5."
+      },
+      {
+        "group_name": "Ingredient Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "Ingredient Service"
+        ],
+        "explaination": "I chose this pattern because Ingredient is a clear aggregate root with well-defined boundaries around ingredient information and nutritional data as required by user story 4."
+      },
+      {
+        "group_name": "User Profile Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "User Profile Service"
+        ],
+        "explaination": "I chose this pattern because UserProfile is an aggregate root that encapsulates profile data and the favorites collection, ensuring consistency for operations in user stories 8, 12, 13, and 14."
+      },
+      {
+        "group_name": "Calendar Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "Calendar Service"
+        ],
+        "explaination": "I chose this pattern because Calendar is an aggregate root containing calendar metadata and events collection, maintaining consistency boundaries for calendar operations in user stories 9, 10, and 11."
+      }
+    ],
+    "datastore": [
+      {
+        "datastore_name": "Authentication Database",
+        "associated_microservices": [
+          "Authentication Service"
+        ],
+        "description": "Stores user authentication credentials, Google OAuth tokens, session tokens, and registration timestamps. Supports user stories 1, 6, and 7 for registration, login, and logout. Uses the Database per Service pattern to maintain service autonomy."
+      },
+      {
+        "datastore_name": "Recipe Database",
+        "associated_microservices": [
+          "Recipe Service"
+        ],
+        "description": "Stores recipe information including names, descriptions, instructions, diet types, ingredient references, and popularity scores. Contains separate command and query models for CQRS pattern. The query model is optimized for search operations (user story 2) and diet-based suggestions (user story 5). Supports user stories 2, 3, and 5."
+      },
+      {
+        "datastore_name": "Ingredient Database",
+        "associated_microservices": [
+          "Ingredient Service"
+        ],
+        "description": "Stores detailed ingredient information including names, nutritional data, allergen information, and descriptions. Supports user story 4 for displaying ingredient details. Uses the Database per Service pattern for independent management of ingredient data."
+      },
+      {
+        "datastore_name": "User Profile Database",
+        "associated_microservices": [
+          "User Profile Service"
+        ],
+        "description": "Stores user profile data, personal information, and favorite recipe lists. Supports user stories 8, 12, 13, and 14 for profile management and favorites operations. Maintains the UserProfile aggregate with embedded favorites collection. Uses Database per Service pattern for profile data isolation."
+      },
+      {
+        "datastore_name": "Calendar Database",
+        "associated_microservices": [
+          "Calendar Service"
+        ],
+        "description": "Stores calendar metadata, recipe-related events, reminder times, and event dates. Supports user stories 9, 10, and 11 for calendar and event management. Maintains the Calendar aggregate with embedded events collection. Uses Database per Service pattern to independently manage calendar data."
+      }
+    ]
+  },
+  "error": null
+}

@@ -2,6 +2,30 @@ import os
 import json
 import pandas as pd
 
+def single_quote_to_double(str_in) -> str:
+    """
+    A function to parse a string and convert it into a valid JSON format.
+    It replaces single quotes with double quotes
+    """
+    # Replace single quotes with double quotes except when they are inside double quotes.
+    opend = False
+    str_out = ""
+    for c in str_in:
+        if c != "'":
+            if c == '"' and not opend:
+                opend = True
+            elif c == '"' and opend:
+                opend = False
+            str_out += c
+        else:
+            if opend:
+                str_out += c
+            else:
+                str_out += '"'
+    
+  
+    
+    return str_out
 
 is_open_dataset = True  # Set to True for open dataset, False for closed dataset
 
@@ -14,7 +38,7 @@ def avg_stories_per_service(gen):
 
 def compute_ussc(ref, gen):
     set_ref = set([ddx for dx in ref for ddx in dx['user_stories']])
-    set_gen = set([int(ddx) for dx in json.loads(gen[1])["microservices"] for ddx in dx['user_stories']])
+    set_gen = set([int(ddx) for dx in json.loads(single_quote_to_double(gen[1]))["microservices"] for ddx in dx['user_stories']])
     prec = len(set_ref.intersection(set_gen)) / len(set_ref)
     return prec, len(set_gen), len(set_ref)
 
@@ -37,45 +61,54 @@ def main(excel_path, dataset_path, output_excel_path):
     sps_scores = []
     
     for idx, row in df.iterrows():
-        folder_name = row['Subfolder']  # Adjust if the column is named differently
-        dalle_output_json = row['Dalle Output']
-        # Dalle Output is expected to be a JSON string or a list, adapt as needed
-        if isinstance(dalle_output_json, str):
-            # If the string is a list of json strings, take the first or parse as required
-            dalle_output = json.loads(dalle_output_json)
-        else:
-            dalle_output = dalle_output_json
-        # Ensure format: gen needs to be a list/tuple where gen[1] is a json string with "microservices"
-        if isinstance(dalle_output, (list, tuple)):
-            gen = dalle_output
-        else:
-            gen = [None, dalle_output_json]
+        try:
+            folder_name = row['Subfolder']  # Adjust if the column is named differently
+            print(f"Processing folder: {folder_name}")
+            dalle_output_json = row['Dalle Output']
+            # Dalle Output is expected to be a JSON string or a list, adapt as needed
+            if isinstance(dalle_output_json, str):
+                # If the string is a list of json strings, take the first or parse as required
+                try:
+                    dalle_output = json.loads(dalle_output_json)
+                except json.JSONDecodeError:
+                    dalle_output = json.loads(single_quote_to_double(dalle_output_json))
+            else:
+                dalle_output = dalle_output_json
+            # Ensure format: gen needs to be a list/tuple where gen[1] is a json string with "microservices"
+            if isinstance(dalle_output, (list, tuple)):
+                gen = dalle_output
+            else:
+                gen = [None, dalle_output_json]
 
-        
-        if is_open_dataset:
-            score = compute_uscc_open(dalle_output, os.path.join(dataset_path, folder_name, 'input.txt'))
             
+            if is_open_dataset:
+                score = compute_uscc_open(dalle_output, os.path.join(dataset_path, folder_name, 'input.txt'))
+                
 
-        else:
-            metrics_path = os.path.join(dataset_path, folder_name, 'DataMetrics.json')
-            
-            
-            try:
-                # Load Data Metrics.json
-                with open(metrics_path, 'r', encoding='utf-8-sig') as f:
-                    ref_json = json.load(f)
+            else:
+                metrics_path = os.path.join(dataset_path, folder_name, 'DataMetrics.json')
                 
                 
+                try:
+                    # Load Data Metrics.json
+                    with open(metrics_path, 'r', encoding='utf-8-sig') as f:
+                        ref_json = json.load(f)
                     
-                # Compute USSC for the open dataset
-                score = compute_ussc(ref_json, gen)
-            except Exception as e:
-                print(f'Error processing row {idx} ({folder_name}): {e}')
-                score = None
-        sps_score = avg_stories_per_service(dalle_output)
-
-        ussc_scores.append(score)
-        sps_scores.append(sps_score)
+                    
+                        
+                    # Compute USSC for the open dataset
+                    score = compute_ussc(ref_json, gen)
+                except Exception as e:
+                    print(f'Error processing row {idx} ({folder_name}): {e}')
+                    score = None
+            
+                sps_score = avg_stories_per_service(dalle_output)
+                ussc_scores.append(score)
+                sps_scores.append(sps_score)
+        except Exception as e:
+            print(f'Error computing SPS for row {idx} ({folder_name}): {e}')
+            sps_scores.append(None)
+            ussc_scores.append(None)
     
     df['USSC'] = [score[0] if score else None for score in ussc_scores]
     df['Generated User Stories Count'] = [score[1] if score else None for score in ussc_scores]

@@ -13,6 +13,22 @@ from pathlib import Path
 from typing import Dict, Tuple, Optional
 from dotenv import load_dotenv
 
+import os
+from llama_index.core import (
+    SimpleDirectoryReader,
+    StorageContext,
+    VectorStoreIndex,
+    load_index_from_storage,
+)
+
+
+from llama_index.vector_stores.qdrant import QdrantVectorStore
+from llama_index.core.retrievers import QueryFusionRetriever
+
+# Create your index
+from llama_index.core import VectorStoreIndex
+import qdrant_client
+
 # Ensure environment is loaded
 assert load_dotenv()
 
@@ -134,10 +150,8 @@ async def process_input_file(
         user_stories = extract_section_from_input(input_file, "USER STORIES")
         
         if not specs or not user_stories:
-            result["status"] = "skipped"
-            result["error"] = "Missing SYSTEM DESCRIPTION or USER STORIES"
-            print(f"⚠️  Skipped {folder_name}: Missing required sections")
-            return result
+            specs = ""
+            user_stories = ""
         
         result["specs"] = specs
         result["user_stories"] = user_stories
@@ -208,7 +222,7 @@ async def main(
     
     output_path: Path
     if output_dir is None:
-        output_path = Path(__file__).parent.parent / "results"
+        output_path = Path(__file__).parent.parent / "results_claude"
     else:
         output_path = Path(output_dir)
     
@@ -278,7 +292,7 @@ if __name__ == "__main__":
         "--output",
         type=str,
         default=None,
-        help="Path to output directory (default: ./results)"
+        help="Path to output directory (default: ./results_claude)"
     )
     parser.add_argument(
         "--depth",
@@ -289,17 +303,57 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        default="openai",
+        default="anthropic",
         choices=["openai", "anthropic", "mistral"],
         help="LLM model to use (default: openai)"
     )
     
     args = parser.parse_args()
+
     
+    # load or build the “sito” index
+    # assume you have a persist_dir or vector_store prepared
+    # e.g.:
+    # index_sito = VectorStoreIndex.from_vector_store(my_vector_store)
+    lock_file = os.path.join("./archi", ".lock")
+    if os.path.exists(lock_file):
+        os.remove(lock_file)
+
+    os.makedirs("./archi", exist_ok=True)
+    client = qdrant_client.AsyncQdrantClient(path="./archi")
+
+    vector_store = QdrantVectorStore(aclient=client, collection_name="micro", use_async=True)
+    
+    index_sito = VectorStoreIndex.from_vector_store(vector_store)
+
+    # load or build the “libro” index from disk
+    persist_dir = "./archi/persist"
+    if os.path.exists(persist_dir):
+        storage = StorageContext.from_defaults(persist_dir=persist_dir)
+        index_libro = load_index_from_storage(storage)
+    else:
+        book_dir = os.environ.get("BOOK_DIR", "./book")
+        docs = SimpleDirectoryReader(book_dir).load_data()
+        index_libro = VectorStoreIndex.from_documents(docs)
+        #available or not should be irrelevant here
+        index_libro.storage_context.persist(persist_dir=persist_dir) 
+
+    retriever = QueryFusionRetriever(
+        [
+            index_sito.as_retriever(similarity_top_k=3),
+            index_libro.as_retriever(similarity_top_k=3),
+        ],
+        similarity_top_k=3,
+        num_queries=4,
+        mode="reciprocal_rerank",
+        use_async=True,
+        verbose=True,
+    )
     # Run the main function
     asyncio.run(main(
         dataset_dir=args.dataset,
         output_dir=args.output,
         max_depth=args.depth,
+        retriever=retriever,
         model=args.model
     ))

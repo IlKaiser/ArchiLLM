@@ -4,7 +4,7 @@ import json
 
 from benchmark.judge import DalleJudge
 from llama_index.core.workflow import StartEvent
-from gen import get_retrievers  # Assumed to exist as per the code
+from gen_archi_excel import get_retrievers  # Assumed to exist as per the code
 
 # Load input Excel
 df = pd.read_excel("/Users/marcocalamo/DALLE/results_open.xlsx")

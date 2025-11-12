@@ -1,0 +1,904 @@
+{
+  "folder_name": "EFarmers",
+  "input_file": "/Users/marcocalamo/ArchiLLM/dataset/student_projects/EFarmers/input.txt",
+  "status": "success",
+  "specs": "E-Farmers is an e-commerce website that aims to connect local farmers with customers who are interested in\nbuying fresh and locally sourced products. Our platform allows farmers to showcase their products by publishing\ninsertions, while customers can easily browse and purchase these goods. Whether you are a farmer looking\nto sell your products or a customers seeking high-quality \u201dfarm-to-table\u201d items, E-Farmers has something for\neveryone. Moreover, if you cannot reach the farmer\u2019s warehouse yourself, you can rely on riders who can ship\nthe products to your home",
+  "user_stories": "1) As a visitor, I want to register to the website with an email\n2) As a user, I want to logout from my account\n3) As a user, I want to reach a login page so that I can login into my  account\n4) As a farmer, I want to publish a new insertion\n5) As a user, I want to access the home page\n6) As a user, I want to access my personal page, so that I can see my informations\n7) As a customer, I can check on calendar all seasonal foodstuff \n8) As a user or visitor, I can search for farmer's insertions \n9) As a the owner of an insertion, I want to delete one of my insertions\n10) As a farmer, I want to modify my insertions\n11) As a user, I want to see the expiring boxes\n12) As a customer, I want to update my status to Farmer\n13) As a user, I want to access a farmer page, so I can see his information\n14) As a customer, I want to add a product in my cart, so that I buy this product \n15) As a customer, I want to delete the boxes added to the shopping cart\n16) As a customer. I want to generate an order which contains items from my shopping cart \n17) As a customer, I want to be able to checkout and pay for my order using a secure payment gateway. \n18) As a customer, I want to book a product from the calendar\n19) As a customer, I can subscribe to a farmer, so I will be notify for his every new insertion\n20) As a customer, I want to have a list of the farmers that I am subscribed to \n21) As a farmer, I want to accept or decline incoming requests for booked boxes\n22) As a customer, I want to check my order history, so I can remember past purchases \n23) As a user that bought a box, I want to leave a comment to the farmer\n24) As a customer, I want to update my status to Rider, so that I can deliver stuffs. \n25) As a rider, I want to have a personal delivery page \n26) As a rider, I want to change my availability status to available so that I can receive delivery requests \n27) As a customer, I want to select a delivery option, so that I can receive the products at home \n28) As a farmer, I want to earn badges so that my achievements are showcased on my profile page\n29) As a visitor, I want to register to the website with OAuth\n30) As a user, I want to be able to modify my informations\n31) As a the owner of an insertion, I want to be able to add boxes on my insertion\n32) As a user, I want to see the status of my requests for booked boxes\n33) As a user, I want to see my cart, so I can see all the products I am about to purchase\n34) As a rider, I want to be able to update the status of an order that i have delivered \n35) As a customer, I want to be able to unsubscribe from a farmer, so that I no longer receive notifications for his insertions\n36) As a customer, I want to have a notification center, so I can read my notifications",
+  "output": {
+    "microservices": [
+      {
+        "name": "user-management-service",
+        "endpoints": [
+          {
+            "name": "/register",
+            "method": "POST",
+            "inputs": [
+              "email",
+              "password"
+            ],
+            "outputs": [
+              "user_id",
+              "registration_status"
+            ],
+            "description": "Registers a new user with email and password"
+          },
+          {
+            "name": "/register/oauth",
+            "method": "POST",
+            "inputs": [
+              "oauth_token",
+              "provider"
+            ],
+            "outputs": [
+              "user_id",
+              "registration_status"
+            ],
+            "description": "Registers a new user using OAuth provider"
+          },
+          {
+            "name": "/login",
+            "method": "POST",
+            "inputs": [
+              "email",
+              "password"
+            ],
+            "outputs": [
+              "auth_token",
+              "user_profile"
+            ],
+            "description": "Authenticates user and returns authentication token"
+          },
+          {
+            "name": "/logout",
+            "method": "POST",
+            "inputs": [
+              "auth_token"
+            ],
+            "outputs": [
+              "logout_status"
+            ],
+            "description": "Logs out user and invalidates authentication token"
+          },
+          {
+            "name": "/profile",
+            "method": "GET",
+            "inputs": [
+              "user_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "user_profile"
+            ],
+            "description": "Retrieves user profile information"
+          },
+          {
+            "name": "/profile",
+            "method": "PUT",
+            "inputs": [
+              "user_id",
+              "auth_token",
+              "profile_data"
+            ],
+            "outputs": [
+              "update_status"
+            ],
+            "description": "Updates user profile information"
+          },
+          {
+            "name": "/role",
+            "method": "PUT",
+            "inputs": [
+              "user_id",
+              "auth_token",
+              "new_role"
+            ],
+            "outputs": [
+              "role_update_status"
+            ],
+            "description": "Updates user role from customer to farmer or rider"
+          }
+        ],
+        "user_stories": [
+          "1",
+          "2",
+          "3",
+          "6",
+          "12",
+          "24",
+          "29",
+          "30"
+        ],
+        "parameters": [
+          "user_id",
+          "email",
+          "password",
+          "oauth_token",
+          "auth_token",
+          "role",
+          "profile_data"
+        ],
+        "description": "Manages user authentication, registration (email and OAuth), login/logout, user profiles, role updates (customer to farmer/rider), and user information modifications"
+      },
+      {
+        "name": "insertion-service",
+        "endpoints": [
+          {
+            "name": "/insertions",
+            "method": "POST",
+            "inputs": [
+              "farmer_id",
+              "auth_token",
+              "insertion_data"
+            ],
+            "outputs": [
+              "insertion_id",
+              "creation_status"
+            ],
+            "description": "Creates a new product insertion by a farmer"
+          },
+          {
+            "name": "/insertions/{insertion_id}",
+            "method": "PUT",
+            "inputs": [
+              "insertion_id",
+              "farmer_id",
+              "auth_token",
+              "insertion_data"
+            ],
+            "outputs": [
+              "update_status"
+            ],
+            "description": "Modifies an existing insertion"
+          },
+          {
+            "name": "/insertions/{insertion_id}",
+            "method": "DELETE",
+            "inputs": [
+              "insertion_id",
+              "farmer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Deletes an insertion"
+          },
+          {
+            "name": "/insertions/search",
+            "method": "GET",
+            "inputs": [
+              "search_query",
+              "filters"
+            ],
+            "outputs": [
+              "insertion_list"
+            ],
+            "description": "Searches for insertions based on query and filters"
+          },
+          {
+            "name": "/insertions/{insertion_id}/boxes",
+            "method": "POST",
+            "inputs": [
+              "insertion_id",
+              "farmer_id",
+              "auth_token",
+              "box_data"
+            ],
+            "outputs": [
+              "box_id",
+              "creation_status"
+            ],
+            "description": "Adds boxes to an existing insertion"
+          }
+        ],
+        "user_stories": [
+          "4",
+          "8",
+          "9",
+          "10",
+          "31"
+        ],
+        "parameters": [
+          "insertion_id",
+          "farmer_id",
+          "insertion_data",
+          "box_data",
+          "box_id",
+          "search_query"
+        ],
+        "description": "Handles farmer product insertions including creation, modification, deletion, search functionality, and box management within insertions"
+      },
+      {
+        "name": "catalog-service",
+        "endpoints": [
+          {
+            "name": "/catalog",
+            "method": "GET",
+            "inputs": [
+              "filters"
+            ],
+            "outputs": [
+              "product_list"
+            ],
+            "description": "Retrieves the main catalog of products"
+          },
+          {
+            "name": "/calendar/seasonal",
+            "method": "GET",
+            "inputs": [
+              "month",
+              "season"
+            ],
+            "outputs": [
+              "seasonal_products"
+            ],
+            "description": "Displays seasonal foodstuff calendar"
+          },
+          {
+            "name": "/catalog/expiring",
+            "method": "GET",
+            "inputs": [],
+            "outputs": [
+              "expiring_boxes"
+            ],
+            "description": "Shows boxes that are expiring soon"
+          },
+          {
+            "name": "/farmers/{farmer_id}/profile",
+            "method": "GET",
+            "inputs": [
+              "farmer_id"
+            ],
+            "outputs": [
+              "farmer_profile",
+              "insertions",
+              "reviews",
+              "badges"
+            ],
+            "description": "Displays farmer public profile page"
+          }
+        ],
+        "user_stories": [
+          "5",
+          "7",
+          "11",
+          "13"
+        ],
+        "parameters": [
+          "farmer_id",
+          "seasonal_data",
+          "expiring_boxes",
+          "catalog_view"
+        ],
+        "description": "Manages product catalog, seasonal calendar display, expiring boxes, and farmer profile pages with public information"
+      },
+      {
+        "name": "cart-service",
+        "endpoints": [
+          {
+            "name": "/cart",
+            "method": "GET",
+            "inputs": [
+              "customer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "cart_items"
+            ],
+            "description": "Retrieves current cart contents"
+          },
+          {
+            "name": "/cart/items",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "product_id",
+              "quantity"
+            ],
+            "outputs": [
+              "cart_status"
+            ],
+            "description": "Adds a product to the shopping cart"
+          },
+          {
+            "name": "/cart/items/{item_id}",
+            "method": "DELETE",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "item_id"
+            ],
+            "outputs": [
+              "deletion_status"
+            ],
+            "description": "Removes an item from the shopping cart"
+          }
+        ],
+        "user_stories": [
+          "14",
+          "15",
+          "33"
+        ],
+        "parameters": [
+          "cart_id",
+          "customer_id",
+          "cart_items",
+          "product_id",
+          "quantity"
+        ],
+        "description": "Manages shopping cart operations including adding products, viewing cart contents, and removing items from cart"
+      },
+      {
+        "name": "order-service",
+        "endpoints": [
+          {
+            "name": "/orders",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "cart_id"
+            ],
+            "outputs": [
+              "order_id",
+              "order_status"
+            ],
+            "description": "Generates an order from shopping cart"
+          },
+          {
+            "name": "/orders/{order_id}/payment",
+            "method": "POST",
+            "inputs": [
+              "order_id",
+              "customer_id",
+              "auth_token",
+              "payment_details"
+            ],
+            "outputs": [
+              "payment_status",
+              "transaction_id"
+            ],
+            "description": "Processes payment for an order"
+          },
+          {
+            "name": "/orders/history",
+            "method": "GET",
+            "inputs": [
+              "customer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "order_history"
+            ],
+            "description": "Retrieves customer order history"
+          },
+          {
+            "name": "/bookings",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "product_id",
+              "booking_details"
+            ],
+            "outputs": [
+              "booking_id",
+              "booking_status"
+            ],
+            "description": "Creates a booking request for a product from calendar"
+          },
+          {
+            "name": "/bookings/{booking_id}/respond",
+            "method": "PUT",
+            "inputs": [
+              "booking_id",
+              "farmer_id",
+              "auth_token",
+              "response"
+            ],
+            "outputs": [
+              "response_status"
+            ],
+            "description": "Farmer accepts or declines a booking request"
+          },
+          {
+            "name": "/bookings/status",
+            "method": "GET",
+            "inputs": [
+              "customer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "booking_requests"
+            ],
+            "description": "Retrieves status of booking requests"
+          }
+        ],
+        "user_stories": [
+          "16",
+          "17",
+          "18",
+          "21",
+          "22",
+          "32"
+        ],
+        "parameters": [
+          "order_id",
+          "customer_id",
+          "order_items",
+          "payment_status",
+          "booking_id",
+          "booking_status",
+          "farmer_response"
+        ],
+        "description": "Handles order generation from cart, payment processing, order history, and booking requests management (acceptance/decline by farmers)"
+      },
+      {
+        "name": "delivery-service",
+        "endpoints": [
+          {
+            "name": "/riders/{rider_id}/availability",
+            "method": "PUT",
+            "inputs": [
+              "rider_id",
+              "auth_token",
+              "availability_status"
+            ],
+            "outputs": [
+              "status_update"
+            ],
+            "description": "Updates rider availability status"
+          },
+          {
+            "name": "/riders/{rider_id}/dashboard",
+            "method": "GET",
+            "inputs": [
+              "rider_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "delivery_requests",
+              "delivery_history"
+            ],
+            "description": "Displays rider personal delivery dashboard"
+          },
+          {
+            "name": "/orders/{order_id}/delivery",
+            "method": "POST",
+            "inputs": [
+              "order_id",
+              "customer_id",
+              "auth_token",
+              "delivery_option",
+              "address"
+            ],
+            "outputs": [
+              "delivery_id",
+              "delivery_status"
+            ],
+            "description": "Selects delivery option for an order"
+          },
+          {
+            "name": "/deliveries/{delivery_id}/status",
+            "method": "PUT",
+            "inputs": [
+              "delivery_id",
+              "rider_id",
+              "auth_token",
+              "status"
+            ],
+            "outputs": [
+              "status_update"
+            ],
+            "description": "Updates delivery status by rider"
+          }
+        ],
+        "user_stories": [
+          "25",
+          "26",
+          "27",
+          "34"
+        ],
+        "parameters": [
+          "rider_id",
+          "availability_status",
+          "delivery_id",
+          "delivery_status",
+          "delivery_address",
+          "assigned_rider"
+        ],
+        "description": "Manages rider availability, delivery requests, delivery option selection, delivery status updates, and rider delivery dashboard"
+      },
+      {
+        "name": "notification-service",
+        "endpoints": [
+          {
+            "name": "/subscriptions",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "farmer_id"
+            ],
+            "outputs": [
+              "subscription_status"
+            ],
+            "description": "Subscribes customer to a farmer"
+          },
+          {
+            "name": "/subscriptions",
+            "method": "DELETE",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "farmer_id"
+            ],
+            "outputs": [
+              "unsubscription_status"
+            ],
+            "description": "Unsubscribes customer from a farmer"
+          },
+          {
+            "name": "/subscriptions",
+            "method": "GET",
+            "inputs": [
+              "customer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "subscribed_farmers"
+            ],
+            "description": "Retrieves list of subscribed farmers"
+          },
+          {
+            "name": "/notifications",
+            "method": "GET",
+            "inputs": [
+              "customer_id",
+              "auth_token"
+            ],
+            "outputs": [
+              "notification_list"
+            ],
+            "description": "Retrieves customer notification center"
+          },
+          {
+            "name": "/notifications/{notification_id}",
+            "method": "PUT",
+            "inputs": [
+              "notification_id",
+              "customer_id",
+              "auth_token",
+              "read_status"
+            ],
+            "outputs": [
+              "status_update"
+            ],
+            "description": "Marks notification as read"
+          }
+        ],
+        "user_stories": [
+          "19",
+          "20",
+          "35",
+          "36"
+        ],
+        "parameters": [
+          "subscription_id",
+          "customer_id",
+          "farmer_id",
+          "notification_id",
+          "notification_type",
+          "read_status"
+        ],
+        "description": "Handles farmer subscriptions, unsubscriptions, notification generation for new insertions, and notification center for customers"
+      },
+      {
+        "name": "review-service",
+        "endpoints": [
+          {
+            "name": "/reviews",
+            "method": "POST",
+            "inputs": [
+              "customer_id",
+              "auth_token",
+              "farmer_id",
+              "order_id",
+              "rating",
+              "comment"
+            ],
+            "outputs": [
+              "review_id",
+              "creation_status"
+            ],
+            "description": "Creates a review for a purchased product"
+          },
+          {
+            "name": "/reviews/farmer/{farmer_id}",
+            "method": "GET",
+            "inputs": [
+              "farmer_id"
+            ],
+            "outputs": [
+              "review_list"
+            ],
+            "description": "Retrieves reviews for a specific farmer"
+          }
+        ],
+        "user_stories": [
+          "23"
+        ],
+        "parameters": [
+          "review_id",
+          "customer_id",
+          "farmer_id",
+          "order_id",
+          "rating",
+          "comment"
+        ],
+        "description": "Manages customer reviews and comments on purchased products from farmers"
+      },
+      {
+        "name": "gamification-service",
+        "endpoints": [
+          {
+            "name": "/farmers/{farmer_id}/badges",
+            "method": "GET",
+            "inputs": [
+              "farmer_id"
+            ],
+            "outputs": [
+              "badge_list"
+            ],
+            "description": "Retrieves badges earned by a farmer"
+          },
+          {
+            "name": "/badges/calculate",
+            "method": "POST",
+            "inputs": [
+              "farmer_id",
+              "achievement_data"
+            ],
+            "outputs": [
+              "new_badges",
+              "calculation_status"
+            ],
+            "description": "Calculates and awards badges based on farmer achievements"
+          }
+        ],
+        "user_stories": [
+          "28"
+        ],
+        "parameters": [
+          "farmer_id",
+          "badge_id",
+          "badge_type",
+          "achievement_criteria",
+          "earned_date"
+        ],
+        "description": "Manages farmer badge system and achievement tracking displayed on farmer profiles"
+      }
+    ],
+    "patterns": [
+      {
+        "group_name": "Microservices Data Isolation",
+        "implementation_pattern": "database per service",
+        "involved_microservices": [
+          "user-management-service",
+          "insertion-service",
+          "catalog-service",
+          "cart-service",
+          "order-service",
+          "delivery-service",
+          "notification-service",
+          "review-service",
+          "gamification-service"
+        ],
+        "explaination": "I chose database per service pattern because the context explicitly recommends it for ensuring loose coupling between microservices. Each service manages its own data domain (users, insertions, orders, etc.) and needs to evolve independently. This pattern supports the fundamental principle of microservices architecture where services are autonomous and independently deployable."
+      },
+      {
+        "group_name": "Order Creation Flow",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "cart-service",
+          "order-service",
+          "notification-service",
+          "delivery-service"
+        ],
+        "explaination": "I chose the saga pattern for order creation because it involves a distributed transaction across multiple services. When a customer generates an order (user stories 16, 17), it requires coordinated actions: generating order from cart, processing payment, notifying farmers, and potentially assigning delivery. The context specifically identifies this as an Order Creation Saga to maintain data consistency without distributed transactions."
+      },
+      {
+        "group_name": "Booking Request Flow",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "catalog-service",
+          "order-service",
+          "notification-service"
+        ],
+        "explaination": "I chose the saga pattern for booking requests because it handles the distributed workflow when customers book products from the calendar (user story 18) and farmers accept/decline requests (user story 21). The context recommends this saga to manage the booking request lifecycle and farmer response flow while maintaining consistency across services."
+      },
+      {
+        "group_name": "Role Update Flow",
+        "implementation_pattern": "saga",
+        "involved_microservices": [
+          "user-management-service",
+          "delivery-service",
+          "insertion-service"
+        ],
+        "explaination": "I chose the saga pattern for role updates because when a customer updates their status to farmer or rider (user stories 12, 24), it requires coordinated initialization across multiple services. The user-management-service updates the role, and then delivery-service or insertion-service must initialize the necessary data and capabilities for the new role. The context specifically identifies this as a Role Update Saga."
+      },
+      {
+        "group_name": "Catalog and Seasonal Calendar",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "insertion-service",
+          "catalog-service"
+        ],
+        "explaination": "I chose CQRS pattern because catalog-service handles read-heavy operations for browsing products, seasonal calendar, and expiring boxes (user stories 5, 7, 11), while insertion-service handles write operations for creating and modifying insertions. The context recommends CQRS for efficient search and filtering operations. The insertion-service is the write model, and catalog-service maintains optimized read views."
+      },
+      {
+        "group_name": "Notification Management",
+        "implementation_pattern": "cqrs",
+        "involved_microservices": [
+          "notification-service"
+        ],
+        "explaination": "I chose CQRS pattern for notification-service because it needs to efficiently handle notification generation (writes) and notification retrieval (reads) separately. The context recommends CQRS for the notification center (user stories 35, 36) with separate write and read models to optimize notification retrieval performance while handling high-volume notification generation from various domain events."
+      },
+      {
+        "group_name": "Farmer Profile Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "catalog-service",
+          "review-service",
+          "gamification-service"
+        ],
+        "explaination": "I chose API composition pattern because displaying a farmer profile page (user story 13) requires composing data from multiple services: insertions from catalog-service, reviews from review-service, and badges from gamification-service. The context specifically identifies this as a use case for API composition to create a comprehensive farmer profile view while keeping services decoupled."
+      },
+      {
+        "group_name": "Shopping Cart View Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "cart-service",
+          "catalog-service"
+        ],
+        "explaination": "I chose API composition pattern because viewing the shopping cart (user story 33) requires combining cart items from cart-service with detailed product information from catalog-service. The context recommends this pattern to compose the complete cart view with enriched product details while maintaining service independence."
+      },
+      {
+        "group_name": "Order History Composition",
+        "implementation_pattern": "api composition",
+        "involved_microservices": [
+          "order-service",
+          "delivery-service"
+        ],
+        "explaination": "I chose API composition pattern because displaying order history (user story 22) requires composing order data from order-service with delivery status from delivery-service. The context identifies this as an API composition use case to provide customers with complete order information including delivery tracking."
+      },
+      {
+        "group_name": "Event-Driven Communication",
+        "implementation_pattern": "domain event",
+        "involved_microservices": [
+          "user-management-service",
+          "insertion-service",
+          "order-service",
+          "delivery-service",
+          "notification-service",
+          "gamification-service"
+        ],
+        "explaination": "I chose domain event pattern for asynchronous communication between services. The context recommends publishing domain events like UserRegistered, InsertionCreated, OrderCreated, DeliveryAssigned, etc. This enables loose coupling and supports use cases like triggering notifications (user stories 19, 35, 36), updating gamification badges (user story 28), and coordinating cross-service workflows without direct service-to-service calls."
+      },
+      {
+        "group_name": "Cart Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "cart-service"
+        ],
+        "explaination": "I chose the aggregate pattern for cart-service because a shopping cart with its items forms a natural aggregate root. The context identifies Cart Aggregate as a bounded consistency boundary where cart items are managed as a unit. This ensures transactional consistency for cart operations (user stories 14, 15, 33) within the cart-service."
+      },
+      {
+        "group_name": "Order Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "order-service"
+        ],
+        "explaination": "I chose the aggregate pattern for order-service because an order with its line items and booking requests forms a cohesive aggregate. The context identifies Order Aggregate as maintaining consistency for order-related operations. This ensures that order generation, payment, and booking requests (user stories 16, 17, 18, 21, 22, 32) are managed as a consistent unit."
+      },
+      {
+        "group_name": "User Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "user-management-service"
+        ],
+        "explaination": "I chose the aggregate pattern for user-management-service because user profile with roles and authentication data forms an aggregate root. The context identifies User Aggregate for managing user-related consistency. This ensures that authentication, registration, and role updates (user stories 1, 2, 3, 6, 12, 24, 29, 30) maintain consistency within the user boundary."
+      },
+      {
+        "group_name": "Insertion Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "insertion-service"
+        ],
+        "explaination": "I chose the aggregate pattern for insertion-service because an insertion with its associated boxes forms a natural aggregate. The context identifies Insertion Aggregate for maintaining consistency when farmers create, modify, or delete insertions and manage boxes (user stories 4, 9, 10, 31). This ensures transactional consistency for insertion operations."
+      },
+      {
+        "group_name": "Subscription Aggregate",
+        "implementation_pattern": "aggregate",
+        "involved_microservices": [
+          "notification-service"
+        ],
+        "explaination": "I chose the aggregate pattern for notification-service subscriptions because farmer subscriptions with notification preferences form a consistency boundary. The context identifies Subscription Aggregate for managing subscription lifecycle. This ensures that subscribe, unsubscribe, and notification preferences (user stories 19, 20, 35) are handled consistently."
+      }
+    ],
+    "datastore": [
+      {
+        "datastore_name": "User Database",
+        "associated_microservices": [
+          "user-management-service"
+        ],
+        "description": "Stores user profiles, authentication credentials (email/OAuth tokens), roles (customer/farmer/rider), and profile information. Supports user stories 1, 2, 3, 6, 12, 24, 29, 30 for registration, authentication, role management, and profile modifications. Uses aggregate pattern for user data consistency."
+      },
+      {
+        "datastore_name": "Insertion Write Database",
+        "associated_microservices": [
+          "insertion-service"
+        ],
+        "description": "Stores farmer product insertions and associated boxes with write-optimized schema. Supports user stories 4, 9, 10, 31 for creating, modifying, deleting insertions and managing boxes. Part of CQRS write model and uses aggregate pattern for insertion consistency."
+      },
+      {
+        "datastore_name": "Catalog Read Database",
+        "associated_microservices": [
+          "catalog-service"
+        ],
+        "description": "Maintains optimized read views of product catalog, seasonal calendar, expiring boxes, and farmer profiles. Supports user stories 5, 7, 11, 13 with denormalized data for efficient querying and filtering. Part of CQRS read model synchronized via domain events from insertion-service."
+      },
+      {
+        "datastore_name": "Cart Database",
+        "associated_microservices": [
+          "cart-service"
+        ],
+        "description": "Stores shopping cart data with cart items for each customer. Supports user stories 14, 15, 33 for adding products, viewing cart, and removing items. Uses aggregate pattern to maintain cart consistency as a transactional unit."
+      },
+      {
+        "datastore_name": "Order Database",
+        "associated_microservices": [
+          "order-service"
+        ],
+        "description": "Stores orders, order line items, payment information, and booking requests. Supports user stories 16, 17, 18, 21, 22, 32 for order generation, payment processing, booking management, and order history. Uses aggregate pattern for order consistency and participates in saga patterns for distributed transactions."
+      },
+      {
+        "datastore_name": "Delivery Database",
+        "associated_microservices": [
+          "delivery-service"
+        ],
+        "description": "Stores rider availability status, delivery assignments, delivery requests, and delivery status history. Supports user stories 25, 26, 27, 34 for rider dashboard, availability management, delivery assignment, and status updates. Participates in order creation saga."
+      },
+      {
+        "datastore_name": "Notification Write Database",
+        "associated_microservices": [
+          "notification-service"
+        ],
+        "description": "Stores subscription data and notification generation records. Supports user stories 19, 20, 35 for farmer subscriptions and unsubscriptions. Uses aggregate pattern for subscription consistency and domain events for notification triggering."
+      },
+      {
+        "datastore_name": "Notification Read Database",
+        "associated_microservices": [
+          "notification-service"
+        ],
+        "description": "Maintains optimized read view of customer notifications for efficient retrieval. Supports user story 36 for notification center. Part of CQRS read model for high-performance notification querying."
+      },
+      {
+        "datastore_name": "Review Database",
+        "associated_microservices": [
+          "review-service"
+        ],
+        "description": "Stores customer reviews and comments on purchased products from farmers. Supports user story 23 for leaving reviews. Data is composed with farmer profiles via API composition pattern."
+      },
+      {
+        "datastore_name": "Gamification Database",
+        "associated_microservices": [
+          "gamification-service"
+        ],
+        "description": "Stores farmer badges, achievements, and achievement tracking data. Supports user story 28 for badge system. Updated via domain events and composed with farmer profiles via API composition pattern."
+      }
+    ]
+  },
+  "error": null
+}
