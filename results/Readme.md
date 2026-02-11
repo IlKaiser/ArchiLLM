@@ -8,14 +8,18 @@ These metrics assess how effectively the input requirements (User Stories) are t
 ### User Stories Satisfaction Coverage (USSC)
 * **Definition**: Measures the extent to which the input user stories are addressed in the generated output. It represents the percentage of unique user stories covered across all generated microservices.
 * **Formula**: 
-    $$USSC = \frac{\sum_{i=0}^{n} US_i}{\#Input\ US}$$
-    *Where $US_i$ is the number of user stories implemented by the $i^{th}$ microservice (excluding duplicates), and the denominator is the total number of user stories provided as input.*
+    $$USSC = \frac{\sum_{i=0}^{n} US_i}{\text{Total Input US}}$$
+  
+  
+    Where $US_i$ is the number of user stories implemented by the $i^{th}$ microservice (excluding duplicates).
 
 ### Average User Stories per Microservice (AUSM)
 * **Definition**: Measures the average number of user stories assigned to each microservice. This provides insight into the functional density and granularity of the application.
 * **Formula**: 
-    $$AUSM = \frac{\sum_{i=0}^{n} US_i}{\#\ microservices}$$
-    *Where $US_i$ is the number of user stories in a single microservice $i$, and the denominator is the total number of generated microservices.*
+    $$AUSM = \frac{\sum_{i=0}^{n} US_i}{N_{\text{microservices}}}$$
+
+  
+    Where $US_i$ is the number of user stories in a single microservice $i$, and the denominator is the total number of generated microservices.
 
 ---
 
