@@ -4,6 +4,10 @@ Welcome to the `example` directory of **ArchiLLM**. This folder contains sample 
 
 These examples are aligned with the research presented in our paper: *"On the feasibility of identifying microservice early-stage architectures using LLMs"*.
 
+## 🔥 Generated Architecture
+
+![image](archi.png)
+
 ## 📂 Folder Contents
 
 This directory contains reference materials used to demonstrate and validate the tool, which typically include:
