@@ -1,0 +1,7 @@
+archi_generated/
+generator/
+.env
+.venv
+.vscode
+__pycache__/
+.DS_Store
