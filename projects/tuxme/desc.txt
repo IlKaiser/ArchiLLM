@@ -1,0 +1,3 @@
+TuxMe is a tuxedo rental company for very exclusive persons (celebrities, millionaires, …). 
+
+People that wish to rent tuxedos from TuxMe need to register and then to apply.  If the candidate is approved, that person can rent tuxedo's from then on. If the application is rejected, the person might try to provide extra details, reference letters etc. to support his application and reapply.  A person that does not behave appropriately (e.g. damage rented tuxedo's repeatedly), may lose his approval as well.  New tuxedo's are checked before they are put to use for rental. When a tuxedo is damaged, it is put in repair and can temporarily not be rented. When returning from repair, the tuxedo will undergo the same check as a new tuxedo before being put back into rental.

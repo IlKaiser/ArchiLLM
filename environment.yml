@@ -1,4 +1,4 @@
-name: kul3
+name: env_name
 channels:
   - defaults
   - conda-forge

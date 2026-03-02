@@ -8,3 +8,6 @@ __pycache__/
 output/
 velocity.log*
 merode_application/
+
+# Add only the content of project but not its subfolders
+projects/*/*/
