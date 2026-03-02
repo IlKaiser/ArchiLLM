@@ -5,3 +5,6 @@ generator/
 .vscode
 __pycache__/
 .DS_Store
+output/
+velocity.log*
+merode_application/
