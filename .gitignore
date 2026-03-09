@@ -11,3 +11,12 @@ merode_application/
 
 # Add only the content of project but not its subfolders
 projects/*/*/
+
+laminar_spans.csv
+laminar_traces.csv
+traces.csv
+dataset.csv
+execution_report copy.csv
+aggregate_laminar_traces.py
+plot_bubbles.py
+print_totals.py
