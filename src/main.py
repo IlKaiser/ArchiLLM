@@ -17,7 +17,7 @@ def main():
     accumulated_cost = 0.0
     
     # List of subfolders to skip
-    SKIP_LIST = ["hfte", "easybank",
+    SKIP_LIST = ["hfte", "rentanorchid", "gasstation", "donationbank",
                  "alphainsurance", "tuxme", "kinepolis"]
     
     # Setup CSV logging

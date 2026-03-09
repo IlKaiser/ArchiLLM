@@ -42,7 +42,7 @@ Save the results into a new folder called frontend inside the working directory 
 
 TEST_PROMPT = """
 From the merode_application/src/tescav folder extract the test cases and provide a java or python (according to the backend language) application called {title} that can run these test cases on the generated backend and frontend.
-Then generate a report of the test results.
+Then generate a report.json of the test results, with a report.html that visualizes the results.
 Save the results into a new folder called test inside the working directory called {title}.
 """
 

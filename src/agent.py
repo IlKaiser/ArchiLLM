@@ -1,7 +1,19 @@
 import _frozen_importlib
 import os
 
-from openhands.sdk import LLM, Agent, Conversation, Tool
+from openhands.sdk import (
+    LLM,
+    Agent,
+    Conversation,
+    Event,
+    ImageContent,
+    LLMConvertibleEvent,
+    Message,
+    Tool,
+    TextContent,
+    get_logger,
+)
+from openhands.sdk.llm.router import MultimodalRouter
 from openhands.tools.file_editor import FileEditorTool
 from openhands.tools.task_tracker import TaskTrackerTool
 from openhands.tools.terminal import TerminalTool
@@ -14,9 +26,12 @@ from openhands.tools.delegate import (
     register_agent,
 )
 
+from openhands.sdk.context.condenser import LLMSummarizingCondenser                                                              
+                                                                                    
 from openhands.tools.preset.default import get_default_tools
 
 from src.prompt import Prompt
+from src.effort_router import EffortRouter
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -25,6 +40,11 @@ load_dotenv()
 def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True) -> float:
     llm = LLM(
         model=os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929"),
+        condenser=LLMSummarizingCondenser(                                                                                           
+            llm=LLM(model="anthropic/claude-sonnet-4-5-20250929", api_key=os.getenv("LLM_API_KEY"), base_url=os.getenv("LLM_BASE_URL", None)),                                                            
+            max_size=120,  
+            keep_first=4   
+        ),                                      
         api_key=os.getenv("LLM_API_KEY"),
         base_url=os.getenv("LLM_BASE_URL", None),
         temperature=0.0,
@@ -32,12 +52,27 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
         usage_id="agent"
     )
 
+
+    secondary_llm = LLM(
+        usage_id="agent-secondary",
+        model="openhands/devstral-medium-2507",
+        base_url=os.getenv("LLM_BASE_URL", None),
+        api_key=os.getenv("OPENHANDS_API_KEY"),
+        native_tool_calling=False,
+    )
+    
+    multimodal_router = EffortRouter(
+        usage_id="effort-router",
+        llms_for_routing={"primary": llm, "secondary": secondary_llm},
+    )
+
+
     tools = [
         Tool(name=FileEditorTool.name),
         Tool(name=TaskTrackerTool.name),
         Tool(name=TerminalTool.name),
         #Tool(name=ApplyPatchTool.name),
-        #Tool(name=DelegateTool.name),
+        Tool(name=DelegateTool.name),
     ]
 
     agent = Agent(
@@ -60,9 +95,9 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
     if create_backend:
         
         agent = Agent(
-            llm=llm,
+            llm=multimodal_router,
             tools=tools,
-            #visualize=DelegationVisualizer(name="Delegator Backend"),
+            visualize=DelegationVisualizer(name="Delegator Backend"),
         )
 
         conversation = Conversation(agent=agent, workspace=cwd)
@@ -79,9 +114,9 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
 
     if create_frontend:
         agent = Agent(
-            llm=llm,
+            llm=multimodal_router,
             tools=tools,
-            #visualize=DelegationVisualizer(name="Delegator Frontend"),
+            visualize=DelegationVisualizer(name="Delegator Frontend"),
         )
 
         cwd = os.getcwd()
@@ -96,9 +131,9 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
 
     if create_test:
         agent = Agent(
-            llm=llm,
+            llm=multimodal_router,
             tools=tools,
-            #visualize=DelegationVisualizer(name="Delegator Test"),
+            visualize=DelegationVisualizer(name="Delegator Test"),
         )
 
         cwd = os.getcwd()
