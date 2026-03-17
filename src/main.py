@@ -9,7 +9,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.prompt import Prompt
 from src.agent import run
 
+import argparse
+
 def main():
+    parser = argparse.ArgumentParser(description="Run the agent on projects.")
+    parser.add_argument("--single-agent", action="store_true", help="Run with a single agent only (disable delegation)")
+    args = parser.parse_args()
+    use_multi_agent = not args.single_agent
+
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     projects_dir = os.path.join(base_dir, 'projects')
     # Maximum total cost across all runs
@@ -17,8 +24,8 @@ def main():
     accumulated_cost = 0.0
     
     # List of subfolders to skip
-    SKIP_LIST = ["hfte", "rentanorchid", "gasstation", "donationbank",
-                 "alphainsurance", "tuxme", "kinepolis"]
+    # skip every project but easybank
+    SKIP_LIST = ["easybank"]
     
     # Setup CSV logging
     csv_file_path = os.path.join(base_dir, 'execution_report.csv')
@@ -69,7 +76,7 @@ def main():
                 start_time = time.time()
                 try:
                     # execute the run function from agent.py
-                    cost = run(prompt=prompt)
+                    cost = run(prompt=prompt, use_multi_agent=use_multi_agent)
                     end_time = time.time()
                     execution_time = end_time - start_time
                     accumulated_cost += cost

@@ -10,40 +10,103 @@ When a stay comes to an end (because of the inhabitant's death or because this p
 """
 
 BACKEND_PROMPT = """
-List the files into merode_application/src/dao, and adapt them to create a new spring boot project.
-with the same logic, that implements the following textual description:
-#############
-TEXTUAL_DESCRIPTION: {desc}
-#############
-Save the results into a new folder called backend inside the working directory called {title}.
-Produce an openapi.yaml file describing the API.
+## Task
+Create a new Spring Boot backend project by adapting the provided DAO files to implement the specified business logic.
+
+## Background
+The application domain is described as follows:
+{desc}
+
+## Requirements
+1. List and analyze the files in `projects/{title}/merode_application/src/dao`.
+2. Adapt these DAO files to create a fully functional Spring Boot project with the same logic.
+3. Produce an `openapi.yaml` file accurately describing the REST API.
+4. Save the generated project into a new folder named `backend` inside the working directory `run/{title}`.
+
+## Constraints
+- The project must use Java and Spring Boot.
+
+## Success Criteria
+- The generated application compiles without errors.
+- The application runs successfully.
+- The `openapi.yaml` file correctly reflects the implemented endpoints.
 """
 
 BACKEND_PROMPT_PYTHON = """
-List the files into merode_application/src/dao, and adapt them to create a pyhton flask project equivalent.
-with the same logic, that implements the following textual description:
-#############
-TEXTUAL_DESCRIPTION: {desc}
-#############
-Save the results into a new folder called backend inside the working directory called {title}.
-Make sure to add support for CORS headers for testing in localhost. Avoid port 5000 as default.
-Produce an openapi.yaml file describing the API.
+## Task
+Create a new Python Flask backend project by adapting the provided Java DAO files to implement the specified business logic.
+
+## Background
+The application domain is described as follows:
+{desc}
+
+## Requirements
+1. List and analyze the files in `projects/{title}/merode_application/src/dao`.
+2. Adapt the logic from these DAO files to create an equivalent Python Flask project.
+3. Configure CORS headers to support cross-origin requests for local testing.
+4. Use a port other than 5000 as the default port.
+5. Produce an `openapi.yaml` file accurately describing the REST API.
+6. Save the generated project into a new folder named `backend` inside the working directory `run/{title}`.
+
+## Constraints
+- The project must use Python and Flask.
+
+## Success Criteria
+- The generated application runs successfully.
+- The application correctly handles CORS for localhost.
+- The application binds to a port other than 5000 by default.
+- The `openapi.yaml` file correctly reflects the implemented endpoints.
 """
 
 FRONTEND_PROMPT = """
-From the openapi.yaml file produced by the backend agent, create a new react project.
-Make its ui modern and responsive. Make sure it can communicate with the backend properly by properly configuring the vite config.
-with the same logic, that implements the following textual description:
-#############
-TEXTUAL_DESCRIPTION: {desc}
-#############
-Save the results into a new folder called frontend inside the working directory called {title}.
+## Task
+Create a modern, responsive React frontend project that communicates with the existing backend API.
+
+## Background
+An OpenAPI specification for the backend API is available.
+The application domain is described as follows:
+{desc}
+
+## Requirements
+1. Use the `openapi.yaml` file produced by the backend agent inside `run/{title}/backend/` to generate the data models and API services.
+2. Create a new React project using Vite.
+3. Implement a modern and responsive user interface reflecting the business logic.
+4. Configure the Vite setup (`vite.config.js` or similar) to correctly proxy or communicate with the backend API.
+5. Save the generated project into a new folder named `frontend` inside the working directory `run/{title}`.
+
+## Constraints
+- Must use React and Vite.
+
+## Success Criteria
+- The frontend application starts and runs successfully in development mode.
+- The UI is responsive and modern.
+- The frontend successfully communicates with the backend.
 """
 
 TEST_PROMPT = """
-From the merode_application/src/tescav folder extract the test cases and provide a java or python (according to the backend language) application called {title} that can run these test cases on the generated backend and frontend.
-Then generate a report.json of the test results, with a report.html that visualizes the results.
-Save the results into a new folder called test inside the working directory called {title}.
+## Task
+Create a Spring Boot-compatible Java testing application to execute the required test cases against the generated backend.
+
+## Background
+Test cases for this application have been pre-generated and are available in an HTML report.
+The application domain is described as follows:
+{desc}
+
+## Requirements
+1. Extract the test cases from the `projects/{title}/merode_application/{title}_testcases.html` file.
+2. Develop a Java application compatible with Spring Boot that can execute these specific test cases against the generated backend located in the `projects/{title}/backend` folder.
+3. Generate a `report.json` file containing the structured results of the test execution.
+4. Generate a `report.html` file that visualizes the results from `report.json`, where are included the test cases and the results, with total and passed tests total and for each criterion.
+5. Save all test artifacts into a new folder named `test` inside the working directory `run/{title}`.
+
+## Constraints
+- The testing application must be written in Java and compatible with Spring Boot testing frameworks.
+- It must include all testcases from the testcases.html file.
+
+## Success Criteria
+- The testing application compiles and runs successfully.
+- It correctly executes the extracted test cases against the backend.
+- `report.json` and `report.html` are accurately generated.
 """
 
 class Prompt:
