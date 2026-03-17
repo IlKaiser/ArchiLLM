@@ -22,19 +22,26 @@ from openhands.tools.apply_patch import ApplyPatchTool
 from openhands.sdk.tool import register_tool
 from openhands.tools.delegate import (
     DelegateTool,
-    DelegationVisualizer,
-    register_agent,
+    DelegationVisualizer
 )
+
+import uuid
+
 
 from openhands.sdk.context.condenser import LLMSummarizingCondenser                                                              
                                                                                     
 from openhands.tools.preset.default import get_default_tools
+
+
 
 from src.prompt import Prompt
 
 from dotenv import load_dotenv
 load_dotenv()
 
+
+conversation_id = uuid.uuid4()
+persistence_dir = "./.conversations"
 
 def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True) -> float:
     llm = LLM(
@@ -54,16 +61,16 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
 
     secondary_llm = LLM(
         usage_id="agent-secondary",
-        model="openhands/qwen3-coder-480b",
+        model=os.getenv("SECONDARY_LLM_MODEL"),
         base_url=os.getenv("LLM_BASE_URL", None),
-        api_key=os.getenv("OPENHANDS_API_KEY"),
+        api_key=os.getenv("SECONDARY_LLM_API_KEY"),
         native_tool_calling=False,
         max_message_chars=50000,
         condenser=LLMSummarizingCondenser(
             llm=LLM(
-                model="openhands/qwen3-coder-480b",
+                model=os.getenv("SECONDARY_LLM_MODEL"),
                 base_url=os.getenv("LLM_BASE_URL", None), 
-                api_key=os.getenv("OPENHANDS_API_KEY"),
+                api_key=os.getenv("SECONDARY_LLM_API_KEY"),
                 native_tool_calling=False
             ),
             max_size=20,
@@ -123,7 +130,7 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
 
     cwd = os.getcwd()
 
-    conversation = Conversation(agent=agent, workspace=cwd)
+    conversation = Conversation(agent=agent, workspace=cwd, conversation_id=conversation_id, persistence_dir=persistence_dir)
 
     conversation.send_message(f"Create a working directory for the project if not already existing, call it {prompt.title}.")
     conversation.run()
@@ -141,7 +148,7 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
             #visualize=DelegationVisualizer(name="Delegator Backend"),
         )
 
-        conversation = Conversation(agent=agent, workspace=cwd)
+        conversation = Conversation(agent=agent, workspace=cwd, conversation_id=conversation_id, persistence_dir=persistence_dir)
 
         if use_spring_boot:
             conversation.send_message(prompt.get_backend_prompt())
@@ -162,7 +169,7 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
         )
 
         cwd = os.getcwd()
-        conversation = Conversation(agent=agent, workspace=cwd)
+        conversation = Conversation(agent=agent, workspace=cwd, conversation_id=conversation_id, persistence_dir=persistence_dir)
 
         conversation.send_message(prompt.get_frontend_prompt())
         conversation.run()
@@ -180,7 +187,7 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
         )
 
         cwd = os.getcwd()
-        conversation = Conversation(agent=agent, workspace=cwd)
+        conversation = Conversation(agent=agent, workspace=cwd, conversation_id=conversation_id, persistence_dir=persistence_dir)
 
         conversation.send_message(prompt.get_test_prompt())
         conversation.run()

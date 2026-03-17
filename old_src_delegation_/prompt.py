@@ -10,7 +10,7 @@ When a stay comes to an end (because of the inhabitant's death or because this p
 """
 
 BACKEND_PROMPT = """
-List the files into merode_application/src/dao, and adapt them to create a new spring boot project.
+List the files into projects/{title}/merode_application/src/dao, and adapt them to create a new spring boot project.
 with the same logic, that implements the following textual description:
 #############
 TEXTUAL_DESCRIPTION: {desc}
@@ -20,7 +20,7 @@ Produce an openapi.yaml file describing the API.
 """
 
 BACKEND_PROMPT_PYTHON = """
-List the files into merode_application/src/dao, and adapt them to create a pyhton flask project equivalent.
+List the files into projects/{title}/merode_application/src/dao, and adapt them to create a pyhton flask project equivalent.
 with the same logic, that implements the following textual description:
 #############
 TEXTUAL_DESCRIPTION: {desc}
@@ -41,7 +41,7 @@ Save the results into a new folder called frontend inside the working directory 
 """
 
 TEST_PROMPT = """
-From the merode_application/src/tescav folder extract the test cases and provide a java or python (according to the backend language) application called {title} that can run these test cases on the generated backend and frontend.
+From the projects/{title}/merode_application/src/tescav folder extract the test cases and provide a java or python (according to the backend language) application called {title} that can run these test cases on the generated backend and frontend.
 Then generate a report.json of the test results, with a report.html that visualizes the results.
 Save the results into a new folder called test inside the working directory called {title}.
 """
