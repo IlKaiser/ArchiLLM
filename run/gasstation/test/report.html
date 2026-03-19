@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gas Station – Test Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; color: #333; }
+    h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+    h2 { color: #2980b9; margin-top: 30px; }
+    h3 { color: #34495e; margin-top: 20px; }
+    .summary { background: #fff; border-radius: 8px; padding: 20px; margin: 20px 0;
+               box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 15px; margin-top: 15px; }
+    .metric { text-align: center; padding: 15px; border-radius: 6px; }
+    .metric .value { font-size: 2em; font-weight: bold; }
+    .metric .label { font-size: 0.85em; color: #666; }
+    .total   { background: #ecf0f1; }
+    .passed  { background: #d5f5e3; color: #1e8449; }
+    .failed  { background: #fadbd8; color: #922b21; }
+    .error   { background: #fdebd0; color: #935116; }
+    .skipped { background: #eaf0fb; color: #2e4482; }
+    .criterion { background: #fff; border-radius: 8px; padding: 20px; margin: 20px 0;
+                 box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .crit-stats { display: flex; gap: 15px; flex-wrap: wrap; margin: 10px 0; }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
+    .badge-total   { background: #bdc3c7; }
+    .badge-pass    { background: #d5f5e3; color: #1e8449; }
+    .badge-fail    { background: #fadbd8; color: #922b21; }
+    .badge-error   { background: #fdebd0; color: #935116; }
+    .badge-skip    { background: #eaf0fb; color: #2e4482; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+    th { background: #2c3e50; color: #fff; padding: 10px; text-align: left; }
+    td { padding: 8px 10px; border-bottom: 1px solid #ecf0f1; vertical-align: top; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .status-PASS    { color: #1e8449; font-weight: bold; }
+    .status-FAIL    { color: #922b21; font-weight: bold; }
+    .status-ERROR   { color: #935116; font-weight: bold; }
+    .status-SKIP    { color: #2e4482; font-weight: bold; }
+    .progress-bar { height: 10px; background: #ecf0f1; border-radius: 5px; margin: 10px 0; }
+    .progress-fill { height: 100%; border-radius: 5px; background: #27ae60; }
+    .desc { font-style: italic; color: #666; margin: 5px 0 15px 0; }
+    code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <h1>Gas Station – Test Execution Report</h1>
+  <p>Generated: <strong>2026-03-19 03:13:10</strong></p>
+  <div class="summary">
+    <h2 style="margin-top:0">Overall Summary</h2>
+    <div class="progress-bar"><div class="progress-fill" style="width:83,4%"></div></div>
+    <p><strong>83,4%</strong> tests passed</p>
+    <div class="summary-grid">
+      <div class="metric total">
+        <div class="value">169</div>
+        <div class="label">Total</div>
+      </div>
+      <div class="metric passed">
+        <div class="value">141</div>
+        <div class="label">Passed</div>
+      </div>
+      <div class="metric failed">
+        <div class="value">28</div>
+        <div class="label">Failed</div>
+      </div>
+      <div class="metric error">
+        <div class="value">0</div>
+        <div class="label">Error</div>
+      </div>
+      <div class="metric skipped">
+        <div class="value">0</div>
+        <div class="label">Skipped</div>
+      </div>
+    </div>
+  </div>
+  <h2>Test Cases by Criterion</h2>
+  <div class="criterion">
+    <h3>CO</h3>
+    <p class="desc">Create Objects: for each object type, at least one instance must be instantiated.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 7</span>
+      <span class="badge badge-pass">Passed: 6</span>
+      <span class="badge badge-fail">Failed: 1</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">85,7%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:85,7%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>CO-1</code></td>
+          <td>Create GasStation</td>
+          <td>Create a GasStation and verify it enters state CONCEPT</td>
+          <td><code>CONCEPT</code></td>
+          <td><code>CONCEPT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>94</td>
+        </tr>
+        <tr>
+          <td><code>CO-2</code></td>
+          <td>Create Pump</td>
+          <td>Create a Pump (linked to a GasStation) and verify state EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>39</td>
+        </tr>
+        <tr>
+          <td><code>CO-3</code></td>
+          <td>Create CashTurn</td>
+          <td>Create a CashTurn via takeNozzleCash and verify state FILLING</td>
+          <td><code>FILLING</code></td>
+          <td><code>FILLING</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>28</td>
+        </tr>
+        <tr>
+          <td><code>CO-4</code></td>
+          <td>Create RefuelTurn</td>
+          <td>Create a RefuelTurn and verify state CARD_IDENTIFIED</td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>23</td>
+        </tr>
+        <tr>
+          <td><code>CO-5</code></td>
+          <td>Create Invoice</td>
+          <td>Create an Invoice and verify state EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>ERROR:{&quot;error&quot;:&quot;Bad Request&quot;,&quot;message&quot;:&quot;could not prepare statement [Table \&quot;INVOICES\&quot; not found; SQL statement:\ninsert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default) [42102-224]] [insert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default)]; SQL [insert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default)]&quot;,&quot;timestamp&quot;:&quot;2026-03-19T03:13:08.896452&quot;,&quot;status&quot;:400}</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>CO-6</code></td>
+          <td>Create InvoiceLine</td>
+          <td>Create an InvoiceLine (requires a FILLING_ENDED RefuelTurn) and verify state EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>41</td>
+        </tr>
+        <tr>
+          <td><code>CO-7</code></td>
+          <td>Create CardHolder</td>
+          <td>Create a CardHolder and verify state NORMAL</td>
+          <td><code>NORMAL</code></td>
+          <td><code>NORMAL</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criterion">
+    <h3>EO</h3>
+    <p class="desc">End Objects: for each object type, at least one instance must be ended.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 7</span>
+      <span class="badge badge-pass">Passed: 6</span>
+      <span class="badge badge-fail">Failed: 1</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">85,7%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:85,7%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>EO-1</code></td>
+          <td>End GasStation</td>
+          <td>End a GasStation by calling rejectPlans, verify state ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>EO-2</code></td>
+          <td>End Pump</td>
+          <td>Delete a Pump (EVendPump) and verify it no longer exists (404)</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <td><code>EO-3</code></td>
+          <td>End CashTurn</td>
+          <td>End a CashTurn via the full cash path → state ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>22</td>
+        </tr>
+        <tr>
+          <td><code>EO-4</code></td>
+          <td>End RefuelTurn</td>
+          <td>End a RefuelTurn via cancelRefuelTurn → state ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td><code>EO-5</code></td>
+          <td>End Invoice</td>
+          <td>End an Invoice via endInvoice → state ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ERROR:{&quot;error&quot;:&quot;Bad Request&quot;,&quot;message&quot;:&quot;Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; For input string: \&quot;null\&quot;&quot;,&quot;timestamp&quot;:&quot;2026-03-19T03:13:09.017832&quot;,&quot;status&quot;:400}</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <td><code>EO-6</code></td>
+          <td>End InvoiceLine</td>
+          <td>End an InvoiceLine via endInvoiceLine → state ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>35</td>
+        </tr>
+        <tr>
+          <td><code>EO-7</code></td>
+          <td>End CardHolder</td>
+          <td>Delete a CardHolder (EVendCardHolder) and verify it no longer exists (404)</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criterion">
+    <h3>AT</h3>
+    <p class="desc">All-Transitions: each FSM transition must be exercised at least once.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 68</span>
+      <span class="badge badge-pass">Passed: 55</span>
+      <span class="badge badge-fail">Failed: 13</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">80,9%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:80,9%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>AT-GS-1</code></td>
+          <td>GasStation: initial → concept</td>
+          <td>Create GasStation → state CONCEPT</td>
+          <td><code>CONCEPT</code></td>
+          <td><code>CONCEPT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-2</code></td>
+          <td>GasStation: concept → underConstruction</td>
+          <td>approvePlans on a CONCEPT station → UNDER_CONSTRUCTION</td>
+          <td><code>UNDER_CONSTRUCTION</code></td>
+          <td><code>UNDER_CONSTRUCTION</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-3</code></td>
+          <td>GasStation: concept → ended</td>
+          <td>rejectPlans on a CONCEPT station → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-4</code></td>
+          <td>GasStation: concept → concept (self-loop)</td>
+          <td>revisePlans on a CONCEPT station → still CONCEPT</td>
+          <td><code>CONCEPT</code></td>
+          <td><code>CONCEPT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-5</code></td>
+          <td>GasStation: underConstruction → ready</td>
+          <td>openingInspectionPassed → READY</td>
+          <td><code>READY</code></td>
+          <td><code>READY</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-6</code></td>
+          <td>GasStation: underConstruction → underConstruction (self-loop)</td>
+          <td>openingInspectionNotPassed → still UNDER_CONSTRUCTION</td>
+          <td><code>UNDER_CONSTRUCTION</code></td>
+          <td><code>UNDER_CONSTRUCTION</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-7</code></td>
+          <td>GasStation: ready → open</td>
+          <td>openStation on a READY station → OPEN</td>
+          <td><code>OPEN</code></td>
+          <td><code>OPEN</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-8</code></td>
+          <td>GasStation: open → closed</td>
+          <td>closeStation on an OPEN station → CLOSED</td>
+          <td><code>CLOSED</code></td>
+          <td><code>CLOSED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-9</code></td>
+          <td>GasStation: underConstruction → closed</td>
+          <td>closeStation on UNDER_CONSTRUCTION → CLOSED</td>
+          <td><code>CLOSED</code></td>
+          <td><code>CLOSED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-10</code></td>
+          <td>GasStation: ready → closed</td>
+          <td>closeStation on READY → CLOSED</td>
+          <td><code>CLOSED</code></td>
+          <td><code>CLOSED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-11</code></td>
+          <td>GasStation: closed → underInspection</td>
+          <td>startInspection on CLOSED → UNDER_INSPECTION</td>
+          <td><code>UNDER_INSPECTION</code></td>
+          <td><code>UNDER_INSPECTION</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-12</code></td>
+          <td>GasStation: underInspection → closed</td>
+          <td>closingInspectionNotPassed → CLOSED</td>
+          <td><code>CLOSED</code></td>
+          <td><code>CLOSED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-13</code></td>
+          <td>GasStation: underInspection → ended</td>
+          <td>closingInspectionPassed → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-14</code></td>
+          <td>GasStation: ready → ready (self-loop via pump creation)</td>
+          <td>Create Pump while GasStation is READY → station stays READY</td>
+          <td><code>READY</code></td>
+          <td><code>READY</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-15</code></td>
+          <td>GasStation: open → open (self-loop via pump creation)</td>
+          <td>Create Pump while GasStation is OPEN → station stays OPEN</td>
+          <td><code>OPEN</code></td>
+          <td><code>OPEN</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>AT-GS-16</code></td>
+          <td>GasStation: closed → closed (self-loop via pump block)</td>
+          <td>Block Pump while GasStation is CLOSED → station stays CLOSED</td>
+          <td><code>CLOSED</code></td>
+          <td><code>CLOSED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-1</code></td>
+          <td>Pump: initial → exists</td>
+          <td>Create Pump → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-2</code></td>
+          <td>Pump: exists → ended (delete)</td>
+          <td>Delete Pump → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-3</code></td>
+          <td>Pump: exists → reserved (via createRefuelTurn)</td>
+          <td>Create RefuelTurn reserves the pump → RESERVED</td>
+          <td><code>RESERVED</code></td>
+          <td><code>RESERVED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-4</code></td>
+          <td>Pump: reserved → exists (via cancelRefuelTurn)</td>
+          <td>Cancel RefuelTurn → pump back to EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-5</code></td>
+          <td>Pump: reserved → inUse (via takeNozzle)</td>
+          <td>takeNozzle on RefuelTurn → pump IN_USE</td>
+          <td><code>IN_USE</code></td>
+          <td><code>IN_USE</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-6</code></td>
+          <td>Pump: inUse → exists (via putBackNozzle refuel)</td>
+          <td>putBackNozzle (refuel) → pump back to EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-7</code></td>
+          <td>Pump: exists → inUse (via takeNozzleCash)</td>
+          <td>takeNozzleCash → pump IN_USE</td>
+          <td><code>IN_USE</code></td>
+          <td><code>IN_USE</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-8</code></td>
+          <td>Pump: inUse → exists (via putBackNozzle cash)</td>
+          <td>putBackNozzle on CashTurn → pump EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>13</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-9</code></td>
+          <td>Pump: exists → blocked (via block)</td>
+          <td>block a pump in EXISTS → BLOCKED</td>
+          <td><code>BLOCKED</code></td>
+          <td><code>BLOCKED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-10</code></td>
+          <td>Pump: blocked → exists (via release)</td>
+          <td>release a BLOCKED pump → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-11</code></td>
+          <td>Pump: reserved → blocked</td>
+          <td>block a RESERVED pump → BLOCKED</td>
+          <td><code>BLOCKED</code></td>
+          <td><code>BLOCKED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-12</code></td>
+          <td>Pump: inUse → blocked</td>
+          <td>block a pump while IN_USE → BLOCKED</td>
+          <td><code>BLOCKED</code></td>
+          <td><code>BLOCKED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-13</code></td>
+          <td>Pump: blocked → ended (delete blocked pump)</td>
+          <td>Delete BLOCKED pump → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-14</code></td>
+          <td>Pump: exists → exists (self-loop via refill)</td>
+          <td>Refill pump in EXISTS → stays EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-15</code></td>
+          <td>Pump: blocked → blocked (self-loop: block already blocked)</td>
+          <td>Block a BLOCKED pump → stays BLOCKED (or error)</td>
+          <td><code>BLOCKED</code></td>
+          <td><code>BLOCKED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-Pump-16</code></td>
+          <td>Pump: reserved → reserved (self-loop: non-state-changing op)</td>
+          <td>Pump stays RESERVED when we just read it</td>
+          <td><code>RESERVED</code></td>
+          <td><code>RESERVED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-1</code></td>
+          <td>CashTurn: initial → filling (takeNozzleCash)</td>
+          <td>takeNozzleCash → FILLING</td>
+          <td><code>FILLING</code></td>
+          <td><code>FILLING</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-2</code></td>
+          <td>CashTurn: filling → fillingEnded (putBackNozzle)</td>
+          <td>putBackNozzle on FILLING → FILLING_ENDED</td>
+          <td><code>FILLING_ENDED</code></td>
+          <td><code>FILLING_ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-3</code></td>
+          <td>CashTurn: fillingEnded → paid (payCash)</td>
+          <td>payCash on FILLING_ENDED → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>PAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-4</code></td>
+          <td>CashTurn: fillingEnded → unpaid (driveAwayWithoutPaying)</td>
+          <td>driveAwayWithoutPaying → UNPAID</td>
+          <td><code>UNPAID</code></td>
+          <td><code>UNPAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-5</code></td>
+          <td>CashTurn: paid → ended (end)</td>
+          <td>end on PAID → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-6</code></td>
+          <td>CashTurn: unpaid → ended (end)</td>
+          <td>end on UNPAID → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-7</code></td>
+          <td>CashTurn: initial → creditCardScanned (scanCreditCard)</td>
+          <td>scanCreditCard → CREDIT_CARD_SCANNED</td>
+          <td><code>CREDIT_CARD_SCANNED</code></td>
+          <td><code>CREDIT_CARD_SCANNED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-8</code></td>
+          <td>CashTurn: creditCardScanned → fillingCredit (takeNozzleCredit)</td>
+          <td>takeNozzleCredit → FILLING_CREDIT</td>
+          <td><code>FILLING_CREDIT</code></td>
+          <td><code>FILLING_CREDIT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-9</code></td>
+          <td>CashTurn: fillingCredit → fillingEndedCredit (putBackNozzle)</td>
+          <td>putBackNozzle on FILLING_CREDIT → FILLING_ENDED_CREDIT</td>
+          <td><code>FILLING_ENDED_CREDIT</code></td>
+          <td><code>FILLING_ENDED_CREDIT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-10</code></td>
+          <td>CashTurn: fillingEndedCredit → paid (chargeCreditCard)</td>
+          <td>chargeCreditCard → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>PAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>AT-CT-11</code></td>
+          <td>CashTurn: creditCardScanned → ended (cancel)</td>
+          <td>cancel on CREDIT_CARD_SCANNED → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-1</code></td>
+          <td>RefuelTurn: initial → cardIdentified</td>
+          <td>createRefuelTurn → CARD_IDENTIFIED</td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-2</code></td>
+          <td>RefuelTurn: cardIdentified → filling (takeNozzle)</td>
+          <td>takeNozzle → FILLING</td>
+          <td><code>FILLING</code></td>
+          <td><code>FILLING</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-3</code></td>
+          <td>RefuelTurn: filling → fillingEnded (putBackNozzle)</td>
+          <td>putBackNozzle → FILLING_ENDED</td>
+          <td><code>FILLING_ENDED</code></td>
+          <td><code>FILLING_ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-4</code></td>
+          <td>RefuelTurn: fillingEnded → invoiced (createInvoiceLine)</td>
+          <td>createInvoiceLine → INVOICED</td>
+          <td><code>INVOICED</code></td>
+          <td><code>INVOICED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>17</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-5</code></td>
+          <td>RefuelTurn: invoiced → ended (endRefuelTurn)</td>
+          <td>endRefuelTurn → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-6</code></td>
+          <td>RefuelTurn: cardIdentified → ended (cancel)</td>
+          <td>cancelRefuelTurn from CARD_IDENTIFIED → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AT-RT-7</code></td>
+          <td>RefuelTurn: invoiced → invoiced (self-loop via endInvoiceLine)</td>
+          <td>endInvoiceLine keeps RefuelTurn in INVOICED (still active)</td>
+          <td><code>INVOICED</code></td>
+          <td><code>INVOICED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-1</code></td>
+          <td>Invoice: initial → exists</td>
+          <td>createInvoice → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-2</code></td>
+          <td>Invoice: exists → ended</td>
+          <td>endInvoice from EXISTS → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-3</code></td>
+          <td>Invoice: exists → sent</td>
+          <td>sendInvoice from EXISTS → SENT</td>
+          <td><code>SENT</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-4</code></td>
+          <td>Invoice: sent → paid</td>
+          <td>payInvoice from SENT → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-5</code></td>
+          <td>Invoice: sent → ended</td>
+          <td>endInvoice from SENT → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-6</code></td>
+          <td>Invoice: paid → ended</td>
+          <td>endInvoice from PAID → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-7</code></td>
+          <td>Invoice: sent → sent (self-loop via send again)</td>
+          <td>sendInvoice from SENT → stays SENT</td>
+          <td><code>SENT</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-8</code></td>
+          <td>Invoice: exists → exists (self-loop via addInvoiceLine)</td>
+          <td>Add InvoiceLine to EXISTS invoice → stays EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>19</td>
+        </tr>
+        <tr>
+          <td><code>AT-Inv-9</code></td>
+          <td>Invoice: paid → paid (self-loop: state read)</td>
+          <td>Invoice stays PAID after payment</td>
+          <td><code>PAID</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-IL-1</code></td>
+          <td>InvoiceLine: initial → exists</td>
+          <td>createInvoiceLine → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td><code>AT-IL-2</code></td>
+          <td>InvoiceLine: exists → ended</td>
+          <td>endInvoiceLine → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>21</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-1</code></td>
+          <td>CardHolder: initial → normal</td>
+          <td>createCardHolder → NORMAL</td>
+          <td><code>NORMAL</code></td>
+          <td><code>NORMAL</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-2</code></td>
+          <td>CardHolder: normal → suspended</td>
+          <td>suspend → SUSPENDED</td>
+          <td><code>SUSPENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-3</code></td>
+          <td>CardHolder: suspended → normal</td>
+          <td>unsuspend → NORMAL</td>
+          <td><code>NORMAL</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-4</code></td>
+          <td>CardHolder: normal → ended (delete)</td>
+          <td>delete normal CardHolder → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-5</code></td>
+          <td>CardHolder: suspended → ended (delete suspended)</td>
+          <td>delete suspended CardHolder → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-6</code></td>
+          <td>CardHolder: normal → normal (self-loop: read)</td>
+          <td>CardHolder stays NORMAL when read</td>
+          <td><code>NORMAL</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AT-CH-7</code></td>
+          <td>CardHolder: suspended → suspended (self-loop: defaultOnInvoice)</td>
+          <td>defaultOnInvoice on suspended CH → stays SUSPENDED</td>
+          <td><code>SUSPENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>6</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criterion">
+    <h3>ALFP</h3>
+    <p class="desc">All-Loop-Free-Paths: for each FSM, every path from initial to an end state (with no state repeated) must be exercised.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 21</span>
+      <span class="badge badge-pass">Passed: 18</span>
+      <span class="badge badge-fail">Failed: 3</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">85,7%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:85,7%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ALFP-GS-1</code></td>
+          <td>GasStation: initial → concept → ended</td>
+          <td>create → rejectPlans → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-GS-2</code></td>
+          <td>GasStation: initial → concept → underConstruction → closed → underInspection → ended</td>
+          <td>Full path bypassing ready/open</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-GS-3</code></td>
+          <td>GasStation: initial → concept → underConstruction → ready → closed → underInspection → ended</td>
+          <td>Path through ready but not open</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-GS-4</code></td>
+          <td>GasStation: initial → concept → underConstruction → ready → open → closed → underInspection → ended</td>
+          <td>Full lifecycle path</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Pump-1</code></td>
+          <td>Pump: initial → exists → ended</td>
+          <td>create → delete → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Pump-2</code></td>
+          <td>Pump: initial → exists → blocked → ended</td>
+          <td>create → block → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Pump-3</code></td>
+          <td>Pump: initial → exists → reserved → blocked → ended</td>
+          <td>create → reserve(via RT) → block → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Pump-4</code></td>
+          <td>Pump: initial → exists → inUse → blocked → ended</td>
+          <td>create → inUse(via takeNozzleCash) → block → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Pump-5</code></td>
+          <td>Pump: initial → exists → reserved → inUse → blocked → ended</td>
+          <td>create → reserve → inUse(takeNozzle) → block → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>13</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CT-1</code></td>
+          <td>CashTurn: initial → creditCardScanned → ended</td>
+          <td>scanCreditCard → cancel → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CT-2</code></td>
+          <td>CashTurn: initial → filling → fillingEnded → paid → ended</td>
+          <td>takeNozzleCash → putBack → payCash → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CT-3</code></td>
+          <td>CashTurn: initial → filling → fillingEnded → unpaid → ended</td>
+          <td>takeNozzleCash → putBack → driveAway → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CT-4</code></td>
+          <td>CashTurn: initial → creditCardScanned → fillingCredit → fillingEndedCredit → paid → ended</td>
+          <td>scanCreditCard → takeNozzleCredit → putBack → chargeCreditCard → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-RT-1</code></td>
+          <td>RefuelTurn: initial → cardIdentified → ended</td>
+          <td>create → cancel → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-RT-2</code></td>
+          <td>RefuelTurn: initial → cardIdentified → filling → fillingEnded → invoiced → ended</td>
+          <td>Full refuelTurn lifecycle → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Inv-1</code></td>
+          <td>Invoice: initial → exists → ended</td>
+          <td>create → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Inv-2</code></td>
+          <td>Invoice: initial → exists → sent → ended</td>
+          <td>create → send → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-Inv-3</code></td>
+          <td>Invoice: initial → exists → sent → paid → ended</td>
+          <td>create → send → pay → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-IL-1</code></td>
+          <td>InvoiceLine: initial → exists → ended</td>
+          <td>create → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CH-1</code></td>
+          <td>CardHolder: initial → normal → ended</td>
+          <td>create → delete → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>ALFP-CH-2</code></td>
+          <td>CardHolder: initial → normal → suspended → ended</td>
+          <td>create → suspend → delete → 404</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criterion">
+    <h3>AOLP</h3>
+    <p class="desc">All-One-Loop-Paths: paths from initial to end state with exactly one state visited twice.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 18</span>
+      <span class="badge badge-pass">Passed: 16</span>
+      <span class="badge badge-fail">Failed: 2</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">88,9%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:88,9%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>AOLP-GS-1</code></td>
+          <td>GasStation: initial → concept(×2) → ended</td>
+          <td>create → revisePlans → rejectPlans → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-2</code></td>
+          <td>GasStation: initial → concept(×2) → underConstruction → closed → underInspection → ended</td>
+          <td>revisePlans loop then full path</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-3</code></td>
+          <td>GasStation: initial → concept → underConstruction(×2) → closed → underInspection → ended</td>
+          <td>openingInspectionNotPassed loop then closeStation</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-4</code></td>
+          <td>GasStation: initial → concept → underConstruction → ready(×2) → closed → underInspection → ended</td>
+          <td>ready self-loop (add pump) then close</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-5</code></td>
+          <td>GasStation: initial → concept → underConstruction → ready → open(×2) → closed → underInspection → ended</td>
+          <td>open self-loop (add pump) then close</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-6</code></td>
+          <td>GasStation: initial → concept → underConstruction → ready → open → closed(×2) → underInspection → ended</td>
+          <td>closed self-loop (block pump) then inspection</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-GS-7</code></td>
+          <td>GasStation: ... → closed → underInspection → closed → underInspection → ended</td>
+          <td>closingInspectionNotPassed then retry → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-Pump-1</code></td>
+          <td>Pump: initial → exists(×2) → ended</td>
+          <td>create → refill(exists→exists) → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-Pump-2</code></td>
+          <td>Pump: initial → exists → blocked(×2) → ended</td>
+          <td>create → block → (blocked stays blocked) → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-Pump-3</code></td>
+          <td>Pump: initial → exists → reserved → exists → blocked → ended</td>
+          <td>create → reserve → cancel(reserve→exists) → block → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-CT-1</code></td>
+          <td>CashTurn: initial → creditCardScanned(×2) → ended</td>
+          <td>scanCreditCard → stay in CREDIT_CARD_SCANNED → cancel</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-CT-2</code></td>
+          <td>CashTurn: initial → filling → fillingEnded → paid(×2) → ended</td>
+          <td>full cash path with paid self-loop confirmed → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-RT-1</code></td>
+          <td>RefuelTurn: initial → cardIdentified → filling → fillingEnded → invoiced(×2) → ended</td>
+          <td>invoiced self-loop via endInvoiceLine</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-Inv-1</code></td>
+          <td>Invoice: initial → exists → sent(×2) → ended</td>
+          <td>create → send → send again → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-Inv-2</code></td>
+          <td>Invoice: initial → exists → sent → paid(×2) → ended</td>
+          <td>create → send → pay → (paid state) → end → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-CH-1</code></td>
+          <td>CardHolder: initial → normal(×2) → suspended → ended</td>
+          <td>create → (normal self-loop) → suspend → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-CH-2</code></td>
+          <td>CardHolder: initial → normal → suspended(×2) → ended</td>
+          <td>create → suspend → (default triggers suspend again or stays) → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>AOLP-CH-3</code></td>
+          <td>CardHolder: initial → normal → suspended → normal → ended</td>
+          <td>create → suspend → unsuspend → delete</td>
+          <td><code>ENDED(404)</code></td>
+          <td><code>ENDED(404)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criterion">
+    <h3>MAD</h3>
+    <p class="desc">Method Allowed/Disallowed: verify each method is allowed (or rejected) in each object state as specified by the MERODE model.</p>
+    <div class="crit-stats">
+      <span class="badge badge-total">Total: 48</span>
+      <span class="badge badge-pass">Passed: 40</span>
+      <span class="badge badge-fail">Failed: 8</span>
+      <span class="badge badge-error">Error: 0</span>
+      <span class="badge badge-skip">Skipped: 0</span>
+      <span class="badge badge-pass">83,3%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:83,3%"></div></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Expected</th>
+          <th>Actual</th>
+          <th>Status</th>
+          <th>ms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>MAD-Pump-1</code></td>
+          <td>Pump[EXISTS]: takeNozzleCredit DISALLOWED</td>
+          <td>takeNozzleCredit requires CashTurn in CREDIT_CARD_SCANNED – pump must be in EXISTS first, but directly creating that CashTurn on a non-existent turn should fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-2</code></td>
+          <td>Pump[EXISTS]: release DISALLOWED</td>
+          <td>release is only allowed from BLOCKED state</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-3</code></td>
+          <td>Pump[EXISTS]: MEcrRefuelTurn ALLOWED</td>
+          <td>createRefuelTurn when pump is EXISTS → pump becomes RESERVED</td>
+          <td><code>RESERVED</code></td>
+          <td><code>RESERVED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-4</code></td>
+          <td>Pump[EXISTS]: block ALLOWED</td>
+          <td>block an EXISTS pump → BLOCKED</td>
+          <td><code>BLOCKED</code></td>
+          <td><code>BLOCKED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-5</code></td>
+          <td>Pump[RESERVED]: MEtakeNozzleCash DISALLOWED</td>
+          <td>takeNozzleCash when pump is RESERVED must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-6</code></td>
+          <td>Pump[RESERVED]: MEcrRefuelTurn DISALLOWED</td>
+          <td>second createRefuelTurn on RESERVED pump must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-7</code></td>
+          <td>Pump[RESERVED]: takeNozzle ALLOWED</td>
+          <td>takeNozzle on reserved pump → IN_USE</td>
+          <td><code>IN_USE</code></td>
+          <td><code>IN_USE</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-8</code></td>
+          <td>Pump[IN_USE]: takeNozzle DISALLOWED</td>
+          <td>takeNozzle on IN_USE pump (via a second refuelTurn) must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-9</code></td>
+          <td>Pump[IN_USE]: putBackNozzle ALLOWED</td>
+          <td>putBackNozzle moves pump back to EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-10</code></td>
+          <td>Pump[BLOCKED]: release ALLOWED</td>
+          <td>release BLOCKED pump → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>EXISTS</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-11</code></td>
+          <td>Pump[BLOCKED]: block DISALLOWED</td>
+          <td>block an already BLOCKED pump must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>17</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Pump-12</code></td>
+          <td>Pump[BLOCKED]: MEtakeNozzleCash DISALLOWED</td>
+          <td>takeNozzleCash on BLOCKED pump must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-1</code></td>
+          <td>CashTurn[FILLING]: putBackNozzle ALLOWED</td>
+          <td>putBackNozzle on FILLING → FILLING_ENDED</td>
+          <td><code>FILLING_ENDED</code></td>
+          <td><code>FILLING_ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-2</code></td>
+          <td>CashTurn[FILLING]: chargeCreditCard DISALLOWED</td>
+          <td>chargeCreditCard on FILLING state must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>13</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-3</code></td>
+          <td>CashTurn[FILLING]: payCash DISALLOWED</td>
+          <td>payCash on FILLING state must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-4</code></td>
+          <td>CashTurn[FILLING_ENDED]: payCash ALLOWED</td>
+          <td>payCash on FILLING_ENDED → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>PAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-5</code></td>
+          <td>CashTurn[FILLING_ENDED]: driveAwayWithoutPaying ALLOWED</td>
+          <td>driveAwayWithoutPaying on FILLING_ENDED → UNPAID</td>
+          <td><code>UNPAID</code></td>
+          <td><code>UNPAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-6</code></td>
+          <td>CashTurn[FILLING_ENDED]: putBackNozzle DISALLOWED</td>
+          <td>second putBackNozzle on FILLING_ENDED must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-7</code></td>
+          <td>CashTurn[CREDIT_CARD_SCANNED]: takeNozzleCredit ALLOWED</td>
+          <td>takeNozzleCredit on CREDIT_CARD_SCANNED → FILLING_CREDIT</td>
+          <td><code>FILLING_CREDIT</code></td>
+          <td><code>FILLING_CREDIT</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-8</code></td>
+          <td>CashTurn[CREDIT_CARD_SCANNED]: cancelCashTurn ALLOWED</td>
+          <td>cancel on CREDIT_CARD_SCANNED → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-9</code></td>
+          <td>CashTurn[FILLING_ENDED_CREDIT]: chargeCreditCard ALLOWED</td>
+          <td>chargeCreditCard → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>PAID</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-10</code></td>
+          <td>CashTurn[FILLING_ENDED_CREDIT]: driveAwayWithoutPaying DISALLOWED</td>
+          <td>driveAwayWithoutPaying on FILLING_ENDED_CREDIT must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP 200 OK (unexpected success)</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-11</code></td>
+          <td>CashTurn[PAID]: end ALLOWED</td>
+          <td>end on PAID → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CT-12</code></td>
+          <td>CashTurn[PAID]: payCash DISALLOWED</td>
+          <td>second payCash on PAID must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-1</code></td>
+          <td>RefuelTurn[CARD_IDENTIFIED]: takeNozzle ALLOWED</td>
+          <td>takeNozzle → FILLING</td>
+          <td><code>FILLING</code></td>
+          <td><code>FILLING</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-2</code></td>
+          <td>RefuelTurn[CARD_IDENTIFIED]: cancelRefuelTurn ALLOWED</td>
+          <td>cancel → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>7</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-3</code></td>
+          <td>RefuelTurn[CARD_IDENTIFIED]: putBackNozzle DISALLOWED</td>
+          <td>putBackNozzle without first taking nozzle must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-4</code></td>
+          <td>RefuelTurn[FILLING]: putBackNozzle ALLOWED</td>
+          <td>putBackNozzle → FILLING_ENDED</td>
+          <td><code>FILLING_ENDED</code></td>
+          <td><code>FILLING_ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-5</code></td>
+          <td>RefuelTurn[FILLING]: takeNozzle DISALLOWED</td>
+          <td>second takeNozzle must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-6</code></td>
+          <td>RefuelTurn[FILLING_ENDED]: MEcrInvoiceLine ALLOWED</td>
+          <td>createInvoiceLine → RefuelTurn becomes INVOICED</td>
+          <td><code>INVOICED</code></td>
+          <td><code>INVOICED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-7</code></td>
+          <td>RefuelTurn[FILLING_ENDED]: takeNozzle DISALLOWED</td>
+          <td>takeNozzle on FILLING_ENDED must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-8</code></td>
+          <td>RefuelTurn[INVOICED]: MEendRefuelTurn ALLOWED</td>
+          <td>endRefuelTurn after endInvoiceLine → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>ENDED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <td><code>MAD-RT-9</code></td>
+          <td>RefuelTurn[INVOICED]: MEcrInvoiceLine DISALLOWED</td>
+          <td>second createInvoiceLine on INVOICED RefuelTurn must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>12</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-1</code></td>
+          <td>Invoice[EXISTS]: send ALLOWED</td>
+          <td>sendInvoice from EXISTS → SENT</td>
+          <td><code>SENT</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-2</code></td>
+          <td>Invoice[EXISTS]: pay DISALLOWED</td>
+          <td>payInvoice before sending must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-3</code></td>
+          <td>Invoice[EXISTS]: defaultOnInvoice DISALLOWED</td>
+          <td>defaultOnInvoice before sending must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-4</code></td>
+          <td>Invoice[SENT]: pay ALLOWED</td>
+          <td>payInvoice from SENT → PAID</td>
+          <td><code>PAID</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-5</code></td>
+          <td>Invoice[SENT]: defaultOnInvoice ALLOWED</td>
+          <td>defaultOnInvoice from SENT → SENT (stays sent, penalty applied)</td>
+          <td><code>SENT</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-6</code></td>
+          <td>Invoice[SENT]: MEcrInvoiceLine DISALLOWED (invoice already sent)</td>
+          <td>addInvoiceLine after sending must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>21</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-7</code></td>
+          <td>Invoice[PAID]: end ALLOWED</td>
+          <td>endInvoice from PAID → ENDED</td>
+          <td><code>ENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-Inv-8</code></td>
+          <td>Invoice[PAID]: pay DISALLOWED (already paid)</td>
+          <td>second payInvoice on PAID must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-1</code></td>
+          <td>CardHolder[NORMAL]: suspend ALLOWED</td>
+          <td>suspend NORMAL CardHolder → SUSPENDED</td>
+          <td><code>SUSPENDED</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-2</code></td>
+          <td>CardHolder[NORMAL]: unsuspend DISALLOWED</td>
+          <td>unsuspend a NORMAL CardHolder must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-3</code></td>
+          <td>CardHolder[NORMAL]: MEcrRefuelTurn ALLOWED</td>
+          <td>createRefuelTurn for NORMAL CardHolder succeeds</td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td><code>CARD_IDENTIFIED</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-4</code></td>
+          <td>CardHolder[SUSPENDED]: unsuspend ALLOWED</td>
+          <td>unsuspend SUSPENDED CardHolder → NORMAL</td>
+          <td><code>NORMAL</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-5</code></td>
+          <td>CardHolder[SUSPENDED]: suspend DISALLOWED</td>
+          <td>second suspend on SUSPENDED must fail</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-6</code></td>
+          <td>CardHolder[SUSPENDED]: MEcrRefuelTurn DISALLOWED</td>
+          <td>createRefuelTurn for SUSPENDED CardHolder must fail (card blocked)</td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td><code>HTTP error (method disallowed)</code></td>
+          <td class="status-PASS">PASS</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td><code>MAD-CH-7</code></td>
+          <td>CardHolder[SUSPENDED]: MEcrInvoice ALLOWED</td>
+          <td>createInvoice for SUSPENDED CardHolder succeeds → EXISTS</td>
+          <td><code>EXISTS</code></td>
+          <td><code>null</code></td>
+          <td class="status-FAIL">FAIL</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

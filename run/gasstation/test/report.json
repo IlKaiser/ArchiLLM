@@ -1,0 +1,2091 @@
+{
+  "testRunDate" : "2026-03-19T03:13:10.275761",
+  "totalTests" : 169,
+  "passedTests" : 141,
+  "failedTests" : 28,
+  "errorTests" : 0,
+  "skippedTests" : 0,
+  "criteria" : [ {
+    "criterion" : "CO",
+    "description" : "Create Objects: for each object type, at least one instance must be instantiated.",
+    "totalTests" : 7,
+    "passedTests" : 6,
+    "failedTests" : 1,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "CO-1",
+        "criterion" : "CO",
+        "name" : "Create GasStation",
+        "description" : "Create a GasStation and verify it enters state CONCEPT"
+      },
+      "status" : "PASS",
+      "expected" : "CONCEPT",
+      "actual" : "CONCEPT",
+      "error" : null,
+      "durationMs" : 94
+    }, {
+      "testCase" : {
+        "id" : "CO-2",
+        "criterion" : "CO",
+        "name" : "Create Pump",
+        "description" : "Create a Pump (linked to a GasStation) and verify state EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 39
+    }, {
+      "testCase" : {
+        "id" : "CO-3",
+        "criterion" : "CO",
+        "name" : "Create CashTurn",
+        "description" : "Create a CashTurn via takeNozzleCash and verify state FILLING"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING",
+      "actual" : "FILLING",
+      "error" : null,
+      "durationMs" : 28
+    }, {
+      "testCase" : {
+        "id" : "CO-4",
+        "criterion" : "CO",
+        "name" : "Create RefuelTurn",
+        "description" : "Create a RefuelTurn and verify state CARD_IDENTIFIED"
+      },
+      "status" : "PASS",
+      "expected" : "CARD_IDENTIFIED",
+      "actual" : "CARD_IDENTIFIED",
+      "error" : null,
+      "durationMs" : 23
+    }, {
+      "testCase" : {
+        "id" : "CO-5",
+        "criterion" : "CO",
+        "name" : "Create Invoice",
+        "description" : "Create an Invoice and verify state EXISTS"
+      },
+      "status" : "FAIL",
+      "expected" : "EXISTS",
+      "actual" : "ERROR:{\"error\":\"Bad Request\",\"message\":\"could not prepare statement [Table \\\"INVOICES\\\" not found; SQL statement:\\ninsert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default) [42102-224]] [insert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default)]; SQL [insert into invoices (card_holder_id,discount_amount,due_date,final_amount,invoice_date,month,name,paid_date,sent_date,state,total_amount,year,id) values (?,?,?,?,?,?,?,?,?,?,?,?,default)]\",\"timestamp\":\"2026-03-19T03:13:08.896452\",\"status\":400}",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "CO-6",
+        "criterion" : "CO",
+        "name" : "Create InvoiceLine",
+        "description" : "Create an InvoiceLine (requires a FILLING_ENDED RefuelTurn) and verify state EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 41
+    }, {
+      "testCase" : {
+        "id" : "CO-7",
+        "criterion" : "CO",
+        "name" : "Create CardHolder",
+        "description" : "Create a CardHolder and verify state NORMAL"
+      },
+      "status" : "PASS",
+      "expected" : "NORMAL",
+      "actual" : "NORMAL",
+      "error" : null,
+      "durationMs" : 2
+    } ]
+  }, {
+    "criterion" : "EO",
+    "description" : "End Objects: for each object type, at least one instance must be ended.",
+    "totalTests" : 7,
+    "passedTests" : 6,
+    "failedTests" : 1,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "EO-1",
+        "criterion" : "EO",
+        "name" : "End GasStation",
+        "description" : "End a GasStation by calling rejectPlans, verify state ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "EO-2",
+        "criterion" : "EO",
+        "name" : "End Pump",
+        "description" : "Delete a Pump (EVendPump) and verify it no longer exists (404)"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 16
+    }, {
+      "testCase" : {
+        "id" : "EO-3",
+        "criterion" : "EO",
+        "name" : "End CashTurn",
+        "description" : "End a CashTurn via the full cash path → state ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 22
+    }, {
+      "testCase" : {
+        "id" : "EO-4",
+        "criterion" : "EO",
+        "name" : "End RefuelTurn",
+        "description" : "End a RefuelTurn via cancelRefuelTurn → state ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 18
+    }, {
+      "testCase" : {
+        "id" : "EO-5",
+        "criterion" : "EO",
+        "name" : "End Invoice",
+        "description" : "End an Invoice via endInvoice → state ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : "ERROR:{\"error\":\"Bad Request\",\"message\":\"Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; For input string: \\\"null\\\"\",\"timestamp\":\"2026-03-19T03:13:09.017832\",\"status\":400}",
+      "error" : null,
+      "durationMs" : 16
+    }, {
+      "testCase" : {
+        "id" : "EO-6",
+        "criterion" : "EO",
+        "name" : "End InvoiceLine",
+        "description" : "End an InvoiceLine via endInvoiceLine → state ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 35
+    }, {
+      "testCase" : {
+        "id" : "EO-7",
+        "criterion" : "EO",
+        "name" : "End CardHolder",
+        "description" : "Delete a CardHolder (EVendCardHolder) and verify it no longer exists (404)"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 8
+    } ]
+  }, {
+    "criterion" : "AT",
+    "description" : "All-Transitions: each FSM transition must be exercised at least once.",
+    "totalTests" : 68,
+    "passedTests" : 55,
+    "failedTests" : 13,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "AT-GS-1",
+        "criterion" : "AT",
+        "name" : "GasStation: initial → concept",
+        "description" : "Create GasStation → state CONCEPT"
+      },
+      "status" : "PASS",
+      "expected" : "CONCEPT",
+      "actual" : "CONCEPT",
+      "error" : null,
+      "durationMs" : 2
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-2",
+        "criterion" : "AT",
+        "name" : "GasStation: concept → underConstruction",
+        "description" : "approvePlans on a CONCEPT station → UNDER_CONSTRUCTION"
+      },
+      "status" : "PASS",
+      "expected" : "UNDER_CONSTRUCTION",
+      "actual" : "UNDER_CONSTRUCTION",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-3",
+        "criterion" : "AT",
+        "name" : "GasStation: concept → ended",
+        "description" : "rejectPlans on a CONCEPT station → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-4",
+        "criterion" : "AT",
+        "name" : "GasStation: concept → concept (self-loop)",
+        "description" : "revisePlans on a CONCEPT station → still CONCEPT"
+      },
+      "status" : "PASS",
+      "expected" : "CONCEPT",
+      "actual" : "CONCEPT",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-5",
+        "criterion" : "AT",
+        "name" : "GasStation: underConstruction → ready",
+        "description" : "openingInspectionPassed → READY"
+      },
+      "status" : "PASS",
+      "expected" : "READY",
+      "actual" : "READY",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-6",
+        "criterion" : "AT",
+        "name" : "GasStation: underConstruction → underConstruction (self-loop)",
+        "description" : "openingInspectionNotPassed → still UNDER_CONSTRUCTION"
+      },
+      "status" : "PASS",
+      "expected" : "UNDER_CONSTRUCTION",
+      "actual" : "UNDER_CONSTRUCTION",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-7",
+        "criterion" : "AT",
+        "name" : "GasStation: ready → open",
+        "description" : "openStation on a READY station → OPEN"
+      },
+      "status" : "PASS",
+      "expected" : "OPEN",
+      "actual" : "OPEN",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-8",
+        "criterion" : "AT",
+        "name" : "GasStation: open → closed",
+        "description" : "closeStation on an OPEN station → CLOSED"
+      },
+      "status" : "PASS",
+      "expected" : "CLOSED",
+      "actual" : "CLOSED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-9",
+        "criterion" : "AT",
+        "name" : "GasStation: underConstruction → closed",
+        "description" : "closeStation on UNDER_CONSTRUCTION → CLOSED"
+      },
+      "status" : "PASS",
+      "expected" : "CLOSED",
+      "actual" : "CLOSED",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-10",
+        "criterion" : "AT",
+        "name" : "GasStation: ready → closed",
+        "description" : "closeStation on READY → CLOSED"
+      },
+      "status" : "PASS",
+      "expected" : "CLOSED",
+      "actual" : "CLOSED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-11",
+        "criterion" : "AT",
+        "name" : "GasStation: closed → underInspection",
+        "description" : "startInspection on CLOSED → UNDER_INSPECTION"
+      },
+      "status" : "PASS",
+      "expected" : "UNDER_INSPECTION",
+      "actual" : "UNDER_INSPECTION",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-12",
+        "criterion" : "AT",
+        "name" : "GasStation: underInspection → closed",
+        "description" : "closingInspectionNotPassed → CLOSED"
+      },
+      "status" : "PASS",
+      "expected" : "CLOSED",
+      "actual" : "CLOSED",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-13",
+        "criterion" : "AT",
+        "name" : "GasStation: underInspection → ended",
+        "description" : "closingInspectionPassed → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-14",
+        "criterion" : "AT",
+        "name" : "GasStation: ready → ready (self-loop via pump creation)",
+        "description" : "Create Pump while GasStation is READY → station stays READY"
+      },
+      "status" : "PASS",
+      "expected" : "READY",
+      "actual" : "READY",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-15",
+        "criterion" : "AT",
+        "name" : "GasStation: open → open (self-loop via pump creation)",
+        "description" : "Create Pump while GasStation is OPEN → station stays OPEN"
+      },
+      "status" : "PASS",
+      "expected" : "OPEN",
+      "actual" : "OPEN",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "AT-GS-16",
+        "criterion" : "AT",
+        "name" : "GasStation: closed → closed (self-loop via pump block)",
+        "description" : "Block Pump while GasStation is CLOSED → station stays CLOSED"
+      },
+      "status" : "PASS",
+      "expected" : "CLOSED",
+      "actual" : "CLOSED",
+      "error" : null,
+      "durationMs" : 15
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-1",
+        "criterion" : "AT",
+        "name" : "Pump: initial → exists",
+        "description" : "Create Pump → EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-2",
+        "criterion" : "AT",
+        "name" : "Pump: exists → ended (delete)",
+        "description" : "Delete Pump → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-3",
+        "criterion" : "AT",
+        "name" : "Pump: exists → reserved (via createRefuelTurn)",
+        "description" : "Create RefuelTurn reserves the pump → RESERVED"
+      },
+      "status" : "PASS",
+      "expected" : "RESERVED",
+      "actual" : "RESERVED",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-4",
+        "criterion" : "AT",
+        "name" : "Pump: reserved → exists (via cancelRefuelTurn)",
+        "description" : "Cancel RefuelTurn → pump back to EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 14
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-5",
+        "criterion" : "AT",
+        "name" : "Pump: reserved → inUse (via takeNozzle)",
+        "description" : "takeNozzle on RefuelTurn → pump IN_USE"
+      },
+      "status" : "PASS",
+      "expected" : "IN_USE",
+      "actual" : "IN_USE",
+      "error" : null,
+      "durationMs" : 15
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-6",
+        "criterion" : "AT",
+        "name" : "Pump: inUse → exists (via putBackNozzle refuel)",
+        "description" : "putBackNozzle (refuel) → pump back to EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 18
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-7",
+        "criterion" : "AT",
+        "name" : "Pump: exists → inUse (via takeNozzleCash)",
+        "description" : "takeNozzleCash → pump IN_USE"
+      },
+      "status" : "PASS",
+      "expected" : "IN_USE",
+      "actual" : "IN_USE",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-8",
+        "criterion" : "AT",
+        "name" : "Pump: inUse → exists (via putBackNozzle cash)",
+        "description" : "putBackNozzle on CashTurn → pump EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 13
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-9",
+        "criterion" : "AT",
+        "name" : "Pump: exists → blocked (via block)",
+        "description" : "block a pump in EXISTS → BLOCKED"
+      },
+      "status" : "PASS",
+      "expected" : "BLOCKED",
+      "actual" : "BLOCKED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-10",
+        "criterion" : "AT",
+        "name" : "Pump: blocked → exists (via release)",
+        "description" : "release a BLOCKED pump → EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-11",
+        "criterion" : "AT",
+        "name" : "Pump: reserved → blocked",
+        "description" : "block a RESERVED pump → BLOCKED"
+      },
+      "status" : "PASS",
+      "expected" : "BLOCKED",
+      "actual" : "BLOCKED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-12",
+        "criterion" : "AT",
+        "name" : "Pump: inUse → blocked",
+        "description" : "block a pump while IN_USE → BLOCKED"
+      },
+      "status" : "PASS",
+      "expected" : "BLOCKED",
+      "actual" : "BLOCKED",
+      "error" : null,
+      "durationMs" : 14
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-13",
+        "criterion" : "AT",
+        "name" : "Pump: blocked → ended (delete blocked pump)",
+        "description" : "Delete BLOCKED pump → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-14",
+        "criterion" : "AT",
+        "name" : "Pump: exists → exists (self-loop via refill)",
+        "description" : "Refill pump in EXISTS → stays EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-15",
+        "criterion" : "AT",
+        "name" : "Pump: blocked → blocked (self-loop: block already blocked)",
+        "description" : "Block a BLOCKED pump → stays BLOCKED (or error)"
+      },
+      "status" : "PASS",
+      "expected" : "BLOCKED",
+      "actual" : "BLOCKED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-Pump-16",
+        "criterion" : "AT",
+        "name" : "Pump: reserved → reserved (self-loop: non-state-changing op)",
+        "description" : "Pump stays RESERVED when we just read it"
+      },
+      "status" : "PASS",
+      "expected" : "RESERVED",
+      "actual" : "RESERVED",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-1",
+        "criterion" : "AT",
+        "name" : "CashTurn: initial → filling (takeNozzleCash)",
+        "description" : "takeNozzleCash → FILLING"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING",
+      "actual" : "FILLING",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-2",
+        "criterion" : "AT",
+        "name" : "CashTurn: filling → fillingEnded (putBackNozzle)",
+        "description" : "putBackNozzle on FILLING → FILLING_ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_ENDED",
+      "actual" : "FILLING_ENDED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-3",
+        "criterion" : "AT",
+        "name" : "CashTurn: fillingEnded → paid (payCash)",
+        "description" : "payCash on FILLING_ENDED → PAID"
+      },
+      "status" : "PASS",
+      "expected" : "PAID",
+      "actual" : "PAID",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-4",
+        "criterion" : "AT",
+        "name" : "CashTurn: fillingEnded → unpaid (driveAwayWithoutPaying)",
+        "description" : "driveAwayWithoutPaying → UNPAID"
+      },
+      "status" : "PASS",
+      "expected" : "UNPAID",
+      "actual" : "UNPAID",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-5",
+        "criterion" : "AT",
+        "name" : "CashTurn: paid → ended (end)",
+        "description" : "end on PAID → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-6",
+        "criterion" : "AT",
+        "name" : "CashTurn: unpaid → ended (end)",
+        "description" : "end on UNPAID → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-7",
+        "criterion" : "AT",
+        "name" : "CashTurn: initial → creditCardScanned (scanCreditCard)",
+        "description" : "scanCreditCard → CREDIT_CARD_SCANNED"
+      },
+      "status" : "PASS",
+      "expected" : "CREDIT_CARD_SCANNED",
+      "actual" : "CREDIT_CARD_SCANNED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-8",
+        "criterion" : "AT",
+        "name" : "CashTurn: creditCardScanned → fillingCredit (takeNozzleCredit)",
+        "description" : "takeNozzleCredit → FILLING_CREDIT"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_CREDIT",
+      "actual" : "FILLING_CREDIT",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-9",
+        "criterion" : "AT",
+        "name" : "CashTurn: fillingCredit → fillingEndedCredit (putBackNozzle)",
+        "description" : "putBackNozzle on FILLING_CREDIT → FILLING_ENDED_CREDIT"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_ENDED_CREDIT",
+      "actual" : "FILLING_ENDED_CREDIT",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-10",
+        "criterion" : "AT",
+        "name" : "CashTurn: fillingEndedCredit → paid (chargeCreditCard)",
+        "description" : "chargeCreditCard → PAID"
+      },
+      "status" : "PASS",
+      "expected" : "PAID",
+      "actual" : "PAID",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "AT-CT-11",
+        "criterion" : "AT",
+        "name" : "CashTurn: creditCardScanned → ended (cancel)",
+        "description" : "cancel on CREDIT_CARD_SCANNED → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-1",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: initial → cardIdentified",
+        "description" : "createRefuelTurn → CARD_IDENTIFIED"
+      },
+      "status" : "PASS",
+      "expected" : "CARD_IDENTIFIED",
+      "actual" : "CARD_IDENTIFIED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-2",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: cardIdentified → filling (takeNozzle)",
+        "description" : "takeNozzle → FILLING"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING",
+      "actual" : "FILLING",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-3",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: filling → fillingEnded (putBackNozzle)",
+        "description" : "putBackNozzle → FILLING_ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_ENDED",
+      "actual" : "FILLING_ENDED",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-4",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: fillingEnded → invoiced (createInvoiceLine)",
+        "description" : "createInvoiceLine → INVOICED"
+      },
+      "status" : "PASS",
+      "expected" : "INVOICED",
+      "actual" : "INVOICED",
+      "error" : null,
+      "durationMs" : 17
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-5",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: invoiced → ended (endRefuelTurn)",
+        "description" : "endRefuelTurn → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 18
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-6",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: cardIdentified → ended (cancel)",
+        "description" : "cancelRefuelTurn from CARD_IDENTIFIED → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AT-RT-7",
+        "criterion" : "AT",
+        "name" : "RefuelTurn: invoiced → invoiced (self-loop via endInvoiceLine)",
+        "description" : "endInvoiceLine keeps RefuelTurn in INVOICED (still active)"
+      },
+      "status" : "PASS",
+      "expected" : "INVOICED",
+      "actual" : "INVOICED",
+      "error" : null,
+      "durationMs" : 18
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-1",
+        "criterion" : "AT",
+        "name" : "Invoice: initial → exists",
+        "description" : "createInvoice → EXISTS"
+      },
+      "status" : "FAIL",
+      "expected" : "EXISTS",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-2",
+        "criterion" : "AT",
+        "name" : "Invoice: exists → ended",
+        "description" : "endInvoice from EXISTS → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-3",
+        "criterion" : "AT",
+        "name" : "Invoice: exists → sent",
+        "description" : "sendInvoice from EXISTS → SENT"
+      },
+      "status" : "FAIL",
+      "expected" : "SENT",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-4",
+        "criterion" : "AT",
+        "name" : "Invoice: sent → paid",
+        "description" : "payInvoice from SENT → PAID"
+      },
+      "status" : "FAIL",
+      "expected" : "PAID",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-5",
+        "criterion" : "AT",
+        "name" : "Invoice: sent → ended",
+        "description" : "endInvoice from SENT → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-6",
+        "criterion" : "AT",
+        "name" : "Invoice: paid → ended",
+        "description" : "endInvoice from PAID → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-7",
+        "criterion" : "AT",
+        "name" : "Invoice: sent → sent (self-loop via send again)",
+        "description" : "sendInvoice from SENT → stays SENT"
+      },
+      "status" : "FAIL",
+      "expected" : "SENT",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-8",
+        "criterion" : "AT",
+        "name" : "Invoice: exists → exists (self-loop via addInvoiceLine)",
+        "description" : "Add InvoiceLine to EXISTS invoice → stays EXISTS"
+      },
+      "status" : "FAIL",
+      "expected" : "EXISTS",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 19
+    }, {
+      "testCase" : {
+        "id" : "AT-Inv-9",
+        "criterion" : "AT",
+        "name" : "Invoice: paid → paid (self-loop: state read)",
+        "description" : "Invoice stays PAID after payment"
+      },
+      "status" : "FAIL",
+      "expected" : "PAID",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-IL-1",
+        "criterion" : "AT",
+        "name" : "InvoiceLine: initial → exists",
+        "description" : "createInvoiceLine → EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 15
+    }, {
+      "testCase" : {
+        "id" : "AT-IL-2",
+        "criterion" : "AT",
+        "name" : "InvoiceLine: exists → ended",
+        "description" : "endInvoiceLine → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 21
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-1",
+        "criterion" : "AT",
+        "name" : "CardHolder: initial → normal",
+        "description" : "createCardHolder → NORMAL"
+      },
+      "status" : "PASS",
+      "expected" : "NORMAL",
+      "actual" : "NORMAL",
+      "error" : null,
+      "durationMs" : 2
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-2",
+        "criterion" : "AT",
+        "name" : "CardHolder: normal → suspended",
+        "description" : "suspend → SUSPENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "SUSPENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-3",
+        "criterion" : "AT",
+        "name" : "CardHolder: suspended → normal",
+        "description" : "unsuspend → NORMAL"
+      },
+      "status" : "FAIL",
+      "expected" : "NORMAL",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-4",
+        "criterion" : "AT",
+        "name" : "CardHolder: normal → ended (delete)",
+        "description" : "delete normal CardHolder → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-5",
+        "criterion" : "AT",
+        "name" : "CardHolder: suspended → ended (delete suspended)",
+        "description" : "delete suspended CardHolder → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-6",
+        "criterion" : "AT",
+        "name" : "CardHolder: normal → normal (self-loop: read)",
+        "description" : "CardHolder stays NORMAL when read"
+      },
+      "status" : "FAIL",
+      "expected" : "NORMAL",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AT-CH-7",
+        "criterion" : "AT",
+        "name" : "CardHolder: suspended → suspended (self-loop: defaultOnInvoice)",
+        "description" : "defaultOnInvoice on suspended CH → stays SUSPENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "SUSPENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 6
+    } ]
+  }, {
+    "criterion" : "ALFP",
+    "description" : "All-Loop-Free-Paths: for each FSM, every path from initial to an end state (with no state repeated) must be exercised.",
+    "totalTests" : 21,
+    "passedTests" : 18,
+    "failedTests" : 3,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "ALFP-GS-1",
+        "criterion" : "ALFP",
+        "name" : "GasStation: initial → concept → ended",
+        "description" : "create → rejectPlans → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 2
+    }, {
+      "testCase" : {
+        "id" : "ALFP-GS-2",
+        "criterion" : "ALFP",
+        "name" : "GasStation: initial → concept → underConstruction → closed → underInspection → ended",
+        "description" : "Full path bypassing ready/open"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "ALFP-GS-3",
+        "criterion" : "ALFP",
+        "name" : "GasStation: initial → concept → underConstruction → ready → closed → underInspection → ended",
+        "description" : "Path through ready but not open"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "ALFP-GS-4",
+        "criterion" : "ALFP",
+        "name" : "GasStation: initial → concept → underConstruction → ready → open → closed → underInspection → ended",
+        "description" : "Full lifecycle path"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Pump-1",
+        "criterion" : "ALFP",
+        "name" : "Pump: initial → exists → ended",
+        "description" : "create → delete → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Pump-2",
+        "criterion" : "ALFP",
+        "name" : "Pump: initial → exists → blocked → ended",
+        "description" : "create → block → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Pump-3",
+        "criterion" : "ALFP",
+        "name" : "Pump: initial → exists → reserved → blocked → ended",
+        "description" : "create → reserve(via RT) → block → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Pump-4",
+        "criterion" : "ALFP",
+        "name" : "Pump: initial → exists → inUse → blocked → ended",
+        "description" : "create → inUse(via takeNozzleCash) → block → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Pump-5",
+        "criterion" : "ALFP",
+        "name" : "Pump: initial → exists → reserved → inUse → blocked → ended",
+        "description" : "create → reserve → inUse(takeNozzle) → block → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 13
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CT-1",
+        "criterion" : "ALFP",
+        "name" : "CashTurn: initial → creditCardScanned → ended",
+        "description" : "scanCreditCard → cancel → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CT-2",
+        "criterion" : "ALFP",
+        "name" : "CashTurn: initial → filling → fillingEnded → paid → ended",
+        "description" : "takeNozzleCash → putBack → payCash → end → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CT-3",
+        "criterion" : "ALFP",
+        "name" : "CashTurn: initial → filling → fillingEnded → unpaid → ended",
+        "description" : "takeNozzleCash → putBack → driveAway → end → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CT-4",
+        "criterion" : "ALFP",
+        "name" : "CashTurn: initial → creditCardScanned → fillingCredit → fillingEndedCredit → paid → ended",
+        "description" : "scanCreditCard → takeNozzleCredit → putBack → chargeCreditCard → end → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 11
+    }, {
+      "testCase" : {
+        "id" : "ALFP-RT-1",
+        "criterion" : "ALFP",
+        "name" : "RefuelTurn: initial → cardIdentified → ended",
+        "description" : "create → cancel → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "ALFP-RT-2",
+        "criterion" : "ALFP",
+        "name" : "RefuelTurn: initial → cardIdentified → filling → fillingEnded → invoiced → ended",
+        "description" : "Full refuelTurn lifecycle → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 18
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Inv-1",
+        "criterion" : "ALFP",
+        "name" : "Invoice: initial → exists → ended",
+        "description" : "create → end → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Inv-2",
+        "criterion" : "ALFP",
+        "name" : "Invoice: initial → exists → sent → ended",
+        "description" : "create → send → end → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "ALFP-Inv-3",
+        "criterion" : "ALFP",
+        "name" : "Invoice: initial → exists → sent → paid → ended",
+        "description" : "create → send → pay → end → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "ALFP-IL-1",
+        "criterion" : "ALFP",
+        "name" : "InvoiceLine: initial → exists → ended",
+        "description" : "create → end → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 15
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CH-1",
+        "criterion" : "ALFP",
+        "name" : "CardHolder: initial → normal → ended",
+        "description" : "create → delete → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "ALFP-CH-2",
+        "criterion" : "ALFP",
+        "name" : "CardHolder: initial → normal → suspended → ended",
+        "description" : "create → suspend → delete → 404"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 4
+    } ]
+  }, {
+    "criterion" : "AOLP",
+    "description" : "All-One-Loop-Paths: paths from initial to end state with exactly one state visited twice.",
+    "totalTests" : 18,
+    "passedTests" : 16,
+    "failedTests" : 2,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "AOLP-GS-1",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept(×2) → ended",
+        "description" : "create → revisePlans → rejectPlans → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-2",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept(×2) → underConstruction → closed → underInspection → ended",
+        "description" : "revisePlans loop then full path"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-3",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept → underConstruction(×2) → closed → underInspection → ended",
+        "description" : "openingInspectionNotPassed loop then closeStation"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-4",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept → underConstruction → ready(×2) → closed → underInspection → ended",
+        "description" : "ready self-loop (add pump) then close"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-5",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept → underConstruction → ready → open(×2) → closed → underInspection → ended",
+        "description" : "open self-loop (add pump) then close"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-6",
+        "criterion" : "AOLP",
+        "name" : "GasStation: initial → concept → underConstruction → ready → open → closed(×2) → underInspection → ended",
+        "description" : "closed self-loop (block pump) then inspection"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "AOLP-GS-7",
+        "criterion" : "AOLP",
+        "name" : "GasStation: ... → closed → underInspection → closed → underInspection → ended",
+        "description" : "closingInspectionNotPassed then retry → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AOLP-Pump-1",
+        "criterion" : "AOLP",
+        "name" : "Pump: initial → exists(×2) → ended",
+        "description" : "create → refill(exists→exists) → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AOLP-Pump-2",
+        "criterion" : "AOLP",
+        "name" : "Pump: initial → exists → blocked(×2) → ended",
+        "description" : "create → block → (blocked stays blocked) → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AOLP-Pump-3",
+        "criterion" : "AOLP",
+        "name" : "Pump: initial → exists → reserved → exists → blocked → ended",
+        "description" : "create → reserve → cancel(reserve→exists) → block → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "AOLP-CT-1",
+        "criterion" : "AOLP",
+        "name" : "CashTurn: initial → creditCardScanned(×2) → ended",
+        "description" : "scanCreditCard → stay in CREDIT_CARD_SCANNED → cancel"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "AOLP-CT-2",
+        "criterion" : "AOLP",
+        "name" : "CashTurn: initial → filling → fillingEnded → paid(×2) → ended",
+        "description" : "full cash path with paid self-loop confirmed → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 10
+    }, {
+      "testCase" : {
+        "id" : "AOLP-RT-1",
+        "criterion" : "AOLP",
+        "name" : "RefuelTurn: initial → cardIdentified → filling → fillingEnded → invoiced(×2) → ended",
+        "description" : "invoiced self-loop via endInvoiceLine"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 15
+    }, {
+      "testCase" : {
+        "id" : "AOLP-Inv-1",
+        "criterion" : "AOLP",
+        "name" : "Invoice: initial → exists → sent(×2) → ended",
+        "description" : "create → send → send again → end → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AOLP-Inv-2",
+        "criterion" : "AOLP",
+        "name" : "Invoice: initial → exists → sent → paid(×2) → ended",
+        "description" : "create → send → pay → (paid state) → end → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "AOLP-CH-1",
+        "criterion" : "AOLP",
+        "name" : "CardHolder: initial → normal(×2) → suspended → ended",
+        "description" : "create → (normal self-loop) → suspend → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "AOLP-CH-2",
+        "criterion" : "AOLP",
+        "name" : "CardHolder: initial → normal → suspended(×2) → ended",
+        "description" : "create → suspend → (default triggers suspend again or stays) → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "AOLP-CH-3",
+        "criterion" : "AOLP",
+        "name" : "CardHolder: initial → normal → suspended → normal → ended",
+        "description" : "create → suspend → unsuspend → delete"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED(404)",
+      "actual" : "ENDED(404)",
+      "error" : null,
+      "durationMs" : 7
+    } ]
+  }, {
+    "criterion" : "MAD",
+    "description" : "Method Allowed/Disallowed: verify each method is allowed (or rejected) in each object state as specified by the MERODE model.",
+    "totalTests" : 48,
+    "passedTests" : 40,
+    "failedTests" : 8,
+    "errorTests" : 0,
+    "skippedTests" : 0,
+    "results" : [ {
+      "testCase" : {
+        "id" : "MAD-Pump-1",
+        "criterion" : "MAD",
+        "name" : "Pump[EXISTS]: takeNozzleCredit DISALLOWED",
+        "description" : "takeNozzleCredit requires CashTurn in CREDIT_CARD_SCANNED – pump must be in EXISTS first, but directly creating that CashTurn on a non-existent turn should fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-2",
+        "criterion" : "MAD",
+        "name" : "Pump[EXISTS]: release DISALLOWED",
+        "description" : "release is only allowed from BLOCKED state"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-3",
+        "criterion" : "MAD",
+        "name" : "Pump[EXISTS]: MEcrRefuelTurn ALLOWED",
+        "description" : "createRefuelTurn when pump is EXISTS → pump becomes RESERVED"
+      },
+      "status" : "PASS",
+      "expected" : "RESERVED",
+      "actual" : "RESERVED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-4",
+        "criterion" : "MAD",
+        "name" : "Pump[EXISTS]: block ALLOWED",
+        "description" : "block an EXISTS pump → BLOCKED"
+      },
+      "status" : "PASS",
+      "expected" : "BLOCKED",
+      "actual" : "BLOCKED",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-5",
+        "criterion" : "MAD",
+        "name" : "Pump[RESERVED]: MEtakeNozzleCash DISALLOWED",
+        "description" : "takeNozzleCash when pump is RESERVED must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-6",
+        "criterion" : "MAD",
+        "name" : "Pump[RESERVED]: MEcrRefuelTurn DISALLOWED",
+        "description" : "second createRefuelTurn on RESERVED pump must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-7",
+        "criterion" : "MAD",
+        "name" : "Pump[RESERVED]: takeNozzle ALLOWED",
+        "description" : "takeNozzle on reserved pump → IN_USE"
+      },
+      "status" : "PASS",
+      "expected" : "IN_USE",
+      "actual" : "IN_USE",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-8",
+        "criterion" : "MAD",
+        "name" : "Pump[IN_USE]: takeNozzle DISALLOWED",
+        "description" : "takeNozzle on IN_USE pump (via a second refuelTurn) must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-9",
+        "criterion" : "MAD",
+        "name" : "Pump[IN_USE]: putBackNozzle ALLOWED",
+        "description" : "putBackNozzle moves pump back to EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-10",
+        "criterion" : "MAD",
+        "name" : "Pump[BLOCKED]: release ALLOWED",
+        "description" : "release BLOCKED pump → EXISTS"
+      },
+      "status" : "PASS",
+      "expected" : "EXISTS",
+      "actual" : "EXISTS",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-11",
+        "criterion" : "MAD",
+        "name" : "Pump[BLOCKED]: block DISALLOWED",
+        "description" : "block an already BLOCKED pump must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 17
+    }, {
+      "testCase" : {
+        "id" : "MAD-Pump-12",
+        "criterion" : "MAD",
+        "name" : "Pump[BLOCKED]: MEtakeNozzleCash DISALLOWED",
+        "description" : "takeNozzleCash on BLOCKED pump must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-1",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING]: putBackNozzle ALLOWED",
+        "description" : "putBackNozzle on FILLING → FILLING_ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_ENDED",
+      "actual" : "FILLING_ENDED",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-2",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING]: chargeCreditCard DISALLOWED",
+        "description" : "chargeCreditCard on FILLING state must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 13
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-3",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING]: payCash DISALLOWED",
+        "description" : "payCash on FILLING state must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-4",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING_ENDED]: payCash ALLOWED",
+        "description" : "payCash on FILLING_ENDED → PAID"
+      },
+      "status" : "PASS",
+      "expected" : "PAID",
+      "actual" : "PAID",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-5",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING_ENDED]: driveAwayWithoutPaying ALLOWED",
+        "description" : "driveAwayWithoutPaying on FILLING_ENDED → UNPAID"
+      },
+      "status" : "PASS",
+      "expected" : "UNPAID",
+      "actual" : "UNPAID",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-6",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING_ENDED]: putBackNozzle DISALLOWED",
+        "description" : "second putBackNozzle on FILLING_ENDED must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-7",
+        "criterion" : "MAD",
+        "name" : "CashTurn[CREDIT_CARD_SCANNED]: takeNozzleCredit ALLOWED",
+        "description" : "takeNozzleCredit on CREDIT_CARD_SCANNED → FILLING_CREDIT"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_CREDIT",
+      "actual" : "FILLING_CREDIT",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-8",
+        "criterion" : "MAD",
+        "name" : "CashTurn[CREDIT_CARD_SCANNED]: cancelCashTurn ALLOWED",
+        "description" : "cancel on CREDIT_CARD_SCANNED → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-9",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING_ENDED_CREDIT]: chargeCreditCard ALLOWED",
+        "description" : "chargeCreditCard → PAID"
+      },
+      "status" : "PASS",
+      "expected" : "PAID",
+      "actual" : "PAID",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-10",
+        "criterion" : "MAD",
+        "name" : "CashTurn[FILLING_ENDED_CREDIT]: driveAwayWithoutPaying DISALLOWED",
+        "description" : "driveAwayWithoutPaying on FILLING_ENDED_CREDIT must fail"
+      },
+      "status" : "FAIL",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP 200 OK (unexpected success)",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-11",
+        "criterion" : "MAD",
+        "name" : "CashTurn[PAID]: end ALLOWED",
+        "description" : "end on PAID → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-CT-12",
+        "criterion" : "MAD",
+        "name" : "CashTurn[PAID]: payCash DISALLOWED",
+        "description" : "second payCash on PAID must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-1",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[CARD_IDENTIFIED]: takeNozzle ALLOWED",
+        "description" : "takeNozzle → FILLING"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING",
+      "actual" : "FILLING",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-2",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[CARD_IDENTIFIED]: cancelRefuelTurn ALLOWED",
+        "description" : "cancel → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 7
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-3",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[CARD_IDENTIFIED]: putBackNozzle DISALLOWED",
+        "description" : "putBackNozzle without first taking nozzle must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 6
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-4",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[FILLING]: putBackNozzle ALLOWED",
+        "description" : "putBackNozzle → FILLING_ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "FILLING_ENDED",
+      "actual" : "FILLING_ENDED",
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-5",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[FILLING]: takeNozzle DISALLOWED",
+        "description" : "second takeNozzle must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-6",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[FILLING_ENDED]: MEcrInvoiceLine ALLOWED",
+        "description" : "createInvoiceLine → RefuelTurn becomes INVOICED"
+      },
+      "status" : "PASS",
+      "expected" : "INVOICED",
+      "actual" : "INVOICED",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-7",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[FILLING_ENDED]: takeNozzle DISALLOWED",
+        "description" : "takeNozzle on FILLING_ENDED must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 9
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-8",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[INVOICED]: MEendRefuelTurn ALLOWED",
+        "description" : "endRefuelTurn after endInvoiceLine → ENDED"
+      },
+      "status" : "PASS",
+      "expected" : "ENDED",
+      "actual" : "ENDED",
+      "error" : null,
+      "durationMs" : 14
+    }, {
+      "testCase" : {
+        "id" : "MAD-RT-9",
+        "criterion" : "MAD",
+        "name" : "RefuelTurn[INVOICED]: MEcrInvoiceLine DISALLOWED",
+        "description" : "second createInvoiceLine on INVOICED RefuelTurn must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 12
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-1",
+        "criterion" : "MAD",
+        "name" : "Invoice[EXISTS]: send ALLOWED",
+        "description" : "sendInvoice from EXISTS → SENT"
+      },
+      "status" : "FAIL",
+      "expected" : "SENT",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-2",
+        "criterion" : "MAD",
+        "name" : "Invoice[EXISTS]: pay DISALLOWED",
+        "description" : "payInvoice before sending must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-3",
+        "criterion" : "MAD",
+        "name" : "Invoice[EXISTS]: defaultOnInvoice DISALLOWED",
+        "description" : "defaultOnInvoice before sending must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 2
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-4",
+        "criterion" : "MAD",
+        "name" : "Invoice[SENT]: pay ALLOWED",
+        "description" : "payInvoice from SENT → PAID"
+      },
+      "status" : "FAIL",
+      "expected" : "PAID",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-5",
+        "criterion" : "MAD",
+        "name" : "Invoice[SENT]: defaultOnInvoice ALLOWED",
+        "description" : "defaultOnInvoice from SENT → SENT (stays sent, penalty applied)"
+      },
+      "status" : "FAIL",
+      "expected" : "SENT",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-6",
+        "criterion" : "MAD",
+        "name" : "Invoice[SENT]: MEcrInvoiceLine DISALLOWED (invoice already sent)",
+        "description" : "addInvoiceLine after sending must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 21
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-7",
+        "criterion" : "MAD",
+        "name" : "Invoice[PAID]: end ALLOWED",
+        "description" : "endInvoice from PAID → ENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "ENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-Inv-8",
+        "criterion" : "MAD",
+        "name" : "Invoice[PAID]: pay DISALLOWED (already paid)",
+        "description" : "second payInvoice on PAID must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-1",
+        "criterion" : "MAD",
+        "name" : "CardHolder[NORMAL]: suspend ALLOWED",
+        "description" : "suspend NORMAL CardHolder → SUSPENDED"
+      },
+      "status" : "FAIL",
+      "expected" : "SUSPENDED",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 1
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-2",
+        "criterion" : "MAD",
+        "name" : "CardHolder[NORMAL]: unsuspend DISALLOWED",
+        "description" : "unsuspend a NORMAL CardHolder must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 2
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-3",
+        "criterion" : "MAD",
+        "name" : "CardHolder[NORMAL]: MEcrRefuelTurn ALLOWED",
+        "description" : "createRefuelTurn for NORMAL CardHolder succeeds"
+      },
+      "status" : "PASS",
+      "expected" : "CARD_IDENTIFIED",
+      "actual" : "CARD_IDENTIFIED",
+      "error" : null,
+      "durationMs" : 4
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-4",
+        "criterion" : "MAD",
+        "name" : "CardHolder[SUSPENDED]: unsuspend ALLOWED",
+        "description" : "unsuspend SUSPENDED CardHolder → NORMAL"
+      },
+      "status" : "FAIL",
+      "expected" : "NORMAL",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 8
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-5",
+        "criterion" : "MAD",
+        "name" : "CardHolder[SUSPENDED]: suspend DISALLOWED",
+        "description" : "second suspend on SUSPENDED must fail"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 3
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-6",
+        "criterion" : "MAD",
+        "name" : "CardHolder[SUSPENDED]: MEcrRefuelTurn DISALLOWED",
+        "description" : "createRefuelTurn for SUSPENDED CardHolder must fail (card blocked)"
+      },
+      "status" : "PASS",
+      "expected" : "HTTP error (method disallowed)",
+      "actual" : "HTTP error (method disallowed)",
+      "error" : null,
+      "durationMs" : 5
+    }, {
+      "testCase" : {
+        "id" : "MAD-CH-7",
+        "criterion" : "MAD",
+        "name" : "CardHolder[SUSPENDED]: MEcrInvoice ALLOWED",
+        "description" : "createInvoice for SUSPENDED CardHolder succeeds → EXISTS"
+      },
+      "status" : "FAIL",
+      "expected" : "EXISTS",
+      "actual" : null,
+      "error" : null,
+      "durationMs" : 3
+    } ]
+  } ]
+}
