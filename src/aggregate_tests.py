@@ -59,7 +59,7 @@ def parse_xml_reports(report_dir):
     }
 
 def main():
-    projects_dir = os.path.join(os.getcwd(), 'projects')
+    projects_dir = os.path.join(os.getcwd(), 'run')
     if not os.path.exists(projects_dir):
         print(f"Projects directory not found at {projects_dir}")
         return

@@ -1,3 +1,4 @@
+from asyncio import timeout
 import _frozen_importlib
 import os
 
@@ -38,7 +39,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True, use_multi_agent: bool = False) -> float:
+def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bool = True,
+       create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True, use_multi_agent: bool = False) -> float:
     llm = LLM(
         model=os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929"),
         condenser=LLMSummarizingCondenser(                                                                                           
@@ -114,7 +116,10 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
         conversation = Conversation(agent=agent, workspace=cwd)
 
         if use_spring_boot:
-            conversation.send_message(prompt.get_backend_prompt())
+            if create_backend_only_uml:
+                conversation.send_message(prompt.get_backend_prompt_only_uml())
+            else:
+                conversation.send_message(prompt.get_backend_prompt())
         else:
             conversation.send_message(prompt.get_backend_prompt_python())
         conversation.run()
@@ -153,7 +158,7 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
             base_url=os.getenv("TEST_LLM_BASE_URL", None),
             temperature=1.0,
             top_p=0.95,
-            
+            timeout=1000,
             usage_id="agent"
         )
 
@@ -161,11 +166,13 @@ def run(prompt: Prompt, create_backend: bool = True, create_frontend: bool = Tru
             Tool(name=FileEditorTool.name),
             Tool(name=TaskTrackerTool.name),
             Tool(name=TerminalTool.name),
+            Tool(name=DelegateTool.name)
         ]
 
         agent = Agent(
             llm=llm,
             tools=tools,
+            visualize=DelegationVisualizer(name="Delegator Test"),
         )
 
         cwd = os.getcwd()

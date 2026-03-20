@@ -32,6 +32,32 @@ The application domain is described as follows:
 - The `openapi.yaml` file correctly reflects the implemented endpoints.
 """
 
+BACKEND_PROMPT_ONLY_UML = """
+## Task
+Create a new Spring Boot backend project by taking all information from a xml conceptual model and a textual description.
+
+## Background
+Implement all metaobject as clases, with their methods and attributes taken from metamethods and metattributes tags.
+Implement all constraints from metadependencies tags. Add support for metaevents with the proper spring boot endpoints.
+
+The application domain is described as follows:
+{desc}
+
+## Requirements
+1. Analyze the xml conceptual model in `projects/{title}/merode_application/model.xmp`.
+2. Use the proper xml tags to create a fully functional Spring Boot project with the same logic.
+3. Produce an `openapi.yaml` file accurately describing the REST API.
+4. Save the generated project into a new folder named `backend` inside the working directory `run/{title}`.
+
+## Constraints
+- The project must use Java and Spring Boot.
+
+## Success Criteria
+- The generated application compiles without errors.
+- The application runs successfully.
+- The `openapi.yaml` file correctly reflects the implemented endpoints.
+"""
+
 BACKEND_PROMPT_PYTHON = """
 ## Task
 Create a new Python Flask backend project by adapting the provided Java DAO files to implement the specified business logic.
@@ -125,5 +151,8 @@ class Prompt:
     
     def get_test_prompt(self):
         return TEST_PROMPT.format(title=self.title, desc=self.desc)
+    
+    def get_backend_prompt_only_uml(self):
+        return BACKEND_PROMPT_ONLY_UML.format(title=self.title, desc=self.desc)
 
 
