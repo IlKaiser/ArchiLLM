@@ -1,4 +1,4 @@
-# MultiMultiAgent-ArchiLLM
+# ARTHUR
 
 This repository provides an automated scaffolding and project generation framework powered by LLM agents. Using the `openhands` SDK, it orchestrates AI agents to autonomously construct backend services (Java Spring Boot or Python), modern frontends, and comprehensive test suites based on simple text descriptions.
 
