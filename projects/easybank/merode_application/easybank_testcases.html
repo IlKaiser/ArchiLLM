@@ -1,0 +1,35 @@
+<html><head><style>body { font-family: sans-serif; }</style></head><body><h1>Tescav Test Cases for easybank</h1>
+<h2>Create Objects</h2>
+<html>The <b>Create Objects (CO)</b> criterion checks whether for each object type, at least one instance has been instantiated.<br><br> The objects of this model are:  Accountholder,  Account, </html>
+<hr>
+<h2>End Objects</h2>
+<html>The <b>End Objects (EO)</b> criterion checks whether for each object type, at least one instance has been ended.<br><br> The objects of this model are:  Accountholder,  Account, </html>
+<hr>
+<h2>All-transitions</h2>
+<html><p>The <b>All-Transitions (AT)</b> criterion checks whether for each Finite State Machine, all transitions between different states have been used.<br><br>For <b>Accountholder</b> the transitions are: <br> from <i>initial</i> to <i>exists</i> <br>  from <i>exists</i> to <i>ended</i> <br>  from <i>exists</i> to <i>exists</i> <br> <br>For <b>Account</b> the transitions are: <br> from <i>initial</i> to <i>frozen</i> <br>  from <i>frozen</i> to <i>frozen</i> <br>  from <i>Open</i> to <i>Open</i> <br>  from <i>frozen</i> to <i>Open</i> <br>  from <i>Open</i> to <i>frozen</i> <br>  from <i>frozen</i> to <i>Closed</i> <br>  from <i>Open</i> to <i>Closed</i> <br>  from <i>Closed</i> to <i>ended</i> <br> <br></p></html>
+<hr>
+<h2>All-loop-free-paths</h2>
+<html><p>The <b>All-Loop-Free-Paths (ALFP)</b> criterion checks whether for each selected Finite State Machine, all the loop-free paths have been used.<br>A loop-free path is any path from the initial to an ending state, in which <b>no</b> states are visited more than once.<br><br>For <b>Accountholder</b> the loop-free-paths are: <br><i>initial</i> <i>exists</i> <i>ended</i><br><br>For <b>Account</b> the loop-free-paths are: <br><i>initial</i> <i>frozen</i> <i>Closed</i> <i>ended</i><br><i>initial</i> <i>frozen</i> <i>Open</i> <i>Closed</i> <i>ended</i><br><br></p></html>
+<hr>
+<h2>All-one-loop-paths</h2>
+<html><p>The <b>All-One-Loop-Paths (AOLP)</b> criterion checks whether for each selected Finite State Machine, all the one-loop paths have been used.<br>A one-loop path is any path from the initial to an ending state, in which <b>exactly one</b> state is visited twice.<br><br>For <b>Accountholder</b> the one-loop-paths are: <br><i>initial</i> <i>exists</i> <i>exists</i> <i>ended</i> <br><br>For <b>Account</b> the one-loop-paths are: <br><i>initial</i> <i>frozen</i> <i>frozen</i> <i>Closed</i> <i>ended</i> <br><i>initial</i> <i>frozen</i> <i>frozen</i> <i>Open</i> <i>Closed</i> <i>ended</i> <br><i>initial</i> <i>frozen</i> <i>Open</i> <i>Open</i> <i>Closed</i> <i>ended</i> <br><i>initial</i> <i>frozen</i> <i>Open</i> <i>frozen</i> <i>Closed</i> <i>ended</i> <br><br>
+<hr>
+<h2>All-states</h2>
+<html><p>The <b>All-States (AS)</b> criterion checks whether for each selected Finite State Machine, all the states have been used.<br> For <b>Accountholder</b>, the states are: <i>initial</i> <i>exists</i> <i>ended</i> <br> For <b>Account</b>, the states are: <i>initial</i> <i>frozen</i> <i>ended</i> <i>Open</i> <i>Closed</i> <br>
+<hr>
+<h2>Association-end multiplicity</h2>
+<html><p>The <b>Association-End-Multiplicity (AEM)</b> criterion checks whether for each <b>master</b> object type, all <b>dependents</b> have been sufficiently instantiated.<br>For <b>optional-1</b> associations, the dependent must at least be instantiated <b>one</b> time<br>For <b>mandatory-1</b> associations, the dependent must at least be instantiated <b>one</b> time<br>For <b>optional-many</b> associations, the dependent must at least be instantiated <b>two</b> times<br>For <b>mandatory-many</b> associations, the dependent must at least be instantiated <b>two</b> times<br><br>For <b>Accountholder</b>, the following dependents must be instantiated: <br><i>Account</i> at least 2 times <br><br>For <b>Account</b>, the following dependents must be instantiated: <br><br>
+<hr>
+<h2>Generalization</h2>
+<html><p>The <b>Generalization (GEN)</b> criterion checks whether for each <b>parent</b> object type, all <b>children</b> have been instantiated.<br><br>For <b>Accountholder</b> the children are: <br><br>For <b>Account</b> the children are: <br><br></p></html>
+<hr>
+<h2>Transitions-Pair</h2>
+<html><p>The <b>Transition-Pairs (TP)</b> criterion checks that each pair of transition of a selected Finite State Machine have been covered.<br>A Transition-Pair is two transitions, in which the target/to state of the first transition is the source/from state of the second transition.<br><br>For <b>Accountholder</b> the transition pairs are: <br><i>initial exists ended </i><br><br>For <b>Account</b> the transition pairs are: <br><i>initial frozen Open </i><br><i>initial frozen Closed </i><br><i>Open frozen Closed </i><br><i>frozen Open Closed </i><br><i>frozen Closed ended </i><br><i>Open Closed ended </i><br><br>
+<hr>
+<h2>All-Loops</h2>
+<html><p>The <b>All-Loops (AL)</b> criterion checks that each loop of a selected Finite State Machine has been covered.<br>A loop is any possible path between a state and itself.<br><br>For <b>Accountholder</b> the loops are: <br><i>exists</i> <i>exists</i> <br><br>For <b>Account</b> the loops are: <br><i>frozen</i> <i>frozen</i> <br><i>frozen</i> <i>Open</i> <i>frozen</i> <br><i>Open</i> <i>Open</i> <br><br>
+<hr>
+<h2>All-Methods</h2>
+<html><p>The <b>All-Methods (AM)</b> criterion checks that each <b>allowed</b> and <b>disallowed</b> method of a selected Finite State Machine has been covered.<br>A method is <b>allowed</b> in a state, if there is a transition from that state that contains that method.<br>A method is <b>disallowed</b> in a state, if there is no transition from that state that contains that method.<br><br>For <i>Accountholder</i> the methods are: <br><b>Allowed</b> methods in the <b>initial</b> state: MEcrAccountholder <br><br><b>Disallowed</b> methods in the <b>initial</b> state: <br><br><b>Allowed</b> methods in the <b>exists</b> state: MEendAccountholder MEunblock MEclose MEcrAccount MEdeposit MEendAccount MEfreeze MEopen MEblock MEwithdraw <br><br><b>Disallowed</b> methods in the <b>exists</b> state: <br><br><b>Allowed</b> methods in the <b>ended</b> state: <br><br><b>Disallowed</b> methods in the <b>ended</b> state: <br><br>For <i>Account</i> the methods are: <br><b>Allowed</b> methods in the <b>initial</b> state: MEcrAccount <br><br><b>Disallowed</b> methods in the <b>initial</b> state: <br><br><b>Allowed</b> methods in the <b>frozen</b> state: MEdeposit MEopen MEclose <br><br><b>Disallowed</b> methods in the <b>frozen</b> state: MEwithdraw MEendAccount MEfreeze <br><br><b>Allowed</b> methods in the <b>ended</b> state: <br><br><b>Disallowed</b> methods in the <b>ended</b> state: <br><br><b>Allowed</b> methods in the <b>Open</b> state: MEwithdraw MEdeposit MEfreeze MEclose <br><br><b>Disallowed</b> methods in the <b>Open</b> state: MEendAccount MEopen <br><br><b>Allowed</b> methods in the <b>Closed</b> state: MEendAccount <br><br><b>Disallowed</b> methods in the <b>Closed</b> state: MEwithdraw MEclose MEdeposit MEfreeze MEopen <br><br>
+<hr>
+</body></html>
