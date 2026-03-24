@@ -11,6 +11,7 @@ merode_application/
 
 # Add only the content of project but not its subfolders
 projects/*/*/
+!projects/easybank/*
 
 laminar_spans.csv
 laminar_traces.csv
