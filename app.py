@@ -54,11 +54,11 @@ def run_agent_thread(prompt_obj, kwargs, q):
 
 # Sidebar Configuration
 st.sidebar.title("⚙️ Generation Modes")
-create_backend = st.sidebar.checkbox("Create Backend", value=True)
-create_frontend = st.sidebar.checkbox("Create Frontend", value=True)
-create_test = st.sidebar.checkbox("Create Test Suite", value=True)
-use_spring_boot = st.sidebar.checkbox("Use Spring Boot (Java)", value=True)
-use_multi_agent = st.sidebar.checkbox("Use Multi-Agent (Delegation)", value=False)
+create_backend = st.sidebar.checkbox("Create Backend", value=True, key="chk_backend")
+create_frontend = st.sidebar.checkbox("Create Frontend", value=True, key="chk_frontend")
+create_test = st.sidebar.checkbox("Create Test Suite", value=True, key="chk_test")
+use_spring_boot = st.sidebar.checkbox("Use Spring Boot (Java)", value=True, key="chk_spring_boot")
+use_multi_agent = st.sidebar.checkbox("Use Multi-Agent (Delegation)", value=False, key="chk_multi_agent")
 st.sidebar.markdown("*(Note: For Python backends, uncheck 'Use Spring Boot')*")
 
 st.sidebar.markdown("---")
@@ -168,7 +168,13 @@ if uploaded_testcase and proj_name:
 
 st.markdown("---")
 
-if st.button("🔨 Run AI Agent Generator", type="primary"):
+execute_trigger = st.button("🔨 Run AI Agent Generator", type="primary")
+
+if st.session_state.get("auto_resume_trigger", False):
+    execute_trigger = True
+    st.session_state.auto_resume_trigger = False
+
+if execute_trigger:
     if not proj_name or not proj_desc:
         st.error("Project Name and Description are required.")
     elif not llm_api_key:
@@ -190,74 +196,95 @@ if st.button("🔨 Run AI Agent Generator", type="primary"):
         }
 
         # Setup streaming execution loop
-        q = queue.Queue()
-        thread = threading.Thread(target=run_agent_thread, args=(prompt_obj, kwargs, q), daemon=True)
+        if not st.session_state.get("is_running", False):
+            st.session_state.is_running = True
+            st.session_state.show_results = False
+            st.session_state.q = queue.Queue()
+            st.session_state.thread = threading.Thread(target=run_agent_thread, args=(prompt_obj, kwargs, st.session_state.q), daemon=True)
+            st.session_state.full_logs = ""
+            st.session_state.has_error = False
+            st.session_state.error_message = ""
+            st.session_state.completed_steps = {"backend": False, "frontend": False, "test": False}
+            st.session_state.zip_bytes = None
+            st.session_state.thread.start()
+
+if st.session_state.get("is_running", False) or st.session_state.get("show_results", False):
+    st.markdown("---")
+    st.warning("⚠️ Generation can take several minutes to completely build and test. Please do not refresh the page.")
+    metrics_container = st.container()
+    
+    with st.status("Agent Orchestrator Running..." if st.session_state.get("is_running") else "Process Complete", expanded=True) as status:
+        log_area = st.empty()
+        import re
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         
-        st.warning("⚠️ Generation can take several minutes to completely build and test. Please do not refresh the page.")
-        
-        metrics_container = st.container()
-        
-        with st.status("Agent Orchestrator Running...", expanded=True) as status:
-            log_area = st.empty()
-            full_logs = ""
-            has_error = False
-            error_message = ""
-            
-            thread.start()
-            import re
-            ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-            
+        if st.session_state.get("is_running"):
             while True:
                 try:
-                    raw_text = q.get(timeout=1.0)
+                    raw_text = st.session_state.q.get(timeout=1.0)
                     if raw_text == "DONE_FLAG":
+                        st.session_state.is_running = False
+                        st.session_state.show_results = True
                         break
                     
-                    # Strip ANSI terminal color codes for a clean UI
                     text = ansi_escape.sub('', raw_text)
-                    
                     if text.startswith("ERROR_FLAG:"):
-                        has_error = True
-                        error_message = text.replace("ERROR_FLAG:", "")
+                        st.session_state.has_error = True
+                        st.session_state.error_message = text.replace("ERROR_FLAG:", "")
                         continue
                         
                     if "--- STEP_METRICS:" in text:
                         m_info = text.split("--- STEP_METRICS:")[-1].split("---")[0].strip()
                         metrics_container.info(f"⏱️ Step Completed: **{m_info}**")
+                        if "Backend" in m_info: st.session_state.completed_steps["backend"] = True
+                        elif "Frontend" in m_info: st.session_state.completed_steps["frontend"] = True
+                        elif "Test Suite" in m_info: st.session_state.completed_steps["test"] = True
                         
                     if "--- FINAL_METRICS:" in text:
                         m_info = text.split("--- FINAL_METRICS:")[-1].split("---")[0].strip()
                         metrics_container.success(f"🏆 Execution Aggregates: **{m_info}**")
                         
-                    full_logs += text
+                    st.session_state.full_logs += text
                     # We only display the last 3000 chars to avoid UI lag
-                    display_text = full_logs[-3000:]
+                    display_text = st.session_state.full_logs[-3000:]
                     log_area.code(display_text, language="bash")
                 except queue.Empty:
+                    # Rerun interrupt handling caught safely
                     pass
-            
-            if has_error:
-                status.update(label="Process failed!", state="error", expanded=True)
-            else:
-                status.update(label="Process complete!", state="complete", expanded=False)
-            
-        if has_error:
-            st.error("🚨 Generation failed due to an error!")
-            st.code(error_message, language="text")
         else:
-            st.success("Agents have successfully finished processing!")
+            display_text = st.session_state.full_logs[-3000:]
+            log_area.code(display_text, language="bash")
             
-            # Provide Download Option
-            run_folder = os.path.join(os.getcwd(), "run", proj_name)
-            if os.path.exists(run_folder):
+        if st.session_state.has_error:
+            status.update(label="Process failed!", state="error", expanded=True)
+        else:
+            status.update(label="Process complete!", state="complete", expanded=False)
+            
+    if st.session_state.has_error:
+        st.error("🚨 Generation failed due to an error!")
+        st.code(st.session_state.error_message, language="text")
+        
+        if any(st.session_state.completed_steps.values()):
+            st.warning("Some steps were successfully completed! You can auto-resume exactly where you left off.")
+            if st.button("🔄 Auto-Resume from Crash", use_container_width=True):
+                if st.session_state.completed_steps["backend"]: st.session_state.chk_backend = False
+                if st.session_state.completed_steps["frontend"]: st.session_state.chk_frontend = False
+                if st.session_state.completed_steps["test"]: st.session_state.chk_test = False
+                st.session_state.auto_resume_trigger = True
+                st.session_state.show_results = False
+                st.rerun()
+    else:
+        st.success("Agents have successfully finished processing!")
+        run_folder = os.path.join(os.getcwd(), "run", proj_name)
+        if os.path.exists(run_folder):
+            if not st.session_state.get("zip_bytes"):
                 with st.spinner("Wait, packaging the generated project into a zip file..."):
-                    zip_bytes = zip_directory(run_folder)
-                    
-                st.download_button(
-                    label=f"📦 Download {proj_name} Generated Files (.zip)",
-                    data=zip_bytes,
-                    file_name=f"{proj_name}_generated.zip",
-                    mime="application/zip"
-                )
-            else:
-                st.error("Run output folder not found. There might have been an execution error that was not caught.")
+                    st.session_state.zip_bytes = zip_directory(run_folder)
+            st.download_button(
+                label=f"📦 Download {proj_name} Generated Files (.zip)",
+                data=st.session_state.zip_bytes,
+                file_name=f"{proj_name}_generated.zip",
+                mime="application/zip"
+            )
+        else:
+            st.error("Run output folder not found. There might have been an execution error that was not caught.")

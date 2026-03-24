@@ -1,24 +1,41 @@
-FROM continuumio/miniconda3:latest
+# Use Ubuntu 22.04 LTS for rock-solid apt-get mirrors (avoids Debian Trixie timeouts)
+# It natively supports ARM64 architecture (Apple Silicon) natively.
+FROM ubuntu:22.04
 
-# Install system dependencies required for OpenHands agents and compilation
-# - Java 17 + Maven for Spring Boot
-# - Node.js + npm for React/Vite
-# - Docker.io so OpenHands has access to Docker CLI if needed for sandboxing
-RUN apt-get update && apt-get install -y --fix-missing \
-    default-jdk \
+USER root
+
+# Avoid tzdata interactive prompts hanging the build
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install baseline dependencies
+# Ubuntu's mirrors are vastly more stable than Debian Testing
+RUN apt-get update -y && apt-get install -y --fix-missing \
+    openjdk-17-jdk \
     maven \
     nodejs \
     npm \
     curl \
     docker.io \
+    build-essential \
+    python3-dev \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# Install cross-platform Miniconda directly from Anaconda servers
+RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-$(uname -m).sh \
+    && bash Miniconda3-latest-Linux-$(uname -m).sh -b -p /opt/conda \
+    && rm Miniconda3-latest-Linux-$(uname -m).sh
 
-# Copy the environment requirements and setup the conda environment first
-# This uses Docker layer caching smartly
+ENV PATH="/opt/conda/bin:$PATH"
+
+WORKDIR /app
 COPY environment.yml /tmp/environment.yml
+
+# Strip OS-specific build hashes from conda packages to ensure cross-platform compatibility
 RUN sed -i '/==/! s/^\([^=]*=[^=]*\)=.*/\1/' /tmp/environment.yml \
+    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main || true \
+    && conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r || true \
     && conda env create -f /tmp/environment.yml
 
 # We setup bash to activate the env_name environment automatically for all subsequent commands
