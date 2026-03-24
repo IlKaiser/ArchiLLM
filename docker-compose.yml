@@ -1,0 +1,19 @@
+
+
+services:
+  agent-orchestrator:
+    build: .
+    container_name: mma-archillm-orchestrator
+    # Mount the local directory overrides the container's /app so generated code appears locally.
+    volumes:
+      - .:/app
+      # Mount docker socket so OpenHands can spin up sandboxed containers natively on your host
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Pass through the LLM API keys via .env file
+    env_file:
+      - .env
+    # Expose Streamlit dashboard port
+    ports:
+      - "8501:8501"
+    # Optionally customize the command here, eg if you want to run aggregate_tests instead:
+    # command: ["conda", "run", "--no-capture-output", "-n", "env_name", "python", "src/aggregate_tests.py"]

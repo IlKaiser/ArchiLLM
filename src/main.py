@@ -25,8 +25,8 @@ def main():
     
     # List of subfolders to skip
     # skip every project but easybank
-    #SKIP_LIST = ["donationbank", "rentanorchid", "gasstation", "kinepolis", "tuxme", "hfte", "alphainsurance"]
-    SKIP_LIST = ["easybank", "gasstation", "tuxme", "hfte", "alphainsurance"]
+    SKIP_LIST = ["donationbank", "rentanorchid", "gasstation", "kinepolis", "tuxme", "hfte", "easybank"]
+    #SKIP_LIST = ["easybank", "gasstation", "tuxme", "hfte", "alphainsurance"]
     # Setup CSV logging
     csv_file_path = os.path.join(base_dir, 'execution_report.csv')
     file_exists = os.path.exists(csv_file_path)

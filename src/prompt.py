@@ -58,6 +58,39 @@ The application domain is described as follows:
 - The `openapi.yaml` file correctly reflects the implemented endpoints.
 """
 
+BACKEND_FROM_DESCRIPTION_PROMPT = """
+## Task
+Design and implement a complete Spring Boot backend project from scratch, using only the provided natural-language description of the application domain.
+
+## Background
+No pre-existing DAO files or UML/XML model are available. You must derive the full data model, business rules, and REST API solely from the description below:
+{desc}
+
+## Requirements
+1. Analyse the description and identify:
+   - All domain entities (classes) with their attributes and relationships.
+   - Business rules, constraints, and state transitions.
+   - Operations / events that must be exposed as REST endpoints.
+2. Design a relational database schema that correctly captures the domain model.
+3. Implement a fully functional Spring Boot project including:
+   - JPA entities and repositories.
+   - Service layer enforcing all business rules and constraints derived from the description.
+   - REST controllers exposing a clean, RESTful API.
+   - An in-memory H2 database (or equivalent) for easy out-of-the-box execution.
+4. Produce an `openapi.yaml` file accurately describing every implemented endpoint.
+5. Save the generated project into a new folder named `backend` inside the working directory `run/{title}`.
+
+## Constraints
+- The project must use Java and Spring Boot.
+- Do NOT reference any DAO files or UML models; derive everything from the description.
+
+## Success Criteria
+- The generated application compiles without errors.
+- The application starts and runs successfully.
+- All business rules mentioned in the description are enforced by the service layer.
+- The `openapi.yaml` file correctly reflects the implemented endpoints.
+"""
+
 BACKEND_PROMPT_PYTHON = """
 ## Task
 Create a new Python Flask backend project by adapting the provided Java DAO files to implement the specified business logic.
@@ -154,5 +187,8 @@ class Prompt:
     
     def get_backend_prompt_only_uml(self):
         return BACKEND_PROMPT_ONLY_UML.format(title=self.title, desc=self.desc)
+
+    def get_backend_from_description_prompt(self):
+        return BACKEND_FROM_DESCRIPTION_PROMPT.format(title=self.title, desc=self.desc)
 
 

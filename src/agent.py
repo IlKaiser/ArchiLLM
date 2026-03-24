@@ -1,6 +1,7 @@
 from asyncio import timeout
 import _frozen_importlib
 import os
+import time
 
 from openhands.sdk import (
     LLM,
@@ -40,7 +41,8 @@ load_dotenv()
 
 
 def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bool = True,
-       create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True, use_multi_agent: bool = False) -> float:
+       create_frontend: bool = True, create_test: bool = True, use_spring_boot: bool = True,
+        use_backend_from_description: bool = True, use_multi_agent: bool = False) -> float:
     llm = LLM(
         model=os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929"),
         condenser=LLMSummarizingCondenser(                                                                                           
@@ -104,6 +106,9 @@ def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bo
     backend_cost = 0.0
     frontend_cost = 0.0
     test_cost = 0.0
+    backend_time = 0.0
+    frontend_time = 0.0
+    test_time = 0.0
 
     if create_backend:
         
@@ -116,17 +121,20 @@ def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bo
         conversation = Conversation(agent=agent, workspace=cwd)
 
         if use_spring_boot:
-            if create_backend_only_uml:
+            if use_backend_from_description:
+                conversation.send_message(prompt.get_backend_from_description_prompt())
+            elif create_backend_only_uml:
                 conversation.send_message(prompt.get_backend_prompt_only_uml())
             else:
                 conversation.send_message(prompt.get_backend_prompt())
         else:
             conversation.send_message(prompt.get_backend_prompt_python())
+        start_time = time.time()
         conversation.run()
-        print("All done!")
+        backend_time = time.time() - start_time
 
         backend_cost = conversation.conversation_stats.get_combined_metrics().accumulated_cost
-        print(f"BACKEND COST (simple delegation): {backend_cost}")
+        print(f"--- STEP_METRICS: Backend | Time: {backend_time:.2f}s | Cost: ${backend_cost:.4f} ---")
 
     if create_frontend:
         agent = Agent(
@@ -139,11 +147,12 @@ def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bo
         conversation = Conversation(agent=agent, workspace=cwd)
 
         conversation.send_message(prompt.get_frontend_prompt())
+        start_time = time.time()
         conversation.run()
-        print("All done!")
+        frontend_time = time.time() - start_time
 
         frontend_cost = conversation.conversation_stats.get_combined_metrics().accumulated_cost
-        print(f"FRONTEND COST (simple delegation): {frontend_cost}")    
+        print(f"--- STEP_METRICS: Frontend | Time: {frontend_time:.2f}s | Cost: ${frontend_cost:.4f} ---")    
 
     if create_test:
 
@@ -179,14 +188,16 @@ def run(prompt: Prompt, create_backend: bool = True, create_backend_only_uml: bo
         conversation = Conversation(agent=agent, workspace=cwd)
 
         conversation.send_message(prompt.get_test_prompt())
+        start_time = time.time()
         conversation.run()
-        print("All done!")
+        test_time = time.time() - start_time
 
         test_cost = conversation.conversation_stats.get_combined_metrics().accumulated_cost
-        print(f"TEST COST (simple delegation): {test_cost}")
+        print(f"--- STEP_METRICS: Test Suite | Time: {test_time:.2f}s | Cost: ${test_cost:.4f} ---")
 
-    final_cost = test_cost
-    print(f"TOTAL COST (simple delegation): {final_cost}")
+    final_cost = backend_cost + frontend_cost + test_cost
+    final_time = backend_time + frontend_time + test_time
+    print(f"--- FINAL_METRICS: Total Time: {final_time:.2f}s | Total Cost: ${final_cost:.4f} ---")
     return final_cost
 
 
