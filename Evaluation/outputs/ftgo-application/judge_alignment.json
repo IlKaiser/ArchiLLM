@@ -1,0 +1,105 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::RestaurantService"
+      ],
+      "predicted_nodes": [
+        "Global::restaurant_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the restaurant management microservice. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Order Service"
+      ],
+      "predicted_nodes": [
+        "Global::order_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the order processing microservice. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Consumer Service"
+      ],
+      "predicted_nodes": [
+        "Global::consumer_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the consumer/customer management microservice. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::OrderHistoryService"
+      ],
+      "predicted_nodes": [
+        "Global::order_history_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the order history service used for querying historical orders. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Accounting Service"
+      ],
+      "predicted_nodes": [
+        "Global::accounting_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the accounting/payment-related microservice. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Kitchen Service"
+      ],
+      "predicted_nodes": [
+        "Global::kitchen_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the kitchen operations service responsible for tickets and preparation tracking. The boundary attribution is the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::API Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::api_gateway",
+        "Global::API Gateway Layer (API Composition)"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The GT API Gateway is represented by the predicted concrete api_gateway node and an additional API composition gateway-layer node. These are semantically part of the same API gateway responsibility, and the boundary attribution remains Global."
+    },
+    {
+      "gt_nodes": [
+        "Global::DynamoDB"
+      ],
+      "predicted_nodes": [
+        "Global::CQRS Read Model"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted CQRS Read Model corresponds functionally to the GT DynamoDB-backed read model used for order history queries. Although the predicted node is less technology-specific, it represents the same read-side storage concern. The boundary attribution is Global in both cases."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Kafka",
+    "Global::GraphQL API Gateway",
+    "Global::CDCService",
+    "Global::Zookeeper",
+    "Global::MySQL Database"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::delivery_service",
+    "Global::Event Sourced Service",
+    "Global::Core Business Services (Database per Service)"
+  ]
+}

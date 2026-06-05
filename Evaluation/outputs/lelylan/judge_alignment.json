@@ -1,0 +1,150 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::subscriptions"
+      ],
+      "predicted_nodes": [
+        "Global::subscription_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the subscription service for real-time device data subscription and notification handling. Both are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::webhooks"
+      ],
+      "predicted_nodes": [
+        "Global::webhook_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent webhook callback delivery for real-time HTTP notifications. Both are in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::websockets"
+      ],
+      "predicted_nodes": [
+        "Global::websocket_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent WebSocket-based real-time bidirectional communication. Both are in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::physicals"
+      ],
+      "predicted_nodes": [
+        "Global::device_proxy_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The GT physicals service corresponds to the physical device proxy that forwards requests to hardware devices. The predicted device_proxy_service is semantically equivalent. Both are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::devices"
+      ],
+      "predicted_nodes": [
+        "Global::device_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the core device management service. Both are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::types"
+      ],
+      "predicted_nodes": [
+        "Global::device_type_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent device type definition and management. Both are in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::profiles"
+      ],
+      "predicted_nodes": [
+        "Global::user_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The GT profiles service aligns with user profile management functionality. The predicted user_service is a reasonable semantic equivalent for this responsibility. Both are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::people"
+      ],
+      "predicted_nodes": [
+        "Global::auth_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The GT people service is associated with user identity/account handling and OAuth-related user concerns. The predicted auth_service captures the authentication/authorization aspect. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::dev-center"
+      ],
+      "predicted_nodes": [
+        "Global::developer_center_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the developer center with documentation, tutorials, and developer-facing resources. Both are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::mqtt"
+      ],
+      "predicted_nodes": [
+        "Global::mqtt_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent MQTT protocol support for publish/subscribe device communication. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::api-proxy"
+      ],
+      "predicted_nodes": [
+        "Global::api_gateway",
+        "Global::rate_limiter_service"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The GT api-proxy is a centralized API proxy/gateway component. The AI split this into an api_gateway and a separate rate_limiter_service, which is functionally consistent with API gateway responsibilities described in the PRD. All nodes are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::devices-dashboard",
+        "Global::types-dashboard"
+      ],
+      "predicted_nodes": [
+        "Global::dashboard_service"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The GT contains separate dashboards for devices and types, while the AI aggregated them into a generic dashboard_service. This is a reasonable functional aggregation of web-based dashboard capabilities. All nodes are in the Global boundary."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::nginx-proxy",
+    "Global::mongodb",
+    "Global::memcached",
+    "Global::nodes",
+    "Global::redis"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Database per Service Pattern",
+    "Global::event_store_service",
+    "Global::Supporting Services"
+  ]
+}

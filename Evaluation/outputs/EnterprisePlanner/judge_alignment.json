@@ -1,0 +1,62 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::API Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::api_gateway"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes are semantically identical; both represent the centralized API Gateway. The boundary attribution is also the same, as both are placed under Global."
+    },
+    {
+      "gt_nodes": [
+        "Global::Orders Service"
+      ],
+      "predicted_nodes": [
+        "Event Sourcing::orders_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches because both refer to the Orders microservice. However, the predicted node is incorrectly placed under an Event Sourcing boundary, while the GT places the Orders Service directly under Global. Event Sourcing is an architectural pattern, not the service boundary in the GT."
+    },
+    {
+      "gt_nodes": [
+        "Global::Shipments Service"
+      ],
+      "predicted_nodes": [
+        "CQRS::shipments_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches because both refer to the Shipments microservice. However, the predicted node is incorrectly placed under a CQRS boundary, while the GT places it under Global. CQRS is a pattern and does not correspond to the GT boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Customers Service"
+      ],
+      "predicted_nodes": [
+        "Saga::customers_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches because both refer to the Customers microservice. However, the predicted node is incorrectly placed under a Saga boundary, while the GT places it under Global. Saga is a process/transaction pattern and is not the correct GT boundary for the service."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Angular App",
+    "Global::rabbitmq",
+    "Global::orders_db",
+    "Global::customers_db",
+    "Global::auth_db",
+    "Global::Authentication Service"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::CQRS",
+    "Global::API Composition",
+    "Global::Saga",
+    "Global::Event Sourcing"
+  ]
+}

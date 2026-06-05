@@ -1,0 +1,36 @@
+# SYSTEM DESCRIPTION: 
+
+ChronoPic is a photo management platform where users can upload images and 
+automatically tag them based on age detection and optionally known persons. The 
+system provides asynchronous processing using computer vision (face & age 
+detection), and supports secure user authentication. Users can view, filter, and 
+manage their personal image collections based on metadata and detection results. 
+
+# USER STORIES:
+ 
+1) As a User, I want to sign up so that I can access the application. 
+2) As a User, I want to verify my account using an OTP so that I can activate my 
+account securely. 
+3) As a User, I want to log in to the platform so that I can use its features. 
+4) As a User, I want to remain logged in so I don’t need to re-enter credentials 
+repeatedly. 
+5) As a User, I want to reset my password so that I can recover access when I 
+forget it. 
+6) As a User, I want to upload a photo with optional metadata so that it can be 
+processed and stored. 
+7) As a User, I want the system to run face detection automatically so the image 
+can be cropped properly. 
+8) As a User, I want age detection to run in the background so I get a result 
+without waiting. 
+9) As a User, I want to retrieve the detected age for a specific photo. 
+10) As a User, I want to retrieve detected ages for multiple photos to avoid many 
+separate API calls. 
+11) As a User, I want to delete one or more photos and their associated age 
+records if desired. 
+12) As a User, I want to view all my uploaded photos and tags by email. 
+13) As a User, I want to retrieve photo content by ID so I can display it on the 
+frontend. 
+14) As a User, I want to filter photos by email and tag to categorize and query 
+them easily. 
+15) As a Developer, I want to containerize the age-detection-service so it can be 
+deployed easily. 

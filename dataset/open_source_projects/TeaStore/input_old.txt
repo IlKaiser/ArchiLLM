@@ -1,0 +1,12 @@
+# SYSTEM DESCRIPTION:
+The application is a micro-service reference and test platform designed for benchmarking and testing purposes. It simulates a web store that sells tea and tea supplies, featuring user interface elements for database generation and service resetting. The architecture consists of five distinct services plus a registry, allowing for unlimited replication and deployment across various devices. Communication between services is facilitated through REST and the Netflix Ribbon client-side load balancer. Additionally, pre-instrumented variants of the services utilize Kieker for detailed monitoring of the application's actions and behavior.
+
+# USER STORIES:
+- 1. As a customer, I want to browse available tea products so that I can find items to purchase.
+- 2. As a customer, I want to add items to my shopping cart so that I can review my selections before checkout.
+- 3. As a customer, I want to complete my purchase securely so that I can receive my tea supplies.
+- 4. As an administrator, I want to reset the service so that I can clear any test data and start fresh.
+- 5. As a developer, I want to generate load on the application so that I can test its performance under stress.
+- 6. As a tester, I want to instrument the application with monitoring tools so that I can analyze its behavior and performance metrics.
+- 7. As a user, I want to deploy the application using Docker Compose so that I can easily manage its services.
+- 8. As a user, I want to run the application on a Kubernetes cluster so that I can leverage orchestration features for scalability.

@@ -1,0 +1,41 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::StoreService",
+        "Global::AccountService",
+        "Global::FoodTrayService",
+        "Global::ItemService",
+        "Global::CustomerService",
+        "Global::PriceService",
+        "Global::customerDB",
+        "Global::itemDB",
+        "Global::priceDB",
+        "Global::accountDB",
+        "Global::storeDB"
+      ],
+      "predicted_nodes": [
+        "Global::Core Business Services\\n(Database per Service Pattern)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the domain microservices and their per-service databases into a single high-level core business services component. Although it lacks the GT's service-level and database-level granularity, it semantically covers account, price, customer, store, item, food tray services, and the database-per-service concept. Both GT and predicted nodes are placed under Global, so there is no boundary/layer mismatch."
+    },
+    {
+      "gt_nodes": [
+        "Global::config",
+        "Global::discovery"
+      ],
+      "predicted_nodes": [
+        "Global::Infrastructure Services"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted Infrastructure Services node aggregates the centralized configuration service and service discovery service from the GT. This is semantically consistent with the PRD infrastructure services. Both are under the Global boundary, so the boundary attribution is correct."
+    }
+  ],
+  "unmatched_gt_nodes": [],
+  "unmatched_predicted_nodes": [
+    "Global::API Gateway\\n(API Composition Pattern)"
+  ]
+}

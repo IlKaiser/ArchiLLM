@@ -1,0 +1,62 @@
+@startuml
+' Configuration for Top-Down Direction
+top to bottom direction
+
+' Styling - Matching your Mermaid class colors
+skinparam rectangle {
+    BackgroundColor<<User>> #f9f
+    BackgroundColor<<Presentation>> #bbf
+    BackgroundColor<<Application>> #dfd
+    BackgroundColor<<Storage>> #fdd
+    BorderColor #333
+    BorderThickness 2
+}
+
+skinparam database {
+    BackgroundColor #fdd
+    BorderColor #333
+}
+
+' Layer 1: User Layer
+rectangle "User Layer / Client Layer" as UserLayer <<User>> {
+    component "PC Browser" as PC
+    component "Mobile Browser" as Mobile
+}
+
+' Layer 2: Presentation Layer
+rectangle "Presentation Layer / Frontend" as PresentationLayer <<Presentation>> {
+    component "Authentication & Navigation UI" as AuthUI
+    component "User Profile & Dashboard UI" as ProfileUI
+    component "Lobby & Matchmaking UI" as MatchUI
+    component "Active Gameplay & Chat UI" as GameUI
+    component "Replay Viewer UI" as ReplayUI
+}
+
+' Layer 3: Application Layer
+rectangle "Application Layer / Backend Services" as ApplicationLayer <<Application>> {
+    component "Auth & Session Service" as AuthSvc
+    component "Profile & Statistics Service" as ProfileSvc
+    component "Matchmaking & Lobby Service" as MatchSvc
+    
+    rectangle "Real-Time Game Engine" as GameEngine {
+        component "Game Logic & Board Validator" as LogicSvc
+        component "Timing & Turn Manager" as TimeSvc
+        component "In-Game Chat Service" as ChatSvc
+    }
+    
+    component "Replay & History Service" as ReplaySvc
+}
+
+' Layer 4: Data Layer
+rectangle "Data Layer / Storage" as DataLayer <<Storage>> {
+    database "User Information & Credentials DB" as UserDB
+    database "Active Challenges & Matchmaking DB" as MatchDB
+    database "Game States, Moves & Replays DB" as HistoryDB
+}
+
+' Structural Relationships
+UserLayer --> PresentationLayer
+PresentationLayer --> ApplicationLayer
+ApplicationLayer --> DataLayer
+
+@enduml

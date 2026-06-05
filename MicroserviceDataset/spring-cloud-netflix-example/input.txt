@@ -1,0 +1,34 @@
+# SYSTEM DESCRIPTION:
+This is a comprehensive Spring Cloud Netflix microservices demonstration system that showcases modern microservice architecture patterns and tools. The system consists of multiple interconnected services including service discovery via Eureka, API gateway routing through Zuul, circuit breaking with Hystrix, centralized configuration management, distributed tracing with Zipkin, and application monitoring through Spring Boot Admin. It serves as a reference implementation for developers and architects learning microservices patterns, providing a complete example of how to build, deploy, and monitor distributed systems using the Spring Cloud ecosystem. The system is fully containerized with Docker and includes both development and production deployment configurations.
+
+# USER STORIES:
+1. As a developer, I want to register microservices with a service discovery server so that services can find and communicate with each other dynamically.
+2. As a system administrator, I want to view all registered services in a dashboard so that I can monitor service availability and health.
+3. As a developer, I want to externalize configuration management so that I can manage environment-specific settings without rebuilding applications.
+4. As a service consumer, I want to call other services through a centralized API gateway so that I have a single entry point for all requests.
+5. As a developer, I want to implement circuit breakers so that my service can handle downstream failures gracefully.
+6. As a system administrator, I want to monitor circuit breaker metrics so that I can identify problematic service dependencies.
+7. As a developer, I want to trace requests across multiple services so that I can debug distributed system issues.
+8. As a system administrator, I want to visualize service dependencies so that I can understand system architecture and bottlenecks.
+9. As a developer, I want to monitor application health and metrics so that I can ensure optimal service performance.
+10. As a system administrator, I want to view detailed application information including environment variables, thread dumps, and traces.
+11. As a service owner, I want to route API requests based on URL patterns so that I can direct traffic to appropriate backend services.
+12. As a developer, I want to use declarative HTTP clients so that I can easily consume other microservices.
+13. As a system administrator, I want to scale services independently so that I can handle varying load patterns.
+14. As a developer, I want to use message queues for asynchronous communication so that I can decouple service interactions.
+15. As a deployment engineer, I want to containerize all services so that I can deploy consistently across different environments.
+16. As a developer, I want to implement fallback mechanisms so that my service provides degraded functionality when dependencies fail.
+17. As a system administrator, I want to collect distributed logs so that I can analyze system behavior across all services.
+18. As a monitoring team member, I want to track request latency and error rates so that I can identify performance issues.
+19. As a developer, I want to use service-to-service authentication so that I can secure inter-service communication.
+20. As a system administrator, I want to configure routing rules dynamically so that I can manage traffic without service restarts.
+21. As a developer, I want to implement timeouts and retries so that my service handles network issues robustly.
+22. As a deployment engineer, I want to use infrastructure as code so that I can reproduce environments consistently.
+23. As a system administrator, I want to view real-time metrics dashboards so that I can respond quickly to system issues.
+24. As a developer, I want to test circuit breaker behavior so that I can verify failure handling scenarios.
+25. As a service consumer, I want load balancing across service instances so that requests are distributed efficiently.
+26. As a developer, I want configuration refresh without restarts so that I can update settings dynamically.
+27. As a system administrator, I want to monitor JVM metrics so that I can optimize resource allocation.
+28. As a security team member, I want to trace security events across services so that I can detect and investigate threats.
+29. As a developer, I want to use profiles for different environments so that I can manage deployment-specific configurations.
+30. As a system administrator, I want to aggregate logs from all services so that I can perform centralized log analysis.

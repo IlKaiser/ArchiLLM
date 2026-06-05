@@ -1,0 +1,56 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::eureka"
+      ],
+      "predicted_nodes": [
+        "Global::Service Discovery (Aggregate Pattern)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node describes the service discovery capability, which corresponds to Eureka in the ground truth. Both are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::config"
+      ],
+      "predicted_nodes": [
+        "Global::Configuration Management (Database per Service)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node represents centralized configuration management, which corresponds to the config server in the ground truth. Although the label includes an inaccurate pattern phrase, the functional intent matches and both are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::zuul"
+      ],
+      "predicted_nodes": [
+        "Global::API Gateway Routing (API Composition)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node describes API gateway routing, which corresponds to the Zuul gateway in the ground truth. Both are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Service A",
+        "Global::Service B"
+      ],
+      "predicted_nodes": [
+        "Global::Core Business Services (Database per Service)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the two core business services from the ground truth into a single higher-level component. While it omits the explicit Service A and Service B names and includes an inaccurate pattern phrase, the functional grouping is semantically aligned and remains in the Global boundary."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::zipkin",
+    "Global::rabbitmq",
+    "Global::hystrix",
+    "Global::admin"
+  ],
+  "unmatched_predicted_nodes": []
+}

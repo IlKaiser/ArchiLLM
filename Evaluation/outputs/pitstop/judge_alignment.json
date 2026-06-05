@@ -1,0 +1,114 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Auditlog Service"
+      ],
+      "predicted_nodes": [
+        "Global::auditlog_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes are semantically identical; the AI only changed the naming style from title case to snake_case. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Workshop Management Event Handler"
+      ],
+      "predicted_nodes": [
+        "Global::workshop_management_event_handler"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same workshop management event handler component. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Workshop Management API"
+      ],
+      "predicted_nodes": [
+        "Global::workshop_management_api",
+        "Global::Workshop CQRS Implementation"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted workshop_management_api directly matches the GT Workshop Management API. The additional Workshop CQRS Implementation represents an internal architectural aspect of the same workshop management bounded context, so it can be treated as a split/detail of the GT node. All matched nodes are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Vehicle Management API"
+      ],
+      "predicted_nodes": [
+        "Global::vehicle_management_api"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same vehicle management API service, with only a naming style difference. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Notification Service"
+      ],
+      "predicted_nodes": [
+        "Global::notification_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same notification service. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Invoice Service"
+      ],
+      "predicted_nodes": [
+        "Global::invoice_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same invoice service. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Time Service"
+      ],
+      "predicted_nodes": [
+        "Global::time_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same time service. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Customer Management API"
+      ],
+      "predicted_nodes": [
+        "Global::customer_management_api"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The nodes refer to the same customer management API service, with only a naming style difference. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Infrastructure.Messaging"
+      ],
+      "predicted_nodes": [
+        "Global::Infrastructure Services"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node is broader and less precise, but it plausibly refers to the shared infrastructure/messaging support component represented by Infrastructure.Messaging in the GT. Both are placed in the Global boundary."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::RabbitMQ",
+    "Global::WebApp",
+    "Global::SQL Server",
+    "Global::MailDev",
+    "Global::Seq"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Core Domain Services"
+  ]
+}

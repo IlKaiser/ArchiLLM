@@ -1,0 +1,34 @@
+# SYSTEM DESCRIPTION:
+This repository contains a comprehensive Spring Cloud microservices demonstration platform that showcases various cloud-native patterns and technologies including service discovery, configuration management, API gateway, circuit breakers, and distributed tracing. The system serves as an educational example for developers learning microservices architecture, featuring multiple interconnected services that demonstrate load balancing, centralized configuration with dynamic updates via Spring Cloud Bus, OAuth2 authentication, and monitoring capabilities. The platform includes both REST and Thrift-based services, a web UI, and comprehensive infrastructure components like Eureka for service registry, Zuul for API gateway functionality, Hystrix for circuit breaking, and Zipkin for distributed request tracing.
+
+# USER STORIES:
+1. As a developer, I want to register microservices with a discovery server so that services can find and communicate with each other dynamically.
+2. As a system administrator, I want to manage application configurations centrally so that I can update settings without redeploying services.
+3. As a developer, I want to route external requests through an API gateway so that I can provide a unified entry point for all services.
+4. As a security administrator, I want to implement OAuth2 authentication so that only authorized users can access protected resources.
+5. As a developer, I want to apply access token validation at the gateway level so that unauthorized requests are blocked before reaching backend services.
+6. As a system operator, I want to monitor service health and performance so that I can detect and respond to issues quickly.
+7. As a developer, I want to implement circuit breakers so that failing services don't cascade failures throughout the system.
+8. As a system administrator, I want to aggregate circuit breaker metrics so that I can monitor overall system resilience.
+9. As a developer, I want to trace requests across multiple services so that I can debug distributed transactions and performance issues.
+10. As a user, I want to access a web interface so that I can interact with the microservices through a user-friendly frontend.
+11. As a developer, I want to fetch user data from a database-backed service so that I can display dynamic content to users.
+12. As a system administrator, I want to switch between different database environments so that I can test configurations without affecting production data.
+13. As a developer, I want to use Thrift for high-performance service communication so that I can achieve better throughput for internal service calls.
+14. As a system operator, I want to containerize all services with Docker so that I can deploy and scale the system consistently across environments.
+15. As a developer, I want to load balance requests across multiple service instances so that I can handle increased traffic and provide high availability.
+16. As a system administrator, I want to refresh configurations dynamically via message bus so that I can update settings without service restarts.
+17. As a developer, I want to expose REST endpoints for user management so that frontend applications can perform CRUD operations.
+18. As a system operator, I want to monitor Hystrix streams in real-time so that I can observe circuit breaker status and system health.
+19. As a developer, I want to implement service-to-service communication so that different microservices can collaborate to fulfill business requirements.
+20. As a system administrator, I want to use ZooKeeper for service coordination so that I can manage distributed configuration and service discovery for Thrift services.
+21. As a developer, I want to implement both synchronous and asynchronous communication patterns so that I can choose the appropriate integration style for different use cases.
+22. As a user, I want to view user lists through the web interface so that I can see available user data in a formatted display.
+23. As a developer, I want to configure different profiles for different environments so that I can deploy the same codebase across development, test, and production environments.
+24. As a system operator, I want to access centralized logging and tracing so that I can troubleshoot issues across the distributed system.
+25. As a developer, I want to use Spring Boot actuator endpoints so that I can monitor application health and metrics.
+26. As a system administrator, I want to manage service routing rules so that I can control how requests flow through the system.
+27. As a developer, I want to implement graceful degradation so that the system continues to function even when some services are unavailable.
+28. As a security administrator, I want to use JWT tokens for authentication so that I can implement stateless security across microservices.
+29. As a system operator, I want to use Docker Compose for local development so that I can easily spin up the entire microservices ecosystem.
+30. As a developer, I want to integrate with RabbitMQ for message-driven configuration updates so that configuration changes can be propagated across all service instances.

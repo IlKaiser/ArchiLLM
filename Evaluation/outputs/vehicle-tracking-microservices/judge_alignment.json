@@ -1,0 +1,60 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Ping Service"
+      ],
+      "predicted_nodes": [
+        "Event Sourcing::ping_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches: both represent the Ping Service responsible for receiving vehicle status pings. However, the GT places it in the global microservice set, while the prediction incorrectly places it inside the Event Sourcing boundary. Ping Service may publish events, but it is not itself an event sourcing component."
+    },
+    {
+      "gt_nodes": [
+        "Global::Tracking Service"
+      ],
+      "predicted_nodes": [
+        "CQRS::tracking_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches: both refer to the Tracking Service used for monitoring vehicle status. However, the prediction places it under CQRS, which is an architectural pattern rather than the service boundary shown in the GT."
+    },
+    {
+      "gt_nodes": [
+        "Global::Redis Cache"
+      ],
+      "predicted_nodes": [
+        "CQRS::Distributed Cache\\n(Redis)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches because Redis is correctly identified as the distributed cache. However, the GT places Redis as a global infrastructure component, while the prediction places it under CQRS, which is not a semantically equivalent boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Event Sourcing Middleware"
+      ],
+      "predicted_nodes": [
+        "Event Sourcing::event_sourcing_middleware"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches: both refer to the Event Sourcing Middleware. However, the GT does not assign it to a separate Event Sourcing boundary, while the prediction introduces such a boundary. This does not reproduce the manual boundary attribution."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Vehicle Service",
+    "Global::Customer Service",
+    "Global::SQL Server",
+    "Global::RabbitMQ"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::CQRS",
+    "Global::api_gateway",
+    "Global::API Composition",
+    "Global::Event Sourcing"
+  ]
+}

@@ -1,0 +1,393 @@
+,path_or_url,file,line,text
+0,/log-server,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.logging.yml,15,image: weaveworksdemos/log-server
+1,/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,5,image: prom/prometheus
+3,/etc/prometheus/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,8,- ./prometheus.yml:/etc/prometheus/prometheus.yml
+4,/alert,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,9,- ./alert.rules:/etc/prometheus/alert.rules
+5,/etc/prometheus/alert,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,9,- ./alert.rules:/etc/prometheus/alert.rules
+8,/usr/share/prometheus/console_libraries,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,13,- '--web.console.libraries=/usr/share/prometheus/console_libraries'
+9,/usr/share/prometheus/consoles,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,14,- '--web.console.templates=/usr/share/prometheus/consoles'
+10,/prometheus/node-exporter,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,22,image: quay.io/prometheus/node-exporter:v1.1.2
+11,/host,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,25,"- '/:/host:ro,rslave'"
+13,/alertmanager,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,33,image: prom/alertmanager
+15,/etc/alertmanager/config,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,37,- ./alertmanager.yml:/etc/alertmanager/config.yml
+18,/grafana,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,42,image: grafana/grafana
+19,/tiny-tools,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,53,image: giantswarm/tiny-tools
+20,/bin/sh,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,56,entrypoint: /bin/sh import.sh
+21,/opt/grafana-import-dashboards,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.monitoring.yml,57,working_dir: /opt/grafana-import-dashboards
+24,/front-end,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,5,image: weaveworksdemos/front-end:0.3.12
+25,/edge-router,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,12,image: weaveworksdemos/edge-router:0.1.1
+26,/var/run,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,26,"- /var/run:rw,noexec,nosuid"
+27,/catalogue,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,30,image: weaveworksdemos/catalogue:0.3.5
+28,/catalogue-db,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,39,image: weaveworksdemos/catalogue-db:0.3.0
+29,/carts,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,47,image: weaveworksdemos/carts:0.4.8
+30,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,56,"- /tmp:rw,noexec,nosuid"
+31,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,58,- JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+33,/orders,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,73,image: weaveworksdemos/orders:0.4.7
+37,/shipping,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,99,image: weaveworksdemos/shipping:0.4.8
+40,/queue-master,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,112,image: weaveworksdemos/queue-master:0.3.1
+41,/var/run/docker,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,115,- /var/run/docker.sock:/var/run/docker.sock
+44,/payment,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,137,image: weaveworksdemos/payment:0.4.3
+45,/user,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,146,image: weaveworksdemos/user:0.4.4
+46,/user-db,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,157,image: weaveworksdemos/user-db:0.4.0
+48,/load-test,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/docker-compose.yml,170,image: weaveworksdemos/load-test:0.1.1
+49,/etc/prometheus/alert,/mnt/data/sock-shop/microservices-demo/deploy/docker-compose/prometheus.yml,10,"- ""/etc/prometheus/alert.rules"""
+50,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,7,apiVersion: apps/v1
+51,/carts,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,26,image: weaveworksdemos/carts:0.4.8
+52,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,29,value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+53,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,49,- mountPath: /tmp
+54,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,56,beta.kubernetes.io/os: linux
+55,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,63,prometheus.io/scrape: 'true'
+60,/catalogue,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,151,image: weaveworksdemos/catalogue:0.3.5
+61,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,152,"command: [""/app""]"
+62,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,175,path: /health
+67,/catalogue-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,224,image: weaveworksdemos/catalogue-db:0.3.0
+70,/front-end,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,268,image: weaveworksdemos/front-end:0.3.12
+74,/orders,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,340,image: weaveworksdemos/orders:0.4.7
+83,/payment,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,465,image: weaveworksdemos/payment:0.4.3
+89,/queue-master,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,535,image: weaveworksdemos/queue-master:0.3.1
+95,/rabbitmq-exporter,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,606,image: kbudde/rabbitmq-exporter
+98,/port,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,619,prometheus.io/port: '9090'
+102,/shipping,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,707,image: weaveworksdemos/shipping:0.4.8
+108,/user,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,778,image: weaveworksdemos/user:0.4.7
+114,/user-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/complete-demo.yaml,852,image: weaveworksdemos/user-db:0.3.0
+117,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/jaeger.yaml,22,- apiVersion: apps/v1
+118,/all-in-one,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/jaeger.yaml,48,image: jaegertracing/all-in-one
+119,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/user-dep.yaml,2,apiVersion: apps/v1
+120,/user,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/user-dep.yaml,21,image: weaveworksdemos/user:0.4.7
+121,http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/user-dep.yaml,35,value: http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans
+122,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/user-dep.yaml,47,path: /health
+124,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/user-dep.yaml,58,beta.kubernetes.io/os: linux
+125,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/catalogue-dep.yaml,2,apiVersion: apps/v1
+126,/catalogue,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/catalogue-dep.yaml,21,image: weaveworksdemos/catalogue:0.3.5
+127,http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/catalogue-dep.yaml,24,value: http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans
+128,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/catalogue-dep.yaml,45,path: /health
+130,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/catalogue-dep.yaml,56,beta.kubernetes.io/os: linux
+131,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/payment-dep.yaml,2,apiVersion: apps/v1
+132,/payment,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/payment-dep.yaml,21,image: weaveworksdemos/payment:0.4.3
+133,http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/payment-dep.yaml,33,value: http://zipkin.jaeger.svc.cluster.local:9411/api/v1/spans
+134,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/payment-dep.yaml,45,path: /health
+136,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-jaeger/payment-dep.yaml,56,beta.kubernetes.io/os: linux
+137,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-cr.yml,2,apiVersion: rbac.authorization.k8s.io/v1beta1
+138,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/kibana.yml,2,apiVersion: apps/v1
+139,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/elasticsearch.yml,2,apiVersion: apps/v1
+140,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/elasticsearch.yml,26,beta.kubernetes.io/os: linux
+141,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-crb.yml,2,apiVersion: rbac.authorization.k8s.io/v1beta1
+142,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-daemon.yml,2,apiVersion: apps/v1
+143,/log-server,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-daemon.yml,21,- image: weaveworksdemos/log-server
+144,/var/lib/docker/containers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-daemon.yml,28,mountPath: /var/lib/docker/containers
+146,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-logging/fluentd-daemon.yml,35,beta.kubernetes.io/os: linux
+147,/etc/prometheus-rules/alert,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,11,"- ""/etc/prometheus-rules/alert.rules"""
+148,/var/run/secrets/kubernetes,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,23,ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+149,/serviceaccount/ca,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,23,ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+151,/serviceaccount/token,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,24,bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+156,/api/v1/nodes/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,44,replacement: /api/v1/nodes/${1}/proxy/metrics
+157,/proxy/metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,44,replacement: /api/v1/nodes/${1}/proxy/metrics
+163,/proxy/metrics/cadvisor,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,60,replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+164,/probe,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,90,metrics_path: /probe
+165,//,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/04-prometheus-configmap.yaml,144,replacement: ${1}://${2}${3}
+166,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/21-grafana-dep.yaml,1,apiVersion: apps/v1
+167,/grafana,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/21-grafana-dep.yaml,22,- image: grafana/grafana:7.5.5
+168,/login,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/21-grafana-dep.yaml,42,path: /login
+169,/var/lib/grafana,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/21-grafana-dep.yaml,48,mountPath: /var/lib/grafana
+170,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/21-grafana-dep.yaml,53,beta.kubernetes.io/os: linux
+171,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/03-prometheus-crb.yaml,2,apiVersion: rbac.authorization.k8s.io/v1
+172,/component,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/24-prometheus-node-exporter-sa.yaml,5,app.kubernetes.io/component: exporter
+173,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/24-prometheus-node-exporter-sa.yaml,6,app.kubernetes.io/name: node-exporter
+174,https://www.weave.works/prometheus-and-kubernetes-monitoring-your-applications/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/05-prometheus-alertrules.yaml,2,# * https://www.weave.works/prometheus-and-kubernetes-monitoring-your-applications/
+175,https://grafana.net/dashboards/162,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/05-prometheus-alertrules.yaml,3,# * https://grafana.net/dashboards/162
+176,/A,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,100,"""text"": ""N/A"","
+180,/span,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,245,"""content"": ""<img src=\""http://prometheus.io/assets/prometheus_logo_grey.svg\"" alt=\""Prometheus logo\"" style=\""height: 40px;\"">\n<span style=\""font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\"">Prometheus</span>\n\n<p style=\""margin-top: 10px;\"">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\""http://www.grafana.org/\"">Grafana</a> and <a href=\""http://prometheus.io/\"">Prometheus</a> projects.</p>"","
+181,http://www.grafana.org/\,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,245,"""content"": ""<img src=\""http://prometheus.io/assets/prometheus_logo_grey.svg\"" alt=\""Prometheus logo\"" style=\""height: 40px;\"">\n<span style=\""font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\"">Prometheus</span>\n\n<p style=\""margin-top: 10px;\"">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\""http://www.grafana.org/\"">Grafana</a> and <a href=\""http://prometheus.io/\"">Prometheus</a> projects.</p>"","
+182,/a,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,245,"""content"": ""<img src=\""http://prometheus.io/assets/prometheus_logo_grey.svg\"" alt=\""Prometheus logo\"" style=\""height: 40px;\"">\n<span style=\""font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\"">Prometheus</span>\n\n<p style=\""margin-top: 10px;\"">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\""http://www.grafana.org/\"">Grafana</a> and <a href=\""http://prometheus.io/\"">Prometheus</a> projects.</p>"","
+183,http://prometheus.io/\,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,245,"""content"": ""<img src=\""http://prometheus.io/assets/prometheus_logo_grey.svg\"" alt=\""Prometheus logo\"" style=\""height: 40px;\"">\n<span style=\""font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\"">Prometheus</span>\n\n<p style=\""margin-top: 10px;\"">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\""http://www.grafana.org/\"">Grafana</a> and <a href=\""http://prometheus.io/\"">Prometheus</a> projects.</p>"","
+185,/p,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,245,"""content"": ""<img src=\""http://prometheus.io/assets/prometheus_logo_grey.svg\"" alt=\""Prometheus logo\"" style=\""height: 40px;\"">\n<span style=\""font-family: 'Open Sans', 'Helvetica Neue', Helvetica; font-size: 25px;vertical-align: text-top;color: #bbbfc2;margin-left: 10px;\"">Prometheus</span>\n\n<p style=\""margin-top: 10px;\"">You're using Prometheus, an open-source systems monitoring and alerting toolkit originally built at SoundCloud. For more information, check out the <a href=\""http://www.grafana.org/\"">Grafana</a> and <a href=\""http://prometheus.io/\"">Prometheus</a> projects.</p>"","
+186,http://www.grafana.org/docs,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,625,"""url"": ""http://www.grafana.org/docs"""
+187,http://prometheus.io/docs/introduction/overview/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,632,"""url"": ""http://prometheus.io/docs/introduction/overview/"""
+218,/5xx,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,2739,"""legendFormat"": ""4xx/5xx"","
+231,http://prometheus:9090,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,4168,"""url"": ""http://prometheus:9090"","
+232,https://github.com/rfrail3/grafana-dashboards,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,4249,"""url"": ""https://github.com/rfrail3/grafana-dashboards"""
+233,https://grafana.com/grafana/dashboards/1860,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/20-grafana-configmap.yaml,4256,"""url"": ""https://grafana.com/grafana/dashboards/1860"""
+249,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/10-kube-state-sa.yaml,5,app.kubernetes.io/name: kube-state-metrics
+250,/version,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/10-kube-state-sa.yaml,6,app.kubernetes.io/version: 2.1.0
+251,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,1,apiVersion: apps/v1
+252,/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,25,image: prom/prometheus:v2.26.0
+253,/etc/prometheus/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,28,- '--config.file=/etc/prometheus/prometheus.yml'
+254,/etc/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,34,mountPath: /etc/prometheus
+255,/etc/prometheus-rules,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,36,mountPath: /etc/prometheus-rules
+256,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/06-prometheus-dep.yaml,45,beta.kubernetes.io/os: linux
+257,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/07-prometheus-svc.yaml,5,prometheus.io/scrape: 'true'
+258,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/11-kube-state-cr.yaml,1,apiVersion: rbac.authorization.k8s.io/v1
+259,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/11-kube-state-cr.yaml,5,app.kubernetes.io/name: kube-state-metrics
+260,/version,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/11-kube-state-cr.yaml,6,app.kubernetes.io/version: 2.1.0
+261,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,1,apiVersion: batch/v1
+262,/init-containers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,17,pod.beta.kubernetes.io/init-containers: '[
+263,/tiny-tools,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,20,"""image"": ""giantswarm/tiny-tools"","
+264,/var/run/secrets/kubernetes,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,22,"""command"": [""fish"", ""-c"", ""echo \""waiting for endpoints...\""; while true; set endpoints (curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --header \""Authorization: Bearer \""(cat /var/run/secrets/kubernetes.io/serviceaccount/token) https://kubernetes.default.svc/api/v1/namespaces/monitoring/endpoints/grafana); echo $endpoints | jq \"".\""; if test (echo $endpoints | jq -r \"".subsets[].addresses | length\"") -gt 0; exit 0; end; echo \""waiting...\"";sleep 1; end""],"
+265,/serviceaccount/ca,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,22,"""command"": [""fish"", ""-c"", ""echo \""waiting for endpoints...\""; while true; set endpoints (curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --header \""Authorization: Bearer \""(cat /var/run/secrets/kubernetes.io/serviceaccount/token) https://kubernetes.default.svc/api/v1/namespaces/monitoring/endpoints/grafana); echo $endpoints | jq \"".\""; if test (echo $endpoints | jq -r \"".subsets[].addresses | length\"") -gt 0; exit 0; end; echo \""waiting...\"";sleep 1; end""],"
+267,/serviceaccount/token,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,22,"""command"": [""fish"", ""-c"", ""echo \""waiting for endpoints...\""; while true; set endpoints (curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --header \""Authorization: Bearer \""(cat /var/run/secrets/kubernetes.io/serviceaccount/token) https://kubernetes.default.svc/api/v1/namespaces/monitoring/endpoints/grafana); echo $endpoints | jq \"".\""; if test (echo $endpoints | jq -r \"".subsets[].addresses | length\"") -gt 0; exit 0; end; echo \""waiting...\"";sleep 1; end""],"
+268,https://kubernetes.default.svc/api/v1/namespaces/monitoring/endpoints/grafana);,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,22,"""command"": [""fish"", ""-c"", ""echo \""waiting for endpoints...\""; while true; set endpoints (curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt --header \""Authorization: Bearer \""(cat /var/run/secrets/kubernetes.io/serviceaccount/token) https://kubernetes.default.svc/api/v1/namespaces/monitoring/endpoints/grafana); echo $endpoints | jq \"".\""; if test (echo $endpoints | jq -r \"".subsets[].addresses | length\"") -gt 0; exit 0; end; echo \""waiting...\"";sleep 1; end""],"
+270,/bin/sh,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,30,"command: [""/bin/sh"", ""-c""]"
+271,/opt/grafana-import-dashboards,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,31,workingDir: /opt/grafana-import-dashboards
+272,http://admin:admin@grafana/api/datasources,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,38,--request POST http://admin:admin@grafana/api/datasources \
+273,/json,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,39,"--header ""Content-Type: application/json"" \"
+275,http://admin:admin@grafana/api/dashboards/import,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml,49,--request POST http://admin:admin@grafana/api/dashboards/import \
+279,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,1,apiVersion: apps/v1
+280,/mnt,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,9,The container `read-du` reads in sizes of all directories below /mnt and writes that to `/tmp/metrics`. It only reports directories larger then `100M` for now.
+281,/tmp/metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,9,The container `read-du` reads in sizes of all directories below /mnt and writes that to `/tmp/metrics`. It only reports directories larger then `100M` for now.
+282,/metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,10,The other container `caddy` just hands out the contents of that file on request via `http` on `/metrics` at port `9102` which are the defaults for Prometheus.
+284,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,22,prometheus.io/scrape: 'true'
+285,/port,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,23,prometheus.io/port: '9102'
+290,/tiny-tools,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,33,image: giantswarm/tiny-tools
+292,/tmp/metrics-temp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,45,>> /tmp/metrics-temp
+295,/mnt/var,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,52,mountPath: /mnt/var
+296,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,55,mountPath: /tmp
+297,/caddy,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,57,image: dockermuenster/caddy:0.9.3
+298,/var/www,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,61,"- ""-root=/var/www"""
+300,/var,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/08-prometheus-exporter-disk-usage-ds.yaml,70,path: /var
+301,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/12-kube-state-crb.yaml,1,apiVersion: rbac.authorization.k8s.io/v1
+302,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/12-kube-state-crb.yaml,5,app.kubernetes.io/name: kube-state-metrics
+303,/version,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/12-kube-state-crb.yaml,6,app.kubernetes.io/version: 2.1.0
+304,/component,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/26-prometheus-node-exporter-svc.yaml,5,app.kubernetes.io/component: exporter
+305,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/26-prometheus-node-exporter-svc.yaml,6,app.kubernetes.io/name: node-exporter
+308,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/02-prometheus-cr.yaml,2,apiVersion: rbac.authorization.k8s.io/v1
+309,/metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/02-prometheus-cr.yaml,20,- nodes/metrics
+310,/proxy,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/02-prometheus-cr.yaml,21,- nodes/proxy
+312,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/14-kube-state-svc.yaml,5,app.kubernetes.io/name: kube-state-metrics
+313,/version,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/14-kube-state-svc.yaml,6,app.kubernetes.io/version: 2.1.0
+315,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,1,apiVersion: apps/v1
+316,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,5,app.kubernetes.io/name: kube-state-metrics
+317,/version,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,6,app.kubernetes.io/version: 2.1.0
+321,/kube-state-metrics/kube-state-metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,21,- image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.1.0
+322,/healthz,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,24,path: /healthz
+323,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/13-kube-state-dep.yaml,43,kubernetes.io/os: linux
+324,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,1,apiVersion: apps/v1
+325,/component,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,5,app.kubernetes.io/component: exporter
+326,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,6,app.kubernetes.io/name: node-exporter
+331,/host/sys,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,23,- --path.sysfs=/host/sys
+332,/host/root,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,24,- --path.rootfs=/host/root
+333,/lib/docker/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,27,- --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+334,/lib/kubelet/pods/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,27,- --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+335,/prometheus/node-exporter,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,30,image: quay.io/prometheus/node-exporter:v1.1.2
+338,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,55,kubernetes.io/os: linux
+339,/sys,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-monitoring/25-prometheus-node-exporter-daemonset.yaml,64,path: /sys
+340,https://helm.nginx.com/stable,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/requirements.yaml,4,repository: https://helm.nginx.com/stable
+341,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,8,options: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+342,/ingress,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,15,kubernetes.io/ingress.class: nginx
+343,/carts,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,37,repo: weaveworksdemos/carts
+344,/catalogue-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,50,repo: weaveworksdemos/catalogue-db
+345,/catalogue,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,62,repo: weaveworksdemos/catalogue
+346,/front-end,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,76,repo: weaveworksdemos/front-end
+347,/load-test,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,90,repo: weaveworksdemos/load-test
+348,/orders,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,117,repo: weaveworksdemos/orders
+349,/payment,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,130,repo: weaveworksdemos/payment
+350,/queue-master,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,144,repo: weaveworksdemos/queue-master
+351,/shipping,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,183,repo: weaveworksdemos/shipping
+352,/user-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,196,repo: weaveworksdemos/user-db
+353,/user,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,208,repo: weaveworksdemos/user
+354,/zipkin-dependencies,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,221,repo: openzipkin/zipkin-dependencies
+355,/zipkin,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,233,repo: openzipkin/zipkin
+356,/zipkin-mysql,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/values.yaml,247,repo: openzipkin/zipkin-mysql
+357,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/zipkin-mysql-dep.yaml,2,apiVersion: apps/v1
+358,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/zipkin-cron-dep.yaml,2,apiVersion: apps/v1
+359,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,2,apiVersion: apps/v1
+360,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+361,/user,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,26,- /user
+362,http://{{,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,40,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+363,/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,40,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+364,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-dep.yaml,55,path: /health
+366,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-db-dep.yaml,2,apiVersion: apps/v1
+367,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/rabbitmq-dep.yaml,2,apiVersion: apps/v1
+368,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/ingress.yaml,1,apiVersion: networking.k8s.io/v1
+369,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/queue-master-dep.yaml,2,apiVersion: apps/v1
+370,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/queue-master-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+371,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/queue-master-dep.yaml,38,path: /health
+373,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,2,apiVersion: apps/v1
+374,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+375,/usr/local/bin/java,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,26,- /usr/local/bin/java.sh
+376,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,28,- ./app.jar
+377,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,53,- mountPath: /tmp
+378,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/shipping-dep.yaml,57,path: /health
+380,/path,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/queue-master-svc.yaml,9,"prometheus.io/path: ""/prometheus"""
+381,/prometheus,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/queue-master-svc.yaml,9,"prometheus.io/path: ""/prometheus"""
+382,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/zipkin-dep.yaml,2,apiVersion: apps/v1
+383,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,2,apiVersion: apps/v1
+384,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+385,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,25,"command: [""/app""]"
+386,/socksdb,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,28,- -DSN=catalogue_user:default_password@tcp(catalogue-db.{{ .Release.Namespace }}.svc.cluster.local:3306)/socksdb
+387,http://{{,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,32,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+388,/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,32,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+389,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/catalogue-dep.yaml,51,path: /health
+391,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/session-db-dep.yaml,2,apiVersion: apps/v1
+392,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-db-dep.yaml,2,apiVersion: apps/v1
+393,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/user-db-dep.yaml,36,- mountPath: /tmp
+394,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-db-dep.yaml,2,apiVersion: apps/v1
+395,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-db-dep.yaml,36,- mountPath: /tmp
+396,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/front-end-dep.yaml,2,apiVersion: apps/v1
+397,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/front-end-dep.yaml,17,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+398,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,2,apiVersion: apps/v1
+399,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+400,/usr/local/bin/java,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,26,- /usr/local/bin/java.sh
+401,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,28,- ./app.jar
+402,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,53,- mountPath: /tmp
+403,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/orders-dep.yaml,57,path: /health
+405,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,2,apiVersion: apps/v1
+406,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+407,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,26,- /app
+408,http://{{,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,35,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+409,/api/v1/spans,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,35,value: http://{{ .Values.zipkin.url }}:9411/api/v1/spans
+410,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/payment-dep.yaml,50,path: /health
+412,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/cart-db-dep.yaml,2,apiVersion: apps/v1
+413,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/cart-db-dep.yaml,36,- mountPath: /tmp
+414,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,2,apiVersion: apps/v1
+415,/rewriteAppHTTPProbers,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,19,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+416,/usr/local/bin/java,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,24,- /usr/local/bin/java.sh
+417,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,26,- ./app.jar
+418,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,53,- mountPath: /tmp
+419,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/carts-dep.yaml,57,path: /health
+421,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/loadtest-dep.yaml,2,apiVersion: apps/v1
+422,/bin/sh,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/loadtest-dep.yaml,21,"command: [""/bin/sh""]"
+423,/config/locustfile,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/helm-chart/templates/loadtest-dep.yaml,22,"args: [""-c"", ""while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --clients 5 --hatch-rate 5 --num-request 100 --no-web; done""]"
+424,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-frontend-access.yaml,2,apiVersion: networking.k8s.io/v1
+425,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-catalogue-access.yaml,2,apiVersion: networking.k8s.io/v1
+426,/network-policy,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-default-deny.yaml,7,net.beta.kubernetes.io/network-policy: |
+427,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-orders-access.yaml,2,apiVersion: networking.k8s.io/v1
+428,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-shipping-access.yaml,2,apiVersion: networking.k8s.io/v1
+429,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-user-db-access.yaml,2,apiVersion: networking.k8s.io/v1
+430,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-orders-db-access.yaml,2,apiVersion: networking.k8s.io/v1
+431,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-cortex-access.yaml,2,apiVersion: networking.k8s.io/v1
+432,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-catalogue-db-access.yaml,2,apiVersion: networking.k8s.io/v1
+433,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-user-access.yaml,2,apiVersion: networking.k8s.io/v1
+434,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-rabbitmq-access.yaml,2,apiVersion: networking.k8s.io/v1
+435,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-payment-access.yaml,2,apiVersion: networking.k8s.io/v1
+436,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-cart-db-access.yaml,2,apiVersion: networking.k8s.io/v1
+437,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-policy/netpol-cart-access.yaml,2,apiVersion: networking.k8s.io/v1
+438,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-loadtest/loadtest-dep.yaml,7,apiVersion: apps/v1
+439,/load-test,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-loadtest/loadtest-dep.yaml,26,image: weaveworksdemos/load-test:0.1.1
+440,/bin/sh,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-loadtest/loadtest-dep.yaml,27,"command: [""/bin/sh""]"
+441,/config/locustfile,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-loadtest/loadtest-dep.yaml,28,"args: [""-c"", ""while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --clients 5 --hatch-rate 5 --num-request 100 --no-web; done""]"
+442,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-loadtest/loadtest-dep.yaml,30,beta.kubernetes.io/os: linux
+443,https://hooks.slack.com/services/API_URL_SECRET,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-configmap.yaml,8,slack_api_url: https://hooks.slack.com/services/API_URL_SECRET
+445,/etc/alertmanager/config,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-configmap.yaml,30,"sed -i -e s,API_URL_SECRET,""$SLACK_HOOK_URL"",g /etc/alertmanager/config.yml"
+446,/bin/alertmanager,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-configmap.yaml,31,exec /bin/alertmanager $*
+447,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-svc.yaml,5,prometheus.io/scrape: 'true'
+448,/path,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-svc.yaml,6,prometheus.io/path: '/alertmanager/metrics'
+449,/alertmanager/metrics,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-svc.yaml,6,prometheus.io/path: '/alertmanager/metrics'
+450,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,1,apiVersion: apps/v1
+451,/alertmanager,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,18,image: prom/alertmanager:latest
+452,/bin/sh,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,25,"command: ['/bin/sh', '/etc/alertmanager/configure_secret.sh']"
+453,/etc/alertmanager/configure_secret,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,25,"command: ['/bin/sh', '/etc/alertmanager/configure_secret.sh']"
+454,/etc/alertmanager/config,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,27,- '-config.file=/etc/alertmanager/config.yml'
+456,/etc/alertmanager,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,34,mountPath: /etc/alertmanager
+457,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests-alerting/alertmanager-dep.yaml,40,beta.kubernetes.io/os: linux
+458,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/07-catalogue-db-dep.yaml,2,apiVersion: apps/v1
+459,/catalogue-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/07-catalogue-db-dep.yaml,21,image: weaveworksdemos/catalogue-db:0.3.0
+460,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/07-catalogue-db-dep.yaml,31,beta.kubernetes.io/os: linux
+461,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/01-carts-dep.yaml,2,apiVersion: apps/v1
+462,/carts,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/01-carts-dep.yaml,21,image: weaveworksdemos/carts:0.4.8
+463,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/01-carts-dep.yaml,24,value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+464,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/01-carts-dep.yaml,44,- mountPath: /tmp
+465,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/01-carts-dep.yaml,51,beta.kubernetes.io/os: linux
+466,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/17-queue-master-dep.yaml,2,apiVersion: apps/v1
+467,/queue-master,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/17-queue-master-dep.yaml,21,image: weaveworksdemos/queue-master:0.3.1
+468,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/17-queue-master-dep.yaml,24,value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+469,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/17-queue-master-dep.yaml,35,beta.kubernetes.io/os: linux
+470,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/20-rabbitmq-svc.yaml,7,prometheus.io/scrape: 'true'
+471,/port,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/20-rabbitmq-svc.yaml,8,prometheus.io/port: '9090'
+472,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/23-shipping-dep.yaml,2,apiVersion: apps/v1
+473,/shipping,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/23-shipping-dep.yaml,21,image: weaveworksdemos/shipping:0.4.8
+474,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/23-shipping-dep.yaml,26,value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+475,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/23-shipping-dep.yaml,46,- mountPath: /tmp
+476,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/23-shipping-dep.yaml,53,beta.kubernetes.io/os: linux
+477,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/25-user-dep.yaml,2,apiVersion: apps/v1
+478,/user,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/25-user-dep.yaml,21,image: weaveworksdemos/user:0.4.7
+479,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/25-user-dep.yaml,45,path: /health
+481,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/25-user-dep.yaml,56,beta.kubernetes.io/os: linux
+482,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/26-user-svc.yaml,7,prometheus.io/scrape: 'true'
+483,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/02-carts-svc.yml,7,prometheus.io/scrape: 'true'
+484,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/11-orders-dep.yaml,2,apiVersion: apps/v1
+485,/orders,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/11-orders-dep.yaml,21,image: weaveworksdemos/orders:0.4.7
+486,/dev/urandom,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/11-orders-dep.yaml,24,value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
+487,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/11-orders-dep.yaml,44,- mountPath: /tmp
+488,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/11-orders-dep.yaml,51,beta.kubernetes.io/os: linux
+489,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/15-payment-dep.yaml,2,apiVersion: apps/v1
+490,/payment,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/15-payment-dep.yaml,21,image: weaveworksdemos/payment:0.4.3
+491,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/15-payment-dep.yaml,42,path: /health
+493,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/15-payment-dep.yaml,53,beta.kubernetes.io/os: linux
+494,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/05-catalogue-dep.yaml,2,apiVersion: apps/v1
+495,/catalogue,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/05-catalogue-dep.yaml,21,image: weaveworksdemos/catalogue:0.3.5
+496,/app,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/05-catalogue-dep.yaml,22,"command: [""/app""]"
+497,/health,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/05-catalogue-dep.yaml,45,path: /health
+499,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/05-catalogue-dep.yaml,56,beta.kubernetes.io/os: linux
+500,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/09-front-end-dep.yaml,2,apiVersion: apps/v1
+501,/front-end,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/09-front-end-dep.yaml,19,image: weaveworksdemos/front-end:0.3.12
+502,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/09-front-end-dep.yaml,52,beta.kubernetes.io/os: linux
+503,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/06-catalogue-svc.yaml,7,prometheus.io/scrape: 'true'
+504,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/24-shipping-svc.yaml,7,prometheus.io/scrape: 'true'
+505,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/12-orders-svc.yaml,7,prometheus.io/scrape: 'true'
+506,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/16-payment-svc.yaml,7,prometheus.io/scrape: 'true'
+507,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/18-queue-master-svc.yaml,7,prometheus.io/scrape: 'true'
+508,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/19-rabbitmq-dep.yaml,2,apiVersion: apps/v1
+509,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/19-rabbitmq-dep.yaml,19,"prometheus.io/scrape: ""false"""
+510,/rabbitmq-exporter,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/19-rabbitmq-dep.yaml,40,image: kbudde/rabbitmq-exporter
+511,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/19-rabbitmq-dep.yaml,45,beta.kubernetes.io/os: linux
+512,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/03-carts-db-dep.yaml,2,apiVersion: apps/v1
+513,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/03-carts-db-dep.yaml,35,- mountPath: /tmp
+514,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/03-carts-db-dep.yaml,42,beta.kubernetes.io/os: linux
+515,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/13-orders-db-dep.yaml,2,apiVersion: apps/v1
+516,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/13-orders-db-dep.yaml,35,- mountPath: /tmp
+517,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/13-orders-db-dep.yaml,42,beta.kubernetes.io/os: linux
+518,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/27-user-db-dep.yaml,2,apiVersion: apps/v1
+519,/user-db,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/27-user-db-dep.yaml,21,image: weaveworksdemos/user-db:0.3.0
+520,/tmp,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/27-user-db-dep.yaml,36,- mountPath: /tmp
+521,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/27-user-db-dep.yaml,43,beta.kubernetes.io/os: linux
+522,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/21-session-db-dep.yaml,2,apiVersion: apps/v1
+523,/os,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/21-session-db-dep.yaml,37,beta.kubernetes.io/os: linux
+524,/scrape,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/manifests/10-front-end-svc.yaml,7,prometheus.io/scrape: 'true'
+525,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-deployment.yaml,1,apiVersion: apps/v1
+526,/google_containers/heapster-amd64,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-deployment.yaml,21,image: gcr.io/google_containers/heapster-amd64:v1.4.0
+527,/heapster,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-deployment.yaml,24,- /heapster
+528,http://monitoring-influxdb:8086,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-deployment.yaml,26,- --sink=influxdb:http://monitoring-influxdb:8086
+529,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/payment-hsc.yaml,2,apiVersion: autoscaling/v1
+530,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/payment-hsc.yaml,9,apiVersion: apps/v1beta1
+531,https://github.com/kubernetes/kubernetes/tree/master/cluster/addons),/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-service.yaml,5,# For use as a Cluster add-on (https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
+532,/cluster-service,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-service.yaml,7,kubernetes.io/cluster-service: 'true'
+533,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-service.yaml,8,kubernetes.io/name: monitoring-grafana
+534,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-deployment.yaml,1,apiVersion: apps/v1
+535,/google_containers/heapster-influxdb-amd64,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-deployment.yaml,20,image: gcr.io/google_containers/heapster-influxdb-amd64:v1.1.1
+536,/data,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-deployment.yaml,22,- mountPath: /data
+537,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/orders-hsc.yaml,2,apiVersion: autoscaling/v1
+538,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/orders-hsc.yaml,9,apiVersion: apps/v1beta1
+539,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-deployment.yaml,1,apiVersion: apps/v1
+540,/google_containers/heapster-grafana-amd64,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-deployment.yaml,20,image: gcr.io/google_containers/heapster-grafana-amd64:v4.0.2
+541,/var,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-deployment.yaml,25,- mountPath: /var
+542,/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana/,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/grafana-deployment.yaml,44,# value: /api/v1/proxy/namespaces/kube-system/services/monitoring-grafana/
+543,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/front-end-hsc.yaml,2,apiVersion: autoscaling/v1
+544,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/front-end-hsc.yaml,9,apiVersion: apps/v1beta1
+545,https://github.com/kubernetes/kubernetes/tree/master/cluster/addons),/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-service.yaml,6,# For use as a Cluster add-on (https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
+546,/cluster-service,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-service.yaml,8,kubernetes.io/cluster-service: 'true'
+547,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/influxdb-service.yaml,9,kubernetes.io/name: monitoring-influxdb
+548,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/catalogue-hsc.yaml,2,apiVersion: autoscaling/v1
+549,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/catalogue-hsc.yaml,9,apiVersion: apps/v1beta1
+550,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/cart-hsc.yaml,2,apiVersion: autoscaling/v1
+551,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/cart-hsc.yaml,9,apiVersion: apps/v1beta1
+552,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/shipping-hsc.yaml,2,apiVersion: autoscaling/v1
+553,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/shipping-hsc.yaml,9,apiVersion: apps/v1beta1
+554,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/queue-master-hsc.yaml,2,apiVersion: autoscaling/v1
+555,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/queue-master-hsc.yaml,9,apiVersion: apps/v1beta1
+556,/v1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/user-hsc.yaml,2,apiVersion: autoscaling/v1
+557,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/user-hsc.yaml,9,apiVersion: apps/v1beta1
+558,/v1beta1,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-crb.yml,2,apiVersion: rbac.authorization.k8s.io/v1beta1
+559,https://github.com/kubernetes/kubernetes/tree/master/cluster/addons),/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-service.yaml,6,# For use as a Cluster add-on (https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
+560,/cluster-service,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-service.yaml,8,kubernetes.io/cluster-service: 'true'
+561,/name,/mnt/data/sock-shop/microservices-demo/deploy/kubernetes/autoscaling/heapster-service.yaml,9,kubernetes.io/name: Heapster
+562,/workdir,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,17,COMPLETE_DEMO_ARGS: --rm -v ${{ github.workspace }}:/workdir
+563,/kubernetes/,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,18,COMPLETE_DEMO_DIR: 'deploy/kubernetes/'
+564,/checkout,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,21,- uses: actions/checkout@v2
+565,/node,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,47,kind-image: 'kindest/node:v1.20.0'
+567,/setup-kind,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,52,uses: engineerd/setup-kind@v0.5.0
+568,/kubernetes/complete-demo,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,64,kubectl apply -f deploy/kubernetes/complete-demo.yaml
+569,/tags/v,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,76,"if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/master'"
+570,/heads/master,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,76,"if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/master'"
+572,/setup-buildx-action,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,90,uses: docker/setup-buildx-action@v1
+573,/login-action,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,93,uses: docker/login-action@v1
+574,/build-push-action,/mnt/data/sock-shop/microservices-demo/.github/workflows/main.yaml,99,uses: docker/build-push-action@v2

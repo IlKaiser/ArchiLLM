@@ -1,0 +1,12 @@
+# SYSTEM DESCRIPTION:
+eShopOnContainers is a legacy reference application that demonstrates a microservices architecture for an e-commerce platform built with .NET technologies and containerization. The system served as a comprehensive sample for developers learning how to implement distributed systems using Docker containers, showcasing patterns like API gateways, event-driven architecture, and multiple database technologies. It was designed for software architects, developers, and engineering teams who wanted to understand best practices for building scalable, containerized e-commerce solutions using modern .NET stack and cloud-native approaches. The application has since been superseded by a newer version and this repository now serves as a read-only archive for historical reference.
+
+# USER STORIES:
+1. As a developer, I want to access the archived codebase so that I can reference the legacy implementation patterns.
+2. As a software architect, I want to study the microservices architecture so that I can understand distributed system design principles.
+3. As a student, I want to explore the containerization examples so that I can learn Docker and container orchestration.
+4. As a team lead, I want to review the legacy code structure so that I can compare it with modern approaches.
+5. As an engineer, I want to examine the API gateway patterns so that I can implement similar solutions.
+6. As a developer, I want to understand the event-driven architecture so that I can apply these concepts to my projects.
+7. As a DevOps engineer, I want to study the container deployment strategies so that I can improve my containerization skills.
+8. As a researcher, I want to analyze the evolution of the codebase so that I can understand how the architecture has changed over time.

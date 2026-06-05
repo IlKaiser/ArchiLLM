@@ -1,0 +1,56 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Apache HTTP"
+      ],
+      "predicted_nodes": [
+        "Global::api_gateway"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Apache HTTP in the GT acts as the reverse proxy/API gateway entry point, which is semantically equivalent to the predicted api_gateway. Both are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::consul"
+      ],
+      "predicted_nodes": [
+        "Global::consul"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes refer to HashiCorp Consul used for service discovery and registration. The boundary attribution is identical and correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Order Service",
+        "Global::Catalog Service",
+        "Global::Customer Service"
+      ],
+      "predicted_nodes": [
+        "Global::Core Services (Database per Service)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the three core business microservices from the GT: Order, Catalog, and Customer services. Although less detailed, it represents the same core service layer and is placed in the same Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::zipkin",
+        "Global::prometheus",
+        "Global::filebeat",
+        "Global::kibana",
+        "Global::elasticsearch"
+      ],
+      "predicted_nodes": [
+        "Global::Infrastructure"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted Infrastructure node is a coarse aggregation of supporting observability and logging infrastructure components such as Zipkin, Prometheus, Filebeat, Kibana, and Elasticsearch. The functional detail is reduced, but the boundary remains Global and is not contextually misplaced."
+    }
+  ],
+  "unmatched_gt_nodes": [],
+  "unmatched_predicted_nodes": []
+}
