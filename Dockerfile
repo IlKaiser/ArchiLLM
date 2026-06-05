@@ -46,5 +46,7 @@ SHELL ["/bin/bash", "--login", "-c"]
 # but we COPY the codebase into the image in case it's run stand-alone.
 COPY . /app
 
-# The default command uses `conda run` to ensure it executes in the right environment.
-CMD ["conda", "run", "--no-capture-output", "-n", "env_name", "streamlit", "run", "app.py", "--server.address", "0.0.0.0"]
+# ENTRYPOINT activates the conda env for every invocation.
+# CMD provides the default (Streamlit UI); override in docker-compose for headless mode.
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "env_name"]
+CMD ["streamlit", "run", "app.py", "--server.address", "0.0.0.0"]

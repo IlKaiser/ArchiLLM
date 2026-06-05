@@ -1,0 +1,39 @@
+# SYSTEM DESCRIPTION:
+Lakeside Mutual is a comprehensive microservices-based insurance application that serves as a demonstration of domain-driven design and microservice API patterns. The system provides digital insurance services to both customers and employees of a fictitious insurance company through multiple interconnected applications including customer management, policy management, and risk assessment capabilities. The architecture consists of multiple Spring Boot backend services, React and Vue.js frontend applications, and supporting infrastructure components, all designed to handle customer data, insurance policies, risk management, and real-time customer support interactions. The system demonstrates modern enterprise patterns including API-first design, event-driven messaging, and containerized deployment strategies.
+
+# USER STORIES:
+1. As a customer, I want to register for a new account so that I can access my insurance information online.
+2. As a customer, I want to view my current insurance policy details so that I can understand my coverage.
+3. As a customer, I want to update my personal address information so that I can keep my records current.
+4. As a customer, I want to chat with customer service representatives so that I can get help with my insurance questions.
+5. As a customer, I want to request insurance quotes so that I can evaluate coverage options.
+6. As a customer service representative, I want to view customer profiles so that I can assist them effectively.
+7. As a customer service representative, I want to search for customers by various criteria so that I can quickly find their information.
+8. As a customer service representative, I want to update customer information so that I can maintain accurate records.
+9. As a customer service representative, I want to chat with customers in real-time so that I can provide immediate assistance.
+10. As a customer service representative, I want to view customer interaction history so that I can understand previous communications.
+11. As a customer service representative, I want to receive notifications about customer activities so that I can respond promptly.
+12. As an insurance agent, I want to create new insurance policies so that I can provide coverage to customers.
+13. As an insurance agent, I want to view and manage existing policies so that I can make necessary adjustments.
+14. As an insurance agent, I want to update policy details so that I can reflect changes in customer needs.
+15. As an insurance agent, I want to access customer data when creating policies so that I can make informed decisions.
+16. As a risk management professional, I want to generate customer data reports so that I can assess risk levels.
+17. As a risk management professional, I want to receive notifications when policies are created or updated so that I can monitor changes.
+18. As a risk management professional, I want to download periodic reports so that I can perform risk assessments.
+19. As a system administrator, I want to monitor application health so that I can ensure system availability.
+20. As a system administrator, I want to view application logs so that I can troubleshoot issues.
+21. As a system administrator, I want to manage API authentication so that I can secure system access.
+22. As a developer, I want to access customer data through APIs so that I can build additional services.
+23. As a developer, I want to view API documentation so that I can integrate with the system effectively.
+24. As a customer, I want to validate my phone number format so that my contact information is correct.
+25. As a customer service representative, I want to acknowledge customer interactions so that I can track communication status.
+26. As a customer, I want to see city suggestions based on postal codes so that I can complete my address accurately.
+27. As a system, I want to validate customer data so that information integrity is maintained.
+28. As a policy management system, I want to send messages when policies change so that other systems stay synchronized.
+29. As a customer core system, I want to provide customer data to other services so that information is consistent across applications.
+30. As a frontend application, I want to handle authentication tokens so that users can securely access their data.
+31. As a customer management system, I want to log all customer interactions so that there's a complete audit trail.
+32. As a risk management system, I want to process policy events so that risk calculations stay current.
+33. As a customer, I want to receive real-time chat messages so that I can have seamless conversations with support.
+34. As a policy system, I want to validate policy data so that coverage terms are accurate.
+35. As a customer service representative, I want to paginate through customer lists so that I can efficiently browse large datasets.

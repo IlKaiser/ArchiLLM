@@ -6,96 +6,79 @@ import csv
 # Ensure the root of the project is in the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.prompt import Prompt
-from src.agent import run
+from src.prompt import DiagramPrompt
 
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the agent on projects.")
-    parser.add_argument("--single-agent", action="store_true", help="Run with a single agent only (disable delegation)")
+    parser = argparse.ArgumentParser(description="Run UML component diagram pipeline over dataset projects.")
+    parser.add_argument("--single-agent", action="store_true", help="Disable EffortRouter multi-agent delegation")
+    parser.add_argument("--dataset-dir", default=None, help="Path to dataset projects directory (default: dataset/student_projects)")
     args = parser.parse_args()
     use_multi_agent = not args.single_agent
+    _run_diagram_pipeline(use_multi_agent=use_multi_agent, dataset_dir=args.dataset_dir)
+
+def _run_diagram_pipeline(use_multi_agent: bool = False, dataset_dir: str = None):
+    from src.diagram_agent import run as run_diagram
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    projects_dir = os.path.join(base_dir, 'projects')
-    # Maximum total cost across all runs
+    if dataset_dir is None:
+        dataset_dir = os.path.join(base_dir, 'dataset', 'student_projects')
+
     MAX_TOTAL_COST = 50.0
     accumulated_cost = 0.0
-    
-    # List of subfolders to skip
-    # skip every project but easybank
-    SKIP_LIST = ["donationbank", "rentanorchid", "gasstation", "kinepolis", "tuxme", "hfte", "easybank"]
-    #SKIP_LIST = ["easybank", "gasstation", "tuxme", "hfte", "alphainsurance"]
-    # Setup CSV logging
-    csv_file_path = os.path.join(base_dir, 'execution_report.csv')
+
+    csv_file_path = os.path.join(base_dir, 'diagram_execution_report.csv')
     file_exists = os.path.exists(csv_file_path)
-    
+
     with open(csv_file_path, mode='a', newline='') as csvfile:
         fieldnames = ['project_name', 'execution_time_seconds', 'cost', 'accumulated_cost']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
         if not file_exists:
             writer.writeheader()
-    
-    if not os.path.exists(projects_dir):
-        print(f"Projects directory not found at {projects_dir}")
+
+    if not os.path.exists(dataset_dir):
+        print(f"Dataset directory not found at {dataset_dir}")
         return
 
-    # Iterate over each subfolder in the projects folder
-    for project_name in os.listdir(projects_dir):
-        if project_name in SKIP_LIST:
-            print(f"Skipping {project_name}: found in SKIP_LIST.")
-            continue
-            
+    for project_name in sorted(os.listdir(dataset_dir)):
         if accumulated_cost >= MAX_TOTAL_COST:
-            print(f"==================================================")
-            print(f"Cost threshold ({MAX_TOTAL_COST}) reached. Stopping execution.")
-            print(f"Final accumulated cost: {accumulated_cost}")
-            print(f"==================================================")
+            print(f"Cost threshold ({MAX_TOTAL_COST}) reached. Stopping.")
             break
-            
-        project_path = os.path.join(projects_dir, project_name)
-        
-        # Check if it's a directory
-        if os.path.isdir(project_path):
-            desc_file = os.path.join(project_path, 'desc.txt')
-            
-            # Read desc.txt if it exists
-            if os.path.exists(desc_file):
-                with open(desc_file, 'r', encoding='utf-8') as f:
-                    desc_content = f.read()
-                
-                # title is the name of the subfolder, desc comes from desc.txt
-                prompt = Prompt(title=project_name, desc=desc_content)
-                
-                print(f"==================================================")
-                print(f"Running agent for project: {project_name}")
-                print(f"==================================================")
-                
-                start_time = time.time()
-                try:
-                    # execute the run function from agent.py
-                    cost = run(prompt=prompt, use_multi_agent=use_multi_agent)
-                    end_time = time.time()
-                    execution_time = end_time - start_time
-                    accumulated_cost += cost
-                    
-                    # Log to CSV
-                    with open(csv_file_path, mode='a', newline='') as csvfile:
-                        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                        writer.writerow({
-                            'project_name': project_name,
-                            'execution_time_seconds': round(execution_time, 2),
-                            'cost': round(cost, 4),
-                            'accumulated_cost': round(accumulated_cost, 4)
-                        })
-                        
-                    print(f"Finished project: {project_name}. Execution Time: {execution_time:.2f}s. Cost: {cost}. Accumulated Cost: {accumulated_cost}")
-                except Exception as e:
-                    print(f"Error running agent for {project_name}: {e}")
-            else:
-                print(f"Skipping {project_name}: desc.txt not found in project folder.")
+
+        project_path = os.path.join(dataset_dir, project_name)
+        if not os.path.isdir(project_path):
+            continue
+
+        input_file = os.path.join(project_path, 'input.txt')
+        if not os.path.exists(input_file):
+            print(f"Skipping {project_name}: input.txt not found.")
+            continue
+
+        print(f"{'='*50}")
+        print(f"Running diagram pipeline for: {project_name}")
+        print(f"{'='*50}")
+
+        prompt = DiagramPrompt(title=project_name)
+        start_time = time.time()
+        try:
+            cost = run_diagram(prompt=prompt, use_multi_agent=use_multi_agent)
+            execution_time = time.time() - start_time
+            accumulated_cost += cost
+
+            with open(csv_file_path, mode='a', newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=['project_name', 'execution_time_seconds', 'cost', 'accumulated_cost'])
+                writer.writerow({
+                    'project_name': project_name,
+                    'execution_time_seconds': round(execution_time, 2),
+                    'cost': round(cost, 4),
+                    'accumulated_cost': round(accumulated_cost, 4),
+                })
+
+            print(f"Finished {project_name}. Time: {execution_time:.2f}s. Cost: {cost:.4f}. Accumulated: {accumulated_cost:.4f}")
+        except Exception as e:
+            print(f"Error running diagram pipeline for {project_name}: {e}")
+
 
 if __name__ == "__main__":
     main()

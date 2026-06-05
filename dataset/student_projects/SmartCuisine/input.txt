@@ -1,0 +1,75 @@
+# SYSTEM DESCRIPTION:
+
+
+Smart Cuisine aims to develop an application to discover new recipes and check their nutritional values in order to monitor the daily intake of macronutrients.
+This application aims to improve the quality of the food intake and to give new ideas to people who want to eat in a healthier way, without giving up on tasty meals.
+The application meets the needs of the users with dietary restrictions given by health issues, intolerances and religious or moral choices.
+To achieve the previous purposes the system allows short-term and medium-term meal planning for the following days.
+The type of users which could be interested about this application are personal trainers, people who can’t afford a dietist or prefer to plan their meals by themselves.
+Another possible user could be a person who uses the application to write down his shopping list and check the nutritional values of the items in the list.
+
+
+# USER STORIES:
+
+
+1) As a not registered user, I want to subscribe with email and password so that being a registered user. 
+
+
+2) As a registered user, I want to log in with email and password so that logging in my account. 
+
+
+3) As a registered user, I want to access my profile so that I can visualize my personal data.
+ 
+4) As a registered user, I want to delete my account so that being no more a registered user. 
+
+
+5) As a registered user, I want to modify my email address so that I can update it. 
+
+
+6) As a registered user, I want to modify my password so that I can update it. 
+
+
+7) As a registered user, I want to modify my gender so that I can update it. 
+
+
+8) As a registered user, I want to add my ingredients to the storage so that I can keep track of the ingredients I have at home. 
+
+
+9) As a registered user, I want to delete an ingredient from my storage so that I can delete an ingredient I used for a recipe. 
+
+
+10) As a registered user, I want to search for recipes so that I can find ideas for meals. 
+11) As a registered user, I want to save recipes so that I can access them easily in the future. 
+
+
+12) As a registered user, I want to add the ingredients to my shopping list so that I can keep track of what I need to buy. 
+
+
+13) As a registered user, I want to delete a saved recipe so that I can remove it if I don't like it. 
+
+
+14) As a registered user, I want to search recipes containing a specific ingredient so that I can find something I can cook with the ingredients I have in storage. 
+
+
+15) As a registered user, I want to move the ingredients from my shopping list to my ingredients storage so that I can keep track of what I bought. 
+
+
+16) As a registered user, I want to delete an ingredient from my shopping list so that I can remove it if I already have it. 
+
+
+17) As a registered user, I want to set the expiration date for the ingredients in my storage so that I can remember when they will expire. 
+
+
+18) As a registered user, I want to receive notifications 1 day before my ingredients expire so that I have time to cook them before the expiration date. 
+
+
+19) As a registered user, I want to set the quantity for the ingredient in my storage so that I can know the quantities of each ingredient in the storage.
+
+
+20) As a registered user, I want to create a shopping list, so that I can keep track of what I want to buy.
+
+
+21) As a registered user, I want to delete a shopping list, so that I can keep track of what I want to buy.
+
+
+22) As a registered user, I want to read my shopping lists, so that I know what to buy.

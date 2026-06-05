@@ -1,0 +1,15 @@
+{
+  "matched_pairs": [],
+  "unmatched_gt_nodes": [
+    "Global::eShopOnContainers"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Database Per Service Pattern",
+    "Global::clients",
+    "Global::CQRS Pattern - Read Models",
+    "Global::Saga Pattern - Order Processing",
+    "Global::API Composition Pattern",
+    "Global::customer_service",
+    "Global::api_gateway"
+  ]
+}

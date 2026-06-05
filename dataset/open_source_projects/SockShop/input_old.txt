@@ -1,0 +1,11 @@
+# SYSTEM DESCRIPTION:
+This microservice application serves as a reference demo for microservices, showcasing best practices and common pitfalls. Its main purpose is to provide a testable application that demonstrates the integration of microservices within an ECommerce context, emphasizing continuous integration and deployment. The architecture is designed to be polyglot, utilizing various technologies to illustrate different aspects of microservices. Communication between services is facilitated through REST over HTTP.
+
+# USER STORIES:
+- 1. As a customer, I want to browse products so that I can find items to purchase.
+- 2. As a customer, I want to add items to my shopping cart so that I can review my selections before checkout.
+- 3. As a customer, I want to complete my purchase so that I can acquire the products I want.
+- 4. As a system administrator, I want to monitor service performance so that I can ensure the application runs smoothly.
+- 5. As a developer, I want to deploy new features quickly so that I can enhance the application without downtime.
+- 6. As a tester, I want to validate the application functionality so that I can ensure a seamless user experience.
+- 7. As a user, I want to receive notifications about my order status so that I am informed about my purchases.

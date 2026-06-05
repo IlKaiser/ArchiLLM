@@ -1,0 +1,40 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Order Service"
+      ],
+      "predicted_nodes": [
+        "Global::Order State Management (Event Sourcing)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node refers to order state management with event sourcing, which is a core responsibility of the GT Order Service. However, it is narrower and more pattern-oriented than the full Order Service, which also includes workflow orchestration and business rule enforcement. Since both are in the Global boundary, the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::API Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::Client Data Aggregation (API Composition)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node describes API composition/client data aggregation, which can be a responsibility of an API Gateway in a microservices system. It is not a precise service name and omits routing/load balancing/service discovery aspects, but it is semantically related to the GT API Gateway. Both are in the Global boundary, so the boundary attribution is correct."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Redis",
+    "Global::Intention Service",
+    "Global::Eureka Discovery",
+    "Global::MySQL",
+    "Global::RabbitMQ",
+    "Global::Test Client",
+    "Global::Position Service",
+    "Global::User Center Service"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Read-Write Optimization (CQRS)",
+    "Global::Distributed Transaction Coordination (Saga)"
+  ]
+}

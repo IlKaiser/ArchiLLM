@@ -1,0 +1,76 @@
+# SYSTEM DESCRIPTION:
+
+The goal of this project is to design and develop a distributed software system that assists individuals in organizing trips. Our solution aims to streamline the process of planning, coordinating, and managing trips, whether they are for leisure or business purposes, by offering a comprehensive suite of tools in a single platform.
+
+Unlike traditional trip planning apps, this system integrates collaborative features like group chat and polls with financial management tools, offering a one-stop solution for trip organization. Its distributed nature ensures reliability and efficiency, catering to both small groups and large-scale travel needs.
+
+
+# USER STORIES:
+1) As a future user, I want to register via email and password, to begin using the application.
+2) As a user, I want to login, to access the application's features.
+3) As a user, I want to delete my account.
+4) As a user, I want to access my profile, to see my information.
+5) As a user, I want to modify my username.
+6) As a user, I want to modify my password.
+7) As a user, I want to see all my trips.
+8) As a user, I want to search my trips by title or destination.
+9) As a user, I want to see my pending invitations to some trips.
+10) As a user, I want to create a Trip, to start planning my trip.
+11) As a trip creator, I want to delete a Trip.
+12) As a trip creator, I want to invite other users to my trip, to share trip information with them.
+13) As a user, I want to accept an invitation to a trip.
+14) As a user, I want to refuse an invitation to a trip.
+15) As a trip creator, I want to revoke an invitation that has been sent.
+16) As a trip participant, I want to leave the trip.
+17) As a trip creator, I want to remove a participant from my trip.
+18) As a trip participant, I want to modify the trip's title.
+19) As a trip participant, I want to modify the trip's dates.
+20) As a trip participant, I want to modify the trip's destinations.
+21) As a trip participant, I want to see the trip's schedule.
+22) As a trip participant, I want to filter my schedule by a specific day.
+23) As a trip participant, I want to see the weather prediction for every day of the trip, to better plan my activities.
+24) As a trip participant, I want to add an activity to a trip's schedule.
+25) As a trip participant, I want to delete an activity from a trip's schedule.
+26) As a trip participant, I want to see the details of an activity from the schedule.
+27) As a trip participant, I want to modify an activity's name, time, place, date, address and additional information.
+28) As a trip participant, I want to add an attachment to an activity.
+29) As a trip participant, I want to see a map with a marker on the activity's address.
+30) As a trip participant, I want to see an activity's attachments.
+31) As a trip participant, I want to be able to download the attachments of an activity.
+32) As a trip participant, I want to add a travel to a trip's schedule.
+33) As a trip participant, I want to delete a travel from a trip's schedule.
+34) As a trip participant, I want to see the details of a travel from the schedule.
+35) As a trip participant, I want to modify a travel's name, departure time, arrival time, departure place, arrival place, date, and additional information.
+36) As a trip participant, I want to add an attachment to a travel.
+37) As a trip participant, I want to see a map with a marker on the travel's departure address.
+38) As a trip participant, I want to see a travel's attachments.
+39) As a trip participant, I want to be able to download the attachments of a travel.
+40) As a trip participant, I want to change the main location of a night.
+41) As a trip participant, I want to create an accommodation spanning several nights, to save information about it.
+42) As a trip participant, I want to delete an accommodation.
+43) As a trip participant, I want to see the details of a night's accommodation.
+44) As a trip participant, I want to modify an accommodation's name, check-in and check-out time, dates, contacts, address and additional information.
+45) As a trip participant, I want to add an attachment to an accommodation.
+46) As a trip participant, I want to see an accommodation's attachments.
+47) As a trip participant, I want to be able to download the attachments of an accommodation.
+48) As a trip participant, I want to create a new expense, to settle up at the end of the trip.
+49) As a trip participant, I want to change the title of an expense.
+50) As a trip participant, I want to change the mount of an expense.
+51) As a trip participant, I want to change the split of an expense.
+52) As a trip participant, I want to change the date of an expense.
+53) As a trip participant, I want to delete an expense.
+54) As a trip participant, I want to see how much I spent during the trip.
+55) As a trip participant, I want to know who I have to pay back.
+56) As a trip participant, I want to know who have to pay me back.
+57) As a trip participant, I want to settle my debts.
+58) As a trip participant, I want to remind other users to settle their debts with me.
+59) As a trip participant, I want to send a message to the others participants in a group chat.
+60) As a trip participant, I want to see the message sent in the group chat in real time.
+61) As the user who sent a message, I want to delete that message.
+62) As the user who sent a message, I wan to to modify that message.
+63) As the user who sent a message, I want to see if other participants receive and/or read the message.
+64) As a trip participant, I want to see the photos of a trip uploaded by me and the other participants.
+65) As a trip participant, I want to upload a photo of a trip.
+66) As a trip participant, I want to delete a photo of a trip.
+67) As a user who's creating or updating a trip, I want to see be suggested names of cities.
+68)	As a user , I want to check if a user is online, so that I know if they are available to chat in real time

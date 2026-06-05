@@ -1,0 +1,14 @@
+# SYSTEM DESCRIPTION:
+This microservice application is a train ticket booking system designed to facilitate the purchase and management of train tickets. It is built using a microservice architecture that comprises 41 microservices, leveraging various programming languages and frameworks, including Java with Spring Boot and Spring Cloud, Node.js with Express, Python with Django, and Go with Webgo. The system utilizes MongoDB and MySQL for database management, ensuring robust data handling and storage.
+
+# USER STORIES:
+- 1. As a traveler, I want to search for available train tickets so that I can find suitable travel options.
+- 2. As a user, I want to book a train ticket so that I can secure my travel plans.
+- 3. As a customer, I want to view my booking history so that I can keep track of my past travels.
+- 4. As a user, I want to cancel my train ticket so that I can manage my travel plans effectively.
+- 5. As a traveler, I want to receive notifications about my train schedule so that I am informed of any changes.
+- 6. As a user, I want to pay for my ticket online so that I can complete my booking conveniently.
+- 7. As an administrator, I want to manage train schedules so that I can ensure accurate information is available to users.
+- 8. As a customer support agent, I want to access user inquiries so that I can assist customers with their issues.
+- 9. As a user, I want to filter search results by price and time so that I can find the best options for my needs.
+- 10. As a traveler, I want to provide feedback on my travel experience so that I can help improve the service.

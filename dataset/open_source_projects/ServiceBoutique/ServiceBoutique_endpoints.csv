@@ -1,0 +1,437 @@
+,path_or_url,file,line,text
+0,/k8s-skaffold/skaffold,/mnt/data/service-shop/service-Shop/cloudbuild.yaml,30,name: 'gcr.io/k8s-skaffold/skaffold:v2.14.1'
+1,/v3,/mnt/data/service-shop/service-Shop/skaffold.yaml,15,apiVersion: skaffold/v3
+2,/amd64,/mnt/data/service-shop/service-Shop/skaffold.yaml,20,"platforms: [""linux/amd64"", ""linux/arm64""]"
+3,/arm64,/mnt/data/service-shop/service-Shop/skaffold.yaml,20,"platforms: [""linux/amd64"", ""linux/arm64""]"
+4,https://skaffold.dev/docs/concepts/#image-repository-handling,/mnt/data/service-shop/service-Shop/skaffold.yaml,25,# https://skaffold.dev/docs/concepts/#image-repository-handling
+5,/emailservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,27,context: src/emailservice
+6,/productcatalogservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,29,context: src/productcatalogservice
+7,/recommendationservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,31,context: src/recommendationservice
+8,/shoppingassistantservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,33,context: src/shoppingassistantservice
+9,/shippingservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,35,context: src/shippingservice
+10,/checkoutservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,37,context: src/checkoutservice
+11,/paymentservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,39,context: src/paymentservice
+12,/currencyservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,41,context: src/currencyservice
+13,/cartservice/src,/mnt/data/service-shop/service-Shop/skaffold.yaml,43,context: src/cartservice/src
+14,/frontend,/mnt/data/service-shop/service-Shop/skaffold.yaml,47,context: src/frontend
+15,/adservice,/mnt/data/service-shop/service-Shop/skaffold.yaml,49,context: src/adservice
+16,/build/artifacts/7/docker/dockerfile,/mnt/data/service-shop/service-Shop/skaffold.yaml,85,path: /build/artifacts/7/docker/dockerfile
+17,/manifests/kustomize/paths/1,/mnt/data/service-shop/service-Shop/skaffold.yaml,93,path: /manifests/kustomize/paths/1
+18,/components/network-policies,/mnt/data/service-shop/service-Shop/skaffold.yaml,94,value: kustomize/components/network-policies
+22,/loadgenerator,/mnt/data/service-shop/service-Shop/skaffold.yaml,107,context: src/loadgenerator
+23,/kubernetes-manifests/loadgenerator,/mnt/data/service-shop/service-Shop/skaffold.yaml,113,- ./kubernetes-manifests/loadgenerator.yaml
+24,/v1alpha3,/mnt/data/service-shop/service-Shop/istio-manifests/frontend-gateway.yaml,15,apiVersion: networking.istio.io/v1alpha3
+26,/v1alpha3,/mnt/data/service-shop/service-Shop/istio-manifests/allow-egress-googleapis.yaml,15,apiVersion: networking.istio.io/v1alpha3
+28,/v1alpha3,/mnt/data/service-shop/service-Shop/istio-manifests/frontend.yaml,15,apiVersion: networking.istio.io/v1alpha3
+29,/creds,/mnt/data/service-shop/service-Shop/.deploystack/test.yaml,21,"args: ['-c','echo $$CREDS > .deploystack/creds.json']"
+30,/cloudshell-images/cloudshell,/mnt/data/service-shop/service-Shop/.deploystack/test.yaml,23,- name: 'gcr.io/cloudshell-images/cloudshell:latest'
+31,/test,/mnt/data/service-shop/service-Shop/.deploystack/test.yaml,25,args: [ '.deploystack/test' ]
+32,/secrets/creds/versions/latest,/mnt/data/service-shop/service-Shop/.deploystack/test.yaml,32,- versionName: projects/$PROJECT_ID/secrets/creds/versions/latest
+33,/secrets/billing_account/versions/latest,/mnt/data/service-shop/service-Shop/.deploystack/test.yaml,34,- versionName: projects/$PROJECT_ID/secrets/billing_account/versions/latest
+34,/kustomize/,/mnt/data/service-shop/service-Shop/.deploystack/deploystack.yaml,11,filepath_manifest: ../kustomize/
+35,https://cloud.google.com/shell/docs/cloud-shell-tutorials/deploystack/microservices-demo,/mnt/data/service-shop/service-Shop/.deploystack/deploystack.yaml,15,documentation_link: https://cloud.google.com/shell/docs/cloud-shell-tutorials/deploystack/microservices-demo
+36,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/emailservice.yaml,15,apiVersion: apps/v1
+37,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/checkoutservice.yaml,15,apiVersion: apps/v1
+38,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/recommendationservice.yaml,15,apiVersion: apps/v1
+39,/v1beta1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+40,/kustomize/components/cymbal-branding,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,30,# - ../kustomize/components/cymbal-branding
+41,/kustomize/components/google-cloud-operations,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,31,# - ../kustomize/components/google-cloud-operations
+42,/kustomize/components/memorystore,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,32,# - ../kustomize/components/memorystore
+43,/kustomize/components/network-policies,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,33,# - ../kustomize/components/network-policies
+44,/kustomize/components/alloydb,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,34,# - ../kustomize/components/alloydb
+45,/kustomize/components/shopping-assistant,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,35,# - ../kustomize/components/shopping-assistant
+46,/kustomize/components/spanner,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,36,# - ../kustomize/components/spanner
+47,/kustomize/components/container-images-tag,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,37,# - ../kustomize/components/container-images-tag
+48,/kustomize/components/container-images-tag-suffix,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,38,# - ../kustomize/components/container-images-tag-suffix
+49,/kustomize/components/container-images-registry,/mnt/data/service-shop/service-Shop/kubernetes-manifests/kustomization.yaml,39,# - ../kustomize/components/container-images-registry
+50,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/frontend.yaml,15,apiVersion: apps/v1
+51,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/kubernetes-manifests/frontend.yaml,30,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+52,/_healthz,/mnt/data/service-shop/service-Shop/kubernetes-manifests/frontend.yaml,53,"path: ""/_healthz"""
+54,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/paymentservice.yaml,15,apiVersion: apps/v1
+55,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/productcatalogservice.yaml,15,apiVersion: apps/v1
+56,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/cartservice.yaml,15,apiVersion: apps/v1
+58,/data,/mnt/data/service-shop/service-Shop/kubernetes-manifests/cartservice.yaml,130,- mountPath: /data
+59,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/loadgenerator.yaml,14,apiVersion: apps/v1
+60,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/kubernetes-manifests/loadgenerator.yaml,30,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+61,/bin/sh,/mnt/data/service-shop/service-Shop/kubernetes-manifests/loadgenerator.yaml,42,- /bin/sh
+62,http://${FRONTEND_ADDR},/mnt/data/service-shop/service-Shop/kubernetes-manifests/loadgenerator.yaml,49,STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+63,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/currencyservice.yaml,15,apiVersion: apps/v1
+64,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/shippingservice.yaml,15,apiVersion: apps/v1
+65,/v1,/mnt/data/service-shop/service-Shop/kubernetes-manifests/adservice.yaml,15,apiVersion: apps/v1
+66,/v1beta1,/mnt/data/service-shop/service-Shop/release/istio-manifests.yaml,21,apiVersion: gateway.networking.k8s.io/v1beta1
+68,/v1alpha3,/mnt/data/service-shop/service-Shop/release/istio-manifests.yaml,50,apiVersion: networking.istio.io/v1alpha3
+71,/v1,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,21,apiVersion: apps/v1
+72,/google-samples/microservices-demo/emailservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,52,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice:v0.10.3
+74,/google-samples/microservices-demo/checkoutservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,126,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice:v0.10.3
+76,/google-samples/microservices-demo/recommendationservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,209,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice:v0.10.3
+78,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,270,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+79,/google-samples/microservices-demo/frontend,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,287,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:v0.10.3
+80,/_healthz,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,293,"path: ""/_healthz"""
+83,/google-samples/microservices-demo/paymentservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,414,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice:v0.10.3
+85,/google-samples/microservices-demo/productcatalogservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,487,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice:v0.10.3
+87,/google-samples/microservices-demo/cartservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,560,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice:v0.10.3
+89,/data,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,644,- mountPath: /data
+92,/bin/sh,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,700,- /bin/sh
+93,http://${FRONTEND_ADDR},/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,707,STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+94,/google-samples/microservices-demo/loadgenerator,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,738,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.3
+96,/google-samples/microservices-demo/currencyservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,790,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice:v0.10.3
+98,/google-samples/microservices-demo/shippingservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,863,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice:v0.10.3
+100,/google-samples/microservices-demo/adservice,/mnt/data/service-shop/service-Shop/release/kubernetes-manifests.yaml,937,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice:v0.10.3
+101,https://semver.org/),/mnt/data/service-shop/service-Shop/helm-chart/Chart.yaml,31,# Versions are expected to follow Semantic Versioning (https://semver.org/)
+102,/google-samples/microservices-demo,/mnt/data/service-shop/service-Shop/helm-chart/values.yaml,20,repository: us-central1-docker.pkg.dev/google-samples/microservices-demo
+103,https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/kustomize/components/shopping-assistant,/mnt/data/service-shop/service-Shop/helm-chart/values.yaml,217,# https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/kustomize/components/shopping-assistant
+104,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,30,apiVersion: apps/v1
+105,https://cloud.google.com/compute/docs/storing-retrieving-metadata,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,65,# https://cloud.google.com/compute/docs/storing-retrieving-metadata
+106,/bin/sh,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,76,- '/bin/sh'
+107,/PROJECT_ID/,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,79,"sed ""s/PROJECT_ID/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+108,http://metadata.google.internal/computeMetadata/v1/project/project-id)/,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,79,"sed ""s/PROJECT_ID/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+109,/template/collector-gateway-config-template,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,79,"sed ""s/PROJECT_ID/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+110,/conf/collector-gateway-config,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,79,"sed ""s/PROJECT_ID/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+111,/template,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,82,mountPath: /template
+112,/conf,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,84,mountPath: /conf
+114,/opentelemetry-collector-contrib,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,99,image: otel/opentelemetry-collector-contrib:0.129.1@sha256:4798e3095561ac8ae13a81965088d68b943b1991bbeede91b1564e12c95372cc
+116,https://opentelemetry.io/docs/collector/configuration/,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,136,# https://opentelemetry.io/docs/collector/configuration/
+118,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,214,apiVersion: networking.istio.io/v1beta1
+120,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,243,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.adService.name }}
+121,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,243,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.adService.name }}
+143,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/opentelemetry-collector.yaml,255,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+144,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,30,apiVersion: apps/v1
+146,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,145,apiVersion: networking.istio.io/v1beta1
+148,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,177,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.checkoutService.name }}
+149,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,177,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.checkoutService.name }}
+151,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,179,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+152,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,184,- /hipstershop.EmailService/SendOrderConfirmation
+153,/SendOrderConfirmation,/mnt/data/service-shop/service-Shop/helm-chart/templates/emailservice.yaml,184,- /hipstershop.EmailService/SendOrderConfirmation
+154,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,30,apiVersion: apps/v1
+156,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,154,apiVersion: networking.istio.io/v1beta1
+158,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,192,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+159,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,192,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+161,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,194,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+162,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,199,- /hipstershop.CheckoutService/PlaceOrder
+163,/PlaceOrder,/mnt/data/service-shop/service-Shop/helm-chart/templates/checkoutservice.yaml,199,- /hipstershop.CheckoutService/PlaceOrder
+164,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,30,apiVersion: apps/v1
+166,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,147,apiVersion: networking.istio.io/v1beta1
+168,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,180,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+169,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,180,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+171,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,182,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+172,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,187,- /hipstershop.RecommendationService/ListRecommendations
+173,/ListRecommendations,/mnt/data/service-shop/service-Shop/helm-chart/templates/recommendationservice.yaml,187,- /hipstershop.RecommendationService/ListRecommendations
+174,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/common.yaml,16,apiVersion: networking.k8s.io/v1
+175,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/common.yaml,29,apiVersion: security.istio.io/v1beta1
+176,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,30,apiVersion: apps/v1
+177,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,46,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+178,/_healthz,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,79,"path: ""/_healthz"""
+181,/metadata,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,192,kubernetes.io/metadata.name: {{ .Values.frontend.virtualService.gateway.namespace }}
+182,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,206,apiVersion: networking.istio.io/v1beta1
+184,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,248,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.loadGenerator.name }}
+185,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,248,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.loadGenerator.name }}
+187,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,250,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+190,/v1alpha3,/mnt/data/service-shop/service-Shop/helm-chart/templates/frontend.yaml,266,apiVersion: networking.istio.io/v1alpha3
+191,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,30,apiVersion: apps/v1
+193,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,143,apiVersion: networking.istio.io/v1beta1
+195,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,175,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.checkoutService.name }}
+196,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,175,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.checkoutService.name }}
+198,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,177,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+199,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,182,- /hipstershop.PaymentService/Charge
+200,/Charge,/mnt/data/service-shop/service-Shop/helm-chart/templates/paymentservice.yaml,182,- /hipstershop.PaymentService/Charge
+201,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,30,apiVersion: apps/v1
+203,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,151,apiVersion: networking.istio.io/v1beta1
+205,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,183,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+206,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,183,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+212,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,187,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+213,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,192,- /hipstershop.ProductCatalogService/GetProduct
+214,/GetProduct,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,192,- /hipstershop.ProductCatalogService/GetProduct
+216,/ListProducts,/mnt/data/service-shop/service-Shop/helm-chart/templates/productcatalogservice.yaml,193,- /hipstershop.ProductCatalogService/ListProducts
+217,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,28,apiVersion: apps/v1
+218,/userVolumeMount,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,43,"sidecar.istio.io/userVolumeMount: '[{""name"": ""{{ .Values.cartDatabase.externalRedisTlsOrigination.name }}"", ""mountPath"": ""/etc/certs"", ""readonly"": true}]'"
+219,/etc/certs,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,43,"sidecar.istio.io/userVolumeMount: '[{""name"": ""{{ .Values.cartDatabase.externalRedisTlsOrigination.name }}"", ""mountPath"": ""/etc/certs"", ""readonly"": true}]'"
+220,/userVolume,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,44,"sidecar.istio.io/userVolume: '[{""name"": ""{{ .Values.cartDatabase.externalRedisTlsOrigination.name }}"", ""secret"": {""secretName"": ""{{ .Values.cartDatabase.externalRedisTlsOrigination.name }}""}}]'"
+221,/config,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,45,"proxy.istio.io/config: '{""holdApplicationUntilProxyStarts"": true}'"
+223,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,143,apiVersion: networking.istio.io/v1beta1
+225,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,182,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+226,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,182,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+230,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,185,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+231,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,190,- /hipstershop.CartService/AddItem
+232,/AddItem,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,190,- /hipstershop.CartService/AddItem
+234,/GetCart,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,191,- /hipstershop.CartService/GetCart
+236,/EmptyCart,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,192,- /hipstershop.CartService/EmptyCart
+238,/redis,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,257,image: {{ .Values.images.repository }}/redis:alpine
+239,/data,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,270,- mountPath: /data
+248,/etc/certs/,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,384,caCertificates: /etc/certs/{{ .Values.cartDatabase.externalRedisTlsOrigination.name }}.pem
+250,/32,/mnt/data/service-shop/service-Shop/helm-chart/templates/cartservice.yaml,395,- {{ .Values.cartDatabase.externalRedisTlsOrigination.endpointAddress }}/32
+251,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/loadgenerator.yaml,30,apiVersion: apps/v1
+252,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/helm-chart/templates/loadgenerator.yaml,47,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+253,/bin/sh,/mnt/data/service-shop/service-Shop/helm-chart/templates/loadgenerator.yaml,70,- /bin/sh
+254,http://${FRONTEND_ADDR},/mnt/data/service-shop/service-Shop/helm-chart/templates/loadgenerator.yaml,77,STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+256,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/loadgenerator.yaml,139,apiVersion: networking.istio.io/v1beta1
+257,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,30,apiVersion: apps/v1
+259,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,147,apiVersion: networking.istio.io/v1beta1
+261,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,179,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+262,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,179,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+266,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,182,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+267,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,187,- /hipstershop.CurrencyService/Convert
+268,/Convert,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,187,- /hipstershop.CurrencyService/Convert
+270,/GetSupportedCurrencies,/mnt/data/service-shop/service-Shop/helm-chart/templates/currencyservice.yaml,188,- /hipstershop.CurrencyService/GetSupportedCurrencies
+271,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,30,apiVersion: apps/v1
+273,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,136,apiVersion: networking.istio.io/v1beta1
+275,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,168,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+276,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,168,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+280,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,171,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+281,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,176,- /hipstershop.ShippingService/GetQuote
+282,/GetQuote,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,176,- /hipstershop.ShippingService/GetQuote
+284,/ShipOrder,/mnt/data/service-shop/service-Shop/helm-chart/templates/shippingservice.yaml,177,- /hipstershop.ShippingService/ShipOrder
+285,/v1,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,30,apiVersion: apps/v1
+287,/v1beta1,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,133,apiVersion: networking.istio.io/v1beta1
+289,/ns/,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,165,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+290,/sa/,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,165,- cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
+292,/sa/default,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,167,- cluster.local/ns/{{ .Release.Namespace }}/sa/default
+293,/hipstershop,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,172,- /hipstershop.AdService/GetAds
+294,/GetAds,/mnt/data/service-shop/service-Shop/helm-chart/templates/adservice.yaml,172,- /hipstershop.AdService/GetAds
+295,https://github.com/apps/license-header-lint-gcf,/mnt/data/service-shop/service-Shop/.github/header-checker-lint.yml,15,"# This file configures a GitHub Bot called ""License Header Lint GCF"": https://github.com/apps/license-header-lint-gcf"
+296,/missing,/mnt/data/service-shop/service-Shop/.github/header-checker-lint.yml,16,"# The bot runs a GitHub check called ""header-check"" (inside pull-requests) that warns us about invalid/missing license headers."
+297,/folders,/mnt/data/service-shop/service-Shop/.github/header-checker-lint.yml,25,"# If you want to ignore certain files/folders, use ignoreFiles."
+298,/requirements,/mnt/data/service-shop/service-Shop/.github/header-checker-lint.yml,27,#  - '**/requirements.txt'
+299,https://github.com/googleapis/repo-automation-bots/tree/main/packages/auto-approve,/mnt/data/service-shop/service-Shop/.github/auto-approve.yml,15,# https://github.com/googleapis/repo-automation-bots/tree/main/packages/auto-approve
+300,/v1,/mnt/data/service-shop/service-Shop/.github/release-cluster/backend-config.yaml,15,apiVersion: cloud.google.com/v1
+301,/v1beta1,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-config.yaml,15,apiVersion: networking.gke.io/v1beta1
+302,/v1,/mnt/data/service-shop/service-Shop/.github/release-cluster/managed-cert.yaml,15,apiVersion: networking.gke.io/v1
+303,/v1,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-ingress.yaml,15,apiVersion: networking.k8s.io/v1
+304,/ingress,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-ingress.yaml,20,kubernetes.io/ingress.global-static-ip-name: online-boutique-ip
+305,/managed-certificates,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-ingress.yaml,21,networking.gke.io/managed-certificates: online-boutique-certificate
+306,/v1beta1,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-ingress.yaml,22,networking.gke.io/v1beta1.FrontendConfig: frontend-frontend-config
+307,/neg,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-service.yaml,20,"cloud.google.com/neg: '{""ingress"": true}'"
+308,/backend-config,/mnt/data/service-shop/service-Shop/.github/release-cluster/frontend-service.yaml,21,"cloud.google.com/backend-config: '{""default"": ""frontend-backend-config""}'"
+309,/workflows/terraform-validate-ci,/mnt/data/service-shop/service-Shop/.github/workflows/terraform-validate-ci.yaml,22,- '.github/workflows/terraform-validate-ci.yaml'
+311,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/terraform-validate-ci.yaml,31,- uses: actions/checkout@v4
+312,/setup-terraform,/mnt/data/service-shop/service-Shop/.github/workflows/terraform-validate-ci.yaml,32,- uses: hashicorp/setup-terraform@v3
+313,/workflows/helm-chart-ci,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,22,- '.github/workflows/helm-chart-ci.yaml'
+315,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,31,- uses: actions/checkout@v4
+316,https://medium.com/google-cloud/b5bd26253a4c,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,45,# Test related to https://medium.com/google-cloud/b5bd26253a4c
+317,/PROJECT_ID/instances/SPANNER_INSTANCE_NAME/databases/SPANNER_DATABASE_NAME,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,47,SPANNER_CONNECTION_STRING=projects/PROJECT_ID/instances/SPANNER_INSTANCE_NAME/databases/SPANNER_DATABASE_NAME
+318,https://medium.com/google-cloud/f7248e077339,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,56,# Test related to https://medium.com/google-cloud/f7248e077339
+320,/gcp-service-account,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,66,"--set ""serviceAccounts.annotations.iam\.gke\.io/gcp-service-account=${SPANNER_DB_USER_GSA_ID}"" \"
+321,https://medium.com/google-cloud/246119e46d53,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,73,# Test related to https://medium.com/google-cloud/246119e46d53
+322,https://medium.com/google-cloud/64b71969318d,/mnt/data/service-shop/service-Shop/.github/workflows/helm-chart-ci.yaml,92,# Test related to https://medium.com/google-cloud/64b71969318d
+323,/README,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,21,- '**/README.md'
+324,/workflows/kustomize-build-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,23,- '.github/workflows/kustomize-build-ci.yaml'
+325,/workflows/terraform-validate-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,25,- '.github/workflows/terraform-validate-ci.yaml'
+326,/workflows/helm-chart-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,27,- '.github/workflows/helm-chart-ci.yaml'
+327,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,38,- uses: actions/checkout@v4
+328,/setup-dotnet,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,39,- uses: actions/setup-dotnet@v4
+329,/setup-go,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,44,- uses: actions/setup-go@v5
+330,/validator,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,50,"for GO_PACKAGE in ""shippingservice"" ""productcatalogservice"" ""frontend/validator""; do"
+331,/cartservice/,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,59,dotnet test src/cartservice/
+333,/refs/pull/,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,88,skaffold run --default-repo=us-docker.pkg.dev/$PROJECT_ID/refs/pull/$PR_NUMBER --tag=$PR_NUMBER --namespace=$NAMESPACE -p network-policies
+334,/redis-cart,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,100,kubectl wait --for=condition=available --timeout=1000s deployment/redis-cart
+335,/adservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,101,kubectl wait --for=condition=available --timeout=1000s deployment/adservice
+336,/cartservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,102,kubectl wait --for=condition=available --timeout=1000s deployment/cartservice
+337,/checkoutservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,103,kubectl wait --for=condition=available --timeout=1000s deployment/checkoutservice
+338,/currencyservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,104,kubectl wait --for=condition=available --timeout=1000s deployment/currencyservice
+339,/emailservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,105,kubectl wait --for=condition=available --timeout=1000s deployment/emailservice
+340,/frontend,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,106,kubectl wait --for=condition=available --timeout=1000s deployment/frontend
+341,/loadgenerator,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,107,kubectl wait --for=condition=available --timeout=1000s deployment/loadgenerator
+342,/paymentservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,108,kubectl wait --for=condition=available --timeout=1000s deployment/paymentservice
+343,/productcatalogservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,109,kubectl wait --for=condition=available --timeout=1000s deployment/productcatalogservice
+344,/recommendationservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,110,kubectl wait --for=condition=available --timeout=1000s deployment/recommendationservice
+345,/shippingservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,111,kubectl wait --for=condition=available --timeout=1000s deployment/shippingservice
+346,//g,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,142,"ERROR_COUNT=$(kubectl logs -l app=loadgenerator | grep Aggregated | awk '{print $3}' | sed ""s/[(][^)]*[)]//g"")"
+347,/json,/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,155,"-H ""Content-Type: application/json"" \"
+348,http://${EXTERNAL_IP},/mnt/data/service-shop/service-Shop/.github/workflows/ci-pr.yaml,157,"--data '{ ""body"": ""🚲 PR staged at '""http://${EXTERNAL_IP}""'""}'"
+349,/workflows/kustomize-build-ci,/mnt/data/service-shop/service-Shop/.github/workflows/kustomize-build-ci.yaml,22,- '.github/workflows/kustomize-build-ci.yaml'
+351,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/kustomize-build-ci.yaml,31,- uses: actions/checkout@v4
+352,/tests,/mnt/data/service-shop/service-Shop/.github/workflows/kustomize-build-ci.yaml,36,# Build the different combinations of Kustomize components found in kustomize/tests.
+354,/Release,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,15,"name: ""Continuous Integration - Main/Release"""
+355,/README,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,23,- '**/README.md'
+356,/workflows/kustomize-build-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,25,- '.github/workflows/kustomize-build-ci.yaml'
+357,/workflows/terraform-validate-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,27,- '.github/workflows/terraform-validate-ci.yaml'
+358,/workflows/helm-chart-ci,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,29,- '.github/workflows/helm-chart-ci.yaml'
+359,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,34,- uses: actions/checkout@v4
+360,/setup-dotnet,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,35,- uses: actions/setup-dotnet@v4
+361,/setup-go,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,40,- uses: actions/setup-go@v5
+362,/cartservice/,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,55,dotnet test src/cartservice/
+364,/redis-cart,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,94,kubectl wait --for=condition=available --timeout=1000s deployment/redis-cart
+365,/adservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,95,kubectl wait --for=condition=available --timeout=1000s deployment/adservice
+366,/cartservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,96,kubectl wait --for=condition=available --timeout=1000s deployment/cartservice
+367,/checkoutservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,97,kubectl wait --for=condition=available --timeout=1000s deployment/checkoutservice
+368,/currencyservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,98,kubectl wait --for=condition=available --timeout=1000s deployment/currencyservice
+369,/emailservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,99,kubectl wait --for=condition=available --timeout=1000s deployment/emailservice
+370,/frontend,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,100,kubectl wait --for=condition=available --timeout=1000s deployment/frontend
+371,/loadgenerator,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,101,kubectl wait --for=condition=available --timeout=1000s deployment/loadgenerator
+372,/paymentservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,102,kubectl wait --for=condition=available --timeout=1000s deployment/paymentservice
+373,/productcatalogservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,103,kubectl wait --for=condition=available --timeout=1000s deployment/productcatalogservice
+374,/recommendationservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,104,kubectl wait --for=condition=available --timeout=1000s deployment/recommendationservice
+375,/shippingservice,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,105,kubectl wait --for=condition=available --timeout=1000s deployment/shippingservice
+376,//g,/mnt/data/service-shop/service-Shop/.github/workflows/ci-main.yaml,119,"ERROR_COUNT=$(kubectl logs -l app=loadgenerator | grep Aggregated | awk '{print $3}' | sed ""s/[(][^)]*[)]//g"")"
+377,/README,/mnt/data/service-shop/service-Shop/.github/workflows/cleanup.yaml,23,- '**/README.md'
+378,/workflows/kustomize-build-ci,/mnt/data/service-shop/service-Shop/.github/workflows/cleanup.yaml,25,- '.github/workflows/kustomize-build-ci.yaml'
+379,/workflows/terraform-validate-ci,/mnt/data/service-shop/service-Shop/.github/workflows/cleanup.yaml,27,- '.github/workflows/terraform-validate-ci.yaml'
+380,/workflows/kubevious-manifests-ci,/mnt/data/service-shop/service-Shop/.github/workflows/kubevious-manifests-ci.yaml,23,- '.github/workflows/kubevious-manifests-ci.yaml'
+382,/checkout,/mnt/data/service-shop/service-Shop/.github/workflows/kubevious-manifests-ci.yaml,36,- uses: actions/checkout@v4
+383,/cli,/mnt/data/service-shop/service-Shop/.github/workflows/kubevious-manifests-ci.yaml,40,uses: kubevious/cli@v1.0.64
+386,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+387,/cymbal-branding,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,20,# - components/cymbal-branding
+388,/google-cloud-operations,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,21,# - components/google-cloud-operations
+389,/memorystore,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,22,# - components/memorystore
+390,/network-policies,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,23,# - components/network-policies
+391,/non-public-frontend,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,24,# - components/non-public-frontend
+392,/service-accounts,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,25,# - components/service-accounts
+393,/alloydb,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,26,# - components/alloydb
+394,/single-shared-session,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,27,# - components/single-shared-session
+395,/spanner,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,28,# - components/spanner
+396,/service-mesh-istio,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,29,# - components/service-mesh-istio
+397,/without-loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,30,# - components/without-loadgenerator
+398,/container-images-tag,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,32,# - components/container-images-tag
+399,/container-images-tag-suffix,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,33,# - components/container-images-tag-suffix
+400,/container-images-registry,/mnt/data/service-shop/service-Shop/kustomize/kustomization.yaml,34,# - components/container-images-registry
+401,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+402,/base,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,18,- ../../base
+403,/components/cymbal-branding,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,20,- ../../components/cymbal-branding
+404,/components/google-cloud-operations,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,21,- ../../components/google-cloud-operations
+405,/components/network-policies,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,22,- ../../components/network-policies
+406,/components/memorystore,/mnt/data/service-shop/service-Shop/kustomize/tests/memorystore-with-all-components/kustomization.yaml,23,- ../../components/memorystore
+407,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+408,/base,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,18,- ../../base
+409,/components/cymbal-branding,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,20,- ../../components/cymbal-branding
+410,/components/google-cloud-operations,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,21,- ../../components/google-cloud-operations
+411,/components/network-policies,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,22,- ../../components/network-policies
+412,/components/spanner,/mnt/data/service-shop/service-Shop/kustomize/tests/spanner-with-all-components/kustomization.yaml,23,- ../../components/spanner
+413,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+414,/base,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,18,- ../../base
+415,/components/cymbal-branding,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,20,- ../../components/cymbal-branding
+416,/components/google-cloud-operations,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,21,- ../../components/google-cloud-operations
+417,/components/network-policies,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,22,- ../../components/network-policies
+418,/components/service-mesh-istio,/mnt/data/service-shop/service-Shop/kustomize/tests/service-mesh-istio-with-all-components/kustomization.yaml,23,- ../../components/service-mesh-istio
+419,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+420,/spec/template/spec/containers/0/env/-,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,23,path: /spec/template/spec/containers/0/env/-
+421,/online-boutique,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,26,value: /online-boutique
+422,/spec/template/spec/containers/0/livenessProbe/httpGet/path,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,28,path: /spec/template/spec/containers/0/livenessProbe/httpGet/path
+423,/online-boutique/_healthz,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,29,value: /online-boutique/_healthz
+424,/spec/template/spec/containers/0/readinessProbe/httpGet/path,/mnt/data/service-shop/service-Shop/kustomize/components/custom-base-url/kustomization.yaml,31,path: /spec/template/spec/containers/0/readinessProbe/httpGet/path
+426,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+427,/google-samples/microservices-demo/adservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,18,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice
+428,/adservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,19,newName: CONTAINER_IMAGES_REGISTRY/adservice
+429,/google-samples/microservices-demo/cartservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,20,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice
+430,/cartservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,21,newName: CONTAINER_IMAGES_REGISTRY/cartservice
+431,/google-samples/microservices-demo/checkoutservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,22,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice
+432,/checkoutservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,23,newName: CONTAINER_IMAGES_REGISTRY/checkoutservice
+433,/google-samples/microservices-demo/currencyservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,24,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice
+434,/currencyservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,25,newName: CONTAINER_IMAGES_REGISTRY/currencyservice
+435,/google-samples/microservices-demo/emailservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,26,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice
+436,/emailservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,27,newName: CONTAINER_IMAGES_REGISTRY/emailservice
+437,/google-samples/microservices-demo/frontend,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,28,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend
+438,/frontend,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,29,newName: CONTAINER_IMAGES_REGISTRY/frontend
+439,/google-samples/microservices-demo/loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,30,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator
+440,/loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,31,newName: CONTAINER_IMAGES_REGISTRY/loadgenerator
+441,/google-samples/microservices-demo/paymentservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,32,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice
+442,/paymentservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,33,newName: CONTAINER_IMAGES_REGISTRY/paymentservice
+443,/google-samples/microservices-demo/productcatalogservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,34,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice
+444,/productcatalogservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,35,newName: CONTAINER_IMAGES_REGISTRY/productcatalogservice
+445,/google-samples/microservices-demo/recommendationservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,36,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice
+446,/recommendationservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,37,newName: CONTAINER_IMAGES_REGISTRY/recommendationservice
+447,/google-samples/microservices-demo/shippingservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,38,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice
+448,/shippingservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,39,newName: CONTAINER_IMAGES_REGISTRY/shippingservice
+449,/redis,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-registry/kustomization.yaml,41,newName: CONTAINER_IMAGES_REGISTRY/redis
+450,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/without-loadgenerator/delete-loadgenerator.patch.yaml,1,apiVersion: apps/v1
+451,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/without-loadgenerator/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+452,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/cymbal-branding/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+453,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/cymbal-branding/kustomization.yaml,19,apiVersion: apps/v1
+454,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/memorystore/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+455,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/memorystore/kustomization.yaml,20,apiVersion: apps/v1
+457,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/single-shared-session/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+458,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/single-shared-session/kustomization.yaml,20,apiVersion: apps/v1
+459,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-paymentservice.yaml,15,apiVersion: networking.k8s.io/v1
+460,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-currencyservice.yaml,15,apiVersion: networking.k8s.io/v1
+461,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-adservice.yaml,15,apiVersion: networking.k8s.io/v1
+462,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-redis.yaml,15,apiVersion: networking.k8s.io/v1
+463,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-deny-all.yaml,15,apiVersion: networking.k8s.io/v1
+464,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-shippingservice.yaml,15,apiVersion: networking.k8s.io/v1
+465,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-frontend.yaml,15,apiVersion: networking.k8s.io/v1
+466,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+467,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-recommendationservice.yaml,15,apiVersion: networking.k8s.io/v1
+468,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-emailservice.yaml,15,apiVersion: networking.k8s.io/v1
+469,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-cartservice.yaml,15,apiVersion: networking.k8s.io/v1
+470,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-checkoutservice.yaml,15,apiVersion: networking.k8s.io/v1
+471,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-productcatalogservice.yaml,15,apiVersion: networking.k8s.io/v1
+472,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/network-policies/network-policy-loadgenerator.yaml,15,apiVersion: networking.k8s.io/v1
+473,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+474,/google-samples/microservices-demo/adservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,18,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice
+475,/google-samples/microservices-demo/cartservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,20,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice
+476,/google-samples/microservices-demo/checkoutservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,22,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice
+477,/google-samples/microservices-demo/currencyservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,24,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice
+478,/google-samples/microservices-demo/emailservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,26,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice
+479,/google-samples/microservices-demo/frontend,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,28,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend
+480,/google-samples/microservices-demo/loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,30,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator
+481,/google-samples/microservices-demo/paymentservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,32,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice
+482,/google-samples/microservices-demo/productcatalogservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,34,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice
+483,/google-samples/microservices-demo/recommendationservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,36,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice
+484,/google-samples/microservices-demo/shippingservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag/kustomization.yaml,38,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice
+485,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,16,apiVersion: apps/v1
+486,https://cloud.google.com/compute/docs/storing-retrieving-metadata,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,37,# https://cloud.google.com/compute/docs/storing-retrieving-metadata
+487,/bin/sh,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,49,- '/bin/sh'
+488,http://metadata.google.internal/computeMetadata/v1/project/project-id)/,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,52,"sed ""s/{{PROJECT_ID}}/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+489,/template/collector-gateway-config-template,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,52,"sed ""s/{{PROJECT_ID}}/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+490,/conf/collector-gateway-config,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,52,"sed ""s/{{PROJECT_ID}}/$(curl -H 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/project/project-id)/"" /template/collector-gateway-config-template.yaml >> /conf/collector-gateway-config.yaml"
+491,/template,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,55,mountPath: /template
+492,/conf,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,57,mountPath: /conf
+494,/opentelemetry-collector-contrib,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,71,image: otel/opentelemetry-collector-contrib:0.129.1@sha256:4798e3095561ac8ae13a81965088d68b943b1991bbeede91b1564e12c95372cc
+496,https://opentelemetry.io/docs/collector/configuration/,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/otel-collector.yaml,106,# https://opentelemetry.io/docs/collector/configuration/
+497,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+498,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/google-cloud-operations/kustomization.yaml,23,apiVersion: apps/v1
+506,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/spanner/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+507,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/spanner/kustomization.yaml,20,apiVersion: apps/v1
+508,/SPANNER_PROJECT/instances/SPANNER_INSTANCE/databases/SPANNER_DATABASE,/mnt/data/service-shop/service-Shop/kustomize/components/spanner/kustomization.yaml,33,value: projects/SPANNER_PROJECT/instances/SPANNER_INSTANCE/databases/SPANNER_DATABASE
+509,/gcp-service-account,/mnt/data/service-shop/service-Shop/kustomize/components/spanner/kustomization.yaml,41,iam.gke.io/gcp-service-account: SPANNER_DB_USER_GSA_ID
+511,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/alloydb/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+512,/read,/mnt/data/service-shop/service-Shop/kustomize/components/alloydb/kustomization.yaml,19,"# Potentially later we'll factor in splitting traffic to primary/read pool, but for now"
+513,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/alloydb/kustomization.yaml,22,apiVersion: apps/v1
+514,/gcp-service-account,/mnt/data/service-shop/service-Shop/kustomize/components/alloydb/kustomization.yaml,51,iam.gke.io/gcp-service-account: ALLOYDB_USER_GSA_ID
+518,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/components/service-mesh-istio/frontend-gateway.yaml,15,apiVersion: gateway.networking.k8s.io/v1beta1
+520,/v1alpha3,/mnt/data/service-shop/service-Shop/kustomize/components/service-mesh-istio/allow-egress-googleapis.yaml,15,apiVersion: networking.istio.io/v1alpha3
+522,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/service-mesh-istio/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+523,/v1alpha3,/mnt/data/service-shop/service-Shop/kustomize/components/service-mesh-istio/frontend.yaml,15,apiVersion: networking.istio.io/v1alpha3
+524,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+525,/google-samples/microservices-demo/adservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,18,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice
+526,/google-samples/microservices-demo/cartservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,20,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice
+527,/google-samples/microservices-demo/checkoutservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,22,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice
+528,/google-samples/microservices-demo/currencyservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,24,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice
+529,/google-samples/microservices-demo/emailservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,26,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice
+530,/google-samples/microservices-demo/frontend,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,28,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend
+531,/google-samples/microservices-demo/loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,30,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator
+532,/google-samples/microservices-demo/paymentservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,32,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice
+533,/google-samples/microservices-demo/productcatalogservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,34,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice
+534,/google-samples/microservices-demo/recommendationservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,36,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice
+535,/google-samples/microservices-demo/shippingservice,/mnt/data/service-shop/service-Shop/kustomize/components/container-images-tag-suffix/kustomization.yaml,38,- name: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice
+536,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/non-public-frontend/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+537,/v1alpha1,/mnt/data/service-shop/service-Shop/kustomize/components/shopping-assistant/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1alpha1
+538,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/shopping-assistant/kustomization.yaml,21,apiVersion: apps/v1
+539,/v1,/mnt/data/service-shop/service-Shop/kustomize/components/shopping-assistant/shoppingassistantservice.yaml,15,apiVersion: apps/v1
+540,/gcp-service-account,/mnt/data/service-shop/service-Shop/kustomize/components/shopping-assistant/shoppingassistantservice.yaml,95,iam.gke.io/gcp-service-account: ALLOYDB_USER_GSA_ID
+541,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/emailservice.yaml,15,apiVersion: apps/v1
+542,/google-samples/microservices-demo/emailservice,/mnt/data/service-shop/service-Shop/kustomize/base/emailservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice:v0.10.3
+543,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/checkoutservice.yaml,15,apiVersion: apps/v1
+544,/google-samples/microservices-demo/checkoutservice,/mnt/data/service-shop/service-Shop/kustomize/base/checkoutservice.yaml,45,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice:v0.10.3
+545,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/recommendationservice.yaml,15,apiVersion: apps/v1
+546,/google-samples/microservices-demo/recommendationservice,/mnt/data/service-shop/service-Shop/kustomize/base/recommendationservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice:v0.10.3
+547,/v1beta1,/mnt/data/service-shop/service-Shop/kustomize/base/kustomization.yaml,15,apiVersion: kustomize.config.k8s.io/v1beta1
+548,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/frontend.yaml,15,apiVersion: apps/v1
+549,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/kustomize/base/frontend.yaml,30,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+550,/google-samples/microservices-demo/frontend,/mnt/data/service-shop/service-Shop/kustomize/base/frontend.yaml,47,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:v0.10.3
+551,/_healthz,/mnt/data/service-shop/service-Shop/kustomize/base/frontend.yaml,53,"path: ""/_healthz"""
+553,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/paymentservice.yaml,15,apiVersion: apps/v1
+554,/google-samples/microservices-demo/paymentservice,/mnt/data/service-shop/service-Shop/kustomize/base/paymentservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice:v0.10.3
+555,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/productcatalogservice.yaml,15,apiVersion: apps/v1
+556,/google-samples/microservices-demo/productcatalogservice,/mnt/data/service-shop/service-Shop/kustomize/base/productcatalogservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice:v0.10.3
+557,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/cartservice.yaml,15,apiVersion: apps/v1
+558,/google-samples/microservices-demo/cartservice,/mnt/data/service-shop/service-Shop/kustomize/base/cartservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice:v0.10.3
+560,/data,/mnt/data/service-shop/service-Shop/kustomize/base/cartservice.yaml,130,- mountPath: /data
+561,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/loadgenerator.yaml,14,apiVersion: apps/v1
+562,/rewriteAppHTTPProbers,/mnt/data/service-shop/service-Shop/kustomize/base/loadgenerator.yaml,30,"sidecar.istio.io/rewriteAppHTTPProbers: ""true"""
+563,/bin/sh,/mnt/data/service-shop/service-Shop/kustomize/base/loadgenerator.yaml,42,- /bin/sh
+564,http://${FRONTEND_ADDR},/mnt/data/service-shop/service-Shop/kustomize/base/loadgenerator.yaml,49,STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+565,/google-samples/microservices-demo/loadgenerator,/mnt/data/service-shop/service-Shop/kustomize/base/loadgenerator.yaml,80,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.3
+566,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/currencyservice.yaml,15,apiVersion: apps/v1
+567,/google-samples/microservices-demo/currencyservice,/mnt/data/service-shop/service-Shop/kustomize/base/currencyservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice:v0.10.3
+568,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/shippingservice.yaml,15,apiVersion: apps/v1
+569,/google-samples/microservices-demo/shippingservice,/mnt/data/service-shop/service-Shop/kustomize/base/shippingservice.yaml,45,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice:v0.10.3
+570,/v1,/mnt/data/service-shop/service-Shop/kustomize/base/adservice.yaml,15,apiVersion: apps/v1
+571,/google-samples/microservices-demo/adservice,/mnt/data/service-shop/service-Shop/kustomize/base/adservice.yaml,46,image: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice:v0.10.3

@@ -1,0 +1,18 @@
+{
+  "matched_pairs": [],
+  "unmatched_gt_nodes": [
+    "Global::Products Service",
+    "Global::Cart Service",
+    "Global::MongoDB",
+    "Global::Redis",
+    "Global::PostgreSQL",
+    "Global::Store UI",
+    "Global::ElasticSearch",
+    "Global::Users Service",
+    "Global::Search Service"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Core Microservices Data Isolation (Database per Service)",
+    "Global::UI Data Aggregation (API Composition)"
+  ]
+}

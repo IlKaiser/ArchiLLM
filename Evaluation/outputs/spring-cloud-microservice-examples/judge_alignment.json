@@ -1,0 +1,77 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Eureka Server"
+      ],
+      "predicted_nodes": [
+        "Global::Service Discovery"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node represents the service registry/discovery capability, which corresponds to the Eureka Server in the GT. Both are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Zipkin Server",
+        "Global::Hystrix Dashboard",
+        "Global::Hystrix Turbine"
+      ],
+      "predicted_nodes": [
+        "Global::Observability"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted Observability node aggregates tracing, circuit breaker dashboarding, and metrics aggregation capabilities represented separately in the GT by Zipkin Server, Hystrix Dashboard, and Hystrix Turbine. The Global boundary is consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::Simple UI"
+      ],
+      "predicted_nodes": [
+        "Global::web_ui",
+        "Global::Frontend"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "Both predicted nodes refer to the Angular/web frontend user interface represented in the GT as Simple UI. Although the prediction duplicates the frontend concept, the boundary attribution remains Global and is therefore correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Config Server"
+      ],
+      "predicted_nodes": [
+        "Global::Configuration Management"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted Configuration Management node corresponds to the centralized Spring Cloud Config Server in the GT. Both are in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::API Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::api_gateway",
+        "Global::API Composition Layer"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted api_gateway directly matches the GT API Gateway, while API Composition Layer is an architectural abstraction of the same gateway/unified-entry capability. Both predicted nodes are placed in the same Global boundary."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::UAA Service",
+    "Global::Simple Service",
+    "Global::Finagle Thrift Client",
+    "Global::Dummy Service",
+    "Global::Finagle Thrift Server",
+    "Global::MySQL",
+    "Global::Thrift Server",
+    "Global::Thrift Client",
+    "Global::Simple Service B"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Event Bus Infrastructure"
+  ]
+}

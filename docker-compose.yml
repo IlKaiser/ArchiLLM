@@ -123,7 +123,7 @@ services:
       QUICKWIT_INGEST_URL: http://lmnr-quickwit:7281
       QUICKWIT_SPANS_INDEX_ID: spans_v2
 
-  # ── ARTHUR agent orchestrator ──────────────────────────────────────────
+  # ── ARTHUR agent orchestrator (Streamlit UI) ───────────────────────────
   agent-orchestrator:
     build: .
     container_name: arthur-orchestrator
@@ -149,6 +149,59 @@ services:
         condition: service_started
     # Optionally customize the command here, eg if you want to run aggregate_tests instead:
     # command: ["conda", "run", "--no-capture-output", "-n", "env_name", "python", "src/aggregate_tests.py"]
+
+  # ── ARTHUR headless batch runner ───────────────────────────────────────
+  headless:
+    build: .
+    container_name: arthur-headless
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./patches/laminar.py:/opt/conda/envs/env_name/lib/python3.13/site-packages/openhands/sdk/observability/laminar.py:ro
+    env_file:
+      - .env
+    environment:
+      - LMNR_PROJECT_API_KEY=${LMNR_PROJECT_API_KEY}
+      - LMNR_BASE_URL=http://lmnr-app-server:8001
+      # ── Headless runner knobs (override via `docker compose run headless` or .env) ──
+      # Dataset directory inside the container (volume-mounted from host)
+      - HEADLESS_DATASET=${HEADLESS_DATASET:-MicroserviceDataset}
+      # Output directory for generated diagrams
+      - HEADLESS_OUTPUT=${HEADLESS_OUTPUT:-./run}
+      # CSV report path
+      - HEADLESS_REPORT=${HEADLESS_REPORT:-headless_report.csv}
+      # Max pipeline cost before stopping
+      - HEADLESS_MAX_COST=${HEADLESS_MAX_COST:-50.0}
+      # Extra CLI flags forwarded verbatim (e.g. "--eval --metrics all --multi-agent")
+      - HEADLESS_EXTRA_ARGS=${HEADLESS_EXTRA_ARGS:-}
+      # Local inference (optional) — set backend + model to use Ollama / HF/vLLM
+      - LOCAL_BACKEND=${LOCAL_BACKEND:-}
+      - LOCAL_MODEL=${LOCAL_MODEL:-}
+      - LOCAL_BASE_URL=${LOCAL_BASE_URL:-}
+    depends_on:
+      lmnr-app-server:
+        condition: service_started
+    # The ENTRYPOINT is already `conda run -n env_name`, so we only supply the python command.
+    # Shell form lets us expand $HEADLESS_EXTRA_ARGS as multiple words.
+    command:
+      - /bin/bash
+      - -c
+      - |
+        LOCAL_FLAGS=""
+        if [ -n "$$LOCAL_BACKEND" ]; then
+          LOCAL_FLAGS="--local-backend $$LOCAL_BACKEND --local-model $$LOCAL_MODEL"
+          if [ -n "$$LOCAL_BASE_URL" ]; then
+            LOCAL_FLAGS="$$LOCAL_FLAGS --local-url $$LOCAL_BASE_URL"
+          fi
+        fi
+        exec python run_headless.py \
+          --dataset "$$HEADLESS_DATASET" \
+          --output  "$$HEADLESS_OUTPUT" \
+          --report  "$$HEADLESS_REPORT" \
+          --max-cost "$$HEADLESS_MAX_COST" \
+          --skip-existing \
+          $$LOCAL_FLAGS \
+          $$HEADLESS_EXTRA_ARGS
 
 volumes:
   lmnr-postgres-data:

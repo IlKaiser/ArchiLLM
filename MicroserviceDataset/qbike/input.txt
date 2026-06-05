@@ -1,0 +1,34 @@
+# SYSTEM DESCRIPTION:
+QBike is a ride-hailing platform specifically designed for electric bikes operating in congested urban areas during peak hours. The system connects electric bike drivers with passengers who need transportation, leveraging the agility of electric bikes to navigate through heavy traffic more efficiently than traditional cars. Built as a microservices architecture using Spring Cloud, the platform handles real-time driver location tracking, passenger ride requests, automated driver-passenger matching, order management with state machine workflows, and distributed tracing for system monitoring. The system serves both drivers who want to offer rides and passengers seeking quick transportation during rush hours in busy cities.
+
+# USER STORIES:
+1. As a driver, I want to register my account so that I can start offering rides on the platform.
+2. As a driver, I want to update my current location so that passengers can find me when I'm available.
+3. As a driver, I want to set my status as available or unavailable so that I only receive ride requests when I'm ready to work.
+4. As a driver, I want to receive ride requests from nearby passengers so that I can choose which rides to accept.
+5. As a driver, I want to confirm or decline incoming ride requests so that I have control over my workload.
+6. As a driver, I want to view passenger pickup and destination locations so that I can plan my route efficiently.
+7. As a driver, I want to update my status during a ride so that the system knows I'm occupied.
+8. As a driver, I want to complete a ride and receive payment confirmation so that I can earn money for my service.
+9. As a passenger, I want to register my account so that I can request rides on the platform.
+10. As a passenger, I want to submit a ride request with pickup and destination locations so that I can get transportation.
+11. As a passenger, I want to see available drivers nearby so that I know if rides are available in my area.
+12. As a passenger, I want to receive confirmation when a driver accepts my ride request so that I know my ride is arranged.
+13. As a passenger, I want to track my matched driver's location so that I know when they will arrive.
+14. As a passenger, I want to modify my destination during a ride so that I can handle changes in my plans.
+15. As a passenger, I want to receive fare calculation after the ride so that I know the cost of my trip.
+16. As a passenger, I want to rate and review my driver so that I can provide feedback on service quality.
+17. As a system administrator, I want to monitor service health through distributed tracing so that I can identify performance issues.
+18. As a system administrator, I want to view real-time system metrics so that I can ensure platform reliability.
+19. As a system administrator, I want to manage user accounts so that I can handle user support requests.
+20. As a system administrator, I want to configure service routing through the API gateway so that I can manage traffic distribution.
+21. As the system, I want to automatically match passengers with nearby available drivers so that ride requests are fulfilled efficiently.
+22. As the system, I want to implement distributed locking for driver assignments so that multiple passengers don't get matched with the same driver.
+23. As the system, I want to manage ride orders through state machines so that order workflows are properly controlled.
+24. As the system, I want to store driver positions in Redis so that location queries are fast and efficient.
+25. As the system, I want to use message queues for asynchronous processing so that the platform remains responsive.
+26. As the system, I want to implement circuit breakers for service calls so that failures don't cascade across the platform.
+27. As the system, I want to provide service discovery through Eureka so that microservices can find each other dynamically.
+28. As the system, I want to handle ride cancellations gracefully so that both drivers and passengers can cancel when needed.
+29. As the system, I want to track ride states from request to completion so that order progress is properly managed.
+30. As the system, I want to validate user permissions for each operation so that only authorized actions are performed.

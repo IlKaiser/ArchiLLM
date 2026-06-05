@@ -1,0 +1,34 @@
+# SYSTEM DESCRIPTION:
+Tap-And-Eat-MicroServices is a cloud-native food ordering and delivery platform built using a microservices architecture pattern with Spring Boot and containerized services. The system enables customers to browse food items from various stores, manage their shopping tray, and process orders through a distributed set of specialized services including account management, customer profiles, item catalogs, pricing, and store information. The platform leverages service discovery, centralized configuration management, and circuit breaker patterns to ensure scalability and resilience, serving both end customers who want to order food and restaurant operators who need to manage their offerings and pricing.
+
+# USER STORIES:
+1. As a customer, I want to create an account so that I can access the food ordering platform.
+2. As a customer, I want to view my account information so that I can verify my personal details.
+3. As a customer, I want to update my account information so that I can keep my profile current.
+4. As a customer, I want to browse available food items so that I can see what's available to order.
+5. As a customer, I want to search for specific food items so that I can quickly find what I'm looking for.
+6. As a customer, I want to view item details so that I can see descriptions and ingredients.
+7. As a customer, I want to see item prices so that I can make informed purchasing decisions.
+8. As a customer, I want to add items to my food tray so that I can collect multiple items for ordering.
+9. As a customer, I want to view my food tray contents so that I can review what I've selected.
+10. As a customer, I want to remove items from my food tray so that I can change my order.
+11. As a customer, I want to see the total price of my tray so that I know how much I'll pay.
+12. As a customer, I want to browse stores so that I can see which restaurants are available.
+13. As a customer, I want to view store details so that I can learn about restaurant information.
+14. As a customer, I want to see items available from specific stores so that I can order from my preferred restaurant.
+15. As a store owner, I want to register my store so that customers can find and order from me.
+16. As a store owner, I want to manage my store information so that customers have accurate details.
+17. As a store owner, I want to add food items to my catalog so that customers can see what I offer.
+18. As a store owner, I want to update food item information so that my menu stays current.
+19. As a store owner, I want to set prices for my items so that customers know the cost.
+20. As a store owner, I want to update item prices so that I can adjust for market conditions.
+21. As a system administrator, I want centralized configuration management so that I can manage service settings efficiently.
+22. As a system administrator, I want service discovery so that microservices can find and communicate with each other.
+23. As a system administrator, I want to monitor service health so that I can ensure system reliability.
+24. As a system administrator, I want to deploy services independently so that I can update components without affecting the entire system.
+25. As a developer, I want circuit breaker functionality so that the system remains resilient when services are unavailable.
+26. As a developer, I want fallback mechanisms so that users get graceful degradation when services fail.
+27. As a customer, I want the system to handle service failures gracefully so that my experience isn't disrupted.
+28. As a customer, I want fast response times so that I can browse and order efficiently.
+29. As a store owner, I want to view customer orders so that I can prepare the requested items.
+30. As a customer, I want to see real-time pricing so that I have accurate cost information.

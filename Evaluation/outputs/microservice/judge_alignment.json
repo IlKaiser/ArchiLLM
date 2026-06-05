@@ -1,0 +1,34 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Zuul Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::API Gateway Composition",
+        "Global::zuul_gateway"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "Both predicted nodes refer to the API gateway/Zuul gateway capability. Although the AI redundantly represented the same gateway concept twice, the semantic functionality matches the GT Zuul Gateway and all are placed in the Global boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Order Service",
+        "Global::Catalog Service",
+        "Global::Customer Service"
+      ],
+      "predicted_nodes": [
+        "Global::Core Business Services (Database per Service)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the three core domain microservices: Order, Catalog, and Customer. The GT models them as separate services, while the AI groups them into one broader business-services node. The boundary remains Global, so the boundary attribution is correct."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Turbine Server",
+    "Global::Eureka Server"
+  ],
+  "unmatched_predicted_nodes": []
+}

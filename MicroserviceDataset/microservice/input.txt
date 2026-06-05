@@ -1,0 +1,39 @@
+# SYSTEM DESCRIPTION:
+This is a comprehensive microservices demonstration system built with Java Spring Boot and Spring Cloud technologies, designed for educational purposes as a companion to a microservices architecture book. The system implements a simple e-commerce domain with three core business microservices (Order, Customer, and Catalog) supported by infrastructure services including Eureka for service discovery, Zuul for API gateway routing, and Turbine for metrics aggregation. It demonstrates key microservices patterns such as service discovery, load balancing with Ribbon, circuit breakers with Hystrix, and consumer-driven contract testing, and can be deployed using Docker containers with orchestration via Docker Compose or Vagrant for easy setup and experimentation.
+
+# USER STORIES:
+1. As a developer, I want to run the entire microservices system locally using Docker Compose so that I can experiment with microservices patterns.
+2. As a developer, I want to run the system in a Vagrant VM so that I can have an isolated development environment.
+3. As a system administrator, I want to access the Eureka service registry dashboard so that I can monitor service registration and discovery.
+4. As a user, I want to access all microservices through a single entry point so that I don't need to know individual service URLs.
+5. As a customer, I want to view a list of available catalog items so that I can see what products are available for purchase.
+6. As a customer, I want to search for specific items in the catalog so that I can find products I'm interested in.
+7. As a customer, I want to view detailed information about a specific catalog item so that I can make informed purchasing decisions.
+8. As an administrator, I want to add new items to the catalog so that customers can purchase new products.
+9. As a customer, I want to view my customer profile information so that I can verify my account details.
+10. As an administrator, I want to manage customer information so that customer records are accurate and up-to-date.
+11. As a customer, I want to create new orders so that I can purchase items from the catalog.
+12. As a customer, I want to view my order history so that I can track my past purchases.
+13. As a customer, I want to view details of a specific order so that I can see what items I purchased.
+14. As an administrator, I want to view all orders in the system so that I can manage order fulfillment.
+15. As a developer, I want the Order service to automatically discover Customer and Catalog services so that services can communicate without hardcoded URLs.
+16. As a developer, I want load balancing between multiple instances of services so that the system can handle increased load.
+17. As a developer, I want circuit breaker protection on service calls so that failures in one service don't cascade to others.
+18. As a developer, I want to monitor Hystrix metrics so that I can understand service health and performance.
+19. As a developer, I want to view a Hystrix dashboard so that I can visualize circuit breaker status and metrics.
+20. As a developer, I want to aggregate metrics from multiple services using Turbine so that I can have a centralized monitoring view.
+21. As a developer, I want to run individual microservices in standalone mode for testing so that I can develop and test services independently.
+22. As a developer, I want to use service stubs during testing so that I can test services without dependencies on other services.
+23. As a developer, I want consumer-driven contract tests so that I can ensure service interfaces remain compatible.
+24. As a developer, I want the Order service to gracefully handle Customer service failures so that orders can still be processed when possible.
+25. As a developer, I want the Order service to fail fast when the Catalog service is unavailable so that users get immediate feedback.
+26. As a developer, I want all services to register with Eureka automatically so that service discovery works without manual configuration.
+27. As a developer, I want HTTP requests to be routed through Zuul so that there's a consistent API gateway pattern.
+28. As a developer, I want Spring Data REST endpoints so that CRUD operations are automatically available for domain entities.
+29. As a developer, I want web interfaces for each service so that I can interact with services through a browser.
+30. As a developer, I want Docker containers for each service so that deployment is consistent across environments.
+31. As a system operator, I want to scale individual services independently so that I can handle varying loads on different parts of the system.
+32. As a developer, I want Maven build automation so that I can easily compile and package all services.
+33. As a developer, I want integration tests for web interfaces so that I can ensure the UI works correctly.
+34. As a developer, I want repository tests so that I can verify data persistence works correctly.
+35. As a developer, I want automated builds through GitHub Actions so that code quality is maintained.

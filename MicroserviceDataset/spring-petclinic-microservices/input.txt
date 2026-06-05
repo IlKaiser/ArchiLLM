@@ -1,0 +1,44 @@
+# SYSTEM DESCRIPTION:
+Spring PetClinic Microservices is a distributed version of the classic Spring PetClinic sample application, demonstrating modern microservices architecture patterns using Spring Cloud technologies. The system manages a veterinary clinic's operations including pet owners, pets, veterinarians, and visit records through a collection of loosely-coupled services that communicate via REST APIs. It serves as both a functional pet clinic management system and an educational reference implementation showcasing microservices best practices, including service discovery with Eureka, centralized configuration management, API gateway routing, distributed tracing, monitoring with Grafana and Prometheus, and AI-powered chat capabilities. The application targets developers, architects, and students learning microservices patterns and Spring Cloud ecosystem, while providing a complete containerized deployment solution with Docker Compose.
+
+# USER STORIES:
+1. As a pet owner, I want to register myself in the system so that I can manage my pets' information.
+2. As a pet owner, I want to add my pets to the system so that I can schedule veterinary visits.
+3. As a pet owner, I want to update my contact information so that the clinic can reach me when needed.
+4. As a pet owner, I want to view my pets' information so that I can verify their details are correct.
+5. As a pet owner, I want to update my pets' information so that their records stay current.
+6. As a pet owner, I want to search for other pet owners so that I can find contact information if needed.
+7. As a pet owner, I want to schedule visits for my pets so that they receive proper veterinary care.
+8. As a pet owner, I want to view my pets' visit history so that I can track their health records.
+9. As a pet owner, I want to interact with an AI chatbot so that I can get quick answers about pet care.
+10. As a clinic receptionist, I want to search for pet owners by name so that I can quickly find their records.
+11. As a clinic receptionist, I want to view all pets belonging to an owner so that I can assist with scheduling.
+12. As a clinic receptionist, I want to register new pet owners so that they can use clinic services.
+13. As a clinic receptionist, I want to add new pets to existing owner accounts so that all pets are tracked.
+14. As a clinic receptionist, I want to schedule visits for pets so that appointment slots are properly managed.
+15. As a clinic receptionist, I want to view the list of available veterinarians so that I can assign them to visits.
+16. As a clinic receptionist, I want to record visit details so that medical records are maintained.
+17. As a veterinarian, I want to view my assigned visits so that I can prepare for appointments.
+18. As a veterinarian, I want to access pet medical history so that I can make informed treatment decisions.
+19. As a veterinarian, I want to view pet owner contact information so that I can communicate about their pets' health.
+20. As a veterinarian, I want to see all other veterinarians in the clinic so that I can coordinate care or referrals.
+21. As a clinic administrator, I want to view all veterinarians so that I can manage clinic staffing.
+22. As a clinic administrator, I want to monitor system health through dashboards so that I can ensure reliable service.
+23. As a clinic administrator, I want to view system metrics so that I can optimize performance.
+24. As a clinic administrator, I want to trace requests across services so that I can troubleshoot issues.
+25. As a clinic administrator, I want to manage system configuration centrally so that updates are consistent.
+26. As a system administrator, I want to deploy all services using Docker so that the system is portable.
+27. As a system administrator, I want services to automatically discover each other so that the system is resilient.
+28. As a system administrator, I want to monitor service health so that I can detect failures quickly.
+29. As a system administrator, I want to view application logs so that I can diagnose problems.
+30. As a system administrator, I want circuit breakers to prevent cascade failures so that the system remains stable.
+31. As a developer, I want to run services locally so that I can develop and test features.
+32. As a developer, I want centralized configuration so that I can manage environment-specific settings.
+33. As a developer, I want to introduce chaos engineering so that I can test system resilience.
+34. As a developer, I want to perform load testing so that I can validate system performance.
+35. As a developer, I want comprehensive metrics collection so that I can understand system behavior.
+36. As a user, I want the system to handle service failures gracefully so that I can continue using available features.
+37. As a user, I want fast response times so that my interactions with the system are efficient.
+38. As a user, I want the interface to be responsive so that I can use it on different devices.
+39. As a user, I want the system to be available in multiple languages so that I can use it in my preferred language.
+40. As a user, I want fallback responses when services are unavailable so that I receive helpful error messages.

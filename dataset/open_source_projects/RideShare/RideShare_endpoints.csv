@@ -1,0 +1,24 @@
+,path_or_url,file,line,text
+0,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/notificationservice-dep.yaml,2,apiVersion: apps/v1
+1,/notification-service,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/notificationservice-dep.yaml,21,image: aista/notification-service
+2,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/gmapsadapter-dep.yaml,2,apiVersion: apps/v1
+3,/gmaps-adapter,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/gmapsadapter-dep.yaml,21,image: aista/gmaps-adapter
+4,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/rabbitmq-dep.yaml,2,apiVersion: apps/v1
+5,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/mongo-dep.yaml,2,apiVersion: apps/v1
+6,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/discovery-dep.yaml,2,apiVersion: apps/v1
+7,/eureka,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/discovery-dep.yaml,21,image: aista/eureka
+8,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/mysqlserver-dep.yaml,2,apiVersion: apps/v1
+9,/var/lib/mysql,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/mysqlserver-dep.yaml,33,mountPath: /var/lib/mysql
+10,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/userservice-dep.yaml,2,apiVersion: apps/v1
+11,/user-service,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/userservice-dep.yaml,21,image: aista/user-service
+12,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/front-end-dep.yaml,2,apiVersion: apps/v1
+13,/front-end,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/front-end-dep.yaml,21,image: aista/front-end
+14,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/edgeservice-dep.yaml,2,apiVersion: apps/v1
+15,/edge-service,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/edgeservice-dep.yaml,21,image: aista/edge-service
+16,/v1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/calculationservice-dep.yaml,2,apiVersion: apps/v1
+17,/calculation-service,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/calculationservice-dep.yaml,21,image: aista/calculation-service
+18,/v1beta1,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/loadtest-dep.yaml,7,apiVersion: extensions/v1beta1
+19,/load-test,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/loadtest-dep.yaml,23,image: aista/load-test
+20,/bin/sh,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/loadtest-dep.yaml,24,"command: [""/bin/sh""]"
+21,/config/locustfile,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/loadtest-dep.yaml,25,"args: [""-c"", ""while true; do locust --host http://frontend.rideshare.dep.cluster.local -f /config/locustfile.py --clients 5 --hatch-rate 5 --num-request 100 --no-web; done""]"
+22,/os,/mnt/data/ride-share/microservices-sandbox/deploy/kubernetes/manifests/loadtest-dep.yaml,27,beta.kubernetes.io/os: linux

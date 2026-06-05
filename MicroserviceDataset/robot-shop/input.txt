@@ -1,0 +1,44 @@
+# SYSTEM DESCRIPTION:
+Robot Shop is a demonstration e-commerce microservices application designed to showcase modern cloud-native application monitoring and observability patterns using Instana. The system serves as a sample polyglot microservices architecture that includes typical e-commerce functionality like product catalog browsing, shopping cart management, user authentication, payment processing, shipping calculations, and product ratings across multiple technology stacks including Node.js, Python, Java, and PHP. The application is specifically engineered to run on various orchestration platforms including Kubernetes, Docker Swarm, and DC/OS, with built-in support for Istio service mesh, automated scaling, and comprehensive observability through distributed tracing and monitoring.
+
+# USER STORIES:
+1. As a customer, I want to browse the product catalog so that I can see available robots for purchase.
+2. As a customer, I want to search for specific products so that I can quickly find robots I'm interested in.
+3. As a customer, I want to view detailed product information so that I can make informed purchasing decisions.
+4. As a customer, I want to add products to my shopping cart so that I can purchase multiple items together.
+5. As a customer, I want to view my shopping cart contents so that I can review items before checkout.
+6. As a customer, I want to remove items from my cart so that I can modify my purchase.
+7. As a customer, I want to update quantities in my cart so that I can buy the exact amount I need.
+8. As a customer, I want to create a user account so that I can save my information for future purchases.
+9. As a customer, I want to log into my account so that I can access my personalized shopping experience.
+10. As a customer, I want to calculate shipping costs so that I can understand total purchase price.
+11. As a customer, I want to process payments securely so that I can complete my purchase.
+12. As a customer, I want to rate products I've purchased so that I can share my experience with other customers.
+13. As a customer, I want to view product ratings so that I can see what other customers think about products.
+14. As a platform administrator, I want to deploy the application on Kubernetes so that I can leverage container orchestration.
+15. As a platform administrator, I want to deploy the application on Docker Swarm so that I can use Docker's native clustering.
+16. As a platform administrator, I want to deploy the application on DC/OS so that I can use Apache Mesos for resource management.
+17. As a platform administrator, I want to use Helm charts for deployment so that I can manage Kubernetes applications efficiently.
+18. As a platform administrator, I want to configure resource quotas so that I can control resource consumption.
+19. As a platform administrator, I want to enable auto-scaling so that the application can handle varying load automatically.
+20. As a platform administrator, I want to integrate with Istio service mesh so that I can manage service-to-service communication.
+21. As a platform administrator, I want to configure ingress gateways so that external traffic can reach the application.
+22. As a platform administrator, I want to implement canary deployments so that I can safely roll out new features.
+23. As a monitoring engineer, I want to install Instana agents so that I can monitor application performance.
+24. As a monitoring engineer, I want to collect distributed traces so that I can understand request flow across microservices.
+25. As a monitoring engineer, I want to monitor database performance so that I can identify bottlenecks in MongoDB and MySQL.
+26. As a monitoring engineer, I want to monitor message queue performance so that I can track RabbitMQ operations.
+27. As a monitoring engineer, I want to collect application logs using Fluentd so that I can centralize log management.
+28. As a monitoring engineer, I want to monitor Redis cache performance so that I can optimize caching strategies.
+29. As a developer, I want to run load testing so that I can validate application performance under stress.
+30. As a developer, I want to use the load generator so that I can simulate realistic user traffic patterns.
+31. As a developer, I want to build and deploy individual microservices so that I can maintain the cart service independently.
+32. As a developer, I want to build and deploy individual microservices so that I can maintain the catalog service independently.
+33. As a developer, I want to build and deploy individual microservices so that I can maintain the payment service independently.
+34. As a developer, I want to build and deploy individual microservices so that I can maintain the shipping service independently.
+35. As a developer, I want to build and deploy individual microservices so that I can maintain the user service independently.
+36. As a developer, I want to build and deploy individual microservices so that I can maintain the ratings service independently.
+37. As a developer, I want to build and deploy individual microservices so that I can maintain the dispatch service independently.
+38. As a developer, I want to build and deploy individual microservices so that I can maintain the web frontend independently.
+39. As a site reliability engineer, I want to monitor service health endpoints so that I can ensure all services are operational.
+40. As a site reliability engineer, I want to configure service mesh traffic routing so that I can implement advanced deployment patterns.

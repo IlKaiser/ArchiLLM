@@ -1,0 +1,47 @@
+# SYSTEM DESCRIPTION:
+
+LuckyBets will be a webapp where users can partecipate and play to various games. They can partecipate to decentralized lotteries and similars, which will be done using smart contracts deployed on the blockchain. In addition there will be a game like coin toss that will be done using P2P.
+The system will be composed by microservices deployed as containers using Docker
+
+# USER STORIES:
+
+---
+
+### General  
+**1.** As a user, I want to connect my wallet, in order to access the games securely.  
+**2.** As a user, I want to see the number of players online, in order to gauge the activity level of the platform.
+
+---
+
+### Coin Toss  
+**3.** As a user, I want to select the amount to bet, in order to manage my risk while playing.  
+**4.** As a user, I want to choose between heads or tails, in order to personalize my betting experience.  
+**5.** As a user, I want to see the current bets placed by other players, in order to make informed decisions.  
+**6.** As a user, I want to see the signatures of the game round, in order to analyze that the outcome is fair.
+
+---
+
+### Lottery  
+**7.** As a user, I want to choose how many tickets to buy, in order to increase my chances of winning.  
+**8.** As a user, I want to confirm my transaction in the wallet popup, in order to ensure my purchase is secure.  
+**9.** As a user, I want to view the historical winnings, in order to see the potential rewards of the lottery.  
+**10.** As a user, I want to receive a confirmation of my ticket purchase, in order to have proof of my entry.  
+**11.** As a user, I want to see the next draw date, in order to plan my participation accordingly.
+
+---
+
+### Scratchcard  
+**12.** As a user, I want to buy a scratchcard, in order to participate in the game.  
+**13.** As a user, I want to use my mouse to scratch off the card, in order to reveal my prize.  
+**14.** As a user, I want to receive instant feedback on whether I won or lost, in order to enjoy the thrill of the game.  
+**15.** As a user, I want to have the option to buy multiple scratchcards at once, in order to increase my chances of winning.
+
+---
+
+### Stats  
+**16.** As a user, I want to access a help section, in order to understand how to play each game.  
+**17.** As a user, I want to see current jackpots, so I know how much I can win.  
+**18.** As a user, I want to see the last wins, in order to know the latest won games.  
+**19.** As a user, I want to see platform stats, so that I can understand the platform’s activity before participating.
+
+---

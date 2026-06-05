@@ -1,0 +1,45 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Customer Core",
+        "Global::Customer Management Backend",
+        "Global::Customer Self-Service Backend"
+      ],
+      "predicted_nodes": [
+        "Global::customer_service"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted customer_service semantically aggregates the customer-domain backend capabilities represented in the GT by Customer Core, Customer Management Backend, and Customer Self-Service Backend, including customer data management, search, registration, and self-service functions. Both GT and predicted nodes are placed in the Global boundary, so the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Policy Management Backend"
+      ],
+      "predicted_nodes": [
+        "Global::policy_service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted policy_service corresponds to the GT Policy Management Backend, covering policy creation, viewing, and lifecycle management. Both are in the Global boundary, so the boundary attribution is correct."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Spring Boot Admin",
+    "Global::ActiveMQ Broker",
+    "Global::Customer Management Frontend",
+    "Global::Risk Management Client",
+    "Global::Customer Self-Service Frontend",
+    "Global::Policy Management Frontend",
+    "Global::H2 Database",
+    "Global::Risk Management Server"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Database per Service Pattern",
+    "Global::api_gateway",
+    "Global::user_management_service",
+    "Global::communication_service",
+    "Global::API Composition Pattern"
+  ]
+}
