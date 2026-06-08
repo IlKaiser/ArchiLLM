@@ -1,0 +1,103 @@
+@startuml
+!define RECTANGLE class
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<db>> LightGreen
+  BackgroundColor<<broker>> Yellow
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<cdc>> Purple
+  BackgroundColor<<client>> LightGray
+}
+
+component "API Gateway" <<gateway>> as apigateway {
+  component "Order Handlers" as orderhandlers
+  component "Consumer Handlers" as consumerhandlers
+  component "Service Proxies" as proxies
+}
+
+component "GraphQL Gateway" <<gateway>> as graphqlgateway
+
+component "Consumer Service" <<service>> as consumerservice {
+  component "Consumer Domain" as consumerdomain
+  component "Consumer Command Handlers" as consumercommandhandlers
+}
+
+component "Restaurant Service" <<service>> as restaurantservice {
+  component "Restaurant Domain" as restaurantdomain
+}
+
+component "Order Service" <<service>> as orderservice {
+  component "Order Domain" as orderdomain
+  component "Create Order Saga" as createordersaga
+  component "Cancel Order Saga" as cancelordersaga
+  component "Revise Order Saga" as reviseordersaga
+  component "Order Command Handlers" as ordercommandhandlers
+}
+
+component "Kitchen Service" <<service>> as kitchenservice {
+  component "Kitchen Domain" as kitchendomain
+  component "Ticket Domain" as ticketdomain
+  component "Kitchen Command Handler" as kitchencommandhandler
+}
+
+component "Accounting Service" <<service>> as accountingservice {
+  component "Account Domain" as accountdomain
+  component "Accounting Command Handler" as accountingcommandhandler
+}
+
+component "Order History Service" <<service>> as orderhistoryservice {
+  component "Order History CQRS View" as orderhistoryview
+}
+
+component "CDC Service" <<cdc>> as cdcservice
+
+database "MySQL" <<db>> as mysql
+database "DynamoDB" <<db>> as dynamodb
+component "Apache Kafka" <<broker>> as kafka
+component "Zookeeper" <<broker>> as zookeeper
+
+apigateway --> consumerservice : HTTP/REST
+apigateway --> restaurantservice : HTTP/REST
+apigateway --> orderservice : HTTP/REST
+apigateway --> kitchenservice : HTTP/REST
+apigateway --> accountingservice : HTTP/REST
+apigateway --> orderhistoryservice : HTTP/REST
+
+graphqlgateway --> consumerservice : HTTP/REST
+graphqlgateway --> restaurantservice : HTTP/REST
+graphqlgateway --> orderservice : HTTP/REST
+
+consumerservice --> mysql : JDBC
+restaurantservice --> mysql : JDBC
+orderservice --> mysql : JDBC
+kitchenservice --> mysql : JDBC
+accountingservice --> mysql : JDBC
+
+orderhistoryservice --> dynamodb : AWS SDK
+
+consumerservice --> kafka : Eventuate Tram
+restaurantservice --> kafka : Eventuate Tram
+orderservice --> kafka : Eventuate Tram
+kitchenservice --> kafka : Eventuate Tram
+accountingservice --> kafka : Eventuate Tram
+orderhistoryservice --> kafka : Eventuate Tram
+
+cdcservice --> mysql : JDBC
+cdcservice --> kafka : Kafka Connect
+
+kafka --> zookeeper : ZK Protocol
+
+createordersaga ..> consumerservice : Command
+createordersaga ..> kitchenservice : Command
+createordersaga ..> accountingservice : Command
+createordersaga ..> restaurantservice : Command
+
+cancelordersaga ..> kitchenservice : Command
+cancelordersaga ..> accountingservice : Command
+
+reviseordersaga ..> kitchenservice : Command
+reviseordersaga ..> accountingservice : Command
+
+@enduml

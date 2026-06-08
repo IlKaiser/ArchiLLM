@@ -16,7 +16,7 @@ Usage (env vars, highest priority wins):
 
 from __future__ import annotations
 
-_OLLAMA_DEFAULT_URL = "http://localhost:11434"
+_OLLAMA_DEFAULT_URL = "http://192.168.1.52:11434"
 _HF_DEFAULT_URL = "http://localhost:8080"
 
 

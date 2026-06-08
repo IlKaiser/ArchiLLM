@@ -1,0 +1,42 @@
+# SYSTEM DESCRIPTION:
+EnterprisePlanner is a distributed microservices-based enterprise resource planning system designed to manage customer relationships, order processing, and shipment tracking for businesses. The system follows a microservices architecture with separate services for customers, orders, and shipments, all orchestrated through an API Gateway and supported by JWT-based authentication and RabbitMQ messaging for inter-service communication. The platform serves business users who need to manage customer data, process orders, and track shipments through a modern Angular web application that provides intuitive interfaces for data entry, editing, and reporting. The system is containerized using Docker and includes comprehensive pagination, filtering, and validation capabilities to handle enterprise-scale data volumes efficiently.
+
+# USER STORIES:
+1. As a business user, I want to register for a new account so that I can access the enterprise planning system.
+2. As a registered user, I want to log into the system using my credentials so that I can access protected resources.
+3. As an authenticated user, I want to reset my password so that I can regain access if I forget my credentials.
+4. As a user, I want to manage my profile settings so that I can keep my account information up to date.
+5. As a customer service representative, I want to view a paginated list of customers so that I can browse through customer records efficiently.
+6. As a customer service representative, I want to search and filter customers so that I can quickly find specific customer records.
+7. As a customer service representative, I want to view detailed customer information so that I can see all relevant customer data.
+8. As a customer service representative, I want to create new customer records so that I can add new clients to the system.
+9. As a customer service representative, I want to edit existing customer information so that I can keep customer data current and accurate.
+10. As a customer service representative, I want to delete customer records so that I can remove inactive or duplicate entries.
+11. As a sales representative, I want to view a paginated list of orders so that I can track all order activity.
+12. As a sales representative, I want to search and filter orders so that I can locate specific orders quickly.
+13. As a sales representative, I want to create new orders for customers so that I can process sales requests.
+14. As a sales representative, I want to edit order details so that I can modify order specifications before fulfillment.
+15. As a sales representative, I want to view complete order information so that I can see all order-related details.
+16. As a logistics coordinator, I want to view shipment information so that I can track order fulfillment status.
+17. As a logistics coordinator, I want to create shipment records for orders so that I can initiate the delivery process.
+18. As a logistics coordinator, I want to update shipment status so that I can track packages through delivery.
+19. As a system administrator, I want to monitor API Gateway traffic so that I can ensure system performance and availability.
+20. As a system administrator, I want to configure service endpoints so that I can manage microservice connectivity.
+21. As a business user, I want to receive real-time notifications when orders are created so that I can respond to new business quickly.
+22. As a business user, I want to see validation errors when entering invalid data so that I can correct mistakes before submitting.
+23. As a business user, I want to navigate between different sections of the application so that I can access all system features.
+24. As a business user, I want to see a welcome page when I first access the system so that I understand the application's purpose.
+25. As a business user, I want to handle authentication tokens automatically so that I don't need to manually manage session security.
+26. As a data analyst, I want to access customer data through API calls so that I can integrate with external reporting tools.
+27. As a data analyst, I want to access order data through API endpoints so that I can perform business intelligence analysis.
+28. As a developer, I want to use standardized HTTP clients so that I can maintain consistent communication patterns across services.
+29. As a system integrator, I want to use message queues for inter-service communication so that I can ensure reliable data synchronization.
+30. As a business user, I want to sort table data by different columns so that I can organize information according to my needs.
+31. As a business user, I want to customize table views so that I can display the most relevant information prominently.
+32. As a business user, I want to perform bulk operations on selected records so that I can efficiently manage large datasets.
+33. As a system administrator, I want to deploy the entire system using Docker containers so that I can ensure consistent environments across deployments.
+34. As a system administrator, I want to scale individual microservices independently so that I can optimize resource allocation based on demand.
+35. As a customer service representative, I want to see customer contact information clearly so that I can communicate effectively with clients.
+36. As a sales representative, I want to associate orders with specific customers so that I can maintain accurate customer purchase history.
+37. As a logistics coordinator, I want to link shipments to their corresponding orders so that I can ensure proper order fulfillment tracking.
+38. As a business user, I want to access the system through a responsive web interface so that I can work effectively on different devices.

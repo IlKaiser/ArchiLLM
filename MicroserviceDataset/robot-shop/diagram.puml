@@ -1,0 +1,52 @@
+@startuml
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<db>> LightGreen
+  BackgroundColor<<cache>> Yellow
+  BackgroundColor<<broker>> Pink
+  BackgroundColor<<client>> LightGray
+}
+
+component "Web" <<service>> {
+  component "Static Content"
+  component "Nginx Proxy"
+}
+
+component "Cart" <<service>>
+component "Catalogue" <<service>>
+component "User" <<service>>
+component "Payment" <<service>>
+component "Shipping" <<service>>
+component "Ratings" <<service>>
+component "Dispatch" <<service>>
+
+component "Load Generator" <<client>>
+
+database "MongoDB" <<db>>
+database "MySQL" <<db>>
+database "Redis" <<cache>>
+component "RabbitMQ" <<broker>>
+
+component "Istio Gateway" <<gateway>>
+
+"Istio Gateway" --> "Web" : HTTP
+"Load Generator" --> "Web" : HTTP
+"Web" --> "Cart" : HTTP
+"Web" --> "Catalogue" : HTTP
+"Web" --> "User" : HTTP
+"Web" --> "Payment" : HTTP
+"Web" --> "Shipping" : HTTP
+"Web" --> "Ratings" : HTTP
+
+"Cart" --> "Redis" : Redis
+"Catalogue" --> "MongoDB" : MongoDB
+"User" --> "MongoDB" : MongoDB
+"Ratings" --> "MySQL" : JDBC
+"Shipping" --> "MySQL" : JDBC
+
+"Payment" --> "RabbitMQ" : AMQP
+"Dispatch" <-- "RabbitMQ" : AMQP
+
+@enduml

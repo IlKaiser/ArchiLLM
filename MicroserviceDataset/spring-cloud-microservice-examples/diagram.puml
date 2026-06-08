@@ -1,0 +1,86 @@
+@startuml
+skinparam component {
+  BackgroundColor<<gateway>> LightBlue
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<config>> Orange
+  BackgroundColor<<discovery>> Yellow
+  BackgroundColor<<monitoring>> Pink
+  BackgroundColor<<auth>> Purple
+  BackgroundColor<<ui>> LightCyan
+  BackgroundColor<<thrift>> LightGray
+  BackgroundColor<<db>> LightSalmon
+}
+
+component "API Gateway" <<gateway>> as gateway {
+  component "AccessFilter"
+  component "OAuth2ClientFilter"
+}
+
+component "Eureka Server" <<discovery>> as eureka
+
+component "Config Server" <<config>> as config
+
+component "Simple Service" <<service>> as simpleservice {
+  component "UserController"
+  component "UserService"
+  component "UserStorage"
+}
+
+component "Simple Service B" <<service>> as simpleserviceb
+
+component "Simple UI" <<ui>> as simpleui
+
+component "Dummy Service" <<service>> as dummyservice
+
+component "UAA Service" <<auth>> as uaa
+
+component "Hystrix Dashboard" <<monitoring>> as hystrix
+
+component "Hystrix Turbine" <<monitoring>> as turbine
+
+component "Zipkin" <<monitoring>> as zipkin
+
+component "Thrift Server" <<thrift>> as thriftserver
+
+component "Thrift Client" <<thrift>> as thriftclient
+
+component "Finagle Thrift Server" <<thrift>> as finaglethriftserver
+
+component "Finagle Thrift Client" <<thrift>> as finaglethriftclient
+
+database "MySQL" <<db>> as mysql
+
+gateway --> eureka : HTTP/Service Discovery
+gateway --> config : HTTP/Configuration
+gateway --> simpleservice : HTTP/Proxy
+gateway --> simpleserviceb : HTTP/Proxy
+gateway --> simpleui : HTTP/Proxy
+
+simpleservice --> eureka : HTTP/Registration
+simpleservice --> config : HTTP/Configuration
+simpleservice --> zipkin : HTTP/Tracing
+simpleservice --> mysql : JDBC
+
+simpleserviceb --> eureka : HTTP/Registration
+simpleserviceb --> config : HTTP/Configuration
+simpleserviceb --> zipkin : HTTP/Tracing
+
+simpleui --> eureka : HTTP/Registration
+simpleui --> config : HTTP/Configuration
+simpleui --> zipkin : HTTP/Tracing
+simpleui --> simpleservice : HTTP/REST
+
+dummyservice --> eureka : HTTP/Registration
+
+uaa --> eureka : HTTP/Registration
+
+hystrix --> eureka : HTTP/Registration
+turbine --> eureka : HTTP/Registration
+
+zipkin --> eureka : HTTP/Registration
+zipkin --> config : HTTP/Configuration
+
+thriftclient --> thriftserver : Thrift/RPC
+finaglethriftclient --> finaglethriftserver : Thrift/RPC
+
+@enduml

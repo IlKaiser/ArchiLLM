@@ -39,6 +39,8 @@ from urllib.parse import urlparse
 
 import requests
 import anthropic
+from dotenv import load_dotenv
+load_dotenv()
 
 # ──────────────────────────────────────────────
 # Constants

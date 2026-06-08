@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<discovery>> Yellow
+  BackgroundColor<<config>> LightGreen
+  BackgroundColor<<db>> LightGray
+}
+
+component "ConfigService" <<config>>
+component "DiscoveryService" <<discovery>>
+component "AccountService" <<service>>
+component "CustomerService" <<service>>
+component "StoreService" <<service>>
+component "ItemService" <<service>>
+component "PriceService" <<service>>
+component "FoodTrayService" <<service>> {
+  component "TrayItemService"
+  component "ItemServiceRepository"
+  component "PriceServiceRepository"
+}
+
+ConfigService --> AccountService : HTTP/Config
+ConfigService --> CustomerService : HTTP/Config
+ConfigService --> StoreService : HTTP/Config
+ConfigService --> ItemService : HTTP/Config
+ConfigService --> PriceService : HTTP/Config
+ConfigService --> FoodTrayService : HTTP/Config
+
+DiscoveryService <-- AccountService : HTTP/Register
+DiscoveryService <-- CustomerService : HTTP/Register
+DiscoveryService <-- StoreService : HTTP/Register
+DiscoveryService <-- ItemService : HTTP/Register
+DiscoveryService <-- PriceService : HTTP/Register
+DiscoveryService <-- FoodTrayService : HTTP/Register
+
+FoodTrayService --> ItemService : HTTP/REST
+FoodTrayService --> PriceService : HTTP/REST
+
+@enduml

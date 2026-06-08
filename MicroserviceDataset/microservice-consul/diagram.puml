@@ -1,0 +1,70 @@
+@startuml
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<discovery>> Yellow
+  BackgroundColor<<monitoring>> LightGreen
+  BackgroundColor<<logging>> Pink
+  BackgroundColor<<tracing>> Violet
+}
+
+component "Consul" <<discovery>> {
+}
+
+component "Apache HTTP" <<gateway>> {
+  component "Consul Template"
+}
+
+component "Order Service" <<service>> {
+  component "OrderController"
+  component "CatalogClient"
+  component "CustomerClient"
+}
+
+component "Customer Service" <<service>> {
+  component "CustomerController"
+}
+
+component "Catalog Service" <<service>> {
+  component "CatalogController"
+}
+
+component "Prometheus" <<monitoring>> {
+}
+
+component "Zipkin" <<tracing>> {
+}
+
+component "Elasticsearch" <<logging>> {
+}
+
+component "Kibana" <<logging>> {
+}
+
+component "Filebeat" <<logging>> {
+}
+
+"Apache HTTP" --> "Consul" : HTTP/Service Discovery
+"Consul Template" --> "Consul" : HTTP/Template Updates
+
+"Order Service" --> "Consul" : HTTP/Service Registration
+"Customer Service" --> "Consul" : HTTP/Service Registration
+"Catalog Service" --> "Consul" : HTTP/Service Registration
+
+"CatalogClient" --> "Catalog Service" : HTTP/REST
+"CustomerClient" --> "Customer Service" : HTTP/REST
+
+"Apache HTTP" --> "Order Service" : HTTP/Proxy
+"Apache HTTP" --> "Customer Service" : HTTP/Proxy
+"Apache HTTP" --> "Catalog Service" : HTTP/Proxy
+
+"Prometheus" --> "Order Service" : HTTP/Metrics
+"Order Service" --> "Zipkin" : HTTP/Traces
+"Customer Service" --> "Zipkin" : HTTP/Traces
+"Catalog Service" --> "Zipkin" : HTTP/Traces
+
+"Filebeat" --> "Elasticsearch" : HTTP/Log Shipping
+"Kibana" --> "Elasticsearch" : HTTP/Log Analysis
+
+@enduml

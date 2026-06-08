@@ -1,0 +1,140 @@
+## Purpose
+
+EnterprisePlanner is a microservices-based enterprise resource planning application designed to manage core business operations including customer management, order processing, and shipment tracking. The system provides a centralized platform for coordinating business workflows across multiple domains while maintaining service independence through a distributed architecture.
+
+## Functional Requirements
+
+### Customer Management
+- Create, read, update, and delete customer records
+- Paginated customer listing with filtering capabilities
+- Customer detail views and editing functionality
+- Customer data validation and management
+
+### Order Management
+- Order creation, modification, and tracking
+- Order listing with pagination and filtering
+- Integration with customer data for order association
+- Order status management and workflow processing
+
+### Shipment Management
+- Shipment creation and tracking
+- Integration with order data for shipment association
+- Shipment status updates and management
+- Coordination with order fulfillment processes
+
+### User Authentication
+- User registration and login functionality
+- JWT-based authentication and authorization
+- Password management including reset and recovery
+- Two-factor authentication support
+- External login provider integration
+
+### API Gateway Services
+- Centralized API routing and aggregation
+- Cross-cutting concerns management (authentication, logging)
+- Service discovery and load balancing
+- Request/response transformation
+
+### Event-Driven Integration
+- Asynchronous communication between services
+- Event publishing and subscription mechanisms
+- Integration event handling for cross-service coordination
+
+## Non-Functional Requirements
+
+### Performance
+- Support for paginated data access to handle large datasets
+- Efficient HTTP client implementations for inter-service communication
+- Optimized database queries with Entity Framework
+
+### Scalability
+- Microservices architecture enabling independent scaling
+- Containerized deployment for horizontal scaling
+- Message broker support for handling high-volume events
+
+### Security
+- JWT token-based authentication across all services
+- Identity management with ASP.NET Core Identity
+- Secure inter-service communication
+- Input validation and sanitization
+
+### Reliability
+- Event-driven architecture for loose coupling
+- Database persistence for critical business data
+- Error handling and validation mechanisms
+
+### Maintainability
+- Clear separation of concerns through microservices
+- Shared DTO libraries for consistent data contracts
+- Repository pattern implementation for data access
+- Modular Angular frontend with feature-based organization
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Domain-driven service decomposition (Customers, Orders, Shipments)
+- Independent service deployment and scaling
+- Service-specific databases and contexts
+
+### API Gateway Pattern
+- Centralized entry point for client requests
+- Service aggregation and routing
+- Cross-cutting concerns implementation
+
+### Event-Driven Architecture
+- RabbitMQ message broker for asynchronous communication
+- Integration events for cross-service coordination
+- Publish-subscribe messaging patterns
+
+### Repository Pattern
+- Data access abstraction layer
+- Separation of business logic from data persistence
+- Testable data access implementations
+
+### CQRS Elements
+- Separate DTOs for create, update, and read operations
+- Command and query separation in service interfaces
+
+## Tech Stack
+
+### Backend Technologies
+- **Language**: C# (.NET Core)
+- **Framework**: ASP.NET Core Web API
+- **ORM**: Entity Framework Core
+- **Authentication**: ASP.NET Core Identity with JWT
+- **Database**: SQL Server (implied from Entity Framework usage)
+- **Message Broker**: RabbitMQ
+- **Containerization**: Docker
+
+### Frontend Technologies
+- **Framework**: Angular (version 1.x based on CLI reference)
+- **Language**: TypeScript
+- **Testing**: Karma, Protractor
+- **Build Tools**: Angular CLI
+
+### Shared Libraries
+- Custom DTO type libraries for inter-service communication
+- Messaging abstraction library for event handling
+- HTTP client implementations for service communication
+
+## Deployment
+
+### Containerization
+- Individual Dockerfiles for each microservice
+- Multi-stage Docker builds for optimized images
+- Container networking for service communication
+
+### Orchestration
+- Docker Compose for local development and testing
+- Service networking with custom bridge network
+- Port mapping for external access to services
+
+### Service Configuration
+- Environment-specific configuration files (Development/Production)
+- Centralized configuration management through appsettings.json
+- Service discovery through container linking
+
+### Infrastructure Components
+- RabbitMQ management interface for monitoring
+- Database initialization and seeding capabilities
+- Development tooling with VS Code configuration

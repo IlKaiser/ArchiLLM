@@ -1,0 +1,39 @@
+# SYSTEM DESCRIPTION:
+Lelylan is an open source Internet of Things (IoT) cloud platform built on a lightweight microservices architecture that enables developers to connect, monitor, and control IoT devices. The platform is both hardware-agnostic and platform-agnostic, supporting everything from ESP8266 microcontrollers to professional embedded hardware solutions, and can be deployed on public clouds, private datacenters, or hybrid environments. It serves IoT developers, hardware manufacturers, and system integrators who need a standardized, scalable solution for device management with real-time communication capabilities through MQTT, WebSockets, and RESTful APIs. The system provides comprehensive device lifecycle management, user authentication via OAuth 2.0, real-time subscriptions and notifications, and both developer tools and end-user dashboards for device and device type management.
+
+# USER STORIES:
+1. As a developer, I want to authenticate users through OAuth 2.0 so that I can secure access to IoT devices and data.
+2. As a device manufacturer, I want to define device types with properties and functions so that I can standardize device behavior across my product line.
+3. As an IoT developer, I want to register new devices through the API so that I can bring them online and make them manageable.
+4. As a system administrator, I want to monitor device status and properties so that I can ensure all connected devices are functioning properly.
+5. As a developer, I want to send commands to devices through the API so that I can control device behavior remotely.
+6. As a device owner, I want to view my devices in a dashboard so that I can easily monitor and control them through a web interface.
+7. As a developer, I want to subscribe to device events so that I can receive real-time notifications when device states change.
+8. As a hardware integrator, I want to connect devices via MQTT so that I can enable lightweight, efficient communication for resource-constrained devices.
+9. As a system architect, I want to use WebSocket connections so that I can provide full-duplex, real-time communication with connected devices.
+10. As a developer, I want to create and manage device types so that I can define the structure and capabilities of different device categories.
+11. As a device manufacturer, I want to define device functions and properties so that I can specify how devices can be controlled and what data they provide.
+12. As an application developer, I want to access device profiles so that I can customize user experiences based on device capabilities and user preferences.
+13. As a system integrator, I want to forward requests to physical devices so that I can bridge the gap between cloud APIs and actual hardware.
+14. As a developer, I want to receive webhook notifications so that I can integrate device events with external systems and applications.
+15. As an IoT platform operator, I want to use rate limiting so that I can prevent abuse and ensure fair resource usage across all users.
+16. As a developer, I want to access comprehensive API documentation so that I can quickly understand and implement IoT device integrations.
+17. As a device owner, I want to organize devices by location or category so that I can manage large deployments efficiently.
+18. As a developer, I want to query device history and logs so that I can analyze device performance and troubleshoot issues.
+19. As a system administrator, I want to manage user permissions and access controls so that I can ensure secure access to devices and data.
+20. As an application developer, I want to filter and search devices based on various criteria so that I can build efficient user interfaces.
+21. As a hardware developer, I want to simulate device behavior so that I can test applications before deploying to actual hardware.
+22. As a platform operator, I want to scale microservices independently so that I can handle varying loads on different parts of the system.
+23. As a developer, I want to use Docker containers for deployment so that I can ensure consistent environments across development and production.
+24. As a system integrator, I want to configure environment variables so that I can customize the platform for different deployment scenarios.
+25. As an IoT developer, I want to access the platform through a unified API proxy so that I can interact with all services through a single endpoint.
+26. As a device manufacturer, I want to validate device data against type schemas so that I can ensure data consistency and integrity.
+27. As a developer, I want to handle device connection and disconnection events so that I can maintain accurate device status information.
+28. As a platform administrator, I want to monitor system health and performance so that I can ensure reliable service for all users.
+29. As an application developer, I want to cache frequently accessed data so that I can improve application performance and reduce latency.
+30. As a developer, I want to process background jobs asynchronously so that I can handle time-consuming operations without blocking user requests.
+31. As a system architect, I want to use message queues for inter-service communication so that I can build resilient, decoupled microservices.
+32. As a developer, I want to access tutorials and documentation so that I can learn how to effectively use the platform.
+33. As a device owner, I want to export device data so that I can perform external analysis or backup important information.
+34. As an IoT platform operator, I want to support multiple deployment options so that I can serve customers with different infrastructure requirements.
+35. As a developer, I want to test device interactions in a development environment so that I can validate functionality before production deployment.

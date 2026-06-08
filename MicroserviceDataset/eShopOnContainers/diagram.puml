@@ -1,0 +1,18 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> LightGreen
+  BackgroundColor<<broker>> Orange
+  BackgroundColor<<db>> LightYellow
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<client>> LightGray
+}
+
+component "Repository Archive" <<service>> {
+  note top : Read-only archive as of November 2023
+  note bottom : Active development moved to dotnet/eShop
+}
+
+@enduml

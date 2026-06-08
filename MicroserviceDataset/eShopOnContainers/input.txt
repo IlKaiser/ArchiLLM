@@ -1,12 +1,38 @@
 # SYSTEM DESCRIPTION:
-eShopOnContainers is a legacy reference application that demonstrates a microservices architecture for an e-commerce platform built with .NET technologies and containerization. The system served as a comprehensive sample for developers learning how to implement distributed systems using Docker containers, showcasing patterns like API gateways, event-driven architecture, and multiple database technologies. It was designed for software architects, developers, and engineering teams who wanted to understand best practices for building scalable, containerized e-commerce solutions using modern .NET stack and cloud-native approaches. The application has since been superseded by a newer version and this repository now serves as a read-only archive for historical reference.
+eShopOnContainers is an archived reference implementation of a microservices-based e-commerce platform built using .NET technologies and containerized architecture. The system demonstrates modern software architecture patterns including microservices, containerization with Docker, and cloud-native development practices for building scalable online retail applications. It serves as an educational resource and sample implementation for developers, architects, and teams looking to understand how to design and implement enterprise-grade e-commerce solutions using Microsoft's technology stack. The application has been migrated to a new repository as of November 2023, with this version serving as a read-only archive of the original implementation.
 
 # USER STORIES:
-1. As a developer, I want to access the archived codebase so that I can reference the legacy implementation patterns.
-2. As a software architect, I want to study the microservices architecture so that I can understand distributed system design principles.
-3. As a student, I want to explore the containerization examples so that I can learn Docker and container orchestration.
-4. As a team lead, I want to review the legacy code structure so that I can compare it with modern approaches.
-5. As an engineer, I want to examine the API gateway patterns so that I can implement similar solutions.
-6. As a developer, I want to understand the event-driven architecture so that I can apply these concepts to my projects.
-7. As a DevOps engineer, I want to study the container deployment strategies so that I can improve my containerization skills.
-8. As a researcher, I want to analyze the evolution of the codebase so that I can understand how the architecture has changed over time.
+1. As a customer, I want to browse product catalogs so that I can discover items to purchase.
+2. As a customer, I want to search for specific products so that I can quickly find what I need.
+3. As a customer, I want to view detailed product information so that I can make informed purchasing decisions.
+4. As a customer, I want to add products to my shopping cart so that I can collect items for purchase.
+5. As a customer, I want to modify quantities in my cart so that I can adjust my order before checkout.
+6. As a customer, I want to remove items from my cart so that I can change my mind about purchases.
+7. As a customer, I want to create an account so that I can save my preferences and order history.
+8. As a customer, I want to log into my account so that I can access personalized features.
+9. As a customer, I want to manage my profile information so that I can keep my details current.
+10. As a customer, I want to save shipping addresses so that I can quickly complete future orders.
+11. As a customer, I want to proceed through checkout so that I can complete my purchase.
+12. As a customer, I want to select payment methods so that I can pay for my order securely.
+13. As a customer, I want to review my order before finalizing so that I can ensure accuracy.
+14. As a customer, I want to receive order confirmation so that I know my purchase was successful.
+15. As a customer, I want to track my order status so that I can monitor delivery progress.
+16. As a customer, I want to view my order history so that I can reference past purchases.
+17. As a customer, I want to receive email notifications so that I stay informed about my orders.
+18. As an administrator, I want to manage product catalogs so that I can maintain current inventory.
+19. As an administrator, I want to add new products so that I can expand the available inventory.
+20. As an administrator, I want to update product information so that I can keep details accurate.
+21. As an administrator, I want to manage product pricing so that I can optimize revenue.
+22. As an administrator, I want to view sales reports so that I can analyze business performance.
+23. As an administrator, I want to manage customer accounts so that I can provide support.
+24. As an administrator, I want to process orders so that I can fulfill customer requests.
+25. As an administrator, I want to manage inventory levels so that I can prevent stockouts.
+26. As an administrator, I want to configure system settings so that I can customize the platform.
+27. As a developer, I want to deploy the application using containers so that I can ensure consistent environments.
+28. As a developer, I want to scale individual microservices so that I can handle varying loads.
+29. As a developer, I want to monitor system health so that I can ensure reliable operation.
+30. As a developer, I want to access API documentation so that I can integrate with the platform.
+31. As a developer, I want to implement authentication so that I can secure user access.
+32. As a developer, I want to handle distributed transactions so that I can maintain data consistency.
+33. As a developer, I want to implement event-driven communication so that I can decouple services.
+34. As a developer, I want to use configuration management so that I can manage environment-specific settings.

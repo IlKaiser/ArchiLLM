@@ -1,0 +1,63 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<broker>> Yellow
+  BackgroundColor<<db>> LightGreen
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<middleware>> Lavender
+}
+
+component "Ping Service" as ping <<service>> {
+  component "PingController" as pingCtrl
+  component "RabbitMQ Publisher" as pingPub
+}
+
+component "Vehicle Service" as vehicle <<service>> {
+  component "VehicleController" as vehicleCtrl
+  component "Vehicle Publisher" as vehiclePub
+}
+
+component "Customer Service" as customer <<service>> {
+  component "CustomerController" as customerCtrl
+  component "Customer Publisher" as customerPub
+}
+
+component "Tracking Service" as tracking <<service>> {
+  component "TrackingController" as trackingCtrl
+  component "RabbitMQ Subscriber" as trackingSub
+}
+
+component "Event Sourcing Middleware" as eventMiddleware <<middleware>> {
+  component "Event Sourcing Ledger" as eventLedger
+  component "RabbitMQ Subscriber" as eventSub
+}
+
+database "Redis Cache" as redis <<cache>>
+database "RabbitMQ" as rabbitmq <<broker>>
+database "SQL Server" as sqlserver <<db>> {
+  database "event_sourcing DB" as eventDb
+  database "tracking_db" as trackingDb
+  database "vehicles_db" as vehicleDb
+  database "customers_db" as customerDb
+}
+
+ping --> redis : Redis
+ping --> rabbitmq : publish *.ping.vehicle
+tracking --> redis : Redis
+tracking --> rabbitmq : subscribe *.ping.vehicle
+vehicle --> redis : Redis
+vehicle --> rabbitmq : publish/subscribe *.vehicle.vehicle
+customer --> redis : Redis
+customer --> rabbitmq : publish/subscribe *.customer.vehicle
+
+eventMiddleware --> rabbitmq : subscribe *.ping.vehicle-*.vehicle.vehicle-*.customer.vehicle
+eventMiddleware --> eventDb : JDBC
+
+tracking --> trackingDb : JDBC
+vehicle --> vehicleDb : JDBC
+customer --> customerDb : JDBC
+
+@enduml

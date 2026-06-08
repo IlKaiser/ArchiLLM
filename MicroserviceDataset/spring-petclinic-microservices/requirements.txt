@@ -1,0 +1,137 @@
+## Purpose
+
+The Spring PetClinic Microservices application is a distributed version of the classic Spring PetClinic sample application that demonstrates modern microservices architecture patterns. It serves as a comprehensive reference implementation for building cloud-native applications using Spring Cloud technologies. The application manages a pet clinic's operations including customer management, veterinary services, pet visit scheduling, and provides AI-powered chatbot functionality.
+
+## Functional Requirements
+
+### Core Business Features
+- Customer Management: Create, read, update customer profiles and contact information
+- Pet Management: Register pets, associate with owners, manage pet types and details
+- Veterinary Services: Maintain veterinarian information, specialties, and availability
+- Visit Scheduling: Schedule and track pet visits, record visit details and medical notes
+- AI-Powered Assistance: Provide chatbot interface for customer inquiries and support
+
+### User Interface
+- Responsive web interface built with AngularJS frontend
+- Multi-language support (English, German)
+- Mobile-friendly design with custom styling and typography
+
+### Data Management
+- Support for multiple database backends (HSQLDB for development, MySQL for production)
+- Database schema management with SQL scripts
+- Sample data provisioning for demonstration purposes
+
+## Non-Functional Requirements
+
+### Performance
+- Memory limits configured per service (512MB for core services, 256MB for monitoring)
+- Container resource constraints for efficient resource utilization
+- Circuit breaker patterns for resilience against cascading failures
+
+### Scalability
+- Microservices architecture enabling independent scaling of components
+- Service registry for dynamic service discovery and load balancing
+- Stateless service design for horizontal scaling
+
+### Reliability
+- Health checks for all services with configurable intervals and retries
+- Circuit breaker implementation using Resilience4j
+- Fallback mechanisms in API Gateway for service unavailability
+
+### Observability
+- Distributed tracing with OpenTelemetry and Zipkin integration
+- Metrics collection and monitoring via Micrometer
+- Custom Grafana dashboards for application monitoring
+- Prometheus for metrics aggregation and alerting
+- Centralized logging with structured log formatting
+
+### Security
+- Configuration externalization through Config Server
+- Environment-based configuration for sensitive data (API keys)
+- Service-to-service communication via internal networks
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **API Gateway Pattern**: Single entry point routing requests to appropriate backend services
+- **Service Registry Pattern**: Eureka-based service discovery for dynamic service location
+- **Configuration Management Pattern**: Externalized configuration via Spring Cloud Config Server
+- **Circuit Breaker Pattern**: Fault tolerance with automatic service degradation
+
+### Communication Patterns
+- **Synchronous Communication**: REST APIs for service-to-service communication
+- **Service Composition**: API Gateway aggregates data from multiple services
+- **Client-Side Load Balancing**: Spring Cloud LoadBalancer for service instance selection
+
+### Data Management Patterns
+- **Database per Service**: Each microservice manages its own data store
+- **Shared Database Anti-Pattern**: Avoided through service decomposition
+
+### Observability Patterns
+- **Distributed Tracing**: Request correlation across service boundaries
+- **Health Check API**: Standardized health endpoints for monitoring
+- **Application Metrics**: Custom business and technical metrics collection
+
+## Tech Stack
+
+### Backend Technologies
+- **Language**: Java 17
+- **Framework**: Spring Boot, Spring Cloud
+- **Service Discovery**: Eureka (Netflix)
+- **API Gateway**: Spring Cloud Gateway
+- **Configuration**: Spring Cloud Config Server
+- **Circuit Breaker**: Resilience4j
+- **Database**: HSQLDB (development), MySQL (production)
+- **ORM**: Spring Data JPA
+
+### Frontend Technologies
+- **Framework**: AngularJS
+- **Styling**: SCSS, Custom CSS
+- **Build Tools**: Maven
+
+### AI/ML Integration
+- **AI Framework**: Spring AI
+- **LLM Providers**: OpenAI, Azure OpenAI
+- **Use Case**: Chatbot functionality for customer assistance
+
+### Monitoring and Observability
+- **Tracing**: OpenTelemetry, Zipkin
+- **Metrics**: Micrometer, Prometheus
+- **Dashboards**: Grafana
+- **Admin Interface**: Spring Boot Admin
+
+### Testing
+- **Load Testing**: JMeter test plans included
+- **Chaos Engineering**: Spring Boot Chaos Monkey integration
+- **Unit Testing**: Spring Boot Test framework
+
+## Deployment
+
+### Containerization
+- **Container Runtime**: Docker with multi-platform support (linux/amd64, linux/arm64)
+- **Alternative Runtime**: Podman support for container builds
+- **Base Images**: Eclipse Temurin Java 17 runtime
+- **Build Tool**: Spring Boot Maven plugin with buildpacks integration
+
+### Orchestration
+- **Local Development**: Docker Compose for full stack deployment
+- **Service Dependencies**: Health check-based service startup coordination
+- **Resource Management**: Memory limits and resource constraints per service
+
+### Build and CI/CD
+- **Build Tool**: Maven with wrapper included
+- **CI Pipeline**: GitHub Actions for automated builds
+- **Image Registry**: Support for custom image repositories
+- **Development Environment**: GitHub Codespaces and VS Code devcontainer support
+
+### Configuration Management
+- **Environment Variables**: Support for runtime configuration override
+- **Secrets Management**: Environment-based injection for API keys
+- **Profile-based Configuration**: Multiple deployment environments supported
+- **Git-based Configuration**: Native Git repository support for config externalization
+
+### Development Tools
+- **Local Development**: Individual service startup without containers
+- **Chaos Testing**: Integrated chaos engineering scripts for resilience testing
+- **Hot Reload**: Development-friendly restart capabilities
+- **IDE Support**: Pre-configured development container setup

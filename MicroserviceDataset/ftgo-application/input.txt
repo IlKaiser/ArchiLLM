@@ -1,45 +1,42 @@
 # SYSTEM DESCRIPTION:
-FTGO is a microservices-based food delivery application that demonstrates enterprise-level microservice architecture patterns and serves as a reference implementation for the "Microservice Patterns" book. The system enables consumers to browse restaurants, place food orders, and track their delivery status, while allowing restaurants to manage their menus and kitchen staff to process orders. Built with Spring Boot and Java, the application implements sophisticated patterns including event sourcing, CQRS, saga-based transaction management, and API gateway routing, utilizing technologies like Apache Kafka for messaging, MySQL for data persistence, and Docker/Kubernetes for deployment orchestration.
+The FTGO application is a comprehensive food delivery microservice platform that demonstrates modern microservice architecture patterns and serves as the example code for the "Microservice Patterns" book. The system manages the complete food ordering lifecycle including consumer registration, restaurant management, order processing, kitchen operations, payment handling, and delivery coordination across multiple independent services. Built using Spring Boot, the application leverages event-driven architecture with Apache Kafka, implements saga patterns for distributed transactions, uses CQRS for data queries, and includes both REST and GraphQL API gateways. The platform is designed to handle complex business workflows while maintaining data consistency across services through event sourcing and transactional messaging patterns.
 
 # USER STORIES:
-
-1. As a consumer, I want to create an account so that I can place food orders.
-2. As a consumer, I want to browse available restaurants so that I can choose where to order from.
-3. As a consumer, I want to view restaurant menus and prices so that I can select items to order.
+1. As a consumer, I want to register an account so that I can place orders on the platform.
+2. As a consumer, I want to view available restaurants so that I can choose where to order from.
+3. As a consumer, I want to browse restaurant menus so that I can select items to order.
 4. As a consumer, I want to add items to my cart so that I can build my order.
-5. As a consumer, I want to modify my cart contents so that I can adjust my order before placing it.
-6. As a consumer, I want to place an order so that I can receive food delivery.
-7. As a consumer, I want to provide my delivery address so that my order can be delivered to the correct location.
-8. As a consumer, I want to view my order history so that I can track my past purchases.
-9. As a consumer, I want to see the status of my current order so that I know when to expect delivery.
-10. As a consumer, I want to cancel an order so that I can avoid unwanted charges if needed.
-11. As a consumer, I want to modify an existing order so that I can change items before preparation begins.
-12. As a restaurant owner, I want to register my restaurant so that customers can order from me.
-13. As a restaurant owner, I want to create and manage my menu so that customers know what I offer.
-14. As a restaurant owner, I want to set menu item prices so that I can control my revenue.
-15. As a restaurant owner, I want to update menu availability so that customers only see items I can prepare.
-16. As a restaurant owner, I want to receive new order notifications so that I can begin preparation promptly.
-17. As a restaurant owner, I want to accept or reject orders so that I can manage my kitchen capacity.
-18. As a kitchen staff member, I want to view incoming tickets so that I know what orders to prepare.
-19. As a kitchen staff member, I want to mark preparation stages so that I can track cooking progress.
-20. As a kitchen staff member, I want to indicate when orders are ready so that delivery can be arranged.
-21. As a kitchen staff member, I want to see order details and special instructions so that I can prepare meals correctly.
-22. As a delivery coordinator, I want to schedule pickups so that orders are collected promptly when ready.
-23. As a delivery coordinator, I want to assign delivery personnel so that orders reach customers efficiently.
-24. As a delivery coordinator, I want to track delivery status so that I can provide accurate updates to customers.
-25. As an accounting system, I want to authorize payment so that orders can be processed financially.
-26. As an accounting system, I want to reverse charges so that cancelled orders don't result in customer billing.
-27. As an accounting system, I want to track transaction history so that financial records are maintained.
-28. As an API gateway, I want to route requests to appropriate services so that clients can access functionality seamlessly.
-29. As an API gateway, I want to aggregate data from multiple services so that clients receive comprehensive responses.
-30. As an API gateway, I want to handle authentication so that only authorized users can access the system.
-31. As a system administrator, I want to monitor service health so that I can maintain system availability.
-32. As a system administrator, I want to view logs and metrics so that I can troubleshoot issues effectively.
-33. As a system administrator, I want to deploy services independently so that I can update functionality without system-wide downtime.
-34. As a developer, I want to test services in isolation so that I can ensure component functionality.
-35. As a developer, I want to use event-driven communication so that services remain loosely coupled.
-36. As a developer, I want to implement sagas so that distributed transactions maintain data consistency.
-37. As a developer, I want to use CQRS views so that read operations can be optimized separately from write operations.
-38. As an order service, I want to validate consumer eligibility so that only authorized users can place orders.
-39. As an order service, I want to verify restaurant availability so that orders are only placed with operating establishments.
-40. As an order service, I want to coordinate with multiple services so that complex order workflows are completed successfully.
+5. As a consumer, I want to place an order so that I can receive food delivery.
+6. As a consumer, I want to view my order history so that I can track past purchases.
+7. As a consumer, I want to cancel an order so that I can avoid unwanted charges if needed.
+8. As a consumer, I want to revise an order so that I can modify items before preparation begins.
+9. As a consumer, I want to track order status so that I know when my food will arrive.
+10. As a restaurant owner, I want to register my restaurant so that customers can find and order from me.
+11. As a restaurant owner, I want to manage my menu items so that customers see current offerings and prices.
+12. As a restaurant owner, I want to update restaurant information so that customers have accurate details.
+13. As a restaurant owner, I want to set restaurant hours so that customers know when I'm open.
+14. As a kitchen staff member, I want to receive new order tickets so that I can prepare the food.
+15. As a kitchen staff member, I want to mark tickets as accepted so that the order processing can continue.
+16. As a kitchen staff member, I want to update preparation status so that customers can track their order.
+17. As a kitchen staff member, I want to mark orders as ready for pickup so that delivery can be arranged.
+18. As a kitchen staff member, I want to cancel tickets so that I can handle unavailable items or capacity issues.
+19. As an accounting system, I want to authorize payments so that orders can be processed with valid funding.
+20. As an accounting system, I want to charge customers so that restaurants receive payment for orders.
+21. As an accounting system, I want to reverse charges so that I can handle cancellations and refunds.
+22. As an accounting system, I want to track account balances so that I can prevent overdrafts.
+23. As a delivery coordinator, I want to schedule pickups so that orders can be collected from restaurants.
+24. As a delivery coordinator, I want to assign delivery personnel so that orders reach customers.
+25. As a delivery coordinator, I want to track delivery status so that customers know their order progress.
+26. As a system administrator, I want to monitor service health so that I can ensure system reliability.
+27. As a developer, I want to use the REST API so that I can integrate with the order management system.
+28. As a developer, I want to use the GraphQL API so that I can query specific data efficiently.
+29. As a mobile app developer, I want to access consumer services so that I can build customer-facing applications.
+30. As a restaurant management system, I want to integrate with kitchen services so that I can streamline operations.
+31. As a business analyst, I want to access order history data so that I can generate reports and insights.
+32. As a customer support agent, I want to view customer orders so that I can assist with inquiries.
+33. As a system integrator, I want to consume events so that I can synchronize data with external systems.
+34. As a payment processor, I want to receive authorization requests so that I can validate customer payments.
+35. As a restaurant chain operator, I want to manage multiple restaurant locations so that I can scale operations.
+36. As a delivery service provider, I want to integrate with the platform so that I can handle order deliveries.
+37. As a compliance officer, I want to audit transaction records so that I can ensure regulatory compliance.
+38. As a performance engineer, I want to monitor saga execution so that I can optimize distributed transaction performance.

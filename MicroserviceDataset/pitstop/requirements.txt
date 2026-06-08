@@ -1,0 +1,132 @@
+## Purpose
+
+Pitstop is a fictitious garage management system designed as a comprehensive educational demonstration of modern software architecture patterns and container technologies. The system manages garage operations including customer registration, vehicle management, workshop maintenance scheduling, invoicing, and notifications. The primary goal is to showcase microservices architecture, event-driven design, CQRS, event sourcing, and domain-driven design principles in a realistic business context.
+
+## Functional Requirements
+
+### Core Business Features
+- **Customer Management**: Register and manage customer information with persistent storage
+- **Vehicle Management**: Register and track vehicles associated with customers
+- **Workshop Management**: Schedule, plan, and finish maintenance jobs with event sourcing for audit trails
+- **Invoicing**: Generate and send invoices automatically when maintenance jobs are completed
+- **Notifications**: Send email notifications for job planning, completion, and other events
+- **Audit Logging**: Comprehensive audit trail of all system events and operations
+- **Time Management**: Controllable time progression service for testing and demonstration purposes
+
+### User Interface
+- Web-based frontend application providing complete garage management functionality
+- RESTful APIs for all management services with HTTP endpoints
+- Interactive UI for customer registration, vehicle registration, and maintenance job management
+
+## Non-Functional Requirements
+
+### Performance and Scalability
+- Microservices architecture enabling independent scaling of components
+- Asynchronous event-driven communication using RabbitMQ message broker
+- Eventually consistent data model across service boundaries
+- Container-based deployment supporting horizontal scaling
+
+### Reliability and Availability
+- Health check endpoints on all services for monitoring and orchestration
+- Fault tolerance through service mesh capabilities (circuit breakers, retries)
+- Data persistence using SQL Server with volume-mounted storage
+- Multi-stage Docker builds optimizing container size and security
+
+### Security
+- Service mesh support for mTLS between services
+- Authorization policies and traffic rules through Istio configuration
+- Environment-specific configuration management
+- Isolated service boundaries preventing direct database access across domains
+
+### Observability
+- Centralized logging using Seq log server
+- Service mesh observability with distributed tracing capabilities
+- SMTP mail server (MailDev) for testing email functionality
+- Comprehensive health monitoring and metrics collection
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Domain-driven service decomposition with bounded contexts
+- Independent deployability and data ownership per service
+- API-first design with RESTful service interfaces
+- Shared messaging infrastructure abstraction layer
+
+### Event-Driven Architecture
+- Event sourcing implementation scoped to Workshop Management domain
+- Domain events published for customer registration, vehicle registration, job planning/completion
+- Event handlers for cross-service coordination and eventual consistency
+- Time-based events for business process automation
+
+### CQRS (Command Query Responsibility Segregation)
+- Separate command and query models within services
+- Command handlers for write operations with event publishing
+- Read models optimized for specific query patterns
+- Event replay capabilities for rebuilding read models
+
+### Communication Patterns
+- Asynchronous messaging via RabbitMQ for inter-service communication
+- Synchronous HTTP APIs for user-facing operations
+- Event-driven saga patterns for distributed transactions
+- Message serialization and routing abstraction
+
+## Tech Stack
+
+### Runtime Platform
+- **.NET 8**: Primary development platform for all services
+- **ASP.NET Core**: Web API framework for REST services
+- **Entity Framework Core**: ORM for database access and migrations
+
+### Data Storage
+- **SQL Server 2022**: Primary database platform for all persistent storage
+- **Entity Framework migrations**: Database schema management and versioning
+- **Volume-mounted storage**: Data persistence in containerized environments
+
+### Messaging and Communication
+- **RabbitMQ**: Message broker for asynchronous event-driven communication
+- **Custom messaging abstraction**: Infrastructure library wrapping RabbitMQ client
+- **HTTP/REST**: Synchronous API communication for user-facing operations
+
+### Infrastructure Services
+- **Seq**: Centralized structured logging and log aggregation
+- **MailDev**: SMTP server for email testing and development
+- **Docker**: Container runtime and image build system
+- **Multi-stage Dockerfiles**: Optimized container builds with SDK and runtime separation
+
+### Testing
+- **xUnit**: Unit testing framework with comprehensive test coverage
+- **Page Object Model**: UI test automation using Selenium WebDriver
+- **Integration testing**: End-to-end testing scenarios across service boundaries
+
+## Deployment
+
+### Container Orchestration
+- **Docker Compose**: Primary local development and deployment method
+- **Kubernetes**: Production-ready orchestration with comprehensive manifests
+- **Service Mesh**: Optional Istio and Linkerd configurations for advanced traffic management
+
+### Container Strategy
+- Multi-stage Docker builds separating build and runtime environments
+- Base image standardization across all .NET services
+- Health check integration for container orchestration
+- Environment-specific configuration through Docker environment variables
+
+### Kubernetes Features
+- Deployment resources for all application services
+- ClusterIP services for internal service-to-service communication
+- NodePort services for external access to web applications and management UIs
+- ConfigMaps and persistent volumes for configuration and data storage
+- Optional service mesh integration with sidecar proxy injection
+
+### Service Mesh Capabilities
+- **Istio**: Advanced traffic management with VirtualServices and DestinationRules
+- **Linkerd**: Lightweight service mesh alternative with automatic proxy injection
+- **Canary deployments**: V1/V2 service variants for gradual rollouts
+- **Traffic shaping**: Mirroring, fault injection, and load balancing policies
+- **Security policies**: AuthorizationPolicies and mTLS enforcement
+
+### Development Workflow
+- Docker Compose override files for debugging and local development
+- Port mapping configurations for direct API access during development
+- Integrated build and deployment pipeline using Docker multi-stage builds
+- Volume mounting for persistent data during local development cycles

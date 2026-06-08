@@ -1,0 +1,81 @@
+@startuml
+!theme plain
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<broker>> Yellow
+  BackgroundColor<<db>> LightGreen
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<client>> LightGray
+}
+
+component "Customer Core" <<service>> as CustomerCore {
+  component "Customer Service" as CustomerService
+  component "Customer Repository" as CustomerRepo
+  component "City Lookup Service" as CityService
+}
+
+component "Customer Management Backend" <<service>> as CustomerMgmtBackend {
+  component "Interaction Log Service" as InteractionLogService
+  component "Customer Core Remote Proxy" as CustomerCoreProxy
+  component "Notification Service" as NotificationService
+}
+
+component "Customer Management Frontend" <<client>> as CustomerMgmtFrontend
+
+component "Customer Self-Service Backend" <<service>> as CustomerSelfServiceBackend {
+  component "User Details Service" as UserDetailsService
+  component "Insurance Quote Service" as InsuranceQuoteService
+}
+
+component "Customer Self-Service Frontend" <<client>> as CustomerSelfServiceFrontend
+
+component "Policy Management Backend" <<service>> as PolicyMgmtBackend {
+  component "Policy Service" as PolicyService
+  component "ActiveMQ Producer" as ActiveMQProducer
+}
+
+component "Policy Management Frontend" <<client>> as PolicyMgmtFrontend
+
+component "Risk Management Server" <<service>> as RiskMgmtServer {
+  component "Risk Assessment Service" as RiskAssessmentService
+  component "ActiveMQ Consumer" as ActiveMQConsumer
+}
+
+component "Risk Management Client" <<client>> as RiskMgmtClient
+
+component "Spring Boot Admin" <<service>> as SpringBootAdmin
+
+database "Customer Database" <<db>> as CustomerDB
+database "Interaction Log Database" <<db>> as InteractionLogDB
+database "Policy Database" <<db>> as PolicyDB
+database "User Database" <<db>> as UserDB
+
+component "ActiveMQ" <<broker>> as ActiveMQ
+
+CustomerMgmtFrontend --> CustomerMgmtBackend : HTTP/REST
+CustomerSelfServiceFrontend --> CustomerSelfServiceBackend : HTTP/REST
+CustomerSelfServiceFrontend --> PolicyMgmtBackend : HTTP/REST
+CustomerSelfServiceFrontend --> CustomerMgmtBackend : WebSocket
+PolicyMgmtFrontend --> PolicyMgmtBackend : HTTP/REST
+
+CustomerMgmtBackend --> CustomerCore : HTTP/REST
+CustomerSelfServiceBackend --> CustomerCore : HTTP/REST
+PolicyMgmtBackend --> CustomerCore : HTTP/REST
+
+CustomerCore --> CustomerDB : JPA
+CustomerMgmtBackend --> InteractionLogDB : JPA
+CustomerSelfServiceBackend --> UserDB : JPA
+PolicyMgmtBackend --> PolicyDB : JPA
+
+PolicyMgmtBackend --> ActiveMQ : JMS
+RiskMgmtServer --> ActiveMQ : STOMP
+
+RiskMgmtClient --> RiskMgmtServer : gRPC
+
+CustomerCore --> SpringBootAdmin : HTTP
+CustomerMgmtBackend --> SpringBootAdmin : HTTP
+CustomerSelfServiceBackend --> SpringBootAdmin : HTTP
+PolicyMgmtBackend --> SpringBootAdmin : HTTP
+
+@enduml

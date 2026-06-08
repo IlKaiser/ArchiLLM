@@ -1,44 +1,42 @@
 # SYSTEM DESCRIPTION:
-Pitstop is a microservices-based garage management system designed to demonstrate modern software architecture patterns including CQRS, event-driven architecture, event sourcing, and domain-driven design. The system serves garage operators, customers, and workshop staff by managing vehicle registrations, customer information, maintenance job scheduling, invoicing, and notifications. Built on .NET with RabbitMQ for messaging and SQL Server for data persistence, it supports deployment via Docker Compose for development and Kubernetes with optional service mesh (Istio/Linkerd) for production environments. The application includes comprehensive automated UI testing and demonstrates advanced concepts like eventual consistency across distributed services.
+Pitstop is a comprehensive garage management system designed as a microservices-based sample application that demonstrates modern software architecture patterns and containerization technologies. The system serves garage operators, mechanics, and administrative staff by managing customers, vehicles, workshop operations, maintenance jobs, invoicing, and notifications in a fictitious car repair shop environment. Built with .NET and leveraging technologies like Docker, Kubernetes, RabbitMQ for messaging, SQL Server for data persistence, and optional service mesh implementations (Istio/Linkerd), Pitstop showcases enterprise-grade patterns including CQRS, event-driven architecture, event sourcing, Domain Driven Design, and eventual consistency across distributed services.
 
 # USER STORIES:
-1. As a garage operator, I want to register new customers so that I can maintain their contact information and service history.
-2. As a garage operator, I want to view customer details so that I can access their personal information and vehicle history.
-3. As a garage operator, I want to register vehicles so that I can track which vehicles belong to which customers.
-4. As a garage operator, I want to view vehicle details so that I can see maintenance history and vehicle specifications.
-5. As a workshop manager, I want to plan maintenance jobs so that I can schedule work for specific vehicles and technicians.
-6. As a workshop manager, I want to view maintenance job details so that I can track job progress and requirements.
-7. As a workshop technician, I want to finish maintenance jobs so that I can mark completed work and record job details.
-8. As a workshop manager, I want to view all scheduled maintenance jobs so that I can manage workshop capacity and priorities.
-9. As a customer, I want to receive notifications about my maintenance jobs so that I stay informed about service progress.
-10. As a customer, I want to receive invoices for completed work so that I can pay for services rendered.
-11. As a garage operator, I want the system to automatically generate invoices so that billing processes are streamlined.
-12. As a system administrator, I want to view audit logs so that I can track all system activities and changes.
-13. As a garage operator, I want email notifications to be sent automatically so that customers stay informed without manual intervention.
-14. As a system administrator, I want time progression functionality so that I can simulate business operations over time.
-15. As a customer, I want to receive email confirmations when my vehicle is registered so that I know the system has my information.
-16. As a workshop manager, I want to receive notifications when new maintenance jobs are planned so that I can allocate resources accordingly.
-17. As a customer, I want to be notified when my maintenance job is completed so that I know my vehicle is ready for pickup.
-18. As a garage operator, I want the system to handle day-to-day time progression so that scheduled events trigger automatically.
-19. As a system administrator, I want centralized logging so that I can troubleshoot issues across all microservices.
-20. As a garage operator, I want a web interface to access all management functions so that I can operate the business efficiently.
-21. As a developer, I want health check endpoints so that I can monitor service availability and system health.
-22. As a system administrator, I want containerized deployment so that I can easily deploy and scale the system.
-23. As a DevOps engineer, I want Kubernetes manifests so that I can deploy the system in container orchestration environments.
-24. As a system administrator, I want service mesh support so that I can implement advanced traffic management and security policies.
-25. As a developer, I want automated UI tests so that I can verify end-to-end functionality across all user workflows.
-26. As a garage operator, I want to search and filter customers so that I can quickly find specific customer records.
-27. As a garage operator, I want to search and filter vehicles so that I can locate specific vehicles efficiently.
-28. As a workshop manager, I want to filter maintenance jobs by status so that I can focus on active or pending work.
-29. As a system administrator, I want message queuing so that services can communicate reliably even during high load or temporary outages.
-30. As a garage operator, I want data persistence so that customer and vehicle information is retained across system restarts.
-31. As a developer, I want event sourcing for workshop management so that I can reconstruct the complete history of maintenance operations.
-32. As a customer, I want my registration to trigger automatic notifications so that I receive immediate confirmation of service enrollment.
-33. As a garage operator, I want vehicle registration to automatically link to customer records so that relationships are maintained correctly.
-34. As a workshop technician, I want to view job planning details so that I understand what work needs to be performed.
-35. As a system administrator, I want infrastructure messaging abstraction so that the message broker can be changed without code modifications.
-36. As a garage operator, I want the system to handle concurrent operations so that multiple staff members can work simultaneously without conflicts.
-37. As a developer, I want comprehensive unit tests so that individual service components are thoroughly validated.
-38. As a system administrator, I want email server integration so that notifications can be delivered to customers via standard email protocols.
-39. As a garage operator, I want the web application to provide intuitive navigation so that staff can efficiently access different management areas.
-40. As a system administrator, I want canary deployment support so that I can safely roll out updates with minimal risk to production operations.
+1. As a garage administrator, I want to register new customers so that I can maintain a customer database for service tracking.
+2. As a garage administrator, I want to view customer details so that I can access customer information when needed.
+3. As a garage administrator, I want to register vehicles so that I can associate them with customers and track maintenance history.
+4. As a garage administrator, I want to view vehicle details so that I can access vehicle specifications and maintenance records.
+5. As a workshop manager, I want to plan maintenance jobs so that I can schedule work for specific vehicles and dates.
+6. As a workshop manager, I want to view maintenance job details so that I can track job progress and specifications.
+7. As a mechanic, I want to finish maintenance jobs so that I can mark completed work and record job outcomes.
+8. As a workshop manager, I want to view all planned maintenance jobs so that I can manage workshop scheduling and workload.
+9. As a customer, I want to receive notifications about my maintenance jobs so that I stay informed about my vehicle's service status.
+10. As a customer, I want to receive invoices for completed maintenance work so that I can pay for services rendered.
+11. As a garage administrator, I want the system to automatically generate invoices when maintenance jobs are finished so that billing is handled efficiently.
+12. As a garage administrator, I want to track all system activities through audit logs so that I can monitor operations and troubleshoot issues.
+13. As a system administrator, I want to monitor application health through health checks so that I can ensure system availability.
+14. As a system administrator, I want centralized logging through Seq so that I can analyze system behavior and diagnose problems.
+15. As a system administrator, I want to deploy the system using Docker containers so that I can ensure consistent environments across development and production.
+16. As a system administrator, I want to deploy the system on Kubernetes so that I can leverage container orchestration for scalability and reliability.
+17. As a system administrator, I want to use RabbitMQ for message communication so that services can communicate asynchronously and reliably.
+18. As a system administrator, I want to use SQL Server for data persistence so that application data is stored reliably with ACID guarantees.
+19. As a system administrator, I want service mesh capabilities with Istio so that I can implement advanced traffic management and security policies.
+20. As a system administrator, I want service mesh capabilities with Linkerd so that I can have a lightweight alternative for service communication.
+21. As a system administrator, I want canary deployment capabilities so that I can safely roll out new versions of services.
+22. As a system administrator, I want traffic mirroring capabilities so that I can test new service versions with production traffic.
+23. As a system administrator, I want fault injection capabilities so that I can test system resilience under failure conditions.
+24. As a developer, I want event sourcing for workshop management so that I can track all changes to maintenance job states over time.
+25. As a developer, I want CQRS implementation so that I can optimize read and write operations separately.
+26. As a developer, I want domain events so that services can react to business events in a loosely coupled manner.
+27. As a developer, I want automated UI tests so that I can verify the web application functionality end-to-end.
+28. As a developer, I want unit tests for critical business logic so that I can ensure code quality and catch regressions.
+29. As a garage staff member, I want a web application interface so that I can interact with all system features through a user-friendly interface.
+30. As a garage staff member, I want to navigate between different management sections so that I can efficiently access customer, vehicle, and workshop management features.
+31. As a system administrator, I want email notification capabilities so that customers can receive service updates via email.
+32. As a system administrator, I want time service functionality so that the system can simulate time progression for demonstration purposes.
+33. As a system administrator, I want database migrations so that schema changes can be applied consistently across environments.
+34. As a system administrator, I want container health checks so that unhealthy services can be automatically detected and restarted.
+35. As a developer, I want message serialization capabilities so that domain events can be reliably transmitted between services.
+36. As a developer, I want repository patterns so that data access is abstracted and testable.
+37. As a developer, I want dependency injection so that services are loosely coupled and easily testable.
+38. As a system administrator, I want configuration management so that service behavior can be customized for different environments.

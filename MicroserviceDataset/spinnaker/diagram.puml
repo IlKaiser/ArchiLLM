@@ -1,0 +1,108 @@
+@startuml
+skinparam component {
+  BackgroundColor<<service>> lightblue
+  BackgroundColor<<gateway>> lightgreen
+  BackgroundColor<<broker>> orange
+  BackgroundColor<<db>> lightyellow
+  BackgroundColor<<cache>> lightpink
+  BackgroundColor<<client>> lightgray
+}
+
+component "Gate" <<gateway>> {
+  component "API Gateway"
+  component "Authentication"
+}
+
+component "Deck" <<client>> {
+  component "Web UI"
+  component "React Components"
+}
+
+component "Orca" <<service>> {
+  component "Orchestration Engine"
+  component "Pipeline Management"
+  component "Task Execution"
+}
+
+component "Clouddriver" <<service>> {
+  component "Cloud Provider Abstraction"
+  component "Deployment Operations"
+  component "Infrastructure Management"
+  component "CATS" {
+    component "Caching Agent"
+    component "Cache Provider"
+  }
+}
+
+component "Echo" <<service>> {
+  component "Event Processing"
+  component "Notification Service"
+  component "Webhook Handling"
+}
+
+component "Front50" <<service>> {
+  component "Metadata Storage"
+  component "Application Config"
+  component "Pipeline Storage"
+}
+
+component "Igor" <<service>> {
+  component "CI Integration"
+  component "Jenkins Connector"
+  component "Build Triggers"
+}
+
+component "Rosco" <<service>> {
+  component "Image Baking"
+  component "AMI Creation"
+  component "Packer Integration"
+}
+
+component "Fiat" <<service>> {
+  component "Authorization"
+  component "Access Control"
+  component "Role Management"
+}
+
+component "Kayenta" <<service>> {
+  component "Automated Canary Analysis"
+  component "Metrics Comparison"
+}
+
+component "Keel" <<service>> {
+  component "GitOps Management"
+  component "Continuous Delivery"
+}
+
+database "Redis" <<cache>>
+database "SQL Database" <<db>>
+database "S3/GCS" <<db>>
+
+Deck --> Gate : "HTTP/REST"
+Gate --> Orca : "HTTP/REST"
+Gate --> Clouddriver : "HTTP/REST"
+Gate --> Front50 : "HTTP/REST"
+Gate --> Echo : "HTTP/REST"
+Gate --> Igor : "HTTP/REST"
+Gate --> Rosco : "HTTP/REST"
+Gate --> Fiat : "HTTP/REST"
+Gate --> Kayenta : "HTTP/REST"
+Gate --> Keel : "HTTP/REST"
+
+Orca --> Clouddriver : "HTTP/REST"
+Orca --> Rosco : "HTTP/REST"
+Orca --> Front50 : "HTTP/REST"
+Orca --> Echo : "HTTP/REST"
+Orca --> Igor : "HTTP/REST"
+Orca --> Kayenta : "HTTP/REST"
+
+Clouddriver --> Redis : "Redis Protocol"
+Clouddriver --> SQL Database : "JDBC"
+Front50 --> S3/GCS : "Object Storage API"
+Front50 --> SQL Database : "JDBC"
+
+Echo ..> Orca : "Event Publishing"
+Igor ..> Orca : "Build Events"
+Kayenta ..> Orca : "Analysis Results"
+
+@enduml

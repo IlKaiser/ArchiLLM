@@ -1,0 +1,34 @@
+# SYSTEM DESCRIPTION:
+This is a demonstration microservices architecture built with Spring Boot and Netflix OSS components that implements a card and statement management system. The system consists of multiple independent services including card-service for managing card data, statement-service for handling financial statements, and a card-statement-composite service that aggregates data from both services. It leverages key Netflix OSS components such as Eureka for service discovery, Zuul for API gateway routing, Spring Cloud Config for centralized configuration management, and includes monitoring capabilities through Hystrix Dashboard and Turbine for circuit breaker metrics aggregation. The architecture is containerized with Docker and includes message queuing via RabbitMQ, serving as a comprehensive example for developers learning microservices patterns and distributed system design.
+
+# USER STORIES:
+1. As a system administrator, I want to deploy all microservices using Docker Compose so that I can easily manage the entire system infrastructure.
+2. As a developer, I want centralized configuration management so that I can maintain consistent settings across all services.
+3. As a service, I want to register with a discovery server so that other services can find and communicate with me.
+4. As a client application, I want to access services through an API gateway so that I have a single entry point for all requests.
+5. As a developer, I want service-to-service communication so that the composite service can aggregate data from multiple sources.
+6. As a user, I want to retrieve card information so that I can view my card details.
+7. As a user, I want to retrieve statement information so that I can view my financial statement data.
+8. As a user, I want to get combined card and statement information so that I can see all my financial data in one view.
+9. As a system operator, I want circuit breaker monitoring so that I can track service health and failures.
+10. As a developer, I want to monitor application metrics through a dashboard so that I can observe system performance.
+11. As a system administrator, I want aggregated circuit breaker metrics so that I can monitor the overall system resilience.
+12. As a service, I want to communicate asynchronously through message queues so that I can decouple operations and improve reliability.
+13. As a developer, I want service discovery so that services can dynamically find and connect to each other.
+14. As a system operator, I want to access RabbitMQ management interface so that I can monitor message queue health.
+15. As a configuration server, I want to serve configuration properties so that all services can retrieve their settings centrally.
+16. As an edge server, I want to route requests to appropriate microservices so that I can provide unified access to the system.
+17. As a card service, I want to expose REST endpoints so that clients can perform CRUD operations on card data.
+18. As a statement service, I want to expose REST endpoints so that clients can perform operations on statement data.
+19. As a composite service, I want to call multiple services so that I can aggregate and present combined data to clients.
+20. As a developer, I want to run the system in different environments so that I can test locally and deploy to production.
+21. As a monitoring service, I want to collect metrics from all services so that I can provide comprehensive system observability.
+22. As a turbine service, I want to aggregate Hystrix streams so that I can provide unified circuit breaker monitoring.
+23. As a system administrator, I want Docker containers for each service so that I can ensure consistent deployment across environments.
+24. As a service, I want to wait for dependencies to be ready so that I can start up properly in the correct order.
+25. As a developer, I want Bootstrap configuration so that services can connect to the config server during startup.
+26. As a client, I want fault tolerance through circuit breakers so that I receive graceful degradation when services are unavailable.
+27. As a system operator, I want load balancing between service instances so that I can distribute traffic efficiently.
+28. As a service consumer, I want service clients that handle communication so that I can easily call other services.
+29. As a developer, I want service abstraction layers so that I can separate business logic from communication details.
+30. As a system administrator, I want network isolation options so that I can secure internal service communication.

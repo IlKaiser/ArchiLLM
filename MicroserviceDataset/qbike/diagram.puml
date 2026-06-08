@@ -1,0 +1,68 @@
+@startuml
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<discovery>> Yellow
+  BackgroundColor<<db>> LightGreen
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<broker>> Purple
+  BackgroundColor<<tracing>> Cyan
+  BackgroundColor<<client>> LightGray
+}
+
+component "API Gateway" as gateway <<gateway>>
+component "Eureka Server" as eureka <<discovery>>
+component "UC Service" as uc <<service>>
+component "Intention Service" as intention <<service>>
+component "Position Service" as position <<service>>
+component "Order Service" as order <<service>>
+component "Test Client" as testclient <<client>>
+
+database "MySQL" as mysql <<db>>
+database "Redis" as redis <<cache>>
+component "RabbitMQ" as rabbit <<broker>>
+component "Zipkin" as zipkin <<tracing>>
+
+' Service Discovery
+uc --> eureka : register
+intention --> eureka : register
+position --> eureka : register
+order --> eureka : register
+gateway --> eureka : discover services
+
+' Gateway routing
+gateway --> uc : HTTP/REST
+gateway --> intention : HTTP/REST
+gateway --> position : HTTP/REST
+gateway --> order : HTTP/REST
+
+' Service-to-service communication
+intention --> position : HTTP/REST via Ribbon+Hystrix
+intention --> uc : HTTP/REST via Ribbon+Hystrix
+order --> uc : HTTP/REST via Ribbon+Hystrix
+position --> uc : HTTP/REST via Ribbon+Hystrix
+
+' Database access
+uc --> mysql : JDBC
+intention --> mysql : JDBC
+position --> mysql : JDBC
+order --> mysql : JDBC
+
+' Cache access
+uc --> redis : Redis
+intention --> redis : Redis
+position --> redis : Redis
+order --> redis : Redis
+
+' Messaging
+intention ..> rabbit : async messaging
+order ..> rabbit : async messaging
+
+' Tracing
+zipkin --> rabbit : trace collection
+
+' Client access
+testclient --> gateway : HTTP/REST
+
+@enduml

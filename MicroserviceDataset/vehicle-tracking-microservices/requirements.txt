@@ -1,0 +1,151 @@
+## Purpose
+
+The Vehicle Tracking Microservices application is a comprehensive IoT-based fleet management system designed to monitor and track the real-time status of connected vehicles belonging to various customers. The system enables vehicle tracking companies to maintain visibility over their fleet's connectivity status and operational health through a web-based monitoring dashboard that displays vehicle statuses and customer information.
+
+## Functional Requirements
+
+### Vehicle Status Reporting
+- Connected vehicles (IoT devices) must send status updates every minute via HTTP endpoints
+- Vehicles can report status types: active, inactive, warning, danger, information
+- Status updates include correlation IDs for future scalability and detailed status information
+- Vehicles operate autonomously without requiring responses from the tracking system
+
+### Vehicle Tracking and Monitoring
+- Real-time monitoring dashboard displaying all vehicles and their current status
+- Filtering capabilities by customer and vehicle status
+- Automatic page refresh every minute to display latest vehicle states
+- Display of vehicle-to-customer ownership relationships
+- Provision for future customer and vehicle detail page navigation
+
+### Data Management
+- Persistent storage of vehicle information, status history, and customer data
+- Event sourcing implementation for tracking all state changes and system events
+- Caching layer for improved performance and reduced database load
+- Support for correlation tracking across all system operations
+
+### API Services
+- RESTful APIs following Swagger/OpenAPI specifications
+- Customer management endpoints for retrieving customer information
+- Vehicle management endpoints for vehicle data operations
+- Ping service for receiving vehicle status updates
+- Tracking service for querying vehicle status and filtering data
+
+## Non-Functional Requirements
+
+### Performance
+- System must handle minute-by-minute status updates from all connected vehicles
+- Redis caching implementation for fast data retrieval
+- Asynchronous message processing using RabbitMQ
+- Sub-second response times for dashboard queries
+
+### Scalability
+- Microservices architecture enabling horizontal scaling of individual components
+- Message-driven communication supporting high throughput
+- Event sourcing pattern supporting audit trails and system replay capabilities
+- Database-per-service pattern for independent scaling
+
+### Reliability
+- Resilience patterns implementation with retry mechanisms
+- Background middleware for reliable message processing
+- Comprehensive error handling and custom exception management
+- Event sourcing for data consistency and recovery
+
+### Security
+- Authorization token verification capabilities (implementation scope limited)
+- Custom authentication and authorization interceptors
+- Secure inter-service communication
+
+### Maintainability
+- Comprehensive unit and integration testing suites
+- Clean architecture with separated concerns
+- Domain-driven design with clear business model definitions
+- Extensive logging and monitoring capabilities
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Decomposed system into four core services: Ping, Vehicle, Customer, and Tracking
+- Database-per-service pattern with isolated data stores
+- Event-driven communication between services
+
+### Message-Driven Communication
+- RabbitMQ message broker for asynchronous inter-service communication
+- Publisher-subscriber pattern for event distribution
+- Request-response pattern for synchronous operations
+
+### Event Sourcing
+- Dedicated event sourcing service capturing all system state changes
+- Event ledger for audit trails and system reconstruction
+- Separate event sourcing database for persistence
+
+### CQRS (Command Query Responsibility Segregation)
+- Separate read and write operations
+- Mediator pattern implementation for request handling
+- Dedicated handlers for commands and queries
+
+### Repository Pattern
+- Data access abstraction layers
+- Database context isolation per domain
+- Entity Framework Core for object-relational mapping
+
+## Tech Stack
+
+### Programming Languages and Frameworks
+- C# .NET Core for all microservices
+- ASP.NET Core for web API development
+- Entity Framework Core for data access
+
+### Databases
+- Microsoft SQL Server for persistent data storage
+- Redis for distributed caching and session management
+
+### Message Broker
+- RabbitMQ for asynchronous message processing and inter-service communication
+
+### Testing Frameworks
+- Unit testing with .NET testing frameworks
+- Integration testing with containerized test environments
+- Postman collections for API testing
+
+### Additional Libraries
+- MediatR for CQRS pattern implementation
+- Custom middleware components for cross-cutting concerns
+- Background services for continuous processing tasks
+
+## Deployment
+
+### Containerization
+- Docker containers for all microservices
+- Individual Dockerfiles for each service component
+- Multi-stage Docker builds for optimized images
+
+### Container Orchestration
+- Docker Compose for local development and testing
+- Service dependency management through Docker Compose
+- Environment-specific configuration overrides
+
+### Infrastructure Services
+- Containerized Redis for caching layer
+- Containerized RabbitMQ for message brokering
+- Containerized SQL Server for data persistence
+- Containerized Event Sourcing middleware
+
+### Environment Configuration
+- Development, testing, and production environment support
+- Environment-specific configuration files
+- Externalized configuration for database connections and service endpoints
+
+### CI/CD Support
+- Docker Compose build pipeline configuration
+- Automated testing pipeline setup
+- Multi-environment deployment configuration
+
+### Port Configuration
+- Ping Service: Port 32777
+- Tracking Service: Port 32771
+- Vehicle Service: Port 32772
+- Customer Service: Port 32773
+- Event Sourcing Middleware: Port 32770
+- Redis: Port 5551
+- RabbitMQ: Port 5552
+- SQL Server: Port 5553

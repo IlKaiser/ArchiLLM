@@ -1,0 +1,116 @@
+## Purpose
+
+This is an educational microservice demonstration system designed to showcase Spring Cloud microservices architecture patterns. The application implements a simple e-commerce system with three core business domains: order processing, customer management, and product catalog management. It serves as a practical example for learning microservices concepts, service discovery, load balancing, circuit breakers, and API gateway patterns.
+
+## Functional Requirements
+
+### Core Business Services
+- **Order Management**: Process and manage customer orders, including order creation, tracking, and order line item management
+- **Customer Management**: Handle customer data including customer registration, profile management, and customer lookup
+- **Catalog Management**: Manage product catalog including item information, pricing, and inventory data
+- **Order Processing Integration**: Order service must integrate with both customer and catalog services to validate customers and retrieve product information
+
+### User Interface Requirements
+- Web-based user interfaces for each microservice using server-side rendering
+- Order form interface for creating new orders
+- Customer listing and management interface  
+- Catalog browsing and item search functionality
+- Success confirmation pages for completed operations
+
+### Service Integration Requirements
+- RESTful API communication between services
+- Service-to-service calls from Order service to Customer and Catalog services
+- Consumer-driven contract testing to ensure API compatibility
+- Graceful handling of service failures and timeouts
+
+## Non-Functional Requirements
+
+### Availability and Resilience
+- Circuit breaker pattern implementation using Hystrix for fault tolerance
+- Service degradation capabilities when dependent services are unavailable
+- Load balancing across multiple service instances
+- Service health monitoring and metrics collection
+
+### Performance and Scalability
+- Horizontal scaling support for individual microservices
+- Load balancing using Ribbon client-side load balancer
+- Caching capabilities within individual services
+- Efficient service-to-service communication
+
+### Monitoring and Observability
+- Hystrix dashboard for circuit breaker monitoring
+- Turbine aggregation for metrics from multiple service instances
+- Health check endpoints for all services
+- Centralized monitoring through dashboard interfaces
+
+### Security and Configuration
+- Externalized configuration management (Spring Cloud Config disabled in demo)
+- Service-to-service authentication and authorization
+- Input validation and error handling
+- Secure inter-service communication
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **Service Decomposition**: Domain-driven service boundaries (Order, Customer, Catalog)
+- **Database per Service**: Each microservice maintains its own data store
+- **API Gateway Pattern**: Zuul gateway for routing and cross-cutting concerns
+- **Service Discovery**: Eureka service registry for dynamic service location
+- **Circuit Breaker**: Hystrix implementation for resilience and fault tolerance
+- **Client-Side Load Balancing**: Ribbon for distributing requests across service instances
+
+### Communication Patterns
+- **Synchronous Communication**: HTTP/REST for service-to-service calls
+- **Request/Response**: Direct API calls between Order and Customer/Catalog services
+- **Gateway Routing**: External requests routed through Zuul proxy
+
+### Data Management Patterns
+- **Data Consistency**: Eventual consistency across service boundaries
+- **Data Synchronization**: Real-time data retrieval through service calls rather than data replication
+
+## Tech Stack
+
+### Core Technologies
+- **Language**: Java
+- **Framework**: Spring Boot, Spring Cloud
+- **Service Discovery**: Netflix Eureka
+- **API Gateway**: Netflix Zuul
+- **Load Balancing**: Netflix Ribbon
+- **Circuit Breaker**: Netflix Hystrix
+- **Metrics Aggregation**: Netflix Turbine
+
+### Development and Testing
+- **Build Tool**: Maven
+- **Template Engine**: Thymeleaf for web UI
+- **Testing**: Consumer-Driven Contract (CDC) testing
+- **Integration Testing**: Spring Boot Test framework
+
+### Data and Persistence
+- **Database**: Spring Data JPA with embedded database for demo
+- **Data Access**: Spring Data repositories
+- **Configuration**: Spring Boot application properties
+
+## Deployment
+
+### Containerization
+- **Container Platform**: Docker containers for each microservice
+- **Container Orchestration**: Docker Compose for local development
+- **Service Images**: Individual Dockerfiles for each microservice and infrastructure component
+
+### Development Environment
+- **Local Development**: Vagrant VM with complete system
+- **Alternative Setup**: Docker Machine and Docker Compose
+- **Build Automation**: Maven wrapper for consistent builds
+- **CI/CD**: GitHub Actions workflow for automated builds
+
+### Infrastructure Services
+- **Service Registry**: Eureka Server (port 8761)
+- **API Gateway**: Zuul Server (port 8080)  
+- **Monitoring Dashboard**: Turbine Server (port 8989)
+- **Business Services**: Customer, Catalog, and Order services with dynamic port assignment
+
+### Scalability and Operations
+- **Horizontal Scaling**: Multiple instances of each microservice supported
+- **Service Discovery**: Automatic registration and deregistration with Eureka
+- **Health Monitoring**: Built-in health check endpoints
+- **Configuration Management**: Environment-specific configuration through application properties

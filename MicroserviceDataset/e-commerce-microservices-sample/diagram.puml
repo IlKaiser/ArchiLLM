@@ -1,0 +1,33 @@
+@startuml
+
+skinparam component {
+  BackgroundColor<<client>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<cache>> Yellow
+  BackgroundColor<<db>> LightCoral
+  BackgroundColor<<search>> Pink
+}
+
+component [Store UI] <<client>>
+component [Cart Service] <<service>>
+component [Products Service] <<service>>
+component [Users Service] <<service>>
+component [Search Service] <<service>>
+
+database [Redis] <<cache>>
+database [MongoDB] <<db>>
+database [PostgreSQL] <<db>>
+database [ElasticSearch] <<search>>
+
+[Store UI] --> [Cart Service] : HTTP/REST
+[Store UI] --> [Products Service] : HTTP/REST
+[Store UI] --> [Users Service] : HTTP/REST
+[Store UI] --> [Search Service] : HTTP/REST
+
+[Cart Service] --> [Redis] : Redis Protocol
+[Products Service] --> [MongoDB] : MongoDB Protocol
+[Users Service] --> [PostgreSQL] : PostgreSQL/JDBC
+[Search Service] --> [ElasticSearch] : ElasticSearch API
+
+@enduml

@@ -1,34 +1,39 @@
 # SYSTEM DESCRIPTION:
-Tap-And-Eat-MicroServices is a cloud-native food ordering and delivery platform built using a microservices architecture pattern with Spring Boot and containerized services. The system enables customers to browse food items from various stores, manage their shopping tray, and process orders through a distributed set of specialized services including account management, customer profiles, item catalogs, pricing, and store information. The platform leverages service discovery, centralized configuration management, and circuit breaker patterns to ensure scalability and resilience, serving both end customers who want to order food and restaurant operators who need to manage their offerings and pricing.
+Tap-And-Eat-MicroServices is a distributed microservice architecture platform designed for restaurant and retail store management. The system provides a comprehensive set of services for handling restaurant operations including account management, customer data, inventory items, pricing, store information, and food tray ordering functionality. Built using Spring Boot and Java 8, the platform features a centralized configuration service and automatic service discovery, enabling scalable deployment through Docker containers. The architecture supports restaurant staff, customers, and administrators who need to manage various aspects of food service operations from menu items and pricing to customer accounts and order processing.
 
 # USER STORIES:
-1. As a customer, I want to create an account so that I can access the food ordering platform.
-2. As a customer, I want to view my account information so that I can verify my personal details.
-3. As a customer, I want to update my account information so that I can keep my profile current.
-4. As a customer, I want to browse available food items so that I can see what's available to order.
-5. As a customer, I want to search for specific food items so that I can quickly find what I'm looking for.
-6. As a customer, I want to view item details so that I can see descriptions and ingredients.
-7. As a customer, I want to see item prices so that I can make informed purchasing decisions.
-8. As a customer, I want to add items to my food tray so that I can collect multiple items for ordering.
-9. As a customer, I want to view my food tray contents so that I can review what I've selected.
-10. As a customer, I want to remove items from my food tray so that I can change my order.
-11. As a customer, I want to see the total price of my tray so that I know how much I'll pay.
-12. As a customer, I want to browse stores so that I can see which restaurants are available.
-13. As a customer, I want to view store details so that I can learn about restaurant information.
-14. As a customer, I want to see items available from specific stores so that I can order from my preferred restaurant.
-15. As a store owner, I want to register my store so that customers can find and order from me.
-16. As a store owner, I want to manage my store information so that customers have accurate details.
-17. As a store owner, I want to add food items to my catalog so that customers can see what I offer.
-18. As a store owner, I want to update food item information so that my menu stays current.
-19. As a store owner, I want to set prices for my items so that customers know the cost.
-20. As a store owner, I want to update item prices so that I can adjust for market conditions.
-21. As a system administrator, I want centralized configuration management so that I can manage service settings efficiently.
-22. As a system administrator, I want service discovery so that microservices can find and communicate with each other.
-23. As a system administrator, I want to monitor service health so that I can ensure system reliability.
-24. As a system administrator, I want to deploy services independently so that I can update components without affecting the entire system.
-25. As a developer, I want circuit breaker functionality so that the system remains resilient when services are unavailable.
-26. As a developer, I want fallback mechanisms so that users get graceful degradation when services fail.
-27. As a customer, I want the system to handle service failures gracefully so that my experience isn't disrupted.
-28. As a customer, I want fast response times so that I can browse and order efficiently.
-29. As a store owner, I want to view customer orders so that I can prepare the requested items.
-30. As a customer, I want to see real-time pricing so that I have accurate cost information.
+1. As a system administrator, I want to deploy all microservices using Docker Compose so that I can easily manage the entire system infrastructure.
+2. As a developer, I want centralized configuration management so that I can maintain consistent settings across all microservices.
+3. As a system administrator, I want automatic service discovery so that microservices can find and communicate with each other without manual configuration.
+4. As a restaurant manager, I want to create new customer accounts so that I can track customer information and order history.
+5. As a restaurant manager, I want to view all customer accounts so that I can manage customer relationships.
+6. As a restaurant manager, I want to update customer account information so that I can keep customer data current.
+7. As a restaurant manager, I want to delete customer accounts so that I can remove inactive customers from the system.
+8. As a restaurant manager, I want to create new menu items so that I can expand the restaurant's offerings.
+9. As a restaurant manager, I want to view all menu items so that I can see what's available in the restaurant.
+10. As a restaurant manager, I want to update menu item details so that I can modify descriptions or availability.
+11. As a restaurant manager, I want to delete menu items so that I can remove discontinued items from the menu.
+12. As a restaurant manager, I want to set prices for menu items so that I can control the cost of each item.
+13. As a restaurant manager, I want to view all item prices so that I can review the current pricing structure.
+14. As a restaurant manager, I want to update item prices so that I can adjust costs based on market conditions.
+15. As a restaurant manager, I want to delete price entries so that I can remove outdated pricing information.
+16. As a restaurant owner, I want to register new store locations so that I can expand my business.
+17. As a restaurant owner, I want to view all store information so that I can manage multiple locations.
+18. As a restaurant owner, I want to update store details so that I can keep location information current.
+19. As a restaurant owner, I want to remove store locations so that I can handle closures or relocations.
+20. As a customer, I want to add items to my food tray so that I can build my order.
+21. As a customer, I want to view items in my food tray so that I can see what I've selected to order.
+22. As a customer, I want to remove items from my food tray so that I can modify my order before finalizing.
+23. As a customer, I want to see the total price of items in my tray so that I know the cost before ordering.
+24. As a restaurant staff member, I want to access the food tray service even when item service is down so that orders can still be processed with fallback data.
+25. As a restaurant staff member, I want to access pricing information even when the price service is unavailable so that I can continue taking orders.
+26. As a system administrator, I want to monitor service health through the discovery service so that I can ensure all microservices are running properly.
+27. As a developer, I want to use Spring Boot applications so that I can leverage the framework's features for rapid development.
+28. As a system administrator, I want to containerize each microservice so that I can deploy them independently.
+29. As a restaurant manager, I want to search for specific customers so that I can quickly find customer information.
+30. As a restaurant manager, I want to search for menu items so that I can quickly locate specific products.
+31. As a restaurant staff member, I want to calculate order totals automatically so that I can provide accurate pricing to customers.
+32. As a customer, I want my tray to persist during my session so that I don't lose my selections if I navigate away temporarily.
+33. As a system administrator, I want centralized logging across all services so that I can troubleshoot issues effectively.
+34. As a restaurant manager, I want to generate reports on popular items so that I can make informed menu decisions.
+35. As a restaurant owner, I want to track revenue across different stores so that I can compare performance.

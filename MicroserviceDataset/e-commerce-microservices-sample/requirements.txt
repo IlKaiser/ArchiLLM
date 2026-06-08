@@ -1,0 +1,119 @@
+## Purpose
+The application is a sample e-commerce platform built using microservices and cloud-native architecture patterns. It demonstrates modern application development practices by implementing a complete online shopping solution with product catalog, shopping cart, user management, search functionality, and a web-based storefront interface.
+
+## Functional Requirements
+
+### Core E-Commerce Features
+- Product catalog management with merchandise information and images
+- Shopping cart functionality with add/remove/update item capabilities
+- User profile and account management system
+- Product search with advanced features including auto-complete, typeahead, and faceted search
+- Web-based storefront interface for customer interactions
+- Checkout processing capabilities
+
+### User Interface Requirements
+- Responsive web application built with modern UI components
+- Material UI design system implementation
+- Category-based product browsing (appliances, electronics, fashion, grocery, home, mobiles, offers, toys)
+- Deal and promotional content display
+- Shopping cart management interface
+
+## Non-Functional Requirements
+
+### Performance
+- Load testing capabilities with JMeter test plans
+- In-memory caching using Redis for cart operations
+- Search optimization through Elasticsearch integration
+- Performance monitoring and testing infrastructure
+
+### Scalability
+- Microservices architecture enabling independent scaling
+- Container-based deployment for horizontal scaling
+- Kubernetes orchestration for dynamic resource allocation
+- Polyglot database strategy for optimized data storage
+
+### Reliability
+- Independent service deployability with bounded contexts
+- Service isolation preventing cascade failures
+- Database redundancy across multiple storage systems
+
+### Security
+- Environment-specific configuration management
+- Secrets management for database credentials
+- Service mesh communication patterns
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Domain-driven design with bounded contexts
+- Independent service deployment and scaling
+- Service-to-service communication through REST APIs
+- Database per service pattern implementation
+
+### Communication Patterns
+- Synchronous REST API communication
+- HTTP-based inter-service communication
+- API Gateway pattern through UI service integration
+
+### Data Management Patterns
+- Polyglot persistence with specialized databases per service
+- Event sourcing capabilities through Redis
+- Search index management with Elasticsearch
+
+## Tech Stack
+
+### Backend Technologies
+- **Java**: Spring Boot, Spring Cloud with Gradle build system
+- **Python**: FastAPI framework with SQLAlchemy ORM
+- **JavaScript/TypeScript**: Node.js with Express.js framework
+
+### Frontend Technologies
+- **React**: TypeScript-based web application
+- **Material UI**: Component library for consistent design
+- **Nginx**: Web server for production deployment
+
+### Database Technologies
+- **MongoDB**: Document storage for product catalog
+- **Redis**: In-memory data store for shopping cart
+- **PostgreSQL**: Relational database for user profiles
+- **Elasticsearch**: Search engine for product discovery
+
+### Infrastructure Technologies
+- **Docker**: Containerization platform
+- **Kubernetes**: Container orchestration
+- **Kustomize**: Kubernetes configuration management
+
+## Deployment
+
+### Containerization
+- Docker containers for each microservice
+- Multi-stage Docker builds with optimized images
+- Container registry integration for image management
+
+### Kubernetes Orchestration
+- Minikube support for local development
+- Kustomize-based configuration management with base and overlay patterns
+- Namespace isolation for application and shared services
+- ConfigMap and Secret management for environment configuration
+
+### Environment Management
+- Local development environment using Minikube
+- Development environment configuration
+- Environment-specific overlays for different deployment targets
+
+### Infrastructure as Code
+- Terraform modules for AWS cloud deployment
+- VPC and networking infrastructure automation
+- Multi-environment support (dev, staging, production)
+
+### Service Deployment Strategy
+- Independent microservice deployment
+- Rolling updates through Kubernetes deployments
+- Service discovery through Kubernetes services
+- Load balancing with NodePort services for external access
+
+### Shared Services Management
+- Centralized database deployment and management
+- Redis cluster configuration
+- Elasticsearch cluster setup
+- MongoDB replica set configuration
