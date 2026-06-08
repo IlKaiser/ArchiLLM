@@ -1,0 +1,24 @@
+@startuml
+skinparam componentStyle compact
+
+ComponentDiagram
+
+  :ComponentLabel --> Database
+
+  UserService [Component] -- RestUser --> UserDB
+  OrderService [Component] -- RestOrder --> OrderDB
+  ProductInfoService [Component] -- RestProduct --> ProductDB
+
+  SagaPattern --> InterServiceDependency
+  APIComposition --> InterServiceDependency
+  CQRS --> InterServiceDependency
+  DomainEvent --> InterServiceDependency
+  EventSourcing --> InterServiceDependency
+
+  UserService -> OrderService : REST
+  OrderService -> ProductInfoService : REST
+  ProductInfoService -> InventoryService : REST
+
+@enduml>
+<parameter=security_risk>LOW
+@enduml

@@ -1,0 +1,105 @@
+## Purpose
+
+This application demonstrates a comprehensive microservices architecture using Spring Boot and Netflix OSS components. It serves as a reference implementation for a financial card and statement management system, showcasing enterprise-grade microservices patterns and infrastructure components for educational and demonstration purposes.
+
+## Functional Requirements
+
+### Core Business Services
+- **Card Service**: Manage credit card information and operations through RESTful APIs
+- **Statement Service**: Handle financial statement data and processing
+- **Card Statement Composite Service**: Aggregate card and statement data from multiple services to provide unified business functionality
+
+### Infrastructure Services
+- **Configuration Management**: Centralized configuration server for all microservices
+- **Service Discovery**: Registry for service location and health monitoring
+- **API Gateway**: Single entry point for external clients with routing and load balancing
+- **Circuit Breaking**: Fault tolerance and resilience patterns implementation
+- **Monitoring and Metrics**: Real-time application health and performance monitoring
+- **Message Streaming**: Asynchronous communication between services
+
+## Non-Functional Requirements
+
+### Performance and Scalability
+- Horizontal scalability through containerized deployment
+- Load balancing across multiple service instances
+- Asynchronous messaging for decoupled service communication
+- Circuit breaker patterns to prevent cascading failures
+
+### Reliability and Resilience
+- Service discovery for dynamic service location
+- Health checking and automatic failover
+- Centralized monitoring and alerting
+- Distributed tracing capabilities
+
+### Security
+- API gateway for centralized security enforcement
+- Service-to-service communication through discovery service
+- Configuration externalization for sensitive data management
+
+### Maintainability
+- Externalized configuration management
+- Comprehensive monitoring and observability
+- Containerized deployment for consistent environments
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **API Gateway Pattern**: Edge server for request routing and protocol translation
+- **Service Registry Pattern**: Centralized service discovery using Netflix Eureka
+- **Configuration Server Pattern**: Externalized configuration management
+- **Circuit Breaker Pattern**: Fault tolerance using Netflix Hystrix
+- **Composite Service Pattern**: Aggregation of multiple backend services
+
+### Communication Patterns
+- **Synchronous Communication**: REST APIs for request-response interactions
+- **Asynchronous Communication**: Message queues using RabbitMQ
+- **Service Discovery**: Dynamic service location and health monitoring
+
+### Monitoring Patterns
+- **Health Check Pattern**: Service health monitoring and reporting
+- **Metrics Aggregation**: Centralized metrics collection using Turbine
+- **Dashboard Pattern**: Visual monitoring using Hystrix Dashboard
+
+## Tech Stack
+
+### Core Framework
+- **Language**: Java
+- **Framework**: Spring Boot
+- **Build Tool**: Maven
+
+### Netflix OSS Components
+- **Service Discovery**: Netflix Eureka
+- **API Gateway**: Netflix Zuul
+- **Circuit Breaker**: Netflix Hystrix
+- **Configuration**: Spring Cloud Config
+- **Monitoring**: Hystrix Dashboard, Turbine
+
+### Infrastructure Components
+- **Message Broker**: RabbitMQ
+- **Service Communication**: Spring Cloud OpenFeign
+- **Configuration Management**: Spring Cloud Config Server
+
+### Development and Testing
+- **Testing Framework**: Spring Boot Test
+- **Configuration**: YAML-based configuration files
+
+## Deployment
+
+### Containerization
+- **Container Technology**: Docker with individual Dockerfiles for each service
+- **Multi-service Orchestration**: Docker Compose for local development and testing
+- **Environment Configuration**: Environment-specific configuration through environment variables
+
+### Service Architecture
+- **Config Server**: Port 9090 for centralized configuration management
+- **Discovery Service**: Port 8761 for service registry
+- **Edge Server**: Port 8765 for API gateway functionality
+- **Business Services**: Port 8080 for card, statement, and composite services
+- **Message Broker**: Ports 5672 (AMQP) and 15672 (Management UI)
+- **Monitoring**: Port 8179 for dashboard and 8989 for Turbine
+
+### Deployment Strategy
+- Service dependency management with startup ordering
+- Health check integration using wait-for-it script
+- Network isolation with front-tier and back-tier networks
+- Environment-specific configuration through Docker Compose overrides

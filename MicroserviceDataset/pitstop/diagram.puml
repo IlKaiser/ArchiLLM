@@ -1,0 +1,68 @@
+@startuml
+skinparam componentStyle rectangle
+
+skinparam component {
+  BackgroundColor<<service>> #E8F8E8
+  BorderColor<<service>> #4CAF50
+  BackgroundColor<<gateway>> #E3F2FD
+  BorderColor<<gateway>> #2196F3
+  BackgroundColor<<broker>> #FFF3E0
+  BorderColor<<broker>> #FF9800
+  BackgroundColor<<db>> #FFEBEE
+  BorderColor<<db>> #F44336
+  BackgroundColor<<cache>> #F3E5F5
+  BorderColor<<cache>> #9C27B0
+  BackgroundColor<<client>> #E8F5E8
+  BorderColor<<client>> #2E7D32
+}
+
+component [WebApp] <<client>>
+component [Customer Management API] <<service>>
+component [Vehicle Management API] <<service>>
+component [Workshop Management API] <<service>>
+
+component [Auditlog Service] <<service>>
+component [Invoice Service] <<service>>
+component [Notification Service] <<service>>
+component [Time Service] <<service>>
+component [Workshop Management Event Handler] <<service>>
+
+component [RabbitMQ] <<broker>>
+database [SQL Server] <<db>>
+component [MailDev] <<service>>
+component [Seq] <<service>>
+
+WebApp --> [Customer Management API] : HTTP/REST
+WebApp --> [Vehicle Management API] : HTTP/REST
+WebApp --> [Workshop Management API] : HTTP/REST
+
+[Customer Management API] --> RabbitMQ : Publish Events
+[Vehicle Management API] --> RabbitMQ : Publish Events
+[Workshop Management API] --> RabbitMQ : Publish Events
+
+RabbitMQ -.-> [Auditlog Service] : Event Subscription
+RabbitMQ -.-> [Invoice Service] : Event Subscription
+RabbitMQ -.-> [Notification Service] : Event Subscription
+RabbitMQ -.-> [Workshop Management Event Handler] : Event Subscription
+
+[Time Service] --> RabbitMQ : Publish DayHasPassed
+
+[Customer Management API] --> [SQL Server] : JDBC
+[Vehicle Management API] --> [SQL Server] : JDBC
+[Workshop Management API] --> [SQL Server] : JDBC
+[Invoice Service] --> [SQL Server] : JDBC
+[Notification Service] --> [SQL Server] : JDBC
+[Workshop Management Event Handler] --> [SQL Server] : JDBC
+
+[Invoice Service] --> MailDev : SMTP
+[Notification Service] --> MailDev : SMTP
+
+[Customer Management API] --> Seq : Logging
+[Vehicle Management API] --> Seq : Logging
+[Workshop Management API] --> Seq : Logging
+[Auditlog Service] --> Seq : Logging
+[Invoice Service] --> Seq : Logging
+[Notification Service] --> Seq : Logging
+[Time Service] --> Seq : Logging
+[Workshop Management Event Handler] --> Seq : Logging
+@enduml

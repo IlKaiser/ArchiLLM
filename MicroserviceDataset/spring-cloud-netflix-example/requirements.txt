@@ -1,0 +1,154 @@
+## Purpose
+
+The Spring Cloud Netflix Example is a comprehensive microservices demonstration system that showcases enterprise-level patterns for building distributed applications. The system serves as a reference implementation for organizations looking to adopt Spring Cloud Netflix stack, providing examples of configuration management, service discovery, circuit breaking, dynamic routing, distributed tracing, and application monitoring in a microservices architecture.
+
+## Functional Requirements
+
+### Service Discovery and Registration
+- Eureka server must provide centralized service registry for all microservices
+- All services must automatically register themselves with Eureka upon startup
+- Services must be discoverable by other services through Eureka client integration
+- Health checking and service instance management capabilities
+
+### Configuration Management
+- Centralized configuration server must manage application configurations
+- Configuration profiles for different environments (development, docker)
+- Dynamic configuration updates without service restart
+- Version control integration for configuration files
+
+### API Gateway and Routing
+- Zuul gateway must provide single entry point for client requests
+- Dynamic routing based on service discovery
+- Load balancing across multiple service instances
+- Request filtering and transformation capabilities
+
+### Circuit Breaking and Fault Tolerance
+- Hystrix integration for circuit breaker pattern implementation
+- Fallback mechanisms for service failures
+- Real-time monitoring of circuit breaker status
+- Timeout and retry configurations
+
+### Distributed Tracing
+- Request tracing across multiple microservices
+- Performance monitoring and bottleneck identification
+- Correlation ID propagation through service calls
+- Integration with ZipKin for trace visualization
+
+### Application Monitoring
+- Spring Boot Admin dashboard for service health monitoring
+- Real-time metrics collection and visualization
+- Environment variable and configuration inspection
+- Thread dump analysis and performance monitoring
+
+### Business Services
+- Service A: Primary business service with Feign client integration
+- Service B: Secondary business service providing data endpoints
+- Inter-service communication through REST APIs
+- Swagger documentation for API endpoints
+
+## Non-Functional Requirements
+
+### Performance
+- Support for horizontal scaling through Docker Compose scaling commands
+- Load balancing across multiple service instances
+- Asynchronous messaging capabilities through RabbitMQ integration
+- Optimized service-to-service communication latency
+
+### Reliability
+- Circuit breaker patterns to prevent cascade failures
+- Health check endpoints for all services
+- Graceful degradation through fallback mechanisms
+- Service resilience through retry policies
+
+### Scalability
+- Containerized services for easy horizontal scaling
+- Stateless service design for seamless scaling
+- Message queue integration for asynchronous processing
+- Auto-discovery of new service instances
+
+### Observability
+- Comprehensive logging and monitoring across all services
+- Distributed request tracing capabilities
+- Real-time dashboards for system health
+- Performance metrics collection and analysis
+
+### Security
+- Centralized configuration management with secure access
+- Service-to-service authentication through Eureka
+- API gateway security policies and filtering
+- Environment-specific configuration isolation
+
+## Architecture Patterns
+
+### Microservices Patterns
+- Service Registry pattern implemented through Eureka
+- API Gateway pattern using Netflix Zuul
+- Circuit Breaker pattern with Hystrix
+- Externalized Configuration pattern via Spring Cloud Config
+
+### Communication Patterns
+- Synchronous REST-based inter-service communication
+- Service discovery for dynamic endpoint resolution
+- Load balancing through client-side discovery
+- Asynchronous messaging through RabbitMQ
+
+### Monitoring and Observability Patterns
+- Distributed Tracing pattern with Spring Cloud Sleuth
+- Health Check API pattern for service monitoring
+- Log Aggregation through centralized logging
+- Metrics Collection through Spring Boot Actuator
+
+## Tech Stack
+
+### Primary Languages and Frameworks
+- Java as primary programming language
+- Spring Boot for microservice foundation
+- Spring Cloud Netflix for microservices infrastructure
+- Gradle for build automation and dependency management
+
+### Service Infrastructure
+- Netflix Eureka for service discovery
+- Netflix Zuul for API gateway functionality
+- Netflix Hystrix for circuit breaking
+- Spring Cloud Config for configuration management
+
+### Monitoring and Observability
+- Spring Cloud Sleuth for distributed tracing
+- ZipKin for trace visualization and analysis
+- Spring Boot Admin for application monitoring
+- Hystrix Dashboard for circuit breaker monitoring
+
+### Messaging and Storage
+- RabbitMQ for asynchronous messaging
+- File-based configuration storage
+- In-memory service registry
+
+### Documentation and Testing
+- Swagger for API documentation
+- Spring Boot Test framework integration
+
+## Deployment
+
+### Containerization
+- Docker containers for all microservices
+- Individual Dockerfiles for each service component
+- Multi-stage build processes for optimized images
+- Standardized container configurations
+
+### Orchestration
+- Docker Compose for local development and testing
+- Production-ready compose configurations
+- Development-specific compose setup with external dependencies
+- Support for service scaling through compose scale commands
+
+### Environment Management
+- Separate configurations for development and production environments
+- Environment-specific Docker compose files
+- External volume mounting for configuration files
+- Port mapping for service accessibility
+
+### Build and Deployment Process
+- Automated build scripts for Docker image creation
+- Cross-platform build support (Windows and Unix)
+- Gradle-based multi-module project structure
+- Continuous integration ready configuration

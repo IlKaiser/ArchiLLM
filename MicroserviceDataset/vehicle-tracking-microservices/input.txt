@@ -1,0 +1,41 @@
+# SYSTEM DESCRIPTION:
+This is a vehicle tracking microservices system designed for a fleet management company to monitor connected vehicles and their real-time status across multiple customers. The system follows a microservices architecture with event sourcing and supports vehicle status pings, customer management, vehicle registration, and tracking capabilities through RESTful APIs. It serves vehicle operators, fleet managers, and system administrators who need to monitor vehicle connectivity, view status dashboards, and manage fleet data. The system is built using .NET Core with Docker containerization, RabbitMQ for messaging, Redis for caching, and SQL Server for persistence, implementing CI/CD practices and cloud-first design principles.
+
+# USER STORIES:
+
+1. As a connected vehicle, I want to send my status ping to the system so that my current connectivity and operational status can be monitored.
+2. As a vehicle, I want to include detailed status information in my ping so that operators can understand specific conditions like engine performance or maintenance needs.
+3. As a vehicle, I want to authenticate with the system using authorization tokens so that only legitimate vehicles can submit status updates.
+4. As a fleet manager, I want to view all vehicles and their current status so that I can monitor the overall health of my fleet.
+5. As a fleet manager, I want to filter vehicles by customer so that I can focus on specific client fleets.
+6. As a fleet manager, I want to filter vehicles by status so that I can quickly identify vehicles with issues.
+7. As a fleet manager, I want the tracking display to auto-refresh every minute so that I always see the most current vehicle status.
+8. As a fleet manager, I want to see the last update time for each vehicle so that I can identify vehicles that haven't reported recently.
+9. As a system administrator, I want to register new vehicles in the system so that they can begin reporting their status.
+10. As a system administrator, I want to update vehicle information so that fleet records remain accurate.
+11. As a system administrator, I want to delete vehicles from the system so that decommissioned vehicles don't clutter the tracking display.
+12. As a system administrator, I want to retrieve vehicle details so that I can verify registration information.
+13. As a customer manager, I want to create new customer records so that vehicle ownership can be properly tracked.
+14. As a customer manager, I want to update customer information so that client records remain current.
+15. As a customer manager, I want to retrieve customer details so that I can verify account information.
+16. As a customer manager, I want to delete customer records so that inactive accounts don't consume system resources.
+17. As a system operator, I want all vehicle pings to be logged in an event sourcing system so that historical tracking data is preserved.
+18. As a system operator, I want vehicle status changes to be published to a message queue so that other services can react to status updates.
+19. As a system operator, I want the system to cache frequently accessed vehicle data so that response times remain fast.
+20. As a system operator, I want each service to have its own database so that data is properly segregated and scalable.
+21. As a developer, I want comprehensive API documentation so that I can integrate with the vehicle tracking services.
+22. As a developer, I want consistent error handling across all services so that I can properly handle failures.
+23. As a developer, I want standardized response formats so that client applications can reliably parse results.
+24. As a developer, I want correlation IDs for all requests so that I can trace operations across microservices.
+25. As a vehicle, I want to receive acknowledgment of my ping so that I know my status was successfully recorded.
+26. As a fleet manager, I want to see detailed vehicle information including owner details so that I can contact the appropriate customer if needed.
+27. As a system administrator, I want to configure message routing between services so that events are properly distributed.
+28. As a system administrator, I want to monitor the health of individual microservices so that I can quickly identify and resolve issues.
+29. As a system administrator, I want the ability to scale individual services independently so that the system can handle varying loads.
+30. As a developer, I want unit and integration tests for all services so that code quality and functionality are maintained.
+31. As a security administrator, I want authentication and authorization capabilities so that only authorized users and devices can access the system.
+32. As a system operator, I want logging and monitoring capabilities so that I can track system performance and troubleshoot issues.
+33. As a DevOps engineer, I want Docker containerization for all services so that deployment and scaling are simplified.
+34. As a DevOps engineer, I want environment-specific configurations so that the system can be deployed across development, testing, and production environments.
+35. As a fleet manager, I want to see vehicle status categories (active, inactive, warning, danger, information) so that I can prioritize responses appropriately.
+36. As a vehicle, I want to be able to send ping data without requiring a response so that my communication remains simple and efficient.

@@ -1,0 +1,39 @@
+# SYSTEM DESCRIPTION:
+This is a sample e-commerce application built using a microservices architecture and cloud-native patterns, demonstrating modern software engineering practices. The system consists of five independently deployable microservices: a Product Catalog service (Node.js/MongoDB), a Shopping Cart service (Java Spring Boot/Redis), a User Profile service (Python FastAPI/PostgreSQL), a Search service (Node.js/Elasticsearch), and a React-based Store UI frontend. The application utilizes polyglot programming languages and databases, is containerized with Docker, and can be deployed to local Kubernetes clusters or AWS cloud infrastructure using Terraform and Kustomize configurations.
+
+# USER STORIES:
+1. As a customer, I want to browse products by categories so that I can find items I'm interested in purchasing.
+2. As a customer, I want to view detailed product information and images so that I can make informed purchasing decisions.
+3. As a customer, I want to search for products using keywords so that I can quickly find specific items.
+4. As a customer, I want to use auto-complete functionality while searching so that I can find products more efficiently.
+5. As a customer, I want to add products to my shopping cart so that I can purchase multiple items together.
+6. As a customer, I want to view items in my shopping cart so that I can review my selections before purchasing.
+7. As a customer, I want to update quantities of items in my cart so that I can adjust my order.
+8. As a customer, I want to remove items from my cart so that I can change my mind about purchases.
+9. As a customer, I want to proceed to checkout so that I can complete my purchase.
+10. As a customer, I want to create a user account so that I can save my preferences and order history.
+11. As a customer, I want to log into my account so that I can access personalized features.
+12. As a customer, I want to manage my user profile so that I can keep my information up to date.
+13. As a customer, I want to view special deals and offers so that I can take advantage of discounts.
+14. As a customer, I want a responsive web interface so that I can shop on different devices.
+15. As a store administrator, I want to manage product catalog information so that customers see accurate product details.
+16. As a store administrator, I want to update product inventory so that availability is accurate.
+17. As a store administrator, I want to configure search functionality so that customers can find products effectively.
+18. As a developer, I want to deploy the application to Kubernetes so that it can scale and be resilient.
+19. As a developer, I want to use Docker containers so that the application runs consistently across environments.
+20. As a developer, I want to deploy to AWS using Terraform so that the application can run in the cloud.
+21. As a developer, I want to monitor application performance so that I can identify and resolve issues.
+22. As a developer, I want to run load tests so that I can verify system performance under stress.
+23. As a system administrator, I want to configure Redis for cart data storage so that cart information is fast and temporary.
+24. As a system administrator, I want to configure MongoDB for product data so that product information is persistently stored.
+25. As a system administrator, I want to configure Elasticsearch for search functionality so that search queries are fast and accurate.
+26. As a system administrator, I want to configure PostgreSQL for user data so that user information is reliably stored.
+27. As a DevOps engineer, I want to use Kustomize for Kubernetes deployments so that I can manage configurations across environments.
+28. As a DevOps engineer, I want to set up CI/CD pipelines so that code changes are automatically tested and deployed.
+29. As a DevOps engineer, I want to configure environment-specific settings so that the application works correctly in different deployment environments.
+30. As a quality assurance tester, I want to run automated tests so that I can verify microservice functionality.
+31. As a customer, I want to filter search results so that I can narrow down product options.
+32. As a customer, I want to view product categories with visual representations so that browsing is more intuitive.
+33. As a developer, I want to use polyglot programming languages so that each microservice can use the most appropriate technology.
+34. As a developer, I want clear API documentation so that I can integrate frontend and backend services effectively.
+35. As a system operator, I want to monitor service health so that I can ensure system availability.

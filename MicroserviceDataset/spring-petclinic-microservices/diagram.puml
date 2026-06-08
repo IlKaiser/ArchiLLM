@@ -1,0 +1,105 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor<<gateway>> LightBlue
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<config>> Orange
+  BackgroundColor<<discovery>> Yellow
+  BackgroundColor<<admin>> Pink
+  BackgroundColor<<monitoring>> LightGray
+  BackgroundColor<<db>> LightCyan
+  BackgroundColor<<ai>> Violet
+}
+
+component "API Gateway" <<gateway>> {
+  component "ApiGatewayController"
+  component "FallbackController"
+  component "CustomersServiceClient"
+  component "VisitsServiceClient"
+}
+
+component "Discovery Server" <<discovery>> {
+  component "Eureka Server"
+}
+
+component "Config Server" <<config>> {
+  component "Spring Cloud Config"
+}
+
+component "Customers Service" <<service>> {
+  component "OwnerResource"
+  component "PetResource"
+  component "OwnerRepository"
+  component "PetRepository"
+  database "Customer DB" <<db>>
+}
+
+component "Visits Service" <<service>> {
+  component "VisitResource"
+  component "VisitRepository"
+  database "Visits DB" <<db>>
+}
+
+component "Vets Service" <<service>> {
+  component "VetResource"
+  component "VetRepository"
+  database "Vets DB" <<db>>
+}
+
+component "GenAI Service" <<ai>> {
+  component "ChatController"
+  component "AIBeanConfiguration"
+}
+
+component "Admin Server" <<admin>> {
+  component "Spring Boot Admin"
+}
+
+component "Tracing Server" <<monitoring>> {
+  component "Zipkin"
+}
+
+component "Grafana" <<monitoring>>
+component "Prometheus" <<monitoring>>
+
+[API Gateway] --> [Discovery Server] : Service Discovery
+[API Gateway] --> [Config Server] : Configuration
+[API Gateway] --> [Customers Service] : HTTP/REST
+[API Gateway] --> [Visits Service] : HTTP/REST
+[API Gateway] --> [Vets Service] : HTTP/REST
+[API Gateway] --> [GenAI Service] : HTTP/REST
+
+[Customers Service] --> [Discovery Server] : Service Registry
+[Customers Service] --> [Config Server] : Configuration
+[Customers Service] --> [Customer DB] : JDBC
+
+[Visits Service] --> [Discovery Server] : Service Registry
+[Visits Service] --> [Config Server] : Configuration
+[Visits Service] --> [Visits DB] : JDBC
+
+[Vets Service] --> [Discovery Server] : Service Registry
+[Vets Service] --> [Config Server] : Configuration
+[Vets Service] --> [Vets DB] : JDBC
+
+[GenAI Service] --> [Discovery Server] : Service Registry
+[GenAI Service] --> [Config Server] : Configuration
+
+[Admin Server] --> [Discovery Server] : Service Registry
+[Admin Server] --> [Config Server] : Configuration
+
+[Prometheus] --> [API Gateway] : Metrics Collection
+[Prometheus] --> [Customers Service] : Metrics Collection
+[Prometheus] --> [Visits Service] : Metrics Collection
+[Prometheus] --> [Vets Service] : Metrics Collection
+[Prometheus] --> [GenAI Service] : Metrics Collection
+
+[Grafana] --> [Prometheus] : Metrics Query
+
+[API Gateway] ..> [Tracing Server] : Distributed Tracing
+[Customers Service] ..> [Tracing Server] : Distributed Tracing
+[Visits Service] ..> [Tracing Server] : Distributed Tracing
+[Vets Service] ..> [Tracing Server] : Distributed Tracing
+[GenAI Service] ..> [Tracing Server] : Distributed Tracing
+
+@enduml

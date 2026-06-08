@@ -1,0 +1,75 @@
+@startuml
+!define RECTANGLE class
+
+skinparam component {
+    BackgroundColor<<client>> LightBlue
+    BackgroundColor<<gateway>> Orange
+    BackgroundColor<<service>> LightGreen
+    BackgroundColor<<broker>> Yellow
+    BackgroundColor<<auth>> Purple
+    BackgroundColor<<db>> LightGray
+}
+
+component "Angular App" <<client>> {
+    component "Customers Module"
+    component "Orders Module"
+    component "Shared Module"
+}
+
+component "API Gateway" <<gateway>> {
+    component "CustomersController"
+    component "OrdersController" 
+    component "ShipmentsController"
+    component "CustomersHttpClient"
+    component "OrdersHttpClient"
+    component "ShipmentsHttpClient"
+}
+
+component "Authentication Service" <<auth>> {
+    component "AccountController"
+    component "TokenProviderMiddleware"
+    component "ApplicationUser"
+}
+
+component "Customers Service" <<service>> {
+    component "CustomersController" as CustCtrl
+    component "CustomerRepository"
+    component "CustomersDbContext"
+}
+
+component "Orders Service" <<service>> {
+    component "OrdersController" as OrderCtrl
+    component "OrderRepository" 
+    component "OrdersDbContext"
+    component "OrderCreatedIntegrationEvent"
+}
+
+component "Shipments Service" <<service>> {
+    component "ShipmentsController" as ShipCtrl
+    component "ShipmentsRepository"
+    component "ShipmentsDbContext"
+}
+
+component "RabbitMQ" <<broker>>
+
+database "CustomersDb" <<db>>
+database "OrdersDb" <<db>>
+database "ShipmentsDb" <<db>>
+database "AuthDb" <<db>>
+
+[Angular App] --> [API Gateway] : HTTP/REST
+[API Gateway] --> [Customers Service] : HTTP/REST
+[API Gateway] --> [Orders Service] : HTTP/REST
+[API Gateway] --> [Shipments Service] : HTTP/REST
+
+[Angular App] --> [Authentication Service] : HTTP/REST
+
+[Customers Service] --> [CustomersDb] : JDBC
+[Orders Service] --> [OrdersDb] : JDBC  
+[Shipments Service] --> [ShipmentsDb] : JDBC
+[Authentication Service] --> [AuthDb] : JDBC
+
+[Orders Service] ..> [RabbitMQ] : publish events
+[Shipments Service] ..> [RabbitMQ] : subscribe events
+
+@enduml

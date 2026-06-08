@@ -1,0 +1,53 @@
+@startuml
+
+!define RECTANGLE class
+
+skinparam component {
+  BackgroundColor<<service>> LightBlue
+  BackgroundColor<<gateway>> Orange
+  BackgroundColor<<config>> Yellow
+  BackgroundColor<<discovery>> LightGreen
+  BackgroundColor<<db>> Pink
+  BackgroundColor<<broker>> Purple
+  BackgroundColor<<shared>> LightGray
+}
+
+component "Gateway Service" <<gateway>> as gateway
+component "Discovery Service" <<discovery>> as discovery
+component "Config Service" <<config>> as config
+
+component "Command Side" <<service>> as commandside {
+  component "Product Aggregate" as aggregate
+  component "Product REST Controller" as cmdcontroller
+  component "Event Logging Handler" as cmdlogger
+}
+
+component "Query Side" <<service>> as queryside {
+  component "Product View Event Handler" as eventhandler
+  component "Product Repository" as repository
+  component "Product Domain" as product
+}
+
+component "Common Things" <<shared>> as common
+
+database "MongoDB" <<db>> as mongodb
+component "RabbitMQ" <<broker>> as rabbitmq
+
+gateway --> discovery : "service discovery"
+gateway --> config : "configuration"
+gateway --> commandside : "HTTP/REST\ncommands"
+gateway --> queryside : "HTTP/REST\nqueries"
+
+commandside --> discovery : "service registration"
+commandside --> config : "configuration"
+commandside --> mongodb : "event store\nMongoDB"
+commandside --> rabbitmq : "publish events\nAMQP"
+
+queryside --> discovery : "service registration"
+queryside --> config : "configuration"
+queryside --> rabbitmq : "consume events\nAMQP"
+
+commandside ..> common : "uses"
+queryside ..> common : "uses"
+
+@enduml

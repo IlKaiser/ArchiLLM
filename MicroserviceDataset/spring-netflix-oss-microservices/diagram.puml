@@ -1,0 +1,46 @@
+@startuml
+!define RECTANGLE class
+
+skinparam component {
+  BackgroundColor<<gateway>> LightBlue
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<composite>> Yellow
+  BackgroundColor<<config>> Orange
+  BackgroundColor<<discovery>> Pink
+  BackgroundColor<<monitor>> Purple
+  BackgroundColor<<broker>> Red
+}
+
+component "Edge Server" <<gateway>> as EdgeServer
+component "Discovery Service" <<discovery>> as DiscoveryService
+component "Config Server" <<config>> as ConfigServer
+component "Card Service" <<service>> as CardService
+component "Statement Service" <<service>> as StatementService
+component "Card Statement Composite" <<composite>> as CardStatementComposite
+component "Monitor Dashboard" <<monitor>> as MonitorDashboard
+component "Turbine" <<monitor>> as Turbine
+component "RabbitMQ" <<broker>> as RabbitMQ
+
+EdgeServer --> DiscoveryService : HTTP/Service Discovery
+EdgeServer --> CardStatementComposite : HTTP/REST
+
+CardStatementComposite --> CardService : HTTP/REST
+CardStatementComposite --> StatementService : HTTP/REST
+
+CardService --> DiscoveryService : HTTP/Service Registration
+StatementService --> DiscoveryService : HTTP/Service Registration
+CardStatementComposite --> DiscoveryService : HTTP/Service Registration
+EdgeServer --> DiscoveryService : HTTP/Service Registration
+
+ConfigServer --> DiscoveryService : HTTP/Config Distribution
+CardService --> ConfigServer : HTTP/Config Retrieval
+StatementService --> ConfigServer : HTTP/Config Retrieval
+CardStatementComposite --> ConfigServer : HTTP/Config Retrieval
+EdgeServer --> ConfigServer : HTTP/Config Retrieval
+
+MonitorDashboard --> RabbitMQ : AMQP/Metrics
+Turbine --> RabbitMQ : AMQP/Metrics
+MonitorDashboard --> DiscoveryService : HTTP/Service Discovery
+Turbine --> DiscoveryService : HTTP/Service Discovery
+
+@enduml

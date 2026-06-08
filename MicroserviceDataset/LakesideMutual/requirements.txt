@@ -1,0 +1,138 @@
+## Purpose
+
+Lakeside Mutual is a fictitious insurance company sample application designed to demonstrate microservices architecture patterns and domain-driven design principles. The application provides digital services for both customers and employees of the insurance company, including customer self-service capabilities, customer management tools for employees, policy management, and risk assessment functionality.
+
+## Functional Requirements
+
+### Customer Management
+- Customer registration and profile management
+- Customer data retrieval and updates
+- Address management and validation
+- Customer search and pagination capabilities
+- Customer interaction logging and history tracking
+
+### Policy Management
+- Insurance policy creation and updates
+- Policy viewing and management by customers
+- Policy administration by employees
+- Integration with risk management for policy assessment
+
+### Customer Self-Service
+- Customer registration portal
+- Policy viewing for authenticated customers
+- Address change functionality
+- User authentication and authorization
+
+### Communication and Notifications
+- Real-time chat functionality between customers and call center agents using WebSockets
+- Message delivery and acknowledgment system
+- Notification system for customer updates
+- Interaction logging for audit trails
+
+### Risk Management
+- Customer data analysis and reporting
+- Risk assessment based on policy data
+- Periodic customer data report generation
+- Integration with policy management for risk evaluation
+
+### Administrative Functions
+- Spring Boot Admin integration for application monitoring
+- API documentation with Swagger
+- Error handling and logging
+- Data loading and initialization
+
+## Non-Functional Requirements
+
+### Performance
+- Support for pagination in customer data retrieval
+- Load balancing capabilities (nginx configuration present)
+- Efficient data access patterns
+
+### Security
+- API key authentication for service-to-service communication
+- User authentication and authorization
+- Secure WebSocket communications
+- Input validation and sanitization
+
+### Scalability
+- Microservices architecture enabling independent scaling
+- Containerized deployment supporting horizontal scaling
+- Service separation allowing independent development and deployment
+
+### Reliability
+- Error handling and exception management
+- Service monitoring through Spring Boot Admin
+- Graceful degradation when dependent services are unavailable
+
+### Maintainability
+- Domain-driven design implementation
+- Separation of concerns across service layers
+- Comprehensive test coverage including architecture tests
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **Database per Service**: Each service manages its own data
+- **API Gateway Pattern**: Services expose REST APIs for communication
+- **Service Registry**: Spring Boot Admin for service discovery and monitoring
+- **Circuit Breaker**: Handling of unavailable services (Customer Core not available exceptions)
+
+### Communication Patterns
+- **Request-Response**: HTTP REST APIs for synchronous communication
+- **Publish-Subscribe**: ActiveMQ messaging for asynchronous communication between Policy Management and Risk Management
+- **Real-time Communication**: WebSockets for chat functionality
+
+### Data Management Patterns
+- **Domain Model**: Rich domain objects with business logic
+- **Repository Pattern**: Data access abstraction
+- **Aggregate Pattern**: Domain aggregates for data consistency
+
+### Integration Patterns
+- **Remote Proxy**: Customer Core remote proxy for service integration
+- **Message Queuing**: ActiveMQ for reliable message delivery
+- **API Composition**: Frontends consuming multiple backend services
+
+## Tech Stack
+
+### Backend Technologies
+- **Framework**: Spring Boot (Java)
+- **Build Tool**: Maven
+- **Database**: H2 (embedded), JPA/Hibernate for persistence
+- **Message Broker**: ActiveMQ
+- **API Documentation**: Swagger/OpenAPI
+- **Monitoring**: Spring Boot Admin
+- **Testing**: JUnit, Architecture tests
+
+### Frontend Technologies
+- **Customer Management Frontend**: React with Redux
+- **Customer Self-Service Frontend**: React
+- **Policy Management Frontend**: Vue.js
+- **Styling**: Semantic UI
+
+### Additional Technologies
+- **Risk Management Server**: Node.js
+- **Load Balancing**: nginx
+- **WebSockets**: STOMP protocol for real-time communication
+- **Validation**: Bean Validation (JSR-303)
+
+## Deployment
+
+### Containerization
+- **Docker**: Each service has its own Dockerfile
+- **Multi-stage builds**: Optimized container images
+- **Environment configuration**: Environment variables for service URLs and configuration
+
+### Orchestration
+- **Docker Compose**: Complete application stack deployment
+- **Kubernetes**: Experimental deployment with manifests for GKE
+- **Service networking**: Internal service communication via container networking
+
+### Configuration Management
+- **Environment-specific configuration**: Different application.properties for environments
+- **External configuration**: Service URLs and dependencies configurable via environment variables
+- **Port management**: Defined port allocation for each service (8080-8110 range)
+
+### Development Support
+- **IDE Integration**: IntelliJ IDEA run configurations provided
+- **Script automation**: Platform-specific startup scripts
+- **Live reloading**: Development mode support for frontend applications

@@ -1,0 +1,120 @@
+## Purpose
+
+This application is a comprehensive Spring Cloud microservices demonstration platform that showcases the implementation of enterprise-level microservice patterns and infrastructure components. It provides a complete example of how to build, deploy, and manage a distributed system using Spring Cloud ecosystem tools.
+
+## Functional Requirements
+
+### Core Services
+- **User Management Service**: Provides CRUD operations for user data with database persistence
+- **Service Discovery**: Automatic registration and discovery of microservices
+- **Configuration Management**: Centralized configuration with dynamic refresh capabilities
+- **API Gateway**: Single entry point for all client requests with routing and authentication
+- **Web UI**: Angular-based frontend for user interaction
+- **Authentication Service**: OAuth2-based user authentication and authorization
+
+### Infrastructure Services
+- **Service Registration**: Eureka-based service registry for microservice discovery
+- **Circuit Breaker**: Hystrix implementation for fault tolerance and resilience
+- **Distributed Tracing**: Zipkin integration for request tracking across services
+- **Monitoring Dashboard**: Real-time monitoring of circuit breaker metrics
+- **Stream Aggregation**: Turbine for aggregating Hystrix metrics across services
+
+### Inter-Service Communication
+- **REST API Communication**: HTTP-based communication between services
+- **Thrift RPC**: High-performance RPC communication using Apache Thrift
+- **Finagle Integration**: Twitter Finagle for scalable RPC services
+
+## Non-Functional Requirements
+
+### Performance
+- Support for multiple instances of the same service for load distribution
+- Connection pooling for database operations
+- Efficient service-to-service communication through load balancing
+
+### Scalability
+- Horizontal scaling capabilities through service replication
+- Auto-discovery of new service instances
+- Dynamic routing based on service availability
+
+### Reliability
+- Circuit breaker pattern implementation for fault tolerance
+- Health checking and automatic service recovery
+- Distributed tracing for debugging and monitoring
+
+### Security
+- Token-based authentication through API gateway
+- OAuth2 authorization server implementation
+- Secure inter-service communication
+
+### Observability
+- Comprehensive logging across all services
+- Real-time metrics collection and visualization
+- Distributed request tracing capabilities
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **Service Registry Pattern**: Eureka server for service discovery
+- **API Gateway Pattern**: Zuul-based routing and cross-cutting concerns
+- **Circuit Breaker Pattern**: Hystrix for resilience and fault tolerance
+- **Configuration Server Pattern**: Centralized configuration management
+- **Bulkhead Pattern**: Service isolation and resource separation
+
+### Communication Patterns
+- **Synchronous Communication**: REST APIs for request-response interactions
+- **RPC Communication**: Thrift-based high-performance communication
+- **Event-Driven Architecture**: Message bus for configuration propagation
+
+### Data Management Patterns
+- **Database per Service**: Each service manages its own data store
+- **Shared Database Anti-pattern**: Demonstration of service data isolation
+
+## Tech Stack
+
+### Core Technologies
+- **Language**: Java 8+
+- **Framework**: Spring Boot 2.x, Spring Cloud
+- **Build Tool**: Maven
+- **Frontend**: Angular, HTML5, JavaScript
+
+### Spring Cloud Components
+- **Spring Cloud Netflix Eureka**: Service discovery
+- **Spring Cloud Netflix Zuul**: API gateway and routing
+- **Spring Cloud Netflix Hystrix**: Circuit breaker
+- **Spring Cloud Config**: Configuration management
+- **Spring Cloud Sleuth**: Distributed tracing
+- **Spring Cloud Bus**: Message-driven configuration updates
+
+### Infrastructure
+- **Database**: MySQL for data persistence
+- **Message Broker**: RabbitMQ for asynchronous messaging
+- **RPC Framework**: Apache Thrift, Twitter Finagle
+- **Monitoring**: Zipkin for distributed tracing, Hystrix Dashboard
+
+### Security
+- **Authentication**: Spring Security OAuth2
+- **Authorization**: JWT tokens
+- **API Security**: Token-based access control
+
+## Deployment
+
+### Containerization
+- **Docker**: Each service packaged as individual Docker containers
+- **Docker Compose**: Multi-container application orchestration
+- **Base Images**: Custom Docker images for each microservice
+
+### Service Architecture
+- **Multi-instance Deployment**: Services can run multiple instances on different ports
+- **Container Networking**: Docker networking for inter-service communication
+- **Port Management**: Standardized port allocation across services
+
+### Environment Configuration
+- **Development Environment**: Local MySQL and RabbitMQ setup required
+- **Database Setup**: Separate dev and test databases with sample data
+- **External Dependencies**: MySQL server, RabbitMQ message broker
+
+### Operational Requirements
+- **Service Startup Order**: Infrastructure services before application services
+- **Health Checks**: Built-in health endpoints for monitoring
+- **Configuration Updates**: Dynamic configuration refresh without restarts
+- **Load Balancing**: Client-side load balancing through Eureka integration

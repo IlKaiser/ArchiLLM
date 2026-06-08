@@ -1,0 +1,122 @@
+## Purpose
+
+The microservice-consul application is a comprehensive demonstration system showcasing microservices architecture patterns using HashiCorp Consul for service discovery and coordination. The system implements an e-commerce-style application with three core business domains: order processing, customer management, and product catalog management. The primary goal is to demonstrate how to build distributed systems using modern microservices patterns with robust service discovery, load balancing, monitoring, and observability capabilities.
+
+## Functional Requirements
+
+### Core Business Services
+- **Order Management**: Process and manage customer orders with order line items
+- **Customer Management**: Handle customer data storage and retrieval operations
+- **Catalog Management**: Manage product catalog with items and inventory information
+- **Web Interface**: Provide HTML-based user interfaces for each service accessible through a unified entry point
+- **Service Integration**: Enable order service to communicate with both customer and catalog services to fulfill business operations
+
+### Service Discovery and Registration
+- Automatic service registration with Consul upon startup
+- Dynamic service discovery for inter-service communication
+- Health check monitoring and service status reporting
+- DNS-based service resolution capabilities
+
+### Load Balancing and Routing
+- HTTP request routing through Apache reverse proxy
+- Client-side load balancing using Netflix Ribbon
+- Dynamic service endpoint discovery and load distribution
+- Automatic scaling support for multiple service instances
+
+## Non-Functional Requirements
+
+### Performance and Scalability
+- Support for horizontal scaling of individual microservices
+- Client-side load balancing for optimal request distribution
+- Efficient service-to-service communication patterns
+- Container-based deployment for resource efficiency
+
+### Reliability and Availability
+- Service health monitoring and automatic failover capabilities
+- Resilient inter-service communication patterns
+- Graceful handling of service unavailability
+- Automatic service discovery updates when instances change
+
+### Monitoring and Observability
+- Comprehensive application metrics collection via Prometheus
+- Distributed tracing capabilities using Zipkin for request flow analysis
+- Centralized logging with structured JSON format
+- Log aggregation and analysis using Elastic Stack (Elasticsearch, Kibana, Filebeat)
+- Real-time monitoring dashboards and alerting
+
+### Security and Configuration
+- Environment-based configuration management
+- Secure service-to-service communication patterns
+- Externalized configuration through Spring Cloud Config integration
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **Database per Service**: Each microservice maintains its own data persistence layer
+- **API Gateway Pattern**: Apache HTTP server acts as single entry point and reverse proxy
+- **Service Discovery**: Consul-based service registry and discovery mechanism
+- **Circuit Breaker Pattern**: Implemented through Spring Cloud components for fault tolerance
+- **Consumer Driven Contracts**: CDC testing implemented for service contract verification
+
+### Communication Patterns
+- **Synchronous HTTP Communication**: REST-based APIs for service interaction
+- **Client-Side Load Balancing**: Netflix Ribbon for intelligent request routing
+- **Service Mesh Preparation**: Infrastructure ready for advanced service mesh patterns
+
+### Monitoring Patterns
+- **Health Check API**: Spring Boot Actuator endpoints for service health monitoring
+- **Metrics Collection**: Prometheus-compatible metrics export
+- **Distributed Tracing**: Zipkin integration for request flow tracking
+- **Centralized Logging**: Structured logging with correlation IDs
+
+## Tech Stack
+
+### Core Technologies
+- **Language**: Java 8+
+- **Framework**: Spring Boot 2.x with Spring Cloud components
+- **Service Discovery**: HashiCorp Consul 1.8.4
+- **Load Balancing**: Netflix Ribbon, Apache HTTP Server 2.4
+- **Template Engine**: Thymeleaf for web UI rendering
+- **Build Tool**: Maven 3.x with wrapper
+
+### Data Persistence
+- **Database**: H2 embedded database for development
+- **ORM**: Spring Data JPA for data access layer
+- **Repository Pattern**: Spring Data repositories for CRUD operations
+
+### Monitoring and Observability
+- **Metrics**: Prometheus for metrics collection and storage
+- **Tracing**: Zipkin for distributed request tracing
+- **Logging**: Logback with JSON structured logging
+- **Log Processing**: Elastic Stack (Elasticsearch 6.3.1, Kibana 6.3.1, Filebeat)
+
+### Infrastructure Components
+- **Reverse Proxy**: Apache HTTP with Consul Template for dynamic configuration
+- **Configuration Management**: Consul Template for service discovery integration
+- **Service Registration**: Spring Cloud Consul for automatic service registration
+
+## Deployment
+
+### Containerization Strategy
+- **Container Technology**: Docker with multi-stage builds for each microservice
+- **Base Images**: OpenJDK for Java applications, official Consul image
+- **Container Orchestration**: Docker Compose for local development and testing
+- **Service Networking**: Docker bridge networks for service communication
+
+### Deployment Configurations
+- **Basic Setup**: Standard microservices with Consul service discovery
+- **Monitoring Setup**: Extended configuration with Prometheus metrics collection
+- **Logging Setup**: Elastic Stack integration for centralized log management
+- **Tracing Setup**: Zipkin integration for distributed request tracing
+
+### Infrastructure Components
+- **Load Balancer**: Apache HTTP server with dynamic configuration via Consul Template
+- **Service Discovery**: Consul cluster running in development mode
+- **Volume Management**: Shared volumes for log collection and data persistence
+- **Port Management**: Exposed ports for web access (8080), Consul UI (8500), and monitoring tools
+
+### Operational Features
+- **Health Checks**: Built-in health check endpoints for all services
+- **Graceful Shutdown**: Proper service deregistration on shutdown
+- **Environment Configuration**: Environment-specific configuration support
+- **Development Mode**: Local development support with embedded databases and simplified setup

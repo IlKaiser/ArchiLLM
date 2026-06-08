@@ -1,0 +1,48 @@
+@startuml
+
+skinparam component {
+  backgroundColor<<service>> LightBlue
+  backgroundColor<<gateway>> Orange
+  backgroundColor<<discovery>> Yellow
+  backgroundColor<<monitoring>> LightGreen
+}
+
+component "Zuul Server" <<gateway>> as zuul
+component "Eureka Server" <<discovery>> as eureka
+component "Turbine Server" <<monitoring>> as turbine
+
+component "Order Service" <<service>> as order {
+  component "OrderController" as orderCtrl
+  component "OrderService" as orderSvc
+  component "CatalogClient" as catClient
+  component "CustomerClient" as custClient
+}
+
+component "Catalog Service" <<service>> as catalog {
+  component "CatalogController" as catCtrl
+  component "ItemRepository" as itemRepo
+}
+
+component "Customer Service" <<service>> as customer {
+  component "CustomerController" as custCtrl
+  component "CustomerRepository" as custRepo
+}
+
+zuul --> order : HTTP/REST
+zuul --> catalog : HTTP/REST
+zuul --> customer : HTTP/REST
+
+order --> eureka : register/discover
+catalog --> eureka : register
+customer --> eureka : register
+zuul --> eureka : discover services
+turbine --> eureka : discover services
+
+catClient --> catalog : HTTP/REST
+custClient --> customer : HTTP/REST
+
+turbine --> order : Hystrix metrics
+turbine --> catalog : Hystrix metrics
+turbine --> customer : Hystrix metrics
+
+@enduml

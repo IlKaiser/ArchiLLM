@@ -1,0 +1,123 @@
+## Purpose
+
+QBike is a microservices-based electric bike ride-sharing platform designed to address urban transportation challenges during rush hours. The application connects passengers with electric bike drivers, leveraging the agility of electric bikes to navigate through congested city traffic more efficiently than traditional ride-hailing services.
+
+## Functional Requirements
+
+**Core Business Features:**
+- Driver location and status publishing (drivers can carry one passenger at a time)
+- Real-time ride request submission by passengers (origin and destination required)
+- Automatic driver-passenger matching based on proximity and availability
+- Driver acceptance/rejection of ride requests
+- Order management and trip completion workflow
+- Dynamic trip modification requests during rides
+- Automated billing and order completion
+- Passenger rating system for drivers
+
+**User Management:**
+- User registration and authentication for both drivers and passengers
+- Driver status management (available, busy, offline)
+- Position tracking and updates for drivers
+
+**Intent and Matching:**
+- Ride intention creation and management
+- Candidate driver identification and selection
+- Intent confirmation and order generation
+- Distributed locking for concurrent booking prevention
+
+**Order Processing:**
+- State machine-driven order lifecycle management
+- Event-driven order state transitions
+- Order status tracking and updates
+
+## Non-Functional Requirements
+
+**Performance:**
+- Real-time location updates and matching
+- Sub-second response times for critical operations
+- Asynchronous processing for non-blocking operations
+
+**Scalability:**
+- Horizontal scaling through microservices architecture
+- Load balancing via API gateway
+- Database and cache layer separation for optimal performance
+
+**Reliability:**
+- Circuit breaker pattern implementation (Hystrix)
+- Service discovery and health monitoring
+- Distributed tracing for system observability
+- Graceful degradation during service failures
+
+**Data Consistency:**
+- Distributed locking for critical operations
+- Event-driven communication between services
+- Database transaction management
+
+## Architecture Patterns
+
+**Microservices Architecture:**
+- Domain-driven design with bounded contexts
+- Event Storming methodology for service decomposition
+- Service-per-aggregate pattern
+
+**Communication Patterns:**
+- Synchronous communication via REST APIs with Ribbon and Hystrix
+- Asynchronous messaging using RabbitMQ
+- Event-driven architecture for service coordination
+
+**Data Management:**
+- Database-per-service pattern
+- CQRS (Command Query Responsibility Segregation) principles
+- Repository pattern for data access abstraction
+
+**Resilience Patterns:**
+- Circuit breaker (Hystrix)
+- Service discovery (Eureka)
+- API Gateway pattern (Zuul)
+- Distributed lock management
+
+## Tech Stack
+
+**Primary Languages and Frameworks:**
+- Java 8 with Spring Boot 2.0
+- Spring Cloud Finchley
+- Maven for dependency management
+- Lombok for code generation
+
+**Infrastructure Services:**
+- Spring Cloud Eureka for service discovery
+- Netflix Zuul for API gateway
+- Netflix Hystrix for circuit breaking
+- Netflix Ribbon for load balancing
+
+**Data Storage:**
+- MySQL 5.7 for persistent data storage
+- Redis for caching and distributed locking
+- RabbitMQ for asynchronous messaging
+
+**Monitoring and Tracing:**
+- Zipkin for distributed tracing
+- Spring Boot Actuator for health monitoring
+
+## Deployment
+
+**Containerization:**
+- Docker containers for all microservices
+- Multi-stage Docker builds for optimized images
+- Docker Compose for local development orchestration
+
+**Service Architecture:**
+- API Gateway (port 8050) as single entry point
+- Eureka Server (port 8761) for service registry
+- Individual microservices on dynamic ports
+- External services: MySQL (port 13306), Redis (port 16379), RabbitMQ (port 5672), Zipkin (port 9411)
+
+**Environment Configuration:**
+- Environment-specific configuration profiles
+- Docker environment variables for service configuration
+- Health checks and dependency management through Docker Compose
+
+**Development Tools:**
+- Postman collection for API testing
+- Test client module for integration testing
+- Wait-for-it script for service startup coordination

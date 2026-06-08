@@ -150,6 +150,24 @@ services:
     # Optionally customize the command here, eg if you want to run aggregate_tests instead:
     # command: ["conda", "run", "--no-capture-output", "-n", "env_name", "python", "src/aggregate_tests.py"]
 
+  # ── Ollama local inference server ──────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: arthur-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    # Remove the `deploy` block entirely if you have no GPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
   # ── ARTHUR headless batch runner ───────────────────────────────────────
   headless:
     build: .
@@ -175,11 +193,14 @@ services:
       # Extra CLI flags forwarded verbatim (e.g. "--eval --metrics all --multi-agent")
       - HEADLESS_EXTRA_ARGS=${HEADLESS_EXTRA_ARGS:-}
       # Local inference (optional) — set backend + model to use Ollama / HF/vLLM
+      # LOCAL_BASE_URL defaults to the co-located Ollama container
       - LOCAL_BACKEND=${LOCAL_BACKEND:-}
       - LOCAL_MODEL=${LOCAL_MODEL:-}
-      - LOCAL_BASE_URL=${LOCAL_BASE_URL:-}
+      - LOCAL_BASE_URL=${LOCAL_BASE_URL:-http://ollama:11434}
     depends_on:
       lmnr-app-server:
+        condition: service_started
+      ollama:
         condition: service_started
     # The ENTRYPOINT is already `conda run -n env_name`, so we only supply the python command.
     # Shell form lets us expand $HEADLESS_EXTRA_ARGS as multiple words.
@@ -208,3 +229,4 @@ volumes:
   lmnr-clickhouse-data:
   lmnr-clickhouse-logs:
   lmnr-quickwit-data:
+  ollama-data:

@@ -1,0 +1,48 @@
+@startuml
+skinparam diagram style = rounded
+
+/* Architecture Diagram for EnterprisePlanner */
+component_diagram.puml
+
+/* Grouping by pattern: all services use Database per Service */
+
+package database-per-service {
+  component API Gateway <<PostgreSQL>> {
+    -- PostgreSQL --> auth-db
+  }
+  component Authentication Service <<MongoDB>> {
+    -- MongoDB --> catalog-db
+  }
+  component Catalog Service <<ElasticSearch>> {
+    -- ElasticSearch --> pricing-db
+  }
+  component Pricing Service <<DynamoDB>> {
+    -- DynamoDB --> inventory-db
+  }
+  component Inventory Service <<PostgreSQL>> {
+    -- PostgreSQL --> order-db
+  }
+  component Order Service <<MySQL>> {
+    -- MySQL --> notification-db
+  }
+  component Notification Service <<Redis>> {
+    -- Redis --> reporting-db
+  }
+  component Reporting Service <<ClickHouse>> {
+    -- ClickHouse --> analytics-db
+  }
+}
+
+/* Inter-service dependencies */
+API Gateway -- REST --> auth-service
+auth-service -- REST --> catalog-service
+catalog-service -- REST --> pricing-service
+inventory-service -- REST --> order-service
+notification-service -- WebSocket --> order-service
+reporting-service -- REST --> analytics-service
+
+legend
+  * Component: Microservice
+  * database element: Datastore associated with the service
+  * Arrow label: Protocol (REST, WebSocket, event, gRPC)
+@enduml

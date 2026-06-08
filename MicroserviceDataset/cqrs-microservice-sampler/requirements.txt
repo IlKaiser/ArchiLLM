@@ -1,0 +1,130 @@
+## Purpose
+
+The application is a demonstration of a CQRS (Command Query Responsibility Segregation) microservices architecture built using Spring Boot and Spring Cloud. It implements a simple Product Master Data service that separates command operations (write/create) from query operations (read) using event sourcing patterns. The system serves as a reference implementation showcasing how to build distributed microservices that communicate asynchronously through events.
+
+## Functional Requirements
+
+### Core Business Features
+- Product creation with unique identifiers and names
+- Product state management (saleable/unsaleable status)
+- Product information retrieval and querying
+- Event-driven product status updates
+- REST API endpoints for both command and query operations
+
+### Command Side Operations
+- Add new products to the system
+- Mark products as saleable
+- Mark products as unsaleable
+- Validate product creation requests
+- Handle duplicate product prevention
+
+### Query Side Operations
+- Retrieve individual product information
+- View materialized product data with current state
+- Support for paginated and sortable product listings
+- Read-only access to product repository
+
+### Integration Capabilities
+- Health check endpoints for system monitoring
+- Event logging and auditing
+- Cross-service communication validation
+- End-to-end workflow testing
+
+## Non-Functional Requirements
+
+### Performance
+- Asynchronous event processing between command and query sides
+- Independent scaling of read and write operations
+- Message-driven architecture for loose coupling
+- Event sourcing for complete audit trail and state reconstruction
+
+### Scalability
+- Microservices architecture enabling independent service scaling
+- Container-based deployment supporting horizontal scaling
+- Service discovery and load balancing through Spring Cloud Netflix
+- Separate data stores optimized for command vs query operations
+
+### Reliability
+- Event-driven architecture with message durability
+- Service registry for automatic failover and discovery
+- External configuration management for environment-specific settings
+- Integration testing framework for system validation
+
+### Security
+- Gateway service providing single entry point for external requests
+- Service-to-service communication through internal networks
+- Configuration externalization for sensitive parameters
+
+## Architecture Patterns
+
+### CQRS Implementation
+- Clear separation of command and query responsibilities
+- Independent command-side and query-side microservices
+- Event sourcing pattern with MongoDB for command persistence
+- Materialized views using H2 database for query optimization
+
+### Microservices Patterns
+- Service Discovery using Netflix Eureka
+- API Gateway using Netflix Zuul with request routing and filtering
+- External Configuration using Spring Cloud Config
+- Event-driven communication using RabbitMQ message broker
+
+### Communication Patterns
+- Asynchronous messaging between command and query sides
+- REST APIs for external client communication
+- Event publishing and subscription model
+- Request/response pattern through gateway service
+
+## Tech Stack
+
+### Primary Languages and Frameworks
+- Java 8 as the primary programming language
+- Spring Boot for microservice development
+- Spring Cloud Netflix for microservices infrastructure
+- Axon Framework for CQRS and Event Sourcing implementation
+
+### Data Storage
+- MongoDB for event sourcing and command-side persistence
+- H2 database for query-side materialized views
+- Event store pattern implementation
+
+### Messaging and Communication
+- RabbitMQ as the message broker for inter-service communication
+- Spring Cloud Config for centralized configuration management
+- Netflix Eureka for service discovery and registration
+- Netflix Zuul for API gateway and request routing
+
+### Testing Framework
+- JUnit for unit testing
+- Integration testing framework with dedicated test module
+- Gradle as the build and dependency management tool
+
+## Deployment
+
+### Containerization
+- Docker containers for each microservice component
+- Individual Dockerfiles for service-specific container builds
+- Multi-stage builds using Gradle for artifact creation
+
+### Container Orchestration
+- Docker Compose for local development and testing environment
+- Seven-container deployment including:
+  - MongoDB database container
+  - RabbitMQ message broker with management interface
+  - Spring Cloud Config service
+  - Eureka discovery service
+  - Zuul gateway service
+  - Command-side microservice
+  - Query-side microservice
+
+### Infrastructure Services
+- External service dependencies managed through Docker Compose
+- Environment-specific configuration profiles (production, development)
+- Port mapping and service networking configuration
+- Health monitoring and service dependency management
+
+### Build and Deployment Process
+- Gradle-based build system with multi-module project structure
+- Docker image creation integrated into build pipeline
+- Container registry publishing capabilities
+- Integration testing automation within containerized environment

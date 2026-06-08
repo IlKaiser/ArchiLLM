@@ -425,21 +425,33 @@ def run_pipeline(
             result["cost"] = cost
             result["time_seconds"] = elapsed
             
-            if temp_run_dir.exists():
-                project_output = temp_run_dir / project_name
-                if project_output.exists():
+            project_output = temp_run_dir / project_name
+            if temp_run_dir.exists() and project_output.exists():
+                output_files = [f for f in project_output.iterdir() if f.is_file()]
+                if output_files:
                     final_output = Path(original_cwd) / output_dir / project_name
                     final_output.mkdir(parents=True, exist_ok=True)
-                    for f in project_output.iterdir():
+                    for f in output_files:
                         shutil.copy2(f, final_output / f.name)
-                    print(f"  ✓ Completed in {elapsed:.2f}s, cost ${cost:.4f}")
+                    print(f"  ✓ Completed in {elapsed:.2f}s, cost ${cost:.4f} ({len(output_files)} files copied)")
                     puml_final = final_output / "component_diagram.puml"
                     if puml_final.exists():
                         if render_puml_to_png(puml_final):
                             print(f"  ✓ PNG saved → {puml_final.with_suffix('.png')}")
                 else:
                     result["status"] = "error"
-                    result["error"] = "Pipeline did not produce output"
+                    result["error"] = "Pipeline produced empty output directory"
+                    # Remove the stale empty folder so skip-existing won't treat it as done
+                    final_output = Path(original_cwd) / output_dir / project_name
+                    if final_output.exists() and not any(final_output.iterdir()):
+                        final_output.rmdir()
+            else:
+                result["status"] = "error"
+                result["error"] = "Pipeline did not produce output directory"
+                # Remove the stale empty folder so skip-existing won't treat it as done
+                final_output = Path(original_cwd) / output_dir / project_name
+                if final_output.exists() and not any(final_output.iterdir()):
+                    final_output.rmdir()
             
         finally:
             os.chdir(original_cwd)

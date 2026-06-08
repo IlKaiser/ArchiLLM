@@ -1,0 +1,75 @@
+@startuml
+!theme plain
+
+skinparam component {
+  BackgroundColor<<gateway>> LightBlue
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<broker>> Orange
+  BackgroundColor<<db>> LightYellow
+  BackgroundColor<<cache>> Pink
+  BackgroundColor<<client>> Lavender
+}
+
+component "nginx-proxy" <<gateway>>
+component "api-proxy" <<gateway>>
+component "devices" <<service>>
+component "mqtt" <<broker>>
+component "nodes" <<service>>
+component "types" <<service>>
+component "subscriptions" <<service>>
+component "profiles" <<service>>
+component "people" <<service>>
+component "physicals" <<service>>
+component "webhooks" <<service>>
+component "websockets" <<service>>
+component "dev-center" <<client>>
+component "devices-dashboard" <<client>>
+component "types-dashboard" <<client>>
+
+database "mongodb" <<db>>
+database "redis" <<db>>
+database "memcached" <<cache>>
+
+"nginx-proxy" --> "api-proxy" : HTTP/proxy
+"api-proxy" --> "devices" : HTTP/REST
+"api-proxy" --> "types" : HTTP/REST
+"api-proxy" --> "subscriptions" : HTTP/REST
+"api-proxy" --> "profiles" : HTTP/REST
+"api-proxy" --> "people" : HTTP/REST
+
+"devices" --> "mongodb" : MongoDB
+"types" --> "mongodb" : MongoDB
+"subscriptions" --> "mongodb" : MongoDB
+"profiles" --> "mongodb" : MongoDB
+"people" --> "mongodb" : MongoDB
+"nodes" --> "mongodb" : MongoDB
+"physicals" --> "mongodb" : MongoDB
+"webhooks" --> "mongodb" : MongoDB
+
+"devices" --> "redis" : Redis
+"types" --> "redis" : Redis
+"subscriptions" --> "redis" : Redis
+"profiles" --> "redis" : Redis
+"people" --> "redis" : Redis
+"nodes" --> "redis" : Redis
+"mqtt" --> "redis" : Redis
+"physicals" --> "redis" : Redis
+"webhooks" --> "redis" : Redis
+"websockets" --> "redis" : Redis
+
+"devices" --> "memcached" : Memcached
+"types" --> "memcached" : Memcached
+"subscriptions" --> "memcached" : Memcached
+"profiles" --> "memcached" : Memcached
+"people" --> "memcached" : Memcached
+
+"nodes" --> "mqtt" : MQTT
+"physicals" -.-> "devices" : async/HTTP
+"subscriptions" -.-> "webhooks" : async/HTTP
+"subscriptions" -.-> "websockets" : async/WebSocket
+
+"dev-center" --> "api-proxy" : HTTP/REST
+"devices-dashboard" --> "api-proxy" : HTTP/REST
+"types-dashboard" --> "api-proxy" : HTTP/REST
+
+@enduml

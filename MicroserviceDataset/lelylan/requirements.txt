@@ -1,0 +1,129 @@
+## Purpose
+
+Lelylan is an open-source Internet of Things (IoT) cloud platform designed to provide a hardware-agnostic and platform-agnostic solution for connecting and managing IoT devices. The platform enables developers to connect any hardware device, from ESP8266 microcontrollers to professional embedded solutions, and deploy the platform across public clouds, private datacenters, or hybrid environments. The primary business goal is to create a standardized, shared codebase for IoT development that addresses the fragmentation in IoT tooling across the industry.
+
+## Functional Requirements
+
+### Core Device Management
+- Device monitoring and control capabilities through dedicated APIs
+- Device type structure definition and management
+- Real-time device state synchronization and updates
+- Support for various hardware platforms and embedded devices
+
+### Communication and Messaging
+- MQTT protocol support for device communication
+- Real-time subscription services for device events
+- HTTP webhooks for real-time notifications
+- WebSocket connections for full-duplex communication over TCP
+- Physical proxy services to forward requests to physical devices
+
+### Authentication and Authorization
+- OAuth 2.0 implementation for user authentication and authorization
+- User profile management and information services
+- Access control for device and API operations
+
+### Developer Tools and Dashboards
+- Developer center with comprehensive documentation and tutorials
+- Device management dashboard for end-users
+- Device type management dashboard
+- API proxy for unified access to all microservices
+
+### Real-time Features
+- Event-driven architecture for real-time device updates
+- Background job processing for asynchronous operations
+- Rate limiting capabilities for API protection
+
+## Non-Functional Requirements
+
+### Performance and Scalability
+- Microservices architecture enabling horizontal scaling
+- Background job processing using Redis for improved responsiveness
+- Caching layer using Memcached for enhanced performance
+- Rate limiting mechanisms to prevent API abuse
+
+### Reliability and Availability
+- Service restart policies configured for high availability
+- Distributed architecture reducing single points of failure
+- MongoDB for persistent data storage with reliability guarantees
+
+### Security
+- OAuth 2.0 standard for secure authentication and authorization
+- Environment-based configuration management for sensitive data
+- Separate database instances for different service domains
+
+### Monitoring and Debugging
+- Debug logging capabilities across all services
+- Environment-specific configurations for development, testing, and production
+- Centralized logging through containerized environment
+
+## Architecture Patterns
+
+### Microservices Architecture
+The platform implements a distributed microservices architecture with the following service decomposition:
+- API Gateway pattern via API Proxy service
+- Service-per-database pattern with dedicated MongoDB instances
+- Event-driven communication between services
+- Domain-driven design with services organized around business capabilities
+
+### Communication Patterns
+- HTTP/REST for synchronous inter-service communication
+- MQTT messaging protocol for IoT device communication
+- WebSocket connections for real-time bidirectional communication
+- Webhook notifications for event-driven integrations
+
+### Data Management Patterns
+- Database-per-service with MongoDB instances for each domain
+- Shared Redis cache for session management and background jobs
+- Memcached for application-level caching
+
+## Tech Stack
+
+### Programming Languages
+- Ruby (MRI ~1.9.3) for core API services
+- Node.js (~0.8.8) for real-time and messaging services
+- JavaScript for frontend dashboard applications
+
+### Frameworks and Runtime
+- Ruby on Rails for API development
+- Rack for Ruby web applications
+- Node.js runtime environment
+
+### Databases and Storage
+- MongoDB (~2.6) as primary database for all services
+- Redis (~2.6) for background job processing and rate limiting
+- Memcached for application caching
+
+### Message Brokers and Communication
+- Custom MQTT broker implementation
+- Redis for pub/sub and job queuing
+- WebSocket implementation for real-time communication
+
+### Infrastructure and Deployment
+- Docker containerization for all services
+- nginx-proxy for service discovery and load balancing
+- jwilder/nginx-proxy for automatic reverse proxy configuration
+
+## Deployment
+
+### Containerization
+- Full Docker containerization using Docker Compose
+- Pre-built Docker images hosted as lelylanlab/* on Docker registry
+- Multi-container application orchestration
+- Development and production environment configurations
+
+### Service Orchestration
+- Docker Compose for local development and deployment
+- Automatic service discovery using nginx-proxy
+- Container restart policies for fault tolerance
+- Port exposure and virtual host configuration for service routing
+
+### Environment Management
+- Environment-specific Docker Compose files (development vs production)
+- Extensive environment variable configuration for service URLs and credentials
+- Configurable domains and subdomain support for multi-tenant deployments
+
+### Infrastructure Dependencies
+- Shared infrastructure services: MongoDB, Redis, Memcached
+- Network isolation and service-to-service communication
+- Volume mounting for Docker socket access in proxy service
+- Exposed port 80 for HTTP traffic routing through nginx proxy

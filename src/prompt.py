@@ -4,9 +4,13 @@ DIAGRAM_EXTRACT_PROMPT = """
 ## Task
 Analyze the dataset input for project `{title}` and extract its complete microservices architecture as a structured JSON file.
 
+## Working Directory
+Your workspace is: `{workspace_dir}`
+All file paths below are relative to this directory. Use the exact absolute path `{workspace_dir}/architecture.json` when writing output.
+
 ## Input Files
 Read the following file:
-- `input.txt` — system description and user stories
+- `{workspace_dir}/input.txt` — system description and user stories
 
 ## Extraction Guidelines
 From the input files, extract:
@@ -35,7 +39,7 @@ From the input files, extract:
 - `description`: what data flows and why
 
 ## Output
-Save the extracted architecture as `architecture.json` in the current working directory, following the schema above.
+Save the extracted architecture as `{workspace_dir}/architecture.json`, following the schema above.
 
 ## Architectural Knowledge Base
 Use the following pattern catalogue as reference when identifying and assigning architectural patterns. Always prefer patterns from this catalogue and follow their prescribed forces, solutions, and trade-offs:
@@ -52,8 +56,12 @@ DIAGRAM_RENDER_PROMPT = """
 ## Task
 Generate a UML component microservice diagram and a written architecture summary for project `{title}`.
 
+## Working Directory
+Your workspace is: `{workspace_dir}`
+All file paths below are relative to this directory. Use exact absolute paths when reading and writing.
+
 ## Input
-Read the extracted architecture from: `architecture.json` in the current working directory.
+Read the extracted architecture from: `{workspace_dir}/architecture.json`
 
 ## Output 1 — PlantUML Component Diagram (`component_diagram.puml`)
 Generate a valid PlantUML component diagram following these rules:
@@ -81,7 +89,7 @@ Use the following pattern catalogue when grouping microservices into packages an
 
 ## Constraints
 - DO NOT generate any implementation code.
-- Output only two files in the current directory: `component_diagram.puml` and `architecture_summary.md`.
+- Output only two files: `{workspace_dir}/component_diagram.puml` and `{workspace_dir}/architecture_summary.md`.
 - The PlantUML must be syntactically valid.
 """
 
@@ -441,13 +449,13 @@ Event sourcing implements the Audit logging pattern.
 
 DIAGRAM_SYNTAX_FIX_PROMPT = """
 ## Task
-The PlantUML file `component_diagram.puml` in the current directory has syntax errors that must be corrected.
+The PlantUML file `{workspace_dir}/component_diagram.puml` has syntax errors that must be corrected.
 
 ## Detected Issues
 {issues}
 
 ## Instructions
-1. Read the file `component_diagram.puml`.
+1. Read the file `{workspace_dir}/component_diagram.puml`.
 2. Fix ALL the syntax issues listed above while preserving the architecture and semantics of the diagram.
 3. Common PlantUML fixes:
    - Ensure the file starts with `@startuml` and ends with `@enduml`
@@ -457,7 +465,7 @@ The PlantUML file `component_diagram.puml` in the current directory has syntax e
    - Remove any invalid arrow syntax (valid: `-->`, `..>`, `--`, `..`, `->`, `.>`)
    - Ensure every `package`, `frame`, `node`, or `rectangle` block has a matching closing `}}`
    - Remove duplicate or conflicting alias definitions
-4. Save the corrected file back to `component_diagram.puml`.
+4. Save the corrected file back to `{workspace_dir}/component_diagram.puml`.
 
 ## Constraints
 - DO NOT change the architecture, component names, relationships, or groupings.
@@ -469,16 +477,16 @@ class DiagramPrompt:
     def __init__(self, title: str):
         self.title = title
 
-    def get_extract_prompt(self) -> str:
-        return DIAGRAM_EXTRACT_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE)
+    def get_extract_prompt(self, workspace_dir: str) -> str:
+        return DIAGRAM_EXTRACT_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE, workspace_dir=workspace_dir)
 
-    def get_render_prompt(self) -> str:
-        return DIAGRAM_RENDER_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE)
+    def get_render_prompt(self, workspace_dir: str) -> str:
+        return DIAGRAM_RENDER_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE, workspace_dir=workspace_dir)
 
     def get_validate_prompt(self) -> str:
         return DIAGRAM_VALIDATE_PROMPT.format(title=self.title)
 
-    def get_syntax_fix_prompt(self, issues: str) -> str:
-        return DIAGRAM_SYNTAX_FIX_PROMPT.format(title=self.title, issues=issues)
+    def get_syntax_fix_prompt(self, issues: str, workspace_dir: str) -> str:
+        return DIAGRAM_SYNTAX_FIX_PROMPT.format(title=self.title, issues=issues, workspace_dir=workspace_dir)
 
 

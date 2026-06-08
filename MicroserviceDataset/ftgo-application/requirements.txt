@@ -1,0 +1,108 @@
+## Purpose
+
+FTGO is a sample food delivery application that demonstrates microservices architecture patterns and serves as the companion code for the "Microservices Patterns" book. The application simulates an online food ordering platform where consumers can browse restaurants, place orders, and track their delivery status, while restaurants manage their menus and fulfill orders through a kitchen service.
+
+## Functional Requirements
+
+### Core Business Features
+- Consumer management including registration and validation
+- Restaurant catalog management with menu items and availability
+- Order placement, modification, and cancellation workflows
+- Kitchen ticket management for order preparation
+- Payment processing and accounting services
+- Order history tracking and querying
+- Delivery coordination
+
+### Service Capabilities
+- RESTful APIs for external client integration
+- GraphQL API gateway for flexible data querying
+- Real-time order status updates through event-driven messaging
+- CQRS implementation for order history views
+- Saga pattern implementation for distributed transaction management
+- Event sourcing for audit trails and state reconstruction
+
+## Non-Functional Requirements
+
+### Performance and Scalability
+- Horizontally scalable microservices architecture
+- Asynchronous messaging for improved throughput
+- Database per service pattern for independent scaling
+- API gateway for request routing and load distribution
+
+### Reliability and Availability
+- Fault-tolerant communication between services
+- Saga pattern for managing distributed transactions
+- Event-driven architecture for loose coupling
+- Health checks and monitoring capabilities
+
+### Data Consistency
+- Eventually consistent data across services
+- Transactional outbox pattern via CDC (Change Data Capture)
+- Event sourcing for critical business events
+- CQRS for optimized read/write operations
+
+## Architecture Patterns
+
+### Microservices Patterns
+- Database per Service: Each service maintains its own data store
+- Saga Pattern: Distributed transaction management across services
+- API Gateway: Single entry point for client requests
+- Event-Driven Architecture: Asynchronous communication via events
+- CQRS: Command Query Responsibility Segregation for order history
+- Event Sourcing: Account service uses event sourcing for state management
+
+### Communication Patterns
+- Synchronous: REST APIs for direct service-to-service calls
+- Asynchronous: Event-based messaging through Apache Kafka
+- API Composition: Gateway aggregates data from multiple services
+- Transactional Messaging: Ensures reliable event publishing
+
+## Tech Stack
+
+### Backend Services
+- **Language**: Java
+- **Framework**: Spring Boot
+- **Build Tool**: Gradle
+- **Messaging**: Apache Kafka with Eventuate Tram framework
+- **Saga Management**: Eventuate Tram Saga framework
+- **Event Sourcing**: Eventuate Client framework
+
+### API Gateway Options
+- **Java Gateway**: Spring Cloud Gateway
+- **GraphQL Gateway**: Node.js with TypeScript
+
+### Data Storage
+- **Primary Database**: MySQL
+- **NoSQL**: DynamoDB Local for order history
+- **Message Broker**: Apache Kafka with Zookeeper
+
+### Infrastructure
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes and Docker Compose
+- **Service Discovery**: Built into Kubernetes
+- **Configuration Management**: Spring Boot configuration
+
+## Deployment
+
+### Container Strategy
+- Each service packaged as individual Docker containers
+- Multi-stage Docker builds for optimized image sizes
+- Health check endpoints for container orchestration
+
+### Orchestration Options
+- **Development**: Docker Compose for local development
+- **Production**: Kubernetes with full service mesh
+- **Persistent Storage**: StatefulSets for databases and message brokers
+
+### Infrastructure Services
+- MySQL cluster for transactional data
+- Apache Kafka cluster for event streaming
+- DynamoDB Local for document storage
+- Change Data Capture (CDC) service for event publishing
+- Zookeeper for Kafka coordination
+
+### Deployment Automation
+- CI/CD pipeline with CircleCI
+- Automated testing including contract testing
+- Kubernetes deployment scripts for service orchestration
+- Environment-specific configuration management

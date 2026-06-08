@@ -1,0 +1,42 @@
+# SYSTEM DESCRIPTION:
+This is a microservices demonstration system that showcases a distributed e-commerce architecture using HashiCorp Consul for service discovery and Apache HTTP as a reverse proxy and load balancer. The system consists of three core Java Spring Boot microservices (Order, Customer, and Catalog) that communicate with each other to handle order processing, customer management, and product catalog operations. It serves developers and architects who want to learn about microservices patterns, service discovery, and distributed system monitoring, featuring comprehensive observability through Prometheus for metrics, Elastic Stack for logging, and Zipkin for distributed tracing. The system is fully containerized with Docker and provides multiple deployment configurations for different monitoring and observability scenarios.
+
+# USER STORIES:
+1. As a developer, I want to run the complete microservices system with Docker Compose so that I can quickly demonstrate microservices architecture patterns.
+2. As a customer, I want to browse the product catalog so that I can see available items for purchase.
+3. As a customer, I want to view detailed information about specific catalog items so that I can make informed purchasing decisions.
+4. As a customer, I want to search for products in the catalog so that I can find items that meet my needs.
+5. As a customer, I want to create and manage my customer profile so that I can place orders.
+6. As a customer, I want to view my customer information so that I can verify my details are correct.
+7. As a customer, I want to create new orders so that I can purchase products from the catalog.
+8. As a customer, I want to view my order history so that I can track my past purchases.
+9. As a customer, I want to view details of specific orders so that I can see what items I purchased.
+10. As a system administrator, I want services to automatically register with Consul so that service discovery works seamlessly.
+11. As a system administrator, I want to access the Consul web UI so that I can monitor service registration and health.
+12. As a system administrator, I want Apache HTTP to automatically load balance requests to multiple service instances so that the system can handle increased load.
+13. As a system administrator, I want to query service locations using Consul's DNS interface so that I can troubleshoot service discovery issues.
+14. As a system administrator, I want to scale individual microservices independently so that I can optimize resource usage based on demand.
+15. As a developer, I want client-side load balancing with Ribbon so that services can distribute calls efficiently across multiple instances.
+16. As a developer, I want to run individual microservices in standalone mode for testing so that I can develop and debug services independently.
+17. As a developer, I want consumer-driven contract testing so that I can ensure service compatibility across teams.
+18. As a operations engineer, I want to monitor system metrics with Prometheus so that I can track application performance and health.
+19. As a operations engineer, I want to access Prometheus metrics dashboard so that I can visualize system performance data.
+20. As a operations engineer, I want centralized log aggregation with Elasticsearch so that I can analyze application logs across all services.
+21. As a operations engineer, I want to use Kibana to search and analyze logs so that I can troubleshoot issues across the distributed system.
+22. As a operations engineer, I want JSON-structured logging so that log analysis and parsing is more efficient.
+23. As a operations engineer, I want distributed tracing with Zipkin so that I can track requests across multiple microservices.
+24. As a operations engineer, I want to access the Zipkin UI so that I can visualize request traces and identify performance bottlenecks.
+25. As a developer, I want services to export trace information automatically so that distributed tracing works without manual instrumentation.
+26. As a developer, I want comprehensive integration tests so that I can verify service interactions work correctly.
+27. As a developer, I want to mock external service dependencies in tests so that I can test services in isolation.
+28. As a system administrator, I want environment-specific configuration so that I can deploy the same services across different environments.
+29. As a system administrator, I want health checks for all services so that I can monitor system availability.
+30. As a developer, I want REST API endpoints for all services so that they can be easily integrated and consumed.
+31. As a developer, I want web interfaces for each service so that I can interact with services through a browser.
+32. As a developer, I want Spring Cloud integration so that microservices patterns are implemented with minimal boilerplate code.
+33. As a system administrator, I want all services to be containerized so that deployment is consistent across environments.
+34. As a system administrator, I want the Apache reverse proxy to automatically discover new service instances so that scaling is transparent to clients.
+35. As a operations engineer, I want log shipping with Filebeat so that logs from all services are automatically collected.
+36. As a developer, I want Maven-based builds so that I can easily build and package services.
+37. As a developer, I want Spring Boot actuator endpoints so that I can access service health and metrics information.
+38. As a system administrator, I want configurable monitoring stacks so that I can choose appropriate observability tools for different environments.

@@ -1,0 +1,117 @@
+## Purpose
+
+eShop is a reference sample application that demonstrates microservices architecture patterns and best practices using .NET technologies. The application serves as a comprehensive example of how to build, deploy, and manage a containerized e-commerce platform using modern cloud-native development approaches.
+
+## Functional Requirements
+
+### Core E-commerce Features
+- Product catalog management and browsing
+- Shopping cart functionality
+- Order processing and management
+- User authentication and authorization
+- Payment processing integration
+- Inventory management
+- Customer account management
+- Order history and tracking
+
+### Administrative Features
+- Product administration interface
+- Order management dashboard
+- User management capabilities
+- Inventory tracking and updates
+- Sales reporting and analytics
+
+## Non-Functional Requirements
+
+### Performance
+- Support for high concurrent user loads
+- Responsive user interface with fast page load times
+- Efficient database queries and caching strategies
+- Scalable microservices architecture
+
+### Reliability
+- High availability through redundancy
+- Fault tolerance and graceful degradation
+- Data consistency across distributed services
+- Automated error handling and recovery
+
+### Security
+- Secure user authentication and authorization
+- Protected API endpoints
+- Encrypted data transmission
+- Secure payment processing
+- Input validation and sanitization
+
+### Scalability
+- Horizontal scaling capabilities
+- Independent service scaling
+- Load balancing across service instances
+- Auto-scaling based on demand
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Domain-driven design with bounded contexts
+- Service decomposition by business capability
+- Independent service deployment and scaling
+- Event-driven communication between services
+
+### Communication Patterns
+- Synchronous HTTP/REST API communication
+- Asynchronous messaging for event handling
+- API Gateway pattern for client communication
+- Service discovery and load balancing
+
+### Data Management
+- Database per service pattern
+- Event sourcing for audit trails
+- CQRS (Command Query Responsibility Segregation)
+- Distributed transaction management
+
+## Tech Stack
+
+### Backend Technologies
+- .NET Core/ASP.NET Core for microservices
+- Entity Framework Core for data access
+- SQL Server for relational data storage
+- Redis for caching and session management
+- RabbitMQ for message queuing
+
+### Frontend Technologies
+- Blazor or ASP.NET Core MVC for web interface
+- Mobile applications (Xamarin/MAUI)
+- JavaScript/TypeScript for client-side functionality
+
+### Infrastructure
+- Docker for containerization
+- Kubernetes for orchestration
+- Azure/AWS cloud services
+- Monitoring and logging tools
+- CI/CD pipeline integration
+
+## Deployment
+
+### Containerization
+- Docker containers for all services
+- Multi-stage Docker builds for optimization
+- Container registry for image management
+- Environment-specific configuration management
+
+### Orchestration
+- Kubernetes cluster deployment
+- Service mesh for advanced networking
+- Ingress controllers for external access
+- Persistent volume management for databases
+
+### DevOps Integration
+- Automated CI/CD pipelines
+- Infrastructure as Code (IaC)
+- Monitoring and alerting systems
+- Automated testing and quality gates
+- Blue-green or rolling deployment strategies
+
+### Cloud Deployment
+- Support for major cloud providers
+- Managed database services
+- Load balancers and auto-scaling groups
+- Backup and disaster recovery procedures

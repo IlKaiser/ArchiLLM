@@ -1,0 +1,48 @@
+@startuml
+
+skinparam component {
+    BackgroundColor<<service>> LightBlue
+    BackgroundColor<<gateway>> Orange
+    BackgroundColor<<dashboard>> LightGreen
+    BackgroundColor<<registry>> Yellow
+    BackgroundColor<<config>> Pink
+    BackgroundColor<<broker>> LightCyan
+    BackgroundColor<<tracing>> Lavender
+}
+
+component "Zuul Gateway" as zuul <<gateway>>
+component "Eureka Server" as eureka <<registry>>
+component "Config Server" as config <<config>>
+component "Service A" as serviceA <<service>>
+component "Service B" as serviceB <<service>>
+component "Admin Dashboard" as admin <<dashboard>>
+component "Hystrix Dashboard" as hystrix <<dashboard>>
+component "RabbitMQ" as rabbit <<broker>>
+component "ZipKin" as zipkin <<tracing>>
+
+zuul --> eureka : "HTTP/Register"
+zuul --> config : "HTTP/Config"
+zuul --> serviceA : "HTTP/Route"
+
+serviceA --> eureka : "HTTP/Register"
+serviceA --> config : "HTTP/Config"
+serviceA --> serviceB : "HTTP/Feign Client"
+serviceA --> hystrix : "HTTP/Hystrix"
+serviceA ..> rabbit : "AMQP"
+serviceA ..> zipkin : "HTTP/Trace"
+
+serviceB --> eureka : "HTTP/Register"
+serviceB --> config : "HTTP/Config"
+serviceB --> hystrix : "HTTP/Hystrix"
+serviceB ..> rabbit : "AMQP"
+serviceB ..> zipkin : "HTTP/Trace"
+
+config --> eureka : "HTTP/Register"
+config ..> rabbit : "AMQP"
+
+admin --> eureka : "HTTP/Discovery"
+admin ..> rabbit : "AMQP"
+
+hystrix --> eureka : "HTTP/Register"
+
+@enduml

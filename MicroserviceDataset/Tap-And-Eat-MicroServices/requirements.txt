@@ -1,0 +1,88 @@
+## Purpose
+
+Tap-And-Eat-MicroServices is a microservice architecture application designed for restaurant and store management. The system provides a distributed platform for managing various aspects of food service operations including accounts, customers, stores, menu items, pricing, and food tray ordering functionality.
+
+## Functional Requirements
+
+### Core Business Services
+- **Account Management**: CRUD operations for user accounts through /accounts endpoint
+- **Customer Management**: API for managing customer information and profiles
+- **Store Management**: API for managing store locations and store-related data
+- **Item Management**: Menu item catalog management for food and beverage items
+- **Price Management**: CRUD operations for pricing information through /prices endpoint
+- **Food Tray Service**: Order management system that aggregates items and prices to create customer food trays
+
+### Service Integration
+- **Service Discovery**: Automatic registration and discovery of microservices
+- **Centralized Configuration**: Configuration management for all microservices
+- **Circuit Breaker Pattern**: Fallback mechanisms in FoodTrayService for ItemService and PriceService failures
+
+## Non-Functional Requirements
+
+### Resilience
+- Circuit breaker implementation with fallback services for graceful degradation
+- Service isolation to prevent cascade failures
+- Fault tolerance through distributed architecture
+
+### Scalability
+- Independent scaling of individual microservices
+- Stateless service design for horizontal scaling
+- Service-to-service communication through well-defined APIs
+
+### Availability
+- Service discovery enables dynamic service registration and health monitoring
+- Containerized deployment for consistent environments
+- Docker Compose orchestration for local development and testing
+
+## Architecture Patterns
+
+### Microservices Patterns
+- **Service Discovery Pattern**: Implemented through DiscoveryService for automatic service registration
+- **Configuration Server Pattern**: Centralized configuration management via ConfigService
+- **Circuit Breaker Pattern**: Fault tolerance implementation in FoodTrayService
+- **API Gateway Pattern**: Service exposure through well-defined REST endpoints
+
+### Communication Styles
+- **Synchronous Communication**: REST APIs between services
+- **Service-to-Service Calls**: Direct HTTP communication between microservices
+- **Centralized Configuration**: Bootstrap configuration loading from ConfigService
+
+## Tech Stack
+
+### Primary Technologies
+- **Language**: Java 8
+- **Framework**: Spring Boot (evident from application structure and bootstrap.yml files)
+- **Build Tool**: Maven 3.0
+- **Service Discovery**: Spring Cloud (based on DiscoveryService structure)
+- **Configuration Management**: Spring Cloud Config (ConfigService)
+
+### Infrastructure Components
+- **Containerization**: Docker with individual Dockerfiles per service
+- **Orchestration**: Docker Compose for multi-container deployment
+- **Repository Pattern**: JPA-based repositories for data persistence
+- **Circuit Breaker**: Hystrix or similar (based on fallback service implementations)
+
+## Deployment
+
+### Containerization Strategy
+- Each microservice has its own Dockerfile in src/main/docker/
+- Individual Docker images built per service (jferrater/ServiceName naming convention)
+- Maven-based build process with Docker image generation
+
+### Orchestration
+- **Docker Compose**: Used for local development and testing environment
+- **Service Dependencies**: Configured through Docker Compose links
+- **Port Management**: ConfigService exposed on port 8888, other services use dynamic ports
+- **Service Startup Order**: ConfigService starts first, followed by dependent services
+
+### Environment Requirements
+- Java 8 runtime environment
+- Maven 3.0 for building
+- Docker Engine for containerization
+- Docker Compose for orchestration
+- Minimum 4GB RAM recommended for full stack deployment
+
+### Configuration Management
+- Bootstrap.yml files for initial service configuration
+- Application.yml files for service-specific settings
+- Centralized configuration through ConfigService at startup

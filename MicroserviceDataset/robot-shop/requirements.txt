@@ -1,0 +1,121 @@
+## Purpose
+
+Stan's Robot Shop is a comprehensive demonstration e-commerce application designed for showcasing microservices architecture patterns, observability, and cloud-native deployment practices. It serves as a reference implementation for testing application performance monitoring (APM) tools like Instana, demonstrating service mesh capabilities, and validating containerized deployment strategies across multiple orchestration platforms.
+
+## Functional Requirements
+
+### Core E-commerce Features
+- Product catalog browsing and search functionality
+- Shopping cart management for adding/removing items
+- User authentication and account management
+- Order payment processing
+- Shipping calculation and management
+- Product ratings and reviews system
+- Load generation capabilities for testing and demonstration
+
+### Service Components
+- Web frontend providing user interface for shopping experience
+- Catalog service managing product inventory and metadata
+- Cart service handling shopping cart operations
+- User service managing authentication and user profiles
+- Payment service processing transactions via message queues
+- Shipping service calculating delivery costs and logistics
+- Ratings service managing product reviews and feedback
+- Dispatch service coordinating order fulfillment
+
+### Administrative Features
+- Health check endpoints across all services
+- Monitoring and observability integration points
+- Load testing capabilities with configurable traffic patterns
+
+## Non-Functional Requirements
+
+### Performance
+- Support for horizontal scaling through container orchestration
+- Configurable resource quotas and limits per service
+- Auto-scaling capabilities based on demand
+- Load balancing across service instances
+
+### Reliability
+- Microservices architecture for fault isolation
+- Database redundancy with MongoDB and MySQL backends
+- Message queue reliability through RabbitMQ
+- Retry mechanisms and circuit breaker patterns
+
+### Observability
+- Comprehensive logging with Fluentd integration
+- Application performance monitoring (APM) instrumentation
+- Distributed tracing capabilities
+- Health monitoring endpoints for all services
+
+### Security
+- Pod security policies in Kubernetes deployments
+- Service account and role-based access controls
+- Network segmentation through service mesh
+- Container image security scanning capabilities
+
+## Architecture Patterns
+
+### Microservices Architecture
+- Domain-driven service decomposition with clear boundaries
+- Event-driven communication through message queues
+- Database per service pattern with MongoDB and MySQL
+- API Gateway pattern through web frontend service
+
+### Service Mesh Integration
+- Istio service mesh compatibility for traffic management
+- Canary deployment capabilities with traffic splitting
+- Service-to-service encryption and authentication
+- Advanced routing and load balancing rules
+
+### Communication Patterns
+- Synchronous HTTP/REST API communication between services
+- Asynchronous messaging through RabbitMQ for payment processing
+- Redis caching layer for performance optimization
+- Service discovery through container orchestration platforms
+
+## Tech Stack
+
+### Programming Languages
+- Node.js for cart, catalog, user, and web services
+- Python for payment service and load generation tools
+- Java (Spring Boot) for shipping service
+- PHP (Symfony) for ratings service
+- Go for dispatch service
+
+### Databases and Storage
+- MongoDB for catalog and user data persistence
+- MySQL for ratings and shipping data
+- Redis for caching and session storage
+
+### Message Brokers and Middleware
+- RabbitMQ for asynchronous payment processing
+- Fluentd for log aggregation and forwarding
+
+### Frontend Technologies
+- Static HTML/CSS/JavaScript for web interface
+- Nginx web server for static content delivery
+
+## Deployment
+
+### Container Orchestration
+- Kubernetes deployment with Helm chart packaging
+- Docker Swarm support with compose file configurations
+- DC/OS Marathon deployment descriptors
+- OpenShift container platform compatibility
+
+### Service Mesh
+- Istio integration with gateway and virtual service configurations
+- Traffic management with canary deployment support
+- Ingress gateway configuration for external access
+
+### Infrastructure as Code
+- Helm charts with configurable values for Kubernetes deployment
+- Docker Compose files for local development and testing
+- Deployment automation scripts for multiple platforms
+
+### Monitoring and Logging
+- Instana agent integration for APM and infrastructure monitoring
+- Fluentd deployment for centralized logging
+- Kubernetes resource quotas and scaling configurations
+- Load testing automation with Python-based tools
