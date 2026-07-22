@@ -62,6 +62,11 @@ LLM_JUDGE_KEY=<your-key>
 LLM_JUDGE_URL=https://api.openai.com/v1
 JUDGE_MODEL=gpt-4o
 
+# ADR pattern-fidelity judge (DeepSeek, evaluation only)
+DEEPSEEK_API_KEY=<your-deepseek-key>
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+DEEPSEEK_JUDGE_MODEL=deepseek-chat
+
 # Laminar observability (optional)
 LMNR_PROJECT_API_KEY=
 ```
