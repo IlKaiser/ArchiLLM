@@ -514,3 +514,7 @@ if st.session_state.get("is_running", False) or st.session_state.get("show_resul
 from src.adr_frontend import render as render_adr_section
 
 render_adr_section(default_llm_model=llm_model)
+
+from src.modifiability_frontend import render as render_modifiability_section
+
+render_modifiability_section(project_name=proj_name)
