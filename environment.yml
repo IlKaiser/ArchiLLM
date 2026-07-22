@@ -147,6 +147,7 @@ dependencies:
       - opentelemetry-sdk==1.39.1
       - opentelemetry-semantic-conventions==0.60b1
       - opentelemetry-semantic-conventions-ai==0.4.15
+      - openpyxl==3.1.5
       - orjson==3.11.7
       - pandas==2.3.3
       - pathable==0.5.0
