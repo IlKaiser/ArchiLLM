@@ -699,8 +699,19 @@ git commit -m "feat: add modifiability analysis orchestrator"
 - Modify: `app.py` (append one import + one function call; no existing lines changed)
 
 **Interfaces:**
-- Consumes: `Evaluation.modifiability.run` (Task 3), `proj_name` (str, already defined in `app.py` from the existing dataset-project dropdown).
-- Produces: `render(project_name: str) -> None` (called once from the bottom of `app.py`).
+- Consumes: `Evaluation.modifiability.run` (Task 3), `proj_name` (str, already defined in `app.py` from the existing dataset-project dropdown), `altair` and `pandas` (both already pinned in `environment.yml` as existing Streamlit/project dependencies — no new pins needed).
+- Produces: `render(project_name: str) -> None` (called once from the bottom of `app.py`), `_scenario_chart(scenarios: list[dict]) -> altair.Chart | None` (pure, testable without a Streamlit runtime).
+
+Per the dataviz skill: weighted GED per scenario is a magnitude comparison
+across categories, so it gets a sorted horizontal bar chart rather than a
+bare table. Each scenario's `magnitude` field is ordinal (small < medium <
+large), not an arbitrary category, so it's colored with a fixed-order
+sequential scale (one hue, light→dark) via Altair's built-in `"blues"`
+scheme — not a hand-picked hex palette (no need to run the palette
+validator: built-in Vega-Lite sequential schemes are already
+perceptually-designed and CVD-safe). The table view is kept alongside the
+chart (collapsed into an expander once a chart exists) per the skill's
+accessibility pass ("a table view exists").
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -772,6 +783,39 @@ def test_scenario_table_rows_formats_missing_values():
     assert rows[1]["Weighted GED"] == "—"
 
 
+def test_scenario_chart_returns_none_when_no_scored_scenarios():
+    chart = modifiability_frontend._scenario_chart([
+        {"description": "Add X", "weight": 3, "magnitude": "small", "ged": None, "exact": False, "weighted_ged": None},
+    ])
+    assert chart is None
+
+
+def test_scenario_chart_builds_altair_chart_with_magnitude_color_encoding():
+    import altair as alt
+
+    scenarios = [
+        {"description": "Add X", "weight": 3, "magnitude": "small", "ged": 2.0, "exact": True, "weighted_ged": 6.0},
+        {"description": "Add Y", "weight": 4, "magnitude": "large", "ged": 5.0, "exact": True, "weighted_ged": 20.0},
+    ]
+    chart = modifiability_frontend._scenario_chart(scenarios)
+
+    assert isinstance(chart, alt.Chart)
+    # Two rows fed in, one per non-null scenario.
+    assert len(chart.data) == 2
+
+    # Inspect the actual serialized Vega-Lite spec rather than Altair's
+    # Python-object attributes: in altair==6.2.2 (the version installed
+    # here, matching environment.yml's altair==6.0.0), `chart.encoding.color`
+    # is a `_PropertySetter`, not a plain object with `.field`/`.scale`
+    # attributes — `.to_dict()` is the stable, version-independent contract.
+    color_spec = chart.to_dict()["encoding"]["color"]
+    # Color is encoded by Magnitude on a fixed small->medium->large domain
+    # (magnitude is ordinal, not an arbitrary category), never a free-cycled hue.
+    assert color_spec["field"] == "Magnitude"
+    assert color_spec["scale"]["domain"] == ["small", "medium", "large"]
+    assert color_spec["scale"]["scheme"] == "blues"
+
+
 def test_load_existing_report_reads_json(tmp_path):
     report_dir = tmp_path / "demo" / "modifiability"
     report_dir.mkdir(parents=True)
@@ -804,11 +848,19 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import altair as alt
+import pandas as pd
 import streamlit as st
 
 from Evaluation.modifiability import run as run_modifiability
 
 REPORT_RELATIVE_PATH = "modifiability/report.json"
+
+# Magnitude is ordinal (small < medium < large), not an arbitrary category, so
+# it gets a fixed-order sequential color scale (one hue, light -> dark) rather
+# than a free-cycled categorical palette — see the dataviz skill's color
+# formula: "Sequential = one hue, light->dark."
+MAGNITUDE_ORDER = ["small", "medium", "large"]
 
 
 def _load_existing_report(project_name: str, run_dir: str = "run") -> dict | None:
@@ -831,6 +883,47 @@ def _scenario_table_rows(scenarios: list[dict]) -> list[dict]:
             "Exact": s.get("exact", False),
         })
     return rows
+
+
+def _scenario_chart(scenarios: list[dict]) -> alt.Chart | None:
+    """Horizontal bar chart of weighted GED per scenario, sorted descending,
+    colored by magnitude on a fixed small->medium->large sequential scale
+    (one hue, light->dark — magnitude is an ordinal size, not a free
+    category), with a tooltip on every bar. Returns None if there are no
+    scenarios with a computed weighted_ged to plot (e.g. every scenario
+    errored or timed out).
+    """
+    rows = [
+        {
+            "Description": (s.get("description") or "")[:60],
+            "Magnitude": s.get("magnitude", "unknown"),
+            "Weighted GED": s.get("weighted_ged"),
+            "GED": s.get("ged"),
+            "Weight": s.get("weight"),
+        }
+        for s in scenarios
+        if s.get("weighted_ged") is not None
+    ]
+    if not rows:
+        return None
+
+    df = pd.DataFrame(rows)
+    return (
+        alt.Chart(df)
+        .mark_bar()
+        .encode(
+            x=alt.X("Weighted GED:Q", title="Weighted Graph Edit Distance"),
+            y=alt.Y("Description:N", sort="-x", title=None),
+            color=alt.Color(
+                "Magnitude:N",
+                sort=MAGNITUDE_ORDER,
+                scale=alt.Scale(domain=MAGNITUDE_ORDER, scheme="blues"),
+                legend=alt.Legend(title="Magnitude"),
+            ),
+            tooltip=["Description", "Magnitude", "Weight", "GED", "Weighted GED"],
+        )
+        .properties(height=alt.Step(28))
+    )
 
 
 def render(project_name: str) -> None:
@@ -861,16 +954,23 @@ def render(project_name: str) -> None:
 
         if report is not None:
             st.metric("Modifiability Score (lower = more flexible)", report["modifiability_score"])
-            st.dataframe(_scenario_table_rows(report["scenarios"]), use_container_width=True)
+
+            chart = _scenario_chart(report["scenarios"])
+            if chart is not None:
+                st.altair_chart(chart, use_container_width=True)
+
+            with st.expander("📋 Scenario table", expanded=chart is None):
+                st.dataframe(_scenario_table_rows(report["scenarios"]), use_container_width=True)
+
             if report.get("by_magnitude"):
-                st.markdown("#### By Magnitude")
+                st.markdown("#### Total Weighted GED by Magnitude")
                 st.bar_chart(report["by_magnitude"])
 ```
 
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `python -m pytest tests/test_modifiability_frontend.py -v`
-Expected: PASS (5 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Wire into `app.py`**
 
