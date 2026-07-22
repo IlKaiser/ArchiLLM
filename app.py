@@ -181,6 +181,25 @@ if proj_name:
         f"Outputs saved to `run/{proj_name}/`."
     )
 
+    # Preload already-generated outputs for this project by default, so
+    # switching to a project with existing results shows them immediately
+    # without requiring a button click. Only fires once per distinct
+    # project selection (tracked via _auto_loaded_project) and never while
+    # a pipeline is actively running.
+    _existing_puml_preload = os.path.join(os.getcwd(), "run", proj_name, "component_diagram.puml")
+    if (
+        os.path.exists(_existing_puml_preload)
+        and not st.session_state.get("is_running", False)
+        and st.session_state.get("_auto_loaded_project") != proj_name
+    ):
+        st.session_state._auto_loaded_project = proj_name
+        st.session_state.show_results = True
+        st.session_state.has_error = False
+        st.session_state.error_message = ""
+        st.session_state.full_logs = ""
+        st.session_state.zip_bytes = None
+        st.session_state.completed_steps = {"extract": True, "render": True, "validate": False}
+
 st.markdown("---")
 
 execute_trigger = st.button("📐 Run Diagram Pipeline", type="primary")
