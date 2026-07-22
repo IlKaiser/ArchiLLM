@@ -24,3 +24,4 @@ plot_bubbles.py
 print_totals.py
 .conversations/
 AGENTS.md
+.worktrees/
