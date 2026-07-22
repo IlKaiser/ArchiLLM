@@ -51,3 +51,18 @@ def test_load_existing_scores_reads_json(tmp_path):
 def test_load_existing_scores_empty_when_missing(tmp_path):
     scores = adr_frontend._load_existing_scores(output_dir=str(tmp_path))
     assert scores == {}
+
+
+def test_generate_adrs_failure_shows_error_not_exception(monkeypatch, tmp_path):
+    def boom(*args, **kwargs):
+        raise RuntimeError("provider timeout")
+
+    monkeypatch.setattr(adr_frontend, "generate_adrs", boom)
+    monkeypatch.setattr(adr_frontend, "_list_existing_adrs", lambda *a, **kw: [])
+
+    at = AppTest.from_file(HARNESS_PATH)
+    at.run()
+    at.button(key="btn_gen_adr").click().run()
+
+    assert not at.exception
+    assert any("ADR generation failed: provider timeout" in e.value for e in at.error)

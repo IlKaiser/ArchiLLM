@@ -79,7 +79,11 @@ def run(
         if pattern_source is None:
             continue
         adr_markdown = md_path.read_text(encoding="utf-8")
-        result = judge.score(pattern_source, adr_markdown)
+        try:
+            result = judge.score(pattern_source, adr_markdown)
+        except Exception as e:
+            scores[slug] = {"score": None, "reasoning": f"Judge call failed: {e}", "missing_elements": []}
+            continue
         scores[slug] = {
             "score": ADRJudge.extract_score(result),
             "reasoning": result.get("reasoning", ""),

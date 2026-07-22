@@ -65,3 +65,26 @@ def test_run_matches_adr_files_to_patterns_by_slug(monkeypatch, tmp_path):
 
     written = json.loads((tmp_path / "scores.json").read_text(encoding="utf-8"))
     assert written == scores
+
+
+def test_run_continues_after_one_judge_failure(monkeypatch, tmp_path):
+    (tmp_path / "001-saga.md").write_text("# ADR-001: Saga", encoding="utf-8")
+    (tmp_path / "002-domain-event.md").write_text("# ADR-002: Domain event", encoding="utf-8")
+
+    def fake_score(self, pattern_source, adr_markdown):
+        if "Saga" in adr_markdown:
+            raise ValueError("malformed JSON from DeepSeek")
+        return {"score": 3, "reasoning": "partial", "missing_elements": ["consequences"]}
+
+    monkeypatch.setattr(adr_judge.ADRJudge, "score", fake_score)
+
+    scores = adr_judge.run(
+        adr_dir=str(tmp_path), api_key="x", base_url="http://example.invalid", model_name="m"
+    )
+
+    assert scores["saga"]["score"] is None
+    assert "malformed JSON from DeepSeek" in scores["saga"]["reasoning"]
+    assert scores["domain-event"]["score"] == 3
+
+    written = json.loads((tmp_path / "scores.json").read_text(encoding="utf-8"))
+    assert written == scores

@@ -56,9 +56,13 @@ def render(default_llm_model: str) -> None:
             st.info("Using existing ADRs. Check 'Regenerate ADRs' to force a fresh run.")
             adrs = existing
         else:
-            with st.spinner("Generating ADRs from the pattern catalogue…"):
-                adrs = generate_adrs()
-            st.success(f"Generated {len(adrs)} ADR(s).")
+            try:
+                with st.spinner("Generating ADRs from the pattern catalogue…"):
+                    adrs = generate_adrs()
+                st.success(f"Generated {len(adrs)} ADR(s).")
+            except Exception as e:
+                st.error(f"ADR generation failed: {e}")
+                adrs = []
         for adr in adrs:
             title = Path(adr["path"]).stem
             with st.expander(title):
@@ -74,9 +78,13 @@ def render(default_llm_model: str) -> None:
             st.info("Using existing scores. Check 'Regenerate ADRs' to force a fresh run.")
             scores = existing_scores
         else:
-            with st.spinner("Scoring ADRs with DeepSeek…"):
-                scores = score_adrs()
-            st.success(f"Scored {len(scores)} ADR(s).")
+            try:
+                with st.spinner("Scoring ADRs with DeepSeek…"):
+                    scores = score_adrs()
+                st.success(f"Scored {len(scores)} ADR(s).")
+            except Exception as e:
+                st.error(f"ADR scoring failed: {e}")
+                scores = {}
         st.dataframe(_score_table_rows(scores), use_container_width=True)
         for slug, data in sorted(scores.items()):
             with st.expander(f"{slug} — reasoning"):
