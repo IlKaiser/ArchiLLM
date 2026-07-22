@@ -46,7 +46,12 @@ def _score_one_scenario(scenario: dict, architecture: dict, g_original, timeout:
         rendered = render_scenario_diagram(modified_arch)
         parsed_modified = UMLParser().parse(rendered)
         g_modified = build_graph(parsed_modified)
+
+        if g_modified.number_of_nodes() == 0 and g_original.number_of_nodes() > 0:
+            raise ValueError("Rendered diagram for this scenario has no parseable components")
+
         ged = compute_ged(g_original, g_modified, timeout=timeout)
+        weighted_ged = scenario["weight"] * ged if ged is not None else None
     except Exception as e:
         print(f"[modifiability] scenario failed: {scenario.get('description', '')[:60]!r} — {e}")
         return {**scenario, "error": str(e), "ged": None, "exact": False, "weighted_ged": None}
@@ -55,7 +60,7 @@ def _score_one_scenario(scenario: dict, architecture: dict, g_original, timeout:
         print(f"[modifiability] GED inconclusive (timeout) for: {scenario.get('description', '')[:60]!r}")
         return {**scenario, "ged": None, "exact": False, "weighted_ged": None}
 
-    return {**scenario, "ged": ged, "exact": True, "weighted_ged": scenario["weight"] * ged}
+    return {**scenario, "ged": ged, "exact": True, "weighted_ged": weighted_ged}
 
 
 def run(
@@ -82,7 +87,8 @@ def run(
     for s in scored:
         if s.get("weighted_ged") is None:
             continue
-        by_magnitude[s["magnitude"]] = by_magnitude.get(s["magnitude"], 0.0) + s["weighted_ged"]
+        magnitude = s.get("magnitude", "unknown")
+        by_magnitude[magnitude] = by_magnitude.get(magnitude, 0.0) + s["weighted_ged"]
 
     report = {
         "project": project_name,
