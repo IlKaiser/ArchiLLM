@@ -54,19 +54,27 @@ def render(default_llm_model: str) -> None:
         existing = _list_existing_adrs()
         if existing and not regenerate:
             st.info("Using existing ADRs. Check 'Regenerate ADRs' to force a fresh run.")
-            adrs = existing
+            for adr in existing:
+                title = Path(adr["path"]).stem
+                with st.expander(title):
+                    st.markdown(adr["content"])
         else:
+            progress_bar = st.progress(0.0, text="Starting ADR generation…")
+            results_area = st.container()
+
+            def _on_progress(completed: int, total: int, result: dict) -> None:
+                progress_bar.progress(
+                    completed / total, text=f"Generated {completed}/{total}: {result['pattern']}"
+                )
+                with results_area.expander(Path(result["path"]).stem):
+                    st.markdown(result["content"])
+
             try:
-                with st.spinner("Generating ADRs from the pattern catalogue…"):
-                    adrs = generate_adrs()
+                adrs = generate_adrs(on_progress=_on_progress)
+                progress_bar.progress(1.0, text="Done.")
                 st.success(f"Generated {len(adrs)} ADR(s).")
             except Exception as e:
                 st.error(f"ADR generation failed: {e}")
-                adrs = []
-        for adr in adrs:
-            title = Path(adr["path"]).stem
-            with st.expander(title):
-                st.markdown(adr["content"])
 
     st.markdown("#### 🧑‍⚖️ DeepSeek Judge")
     deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "")

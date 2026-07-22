@@ -15,6 +15,7 @@ import os
 import re
 from datetime import date
 from pathlib import Path
+from typing import Callable
 
 import litellm
 
@@ -111,11 +112,20 @@ def generate_adr(
     return response.choices[0].message.content
 
 
-def run(patterns: list[str] | None = None, output_dir: str = "docs/adr") -> list[dict]:
+def run(
+    patterns: list[str] | None = None,
+    output_dir: str = "docs/adr",
+    on_progress: Callable[[int, int, dict], None] | None = None,
+) -> list[dict]:
     """Generate ADRs for the given pattern names (default: all patterns in
     KNOWLEDGE_BASE). Returns [{"pattern", "slug", "path", "content"}, ...].
     Writes each ADR to {output_dir}/{NNN}-{slug}.md, numbered 1..N over the
     (possibly filtered) pattern list.
+
+    on_progress: optional callback invoked as on_progress(completed, total,
+        result) immediately after each ADR is generated and written, so a
+        caller (e.g. a Streamlit UI) can report incremental progress instead
+        of waiting silently for the whole batch.
     """
     all_patterns = parse_patterns(KNOWLEDGE_BASE)
     if patterns is not None:
@@ -125,14 +135,16 @@ def run(patterns: list[str] | None = None, output_dir: str = "docs/adr") -> list
     out_dir = Path(output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    total = len(all_patterns)
     results = []
     for i, pattern in enumerate(all_patterns, start=1):
         content = generate_adr(pattern, number=i)
         path = out_dir / f"{i:03d}-{pattern['slug']}.md"
         path.write_text(content, encoding="utf-8")
-        results.append(
-            {"pattern": pattern["name"], "slug": pattern["slug"], "path": str(path), "content": content}
-        )
+        result = {"pattern": pattern["name"], "slug": pattern["slug"], "path": str(path), "content": content}
+        results.append(result)
+        if on_progress is not None:
+            on_progress(i, total, result)
     return results
 
 

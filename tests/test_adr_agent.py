@@ -79,3 +79,18 @@ def test_run_writes_numbered_files_and_returns_metadata(monkeypatch, tmp_path):
     assert results[0]["path"] == str(tmp_path / "001-saga.md")
     assert results[0]["content"] == "CONTENT for Saga"
     assert (tmp_path / "001-saga.md").read_text(encoding="utf-8") == "CONTENT for Saga"
+
+
+def test_run_calls_on_progress_for_each_pattern(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        adr_agent, "generate_adr", lambda pattern, number, model=None, api_key=None: f"CONTENT for {pattern['name']}"
+    )
+
+    calls = []
+    adr_agent.run(
+        patterns=["Saga", "Domain event"],
+        output_dir=str(tmp_path),
+        on_progress=lambda completed, total, result: calls.append((completed, total, result["pattern"])),
+    )
+
+    assert calls == [(1, 2, "Saga"), (2, 2, "Domain event")]
