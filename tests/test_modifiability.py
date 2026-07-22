@@ -111,3 +111,107 @@ def test_run_continues_after_one_scenario_failure(tmp_path, monkeypatch):
     assert succeeded["weighted_ged"] == succeeded["weight"] * succeeded["ged"]
     # aggregate must only include the successful scenario
     assert report["modifiability_score"] == round(succeeded["weighted_ged"], 2)
+
+
+def test_run_continues_when_scenario_has_malformed_weight(tmp_path, monkeypatch):
+    """A scenario missing 'weight' (or with a non-numeric weight) — e.g. from
+    unvalidated LLM-generated JSON — must not abort the whole batch. It
+    should be scored as a graceful per-scenario failure while the other
+    scenario(s) still get scored and the report still gets written.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {"description": "Missing weight", "magnitude": "small"},  # no "weight" key
+        {"description": "Bad weight type", "weight": "not-a-number", "magnitude": "medium"},
+        {"description": "Will succeed", "weight": 4, "magnitude": "large"},
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc: {"microservices": [{"name": "order_service"}, {"name": "extra"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch: "@startuml\n[order_service]\n[extra]\n@enduml",
+    )
+
+    report = modifiability.run(
+        "demo", n_scenarios=3,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    missing_weight, bad_weight, succeeded = report["scenarios"]
+
+    assert missing_weight["ged"] is None
+    assert missing_weight["exact"] is False
+    assert missing_weight["weighted_ged"] is None
+    assert "error" in missing_weight
+
+    assert bad_weight["ged"] is None
+    assert bad_weight["exact"] is False
+    assert bad_weight["weighted_ged"] is None
+    assert "error" in bad_weight
+
+    assert succeeded["ged"] is not None
+    assert succeeded["weighted_ged"] == succeeded["weight"] * succeeded["ged"]
+
+    # The report must still be written, and the score/aggregation must only
+    # reflect the one scenario that actually scored.
+    assert report["modifiability_score"] == round(succeeded["weighted_ged"], 2)
+    report_path = tmp_path / "run" / "demo" / "modifiability" / "report.json"
+    assert report_path.exists()
+
+
+def test_run_treats_unparseable_render_as_inconclusive(tmp_path, monkeypatch):
+    """If modify_architecture + render_scenario_diagram produce PlantUML text
+    with no parseable components (e.g. missing @startuml), the scenario must
+    be treated as inconclusive (ged: None, exact: False) rather than being
+    scored as a huge, exact graph-edit distance against an empty graph.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {"description": "Renders to garbage", "weight": 3, "magnitude": "large"},
+        {"description": "Will succeed", "weight": 2, "magnitude": "small"},
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc: {"microservices": [{"name": "order_service"}]},
+    )
+
+    # Distinguish the two scenarios by call order via a stateful closure,
+    # since both scenarios call modify_architecture with the same arch stub
+    # and scenarios are scored in order.
+    calls = {"n": 0}
+
+    def render_by_call_order(arch):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return "not a plantuml diagram at all"
+        return "@startuml\n[order_service]\n[extra]\n@enduml"
+
+    monkeypatch.setattr(modifiability, "render_scenario_diagram", render_by_call_order)
+
+    report = modifiability.run(
+        "demo", n_scenarios=2,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    garbage, succeeded = report["scenarios"]
+
+    assert garbage["ged"] is None
+    assert garbage["exact"] is False
+    assert garbage["weighted_ged"] is None
+    assert "error" in garbage
+
+    assert succeeded["ged"] is not None
+    assert succeeded["exact"] is True
+    assert succeeded["weighted_ged"] == succeeded["weight"] * succeeded["ged"]
+
+    # The inconclusive scenario must be excluded from both the headline
+    # score and the by-magnitude aggregation, not counted as a huge distance.
+    assert report["modifiability_score"] == round(succeeded["weighted_ged"], 2)
+    assert "large" not in report["by_magnitude"]
+    assert "small" in report["by_magnitude"]
