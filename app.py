@@ -129,6 +129,11 @@ llm_base_url = st.sidebar.text_input("LLM_JUDGE_URL", value=os.environ.get("LLM_
 llm_judge_key = st.sidebar.text_input("LLM_JUDGE_KEY", type="password", value=os.environ.get("LLM_JUDGE_KEY", ""), help="API key for the judge LLM (falls back to LLM_API_KEY if blank)")
 llm_judge_model = st.sidebar.text_input("JUDGE_MODEL", value=os.environ.get("JUDGE_MODEL", "gpt-5.5"), help="Model used for LLM-as-a-judge evaluation")
 
+st.sidebar.subheader("🧑‍⚖️ DeepSeek Judge (ADR scoring)")
+deepseek_api_key = st.sidebar.text_input("DEEPSEEK_API_KEY", type="password", value=os.environ.get("DEEPSEEK_API_KEY", ""))
+deepseek_base_url = st.sidebar.text_input("DEEPSEEK_BASE_URL", value=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"))
+deepseek_judge_model = st.sidebar.text_input("DEEPSEEK_JUDGE_MODEL", value=os.environ.get("DEEPSEEK_JUDGE_MODEL", "deepseek-chat"))
+
 secondary_llm_model = os.environ.get("SECONDARY_LLM_MODEL", "openhands/devstral-medium-2507")
 secondary_llm_api_key = os.environ.get("SECONDARY_LLM_API_KEY", "")
 
@@ -145,6 +150,9 @@ if st.sidebar.button("💾 Save Keys to Environment"):
     os.environ["JUDGE_MODEL"] = llm_judge_model
     os.environ["SECONDARY_LLM_MODEL"] = secondary_llm_model
     os.environ["SECONDARY_LLM_API_KEY"] = secondary_llm_api_key
+    os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
+    os.environ["DEEPSEEK_BASE_URL"] = deepseek_base_url
+    os.environ["DEEPSEEK_JUDGE_MODEL"] = deepseek_judge_model
     st.sidebar.success("Saved dynamically to process environment!")
 
 # ── Main ───────────────────────────────────────────────────────────────────
@@ -483,3 +491,7 @@ if st.session_state.get("is_running", False) or st.session_state.get("show_resul
             )
         else:
             st.error("Output folder not found — the pipeline may have failed silently.")
+
+from src.adr_frontend import render as render_adr_section
+
+render_adr_section(default_llm_model=llm_model)
