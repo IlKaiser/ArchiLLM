@@ -109,12 +109,25 @@ def generate_input_txt(prompt: str) -> str:
 
 
 def main() -> None:
+    print(f"[1/4] Reading PDF: {PDF_PATH}")
     pdf_text = extract_pdf_text(PDF_PATH)
+    print(f"[1/4] Extracted {len(pdf_text)} chars of PDF text (truncated to {MAX_PDF_CHARS})")
+
+    print(f"[2/4] Reading requirements: {XLSX_PATH}")
     requirements = extract_requirements(XLSX_PATH)
+    print(f"[2/4] Extracted {len(requirements)} requirement rows")
+
+    print("[3/4] Building prompt")
     prompt = build_prompt(pdf_text, requirements)
+    print(f"[3/4] Prompt built ({len(prompt)} chars)")
+
+    model = os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929")
+    print(f"[4/4] Calling LLM ({model}) — this may take a while, please wait…")
     content = generate_input_txt(prompt)
+    print(f"[4/4] LLM responded with {len(content)} chars")
+
     OUTPUT_PATH.write_text(content, encoding="utf-8")
-    print(f"Wrote {OUTPUT_PATH}")
+    print(f"Done. Wrote {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
