@@ -20,10 +20,13 @@ from Evaluation.modifiability_scenarios import (
 from Evaluation.uml_parser import UMLParser
 
 
-def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict]:
+def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict, str]:
     """Read architecture.json + parse component_diagram.puml for
     project_name. Raises FileNotFoundError (with a clear message) if either
-    is missing.
+    is missing. Returns (architecture, parsed_original, original_puml_text)
+    — the raw text is kept so per-scenario rendering can adapt it directly
+    (see render_scenario_diagram's original_diagram parameter) rather than
+    regenerating a diagram from scratch.
     """
     project_dir = Path(run_dir) / project_name
     arch_path = project_dir / "architecture.json"
@@ -34,8 +37,9 @@ def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict]:
             f"for '{project_name}' before running modifiability analysis."
         )
     architecture = json.loads(arch_path.read_text(encoding="utf-8"))
-    parsed_original = UMLParser().parse(puml_path.read_text(encoding="utf-8"))
-    return architecture, parsed_original
+    original_puml_text = puml_path.read_text(encoding="utf-8")
+    parsed_original = UMLParser().parse(original_puml_text)
+    return architecture, parsed_original, original_puml_text
 
 
 def _load_or_generate_scenarios(
@@ -66,6 +70,7 @@ def _score_one_scenario(
     architecture: dict,
     g_original,
     timeout: float,
+    original_puml_text: str,
     scenario_dir: Path | None = None,
     cost_tracker: list[float] | None = None,
 ) -> dict:
@@ -73,6 +78,10 @@ def _score_one_scenario(
     raises — records an "error" key in the returned dict on any failure
     instead, so one bad scenario doesn't abort the whole batch.
 
+    original_puml_text: the project's existing rendered diagram, passed to
+        render_scenario_diagram so the new version adapts it in place
+        (same aliases/grouping for anything unchanged) rather than
+        regenerating a diagram from scratch for every scenario.
     scenario_dir: if given, the intermediate modified architecture.json and
         rendered component_diagram.puml are written there as soon as each is
         produced — so a partial artifact (e.g. the edit succeeded but the
@@ -91,7 +100,9 @@ def _score_one_scenario(
                 json.dumps(modified_arch, indent=2, ensure_ascii=False), encoding="utf-8"
             )
 
-        rendered = render_scenario_diagram(modified_arch, cost_tracker=cost_tracker)
+        rendered = render_scenario_diagram(
+            modified_arch, original_diagram=original_puml_text, cost_tracker=cost_tracker
+        )
         if scenario_dir is not None:
             (scenario_dir / "component_diagram.puml").write_text(rendered, encoding="utf-8")
 
@@ -136,7 +147,7 @@ def run(
     start_time = time.time()
     cost_tracker: list[float] = []
 
-    architecture, parsed_original = _load_original(run_dir, project_name)
+    architecture, parsed_original, original_puml_text = _load_original(run_dir, project_name)
     g_original = build_graph(parsed_original)
 
     input_path = Path(dataset_dir) / project_name / "input.txt"
@@ -154,7 +165,8 @@ def run(
     for i, s in enumerate(scenarios, start=1):
         scenario_dir = report_dir / f"scenario_{i:02d}"
         result = _score_one_scenario(
-            s, architecture, g_original, timeout, scenario_dir=scenario_dir, cost_tracker=cost_tracker
+            s, architecture, g_original, timeout, original_puml_text,
+            scenario_dir=scenario_dir, cost_tracker=cost_tracker,
         )
         result["artifacts_dir"] = str(scenario_dir)
         scored.append(result)

@@ -18,7 +18,7 @@ from src.prompt import KNOWLEDGE_BASE
 SCENARIO_GENERATION_PROMPT = """
 ## Task
 Read the following system description and user stories, then propose {n}
-plausible FUTURE scenarios — new requirements not already covered — that
+plausible FUTURE user stories — new requirements not already covered — that
 this system might need to support later.
 
 ## System Description and User Stories
@@ -30,7 +30,7 @@ Respond with ONLY a JSON array in a fenced code block, exactly {n} objects:
 ```json
 [
   {{
-    "description": "<one new requirement, phrased as a concrete capability>",
+    "description": "As a <role>, I want <capability>, so that <benefit>.",
     "weight": <integer 1-5, how important/likely this scenario is>,
     "magnitude": "<small|medium|large, how big a change this would require>"
   }}
@@ -38,22 +38,25 @@ Respond with ONLY a JSON array in a fenced code block, exactly {n} objects:
 ```
 
 ## Rules
-- Each scenario must be a plausible extension of the existing system, not a
-  rewrite of an existing user story.
-- Vary the magnitude across the {n} scenarios — don't make them all the same size.
+- Each "description" MUST be phrased as a user story in the exact
+  "As a <role>, I want <capability>, so that <benefit>." format used by the
+  existing user stories above — not a general capability description.
+- Each user story must be a plausible extension of the existing system, not
+  a rewrite of an existing one.
+- Vary the magnitude across the {n} user stories — don't make them all the same size.
 """
 
 ARCHITECTURE_EDIT_PROMPT = """
 ## Task
 You are evolving an existing microservices architecture to support one new
-scenario. Change or add ONLY what the scenario requires — leave every other
-microservice, pattern, datastore, and dependency exactly as it is in the
-existing architecture.
+user story. Change or add ONLY what the user story requires — leave every
+other microservice, pattern, datastore, and dependency exactly as it is in
+the existing architecture.
 
 ## Existing Architecture
 {architecture_json}
 
-## New Scenario
+## New User Story
 {scenario_description}
 
 ## Architectural Knowledge Base
@@ -68,9 +71,9 @@ fenced code block, following the exact same schema as the Existing
 Architecture above (microservices, patterns, datastores, dependencies).
 
 ## Constraints
-- DO NOT remove or rename anything not directly affected by the scenario.
+- DO NOT remove or rename anything not directly affected by the user story.
 - DO NOT regenerate the whole architecture from scratch — start from the
-  existing one and make the smallest change that satisfies the scenario.
+  existing one and make the smallest change that satisfies the user story.
 """
 
 SCENARIO_RENDER_PROMPT = """
@@ -91,6 +94,44 @@ following the same conventions used elsewhere in this project.
   `package` block named after the pattern.
 - Use snake_case aliases; readable quoted strings as display labels.
 - The file must start with `@startuml` and end with `@enduml`.
+
+## Output Format
+Respond with ONLY the PlantUML text (starting with `@startuml`, ending with
+`@enduml`) — no commentary, no markdown code fences.
+"""
+
+SCENARIO_ADAPT_PROMPT = """
+## Task
+Adapt the following ORIGINAL PlantUML component diagram to reflect the
+MODIFIED architecture below. This diagram is being compared against the
+original to measure how much actually had to change, so it is critical that
+you reuse the exact same aliases, groupings, and structure for every
+component, datastore, and dependency that is unchanged between the original
+and modified architecture. Only add, remove, or change what the modified
+architecture actually requires.
+
+## Original Diagram
+{original_diagram}
+
+## Modified Architecture
+{architecture_json}
+
+## Rules
+- Every microservice -> a `[Component]` element with a readable quoted label.
+- Every datastore -> a `database` element next to its owning service,
+  connected with a plain `--` line (no label): `[service_alias] -- database_alias`.
+- Every inter-service dependency -> a directed arrow labelled with the
+  protocol (REST, WebSocket, event, gRPC).
+- Microservices sharing the same architectural pattern -> grouped inside a
+  `package` block named after the pattern.
+- Use snake_case aliases; readable quoted strings as display labels.
+- The file must start with `@startuml` and end with `@enduml`.
+
+## Constraints
+- DO NOT regenerate the diagram from scratch.
+- DO NOT rename, reformat, reorder, or regroup anything that isn't directly
+  affected by the modified architecture.
+- Only touch what the modified architecture actually adds, removes, or changes.
 
 ## Output Format
 Respond with ONLY the PlantUML text (starting with `@startuml`, ending with
@@ -162,9 +203,26 @@ def modify_architecture(
 
 def render_scenario_diagram(
     architecture: dict,
+    original_diagram: str | None = None,
     model: str | None = None,
     api_key: str | None = None,
     cost_tracker: list[float] | None = None,
 ) -> str:
-    prompt = SCENARIO_RENDER_PROMPT.format(architecture_json=json.dumps(architecture, indent=2))
+    """Render the (already-edited) architecture to PlantUML.
+
+    original_diagram: if given, the LLM is asked to ADAPT this diagram
+        minimally rather than regenerate one from scratch — reusing the same
+        aliases/grouping for anything unchanged. This matters because the
+        rendered diagram is what graph edit distance is measured against;
+        without an anchor, the LLM could re-render unchanged components
+        differently each time (different aliases, grouping order), which
+        would inflate GED with noise unrelated to the actual user story.
+    """
+    if original_diagram:
+        prompt = SCENARIO_ADAPT_PROMPT.format(
+            original_diagram=original_diagram,
+            architecture_json=json.dumps(architecture, indent=2),
+        )
+    else:
+        prompt = SCENARIO_RENDER_PROMPT.format(architecture_json=json.dumps(architecture, indent=2))
     return _complete(prompt, model=model, api_key=api_key, cost_tracker=cost_tracker)

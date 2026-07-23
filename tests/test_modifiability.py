@@ -83,6 +83,37 @@ def test_run_scores_scenarios_and_writes_report(tmp_path, monkeypatch):
     assert json.loads(report_path.read_text(encoding="utf-8")) == report
 
 
+def test_run_passes_original_diagram_text_to_render_step(tmp_path, monkeypatch):
+    """render_scenario_diagram must be called with the project's actual
+    existing diagram text, so it can adapt it in place rather than
+    regenerating a fresh one from scratch for every scenario.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [{"description": "Add SMS notifications", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+
+    captured = {}
+
+    def capturing_render(arch, **kwargs):
+        captured.update(kwargs)
+        return "@startuml\n[order_service]\n[new_service]\n@enduml"
+
+    monkeypatch.setattr(modifiability, "render_scenario_diagram", capturing_render)
+
+    modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    # _write_project's fixture writes exactly this as the original diagram.
+    assert captured["original_diagram"] == "@startuml\n[order_service]\n@enduml"
+
+
 def test_load_or_generate_scenarios_generates_and_saves_when_no_cache(tmp_path, monkeypatch):
     fake_scenarios = [{"description": "Add SMS notifications", "weight": 3, "magnitude": "small"}]
     monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)

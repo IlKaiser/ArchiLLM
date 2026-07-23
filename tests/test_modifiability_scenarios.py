@@ -67,6 +67,39 @@ def test_render_scenario_diagram_returns_plain_puml_text(monkeypatch):
     assert result == "@startuml\n[order_service]\n@enduml"
 
 
+def test_render_scenario_diagram_uses_plain_prompt_without_original(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "@startuml\n[order_service]\n@enduml"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+
+    ms.render_scenario_diagram({"microservices": []}, model="test/model", api_key="test-key")
+
+    prompt_text = fake_completion.call_args.kwargs["messages"][0]["content"]
+    assert "## Original Diagram" not in prompt_text
+    assert "Generate a valid PlantUML component diagram" in prompt_text
+
+
+def test_render_scenario_diagram_adapts_original_when_given(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "@startuml\n[order_service]\n[new_service]\n@enduml"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+
+    original = "@startuml\n[order_service]\n@enduml"
+    result = ms.render_scenario_diagram(
+        {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+        original_diagram=original,
+        model="test/model", api_key="test-key",
+    )
+
+    assert result == "@startuml\n[order_service]\n[new_service]\n@enduml"
+    prompt_text = fake_completion.call_args.kwargs["messages"][0]["content"]
+    assert "## Original Diagram" in prompt_text
+    assert original in prompt_text
+    assert "new_service" in prompt_text
+
+
 def test_complete_appends_cost_to_tracker_when_given(monkeypatch):
     fake_response = MagicMock()
     fake_response.choices[0].message.content = "some text"
