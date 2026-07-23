@@ -18,8 +18,11 @@ from src.prompt import KNOWLEDGE_BASE
 SCENARIO_GENERATION_PROMPT = """
 ## Task
 Read the following system description and user stories, then propose {n}
-plausible FUTURE user stories — new requirements not already covered — that
-this system might need to support later.
+plausible FUTURE scenarios — new requirements not already covered — that
+this system might need to support later. Each scenario represents how the
+specification would evolve over time: depending on its magnitude, it may
+add one or more new user stories, and larger scenarios may also retire
+existing user stories that this evolution would genuinely make obsolete.
 
 ## System Description and User Stories
 {input_text}
@@ -30,33 +33,47 @@ Respond with ONLY a JSON array in a fenced code block, exactly {n} objects:
 ```json
 [
   {{
-    "description": "As a <role>, I want <capability>, so that <benefit>.",
+    "description": "<short summary of the scenario, e.g. 'Add UAV-based aerial sampling'>",
     "weight": <integer 1-5, how important/likely this scenario is>,
-    "magnitude": "<small|medium|large, how big a change this would require>"
+    "magnitude": "<small|medium|large, how big a change this would require>",
+    "new_user_stories": ["As a <role>, I want <capability>, so that <benefit>.", "..."],
+    "removed_user_story_numbers": [<existing story number>, ...]
   }}
 ]
 ```
 
 ## Rules
-- Each "description" MUST be phrased as a user story in the exact
-  "As a <role>, I want <capability>, so that <benefit>." format used by the
-  existing user stories above — not a general capability description.
-- Each user story must be a plausible extension of the existing system, not
-  a rewrite of an existing one.
-- Vary the magnitude across the {n} user stories — don't make them all the same size.
+- Each entry in "new_user_stories" MUST be phrased as a user story in the
+  exact "As a <role>, I want <capability>, so that <benefit>." format used
+  by the existing user stories above — not a general capability description.
+- The NUMBER of new_user_stories and removed_user_story_numbers must scale
+  with "magnitude":
+  - small: exactly 1 new user story, no removals.
+  - medium: 2-3 new user stories, 0-1 removals.
+  - large: 3-5 new user stories, 1-3 removals.
+- "removed_user_story_numbers" must reference real story numbers from the
+  existing user stories above, and only when this scenario would genuinely
+  make that story obsolete (e.g. replaced by a better approach) — never
+  remove a story arbitrarily just to hit a quota. Use an empty array `[]`
+  when nothing should be removed.
+- Each scenario must be a plausible extension of the existing system, not a
+  rewrite of an existing one.
+- Vary the magnitude across the {n} scenarios — don't make them all the same size.
 """
 
 ARCHITECTURE_EDIT_PROMPT = """
 ## Task
-You are evolving an existing microservices architecture to support one new
-user story. Change or add ONLY what the user story requires — leave every
-other microservice, pattern, datastore, and dependency exactly as it is in
-the existing architecture.
+You are evolving an existing microservices architecture to support a
+scenario's new user stories, and to remove support for any user stories
+the scenario retires. Change or add ONLY what the new stories require, and
+remove ONLY what the retired stories were driving — leave every other
+microservice, pattern, datastore, and dependency exactly as it is in the
+existing architecture.
 
 ## Existing Architecture
 {architecture_json}
 
-## New User Story
+## Scenario
 {scenario_description}
 
 ## Architectural Knowledge Base
@@ -71,9 +88,11 @@ fenced code block, following the exact same schema as the Existing
 Architecture above (microservices, patterns, datastores, dependencies).
 
 ## Constraints
-- DO NOT remove or rename anything not directly affected by the user story.
+- DO NOT remove or rename anything not directly affected by the new or
+  retired user stories above. If no stories are being retired, remove
+  nothing.
 - DO NOT regenerate the whole architecture from scratch — start from the
-  existing one and make the smallest change that satisfies the user story.
+  existing one and make the smallest change that satisfies the scenario.
 """
 
 SCENARIO_RENDER_PROMPT = """
