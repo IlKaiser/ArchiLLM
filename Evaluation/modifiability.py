@@ -7,6 +7,7 @@ a weighted Modifiability Score (lower is better).
 from __future__ import annotations
 
 import json
+import re
 import time
 from pathlib import Path
 from typing import Callable
@@ -65,12 +66,26 @@ def _load_or_generate_scenarios(
     return scenarios
 
 
+def _build_updated_spec(original_input_text: str, new_user_story: str) -> str:
+    """Append one new user story to the end of the existing spec's numbered
+    list, continuing the numbering. This is the "new specs" artifact saved
+    per scenario — the exact input that drove the modified architecture,
+    alongside the resulting architecture.json/component_diagram.puml.
+    """
+    existing_numbers = [
+        int(m.group(1)) for m in re.finditer(r"(?m)^\s*(\d+)\.\s", original_input_text)
+    ]
+    next_number = max(existing_numbers, default=0) + 1
+    return original_input_text.rstrip("\n") + f"\n{next_number}. {new_user_story}\n"
+
+
 def _score_one_scenario(
     scenario: dict,
     architecture: dict,
     g_original,
     timeout: float,
     original_puml_text: str,
+    input_text: str,
     scenario_dir: Path | None = None,
     cost_tracker: list[float] | None = None,
 ) -> dict:
@@ -82,6 +97,11 @@ def _score_one_scenario(
         render_scenario_diagram so the new version adapts it in place
         (same aliases/grouping for anything unchanged) rather than
         regenerating a diagram from scratch for every scenario.
+    input_text: the project's existing spec (system description + user
+        stories). Used to save a full "updated spec" artifact — the original
+        stories plus this scenario's new one — alongside the modified
+        architecture/diagram, so the exact input that drove each variation
+        is on disk, not just the isolated scenario description.
     scenario_dir: if given, the intermediate modified architecture.json and
         rendered component_diagram.puml are written there as soon as each is
         produced — so a partial artifact (e.g. the edit succeeded but the
@@ -91,11 +111,16 @@ def _score_one_scenario(
         accumulate into it (see Evaluation.modifiability_scenarios._complete).
     """
     try:
+        if scenario_dir is not None:
+            scenario_dir.mkdir(parents=True, exist_ok=True)
+            (scenario_dir / "input.txt").write_text(
+                _build_updated_spec(input_text, scenario["description"]), encoding="utf-8"
+            )
+
         modified_arch = modify_architecture(
             architecture, scenario["description"], cost_tracker=cost_tracker
         )
         if scenario_dir is not None:
-            scenario_dir.mkdir(parents=True, exist_ok=True)
             (scenario_dir / "architecture.json").write_text(
                 json.dumps(modified_arch, indent=2, ensure_ascii=False), encoding="utf-8"
             )
@@ -165,7 +190,7 @@ def run(
     for i, s in enumerate(scenarios, start=1):
         scenario_dir = report_dir / f"scenario_{i:02d}"
         result = _score_one_scenario(
-            s, architecture, g_original, timeout, original_puml_text,
+            s, architecture, g_original, timeout, original_puml_text, input_text,
             scenario_dir=scenario_dir, cost_tracker=cost_tracker,
         )
         result["artifacts_dir"] = str(scenario_dir)
