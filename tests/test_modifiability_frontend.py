@@ -98,3 +98,15 @@ def test_load_existing_report_reads_json(tmp_path):
 def test_load_existing_report_returns_none_when_missing(tmp_path):
     report = modifiability_frontend._load_existing_report("demo", run_dir=str(tmp_path))
     assert report is None
+
+
+def test_scenarios_cached_true_when_scenarios_json_exists(tmp_path):
+    scenarios_dir = tmp_path / "demo" / "modifiability"
+    scenarios_dir.mkdir(parents=True)
+    (scenarios_dir / "scenarios.json").write_text("[]", encoding="utf-8")
+
+    assert modifiability_frontend._scenarios_cached("demo", run_dir=str(tmp_path)) is True
+
+
+def test_scenarios_cached_false_when_missing(tmp_path):
+    assert modifiability_frontend._scenarios_cached("demo", run_dir=str(tmp_path)) is False
