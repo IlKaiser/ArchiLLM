@@ -69,7 +69,8 @@ def test_run_scores_scenarios_and_writes_report(tmp_path, monkeypatch):
         assert scenario["ged"] is not None
         assert scenario["exact"] is True
         assert scenario["weighted_ged"] == scenario["weight"] * scenario["ged"]
-    assert report["modifiability_score"] == round(sum(s["weighted_ged"] for s in report["scenarios"]), 2)
+    weighted_geds = [s["weighted_ged"] for s in report["scenarios"]]
+    assert report["modifiability_score"] == round(sum(weighted_geds) / len(weighted_geds), 2)
     assert "small" in report["by_magnitude"]
     assert "large" in report["by_magnitude"]
 
@@ -242,7 +243,7 @@ def test_build_updated_spec_appends_new_story_with_next_number():
     )
 
     updated = modifiability._build_updated_spec(
-        original, "As a user, I want to receive SMS notifications, so that I stay informed."
+        original, ["As a user, I want to receive SMS notifications, so that I stay informed."]
     )
 
     assert original in updated
@@ -253,9 +254,131 @@ def test_build_updated_spec_appends_new_story_with_next_number():
 
 def test_build_updated_spec_starts_at_one_when_no_numbered_stories():
     updated = modifiability._build_updated_spec(
-        "# SYSTEM DESCRIPTION:\nAn order system.\n\n# USER STORIES:\n", "A brand new story."
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n# USER STORIES:\n", ["A brand new story."]
     )
     assert updated.endswith("1. A brand new story.\n")
+
+
+def test_build_updated_spec_supports_multiple_new_stories_for_medium_large_magnitude():
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n1. As a user, I want to place orders.\n2. As a user, I want to cancel orders."
+    )
+
+    updated = modifiability._build_updated_spec(
+        original,
+        ["As a user, I want story A.", "As a user, I want story B.", "As a user, I want story C."],
+    )
+
+    assert updated.endswith(
+        "3. As a user, I want story A.\n4. As a user, I want story B.\n5. As a user, I want story C.\n"
+    )
+
+
+def test_build_updated_spec_removes_and_renumbers_when_story_retired():
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n"
+        "1. As a user, I want to place orders.\n"
+        "2. As a user, I want the OLD slow checkout flow.\n"
+        "3. As a user, I want to cancel orders.\n"
+    )
+
+    updated = modifiability._build_updated_spec(
+        original,
+        ["As a user, I want the NEW fast checkout flow."],
+        removed_user_story_numbers=[2],
+    )
+
+    # The retired story must be gone, everything else renumbered
+    # sequentially, and the new story appended at the end.
+    assert "OLD slow checkout flow" not in updated
+    assert updated == (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n"
+        "1. As a user, I want to place orders.\n"
+        "2. As a user, I want to cancel orders.\n"
+        "3. As a user, I want the NEW fast checkout flow.\n"
+    )
+
+
+def test_resolve_removed_stories_looks_up_text_by_number():
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n"
+        "1. As a user, I want to place orders.\n"
+        "2. As a user, I want the OLD slow checkout flow.\n"
+    )
+    assert modifiability._resolve_removed_stories(original, [2]) == [
+        "As a user, I want the OLD slow checkout flow."
+    ]
+
+
+def test_resolve_removed_stories_skips_unknown_numbers():
+    original = "# USER STORIES:\n1. As a user, I want to place orders.\n"
+    assert modifiability._resolve_removed_stories(original, [99]) == []
+
+
+def test_resolve_removed_stories_empty_when_no_numbers_given():
+    assert modifiability._resolve_removed_stories("anything", []) == []
+
+
+def test_run_handles_multiple_new_stories_and_a_removal_end_to_end(tmp_path, monkeypatch):
+    """A 'large' magnitude scenario with several new stories and a removed
+    one must flow all the way through: input.txt reflects the net change,
+    and modify_architecture receives a combined description covering both
+    the additions and the retirement.
+    """
+    _write_project(tmp_path)
+    (tmp_path / "dataset" / "demo" / "input.txt").write_text(
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n# USER STORIES:\n"
+        "1. As a user, I want to place orders.\n"
+        "2. As a user, I want the OLD slow checkout flow.\n",
+        encoding="utf-8",
+    )
+
+    fake_scenarios = [
+        {
+            "description": "Overhaul checkout with fast-path + loyalty program",
+            "weight": 5,
+            "magnitude": "large",
+            "new_user_stories": [
+                "As a user, I want a one-click fast checkout, so that I save time.",
+                "As a user, I want to earn loyalty points on checkout, so that I'm rewarded.",
+            ],
+            "removed_user_story_numbers": [2],
+        },
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+
+    captured = {}
+
+    def capturing_modify(arch, scenario_text, **kwargs):
+        captured["scenario_text"] = scenario_text
+        return {"microservices": [{"name": "order_service"}, {"name": "loyalty_service"}]}
+
+    monkeypatch.setattr(modifiability, "modify_architecture", capturing_modify)
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[loyalty_service]\n@enduml",
+    )
+
+    modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    # modify_architecture must see both the new stories and the retirement.
+    assert "one-click fast checkout" in captured["scenario_text"]
+    assert "earn loyalty points" in captured["scenario_text"]
+    assert "OLD slow checkout flow" in captured["scenario_text"]
+
+    spec_path = tmp_path / "run" / "demo" / "modifiability" / "scenario_01" / "input.txt"
+    content = spec_path.read_text(encoding="utf-8")
+    assert "OLD slow checkout flow" not in content
+    assert "1. As a user, I want to place orders." in content
+    assert "one-click fast checkout" in content
+    assert "earn loyalty points" in content
 
 
 def test_run_writes_updated_spec_per_scenario(tmp_path, monkeypatch):
@@ -303,7 +426,7 @@ def test_compute_spec_delta_shows_only_the_added_line():
         "# USER STORIES:\n1. As a user, I want to place orders.\n"
     )
     updated = modifiability._build_updated_spec(
-        original, "As a user, I want to receive SMS notifications, so that I stay informed."
+        original, ["As a user, I want to receive SMS notifications, so that I stay informed."]
     )
 
     delta = modifiability._compute_spec_delta(original, updated)
@@ -327,7 +450,7 @@ def test_compute_spec_delta_ignores_missing_trailing_newline_on_original():
         "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
         "# USER STORIES:\n1. As a user, I want to place orders."  # no trailing \n
     )
-    updated = modifiability._build_updated_spec(original, "A brand new story.")
+    updated = modifiability._build_updated_spec(original, ["A brand new story."])
 
     delta = modifiability._compute_spec_delta(original, updated)
 
@@ -486,6 +609,57 @@ def test_run_saves_partial_artifacts_when_render_fails_after_edit_succeeds(tmp_p
     assert not (scenario_dir / "component_diagram.puml").exists()
 
 
+def test_modifiability_score_is_average_not_sum_of_weighted_ged(tmp_path, monkeypatch):
+    """The headline score must be the mean of the successfully-scored
+    scenarios' weighted_ged, not their sum — otherwise running more
+    scenarios would inflate the score even if each one is individually small.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {"description": "Scenario A", "weight": 1, "magnitude": "small"},
+        {"description": "Scenario B", "weight": 1, "magnitude": "small"},
+        {"description": "Scenario C", "weight": 1, "magnitude": "small"},
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+
+    fake_results = iter([
+        {"weighted_ged": 10.0}, {"weighted_ged": 20.0}, {"weighted_ged": 30.0},
+    ])
+
+    def fake_score_one_scenario(scenario, architecture, g_original, timeout, *args, **kwargs):
+        return {**scenario, "ged": 1.0, "exact": True, **next(fake_results)}
+
+    monkeypatch.setattr(modifiability, "_score_one_scenario", fake_score_one_scenario)
+
+    report = modifiability.run(
+        "demo", n_scenarios=3,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    # Mean of [10, 20, 30] is 20 — the sum (60) would be a different, wrong answer.
+    assert report["modifiability_score"] == 20.0
+
+
+def test_modifiability_score_is_zero_when_no_scenario_scores_successfully(tmp_path, monkeypatch):
+    _write_project(tmp_path)
+
+    fake_scenarios = [{"description": "Will fail", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+
+    def always_fails(scenario, architecture, g_original, timeout, *args, **kwargs):
+        return {**scenario, "error": "boom", "ged": None, "exact": False, "weighted_ged": None}
+
+    monkeypatch.setattr(modifiability, "_score_one_scenario", always_fails)
+
+    report = modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    assert report["modifiability_score"] == 0.0
+
+
 def test_run_calls_on_progress_for_each_scenario(tmp_path, monkeypatch):
     _write_project(tmp_path)
 
@@ -526,7 +700,7 @@ def test_run_continues_after_one_scenario_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
 
     def flaky_modify(architecture, description, **kwargs):
-        if description == "Will fail":
+        if "Will fail" in description:
             raise ValueError("LLM exploded")
         return {"microservices": [{"name": "order_service"}, {"name": "extra"}]}
 

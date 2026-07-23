@@ -2,7 +2,7 @@
 modifiability.py — orchestrates the modifiability-analysis pipeline for one
 project: generate future scenarios, modify the architecture for each,
 measure graph edit distance against the baseline diagram, and aggregate into
-a weighted Modifiability Score (lower is better).
+a weighted-average Modifiability Score (lower is better).
 """
 from __future__ import annotations
 
@@ -67,17 +67,76 @@ def _load_or_generate_scenarios(
     return scenarios
 
 
-def _build_updated_spec(original_input_text: str, new_user_story: str) -> str:
-    """Append one new user story to the end of the existing spec's numbered
-    list, continuing the numbering. This is the "new specs" artifact saved
-    per scenario — the exact input that drove the modified architecture,
-    alongside the resulting architecture.json/component_diagram.puml.
+USER_STORIES_HEADER_RE = re.compile(r"(?m)^#\s*USER STORIES:\s*$")
+STORY_LINE_RE = re.compile(r"^\s*(\d+)\.\s*(.*)$")
+
+
+def _resolve_removed_stories(original_input_text: str, removed_numbers: list[int]) -> list[str]:
+    """Look up the text of each referenced story number in the original
+    spec, in the given order. A number that doesn't match any existing
+    story is silently skipped — an LLM hallucinating a bad reference
+    shouldn't break the run.
     """
-    existing_numbers = [
-        int(m.group(1)) for m in re.finditer(r"(?m)^\s*(\d+)\.\s", original_input_text)
-    ]
-    next_number = max(existing_numbers, default=0) + 1
-    return original_input_text.rstrip("\n") + f"\n{next_number}. {new_user_story}\n"
+    if not removed_numbers:
+        return []
+    wanted = set(removed_numbers)
+    texts_by_number = {}
+    for line in original_input_text.splitlines():
+        m = STORY_LINE_RE.match(line)
+        if m and int(m.group(1)) in wanted:
+            texts_by_number[int(m.group(1))] = m.group(2)
+    return [texts_by_number[n] for n in removed_numbers if n in texts_by_number]
+
+
+def _build_updated_spec(
+    original_input_text: str,
+    new_user_stories: list[str],
+    removed_user_story_numbers: list[int] | None = None,
+) -> str:
+    """Apply a scenario's story additions/removals to the original spec:
+    drop any existing numbered story whose number is in
+    removed_user_story_numbers, append the new stories, and renumber the
+    whole list sequentially from 1 so it stays a valid, gap-free spec. This
+    is the "new specs" artifact saved per scenario — the exact input that
+    drove the modified architecture, alongside the resulting
+    architecture.json/component_diagram.puml.
+    """
+    removed = set(removed_user_story_numbers or [])
+    match = USER_STORIES_HEADER_RE.search(original_input_text)
+    if match is None:
+        # No recognizable "# USER STORIES:" section — fall back to a plain
+        # append rather than guessing at structure.
+        preamble = original_input_text
+        existing_texts: list[str] = []
+    else:
+        preamble = original_input_text[: match.end()]
+        existing_texts = []
+        for line in original_input_text[match.end():].splitlines():
+            m = STORY_LINE_RE.match(line)
+            if m and int(m.group(1)) not in removed:
+                existing_texts.append(m.group(2))
+
+    all_texts = existing_texts + list(new_user_stories)
+    numbered = "\n".join(f"{i}. {text}" for i, text in enumerate(all_texts, start=1))
+    return preamble.rstrip("\n") + "\n" + numbered + "\n"
+
+
+def _build_scenario_edit_text(new_user_stories: list[str], removed_stories: list[str]) -> str:
+    """Format a scenario's story additions/removals into the single text
+    block modify_architecture's prompt embeds as "the scenario" — its
+    signature stays a plain string, so this is the one place that needs to
+    know about the multi-story schema.
+    """
+    lines = ["New user stories to support:"]
+    lines += [f"- {s}" for s in new_user_stories]
+    if removed_stories:
+        lines.append("")
+        lines.append(
+            "User stories being retired — remove any architecture elements "
+            "that existed ONLY to support these, if nothing else needs them:"
+        )
+        lines += [f"- {s}" for s in removed_stories]
+    return "\n".join(lines)
 
 
 def _compute_spec_delta(original_input_text: str, updated_input_text: str) -> str:
@@ -122,10 +181,12 @@ def _score_one_scenario(
     input_text: the project's existing spec (system description + user
         stories). Used to save a full "updated spec" artifact (input.txt)
         and a unified diff against the original (spec_delta.txt) — the
-        original stories plus this scenario's new one, and the exact
-        textual delta between them — alongside the modified
-        architecture/diagram, so the exact input that drove each variation
-        is on disk, not just the isolated scenario description.
+        original stories plus this scenario's new_user_stories, minus any
+        removed_user_story_numbers, and the exact textual delta between
+        them — alongside the modified architecture/diagram, so the exact
+        input that drove each variation is on disk, not just the scenario's
+        summary description. Scenarios cached before these two fields
+        existed fall back to treating "description" as the one new story.
     scenario_dir: if given, the intermediate modified architecture.json and
         rendered component_diagram.puml are written there as soon as each is
         produced — so a partial artifact (e.g. the edit succeeded but the
@@ -135,16 +196,24 @@ def _score_one_scenario(
         accumulate into it (see Evaluation.modifiability_scenarios._complete).
     """
     try:
+        # Backward-compatible with scenarios cached before new_user_stories/
+        # removed_user_story_numbers existed: fall back to treating the
+        # scenario's single "description" as one new story, no removals.
+        new_user_stories = scenario.get("new_user_stories") or [scenario["description"]]
+        removed_numbers = scenario.get("removed_user_story_numbers") or []
+        removed_texts = _resolve_removed_stories(input_text, removed_numbers)
+
         if scenario_dir is not None:
             scenario_dir.mkdir(parents=True, exist_ok=True)
-            updated_spec = _build_updated_spec(input_text, scenario["description"])
+            updated_spec = _build_updated_spec(input_text, new_user_stories, removed_numbers)
             (scenario_dir / "input.txt").write_text(updated_spec, encoding="utf-8")
             (scenario_dir / "spec_delta.txt").write_text(
                 _compute_spec_delta(input_text, updated_spec), encoding="utf-8"
             )
 
+        scenario_edit_text = _build_scenario_edit_text(new_user_stories, removed_texts)
         modified_arch = modify_architecture(
-            architecture, scenario["description"], cost_tracker=cost_tracker
+            architecture, scenario_edit_text, cost_tracker=cost_tracker
         )
         if scenario_dir is not None:
             (scenario_dir / "architecture.json").write_text(
@@ -224,9 +293,8 @@ def run(
         if on_progress is not None:
             on_progress(i, total, result)
 
-    modifiability_score = sum(
-        s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None
-    )
+    weighted_geds = [s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None]
+    modifiability_score = sum(weighted_geds) / len(weighted_geds) if weighted_geds else 0.0
     by_magnitude: dict = {}
     for s in scored:
         if s.get("weighted_ged") is None:

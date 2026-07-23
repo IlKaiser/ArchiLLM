@@ -102,6 +102,111 @@ def _scenario_chart(scenarios: list[dict]) -> alt.Chart | None:
     )
 
 
+def _render_report(report: dict, project_name: str) -> None:
+    """Render one modifiability report — shared by the preload-on-load path
+    and the just-finished-a-run path, so both look identical.
+    """
+    n_nodes = report.get("original_node_count")
+    n_edges = report.get("original_edge_count")
+    if n_nodes is not None:
+        st.caption(
+            f"📐 Base graph (`{project_name}`'s current diagram): "
+            f"**{n_nodes}** component(s), **{n_edges}** dependency edge(s)."
+        )
+    exec_time = report.get("execution_time_seconds")
+    total_cost = report.get("total_cost_usd")
+    if exec_time is not None:
+        st.caption(f"⏱️ Took **{exec_time:.1f}s** · 💰 ~**${total_cost:.4f}**")
+
+    st.metric(
+        "Modifiability Score (lower = more flexible)",
+        report["modifiability_score"],
+        help=(
+            "Average of each scenario's Weighted GED (Weight × Graph Edit "
+            "Distance). A lower score means fewer/cheaper changes were "
+            "needed, on average, to accommodate the generated future "
+            "scenarios."
+        ),
+    )
+
+    with st.expander("ℹ️ How to read this"):
+        st.markdown(
+            "- **Weight** (1-5): the LLM's estimate of how important or "
+            "likely this future scenario is.\n"
+            "- **Magnitude** (small / medium / large): the LLM's own "
+            "estimate of how big a change the scenario would require — "
+            "shown so you can sanity-check that bigger scenarios really "
+            "do produce bigger distances.\n"
+            "- **GED**: the real graph edit distance (via networkx) "
+            "between the original component diagram and the one edited "
+            "for this scenario — the minimum number of node/edge "
+            "insertions, deletions, or substitutions needed.\n"
+            "- **Weighted GED**: Weight × GED. The Modifiability Score above "
+            "is the average of these across all successfully-scored "
+            "scenarios.\n"
+            "- **Exact**: whether the GED computation finished within "
+            "its time budget. A scenario showing GED = “—” either failed "
+            "(its LLM call errored, or it produced an unparseable "
+            "diagram) or timed out — either way it's excluded from the "
+            "Modifiability Score, not counted as zero or as a large "
+            "distance."
+        )
+
+    chart = _scenario_chart(report["scenarios"])
+    if chart is not None:
+        st.altair_chart(chart, use_container_width=True)
+        st.caption("Bars are colored by magnitude — darker means a bigger expected change.")
+
+    with st.expander("📋 Scenario table", expanded=chart is None):
+        st.dataframe(_scenario_table_rows(report["scenarios"]), use_container_width=True)
+
+    if report.get("by_magnitude"):
+        st.markdown("#### Total Weighted GED by Magnitude")
+        st.caption(
+            "Sanity check: larger-magnitude scenarios should generally "
+            "sum to a bigger total than smaller ones."
+        )
+        st.bar_chart(report["by_magnitude"])
+
+    visualizable = _visualizable_scenarios(report["scenarios"])
+    original_puml_path = Path("run") / project_name / ORIGINAL_DIAGRAM_RELATIVE_PATH
+    if visualizable and original_puml_path.exists():
+        st.markdown("#### 🔍 Visualize an Edit Distance Example")
+        st.caption(
+            "See what actually changed for one scenario — the original "
+            "diagram side by side with the minimally-edited one. Sorted "
+            "by biggest change first."
+        )
+        options = {
+            f"{(s.get('description') or '')[:70]} (GED={s['ged']})": s
+            for s in visualizable
+        }
+        choice = st.selectbox(
+            "Choose a scenario to visualize",
+            list(options.keys()),
+            key="modifiability_visualize_select",
+        )
+        selected = options[choice]
+        modified_puml_path = Path(selected["artifacts_dir"]) / "component_diagram.puml"
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("**Original**")
+            st.image(
+                plantuml_image_url(original_puml_path.read_text(encoding="utf-8")),
+                use_container_width=True,
+            )
+        with col2:
+            st.markdown(f"**Modified** (GED = {selected['ged']})")
+            if modified_puml_path.exists():
+                st.image(
+                    plantuml_image_url(modified_puml_path.read_text(encoding="utf-8")),
+                    use_container_width=True,
+                )
+            else:
+                st.warning("Modified diagram artifact not found on disk.")
+
+
 def render(project_name: str) -> None:
     st.markdown("---")
     st.subheader("🔀 Modifiability Analysis")
@@ -118,6 +223,11 @@ def render(project_name: str) -> None:
         st.info("Select a project above to run modifiability analysis.")
         return
 
+    existing = _load_existing_report(project_name)
+    if existing:
+        st.caption(f"📁 Showing existing analysis for `{project_name}` from disk.")
+        _render_report(existing, project_name)
+
     regenerate = st.checkbox("🔄 Regenerate Analysis", value=False, key="chk_modifiability_regenerate")
     regenerate_scenarios = False
     if regenerate:
@@ -133,11 +243,8 @@ def render(project_name: str) -> None:
         )
 
     if st.button("🔀 Run Modifiability Analysis", key="btn_run_modifiability"):
-        existing = _load_existing_report(project_name)
-        report = None
         if existing and not regenerate:
-            st.info("Using existing analysis. Check 'Regenerate Analysis' to force a fresh run.")
-            report = existing
+            st.info("Already showing the existing analysis above. Check 'Regenerate Analysis' to force a fresh run.")
         else:
             progress_bar = st.progress(0.0, text="Generating future scenarios…")
 
@@ -155,106 +262,8 @@ def render(project_name: str) -> None:
                     f"{report.get('execution_time_seconds', 0):.1f}s "
                     f"(~${report.get('total_cost_usd', 0):.4f})."
                 )
+                _render_report(report, project_name)
             except FileNotFoundError as e:
                 st.error(str(e))
             except Exception as e:
                 st.error(f"Modifiability analysis failed: {e}")
-
-        if report is not None:
-            n_nodes = report.get("original_node_count")
-            n_edges = report.get("original_edge_count")
-            if n_nodes is not None:
-                st.caption(
-                    f"📐 Base graph (`{project_name}`'s current diagram): "
-                    f"**{n_nodes}** component(s), **{n_edges}** dependency edge(s)."
-                )
-            exec_time = report.get("execution_time_seconds")
-            total_cost = report.get("total_cost_usd")
-            if exec_time is not None:
-                st.caption(f"⏱️ Took **{exec_time:.1f}s** · 💰 ~**${total_cost:.4f}**")
-
-            st.metric(
-                "Modifiability Score (lower = more flexible)",
-                report["modifiability_score"],
-                help=(
-                    "Sum of each scenario's Weighted GED (Weight × Graph Edit "
-                    "Distance). A lower score means fewer/cheaper changes were "
-                    "needed to accommodate the generated future scenarios."
-                ),
-            )
-
-            with st.expander("ℹ️ How to read this"):
-                st.markdown(
-                    "- **Weight** (1-5): the LLM's estimate of how important or "
-                    "likely this future scenario is.\n"
-                    "- **Magnitude** (small / medium / large): the LLM's own "
-                    "estimate of how big a change the scenario would require — "
-                    "shown so you can sanity-check that bigger scenarios really "
-                    "do produce bigger distances.\n"
-                    "- **GED**: the real graph edit distance (via networkx) "
-                    "between the original component diagram and the one edited "
-                    "for this scenario — the minimum number of node/edge "
-                    "insertions, deletions, or substitutions needed.\n"
-                    "- **Weighted GED**: Weight × GED. These sum to the "
-                    "Modifiability Score above.\n"
-                    "- **Exact**: whether the GED computation finished within "
-                    "its time budget. A scenario showing GED = “—” either failed "
-                    "(its LLM call errored, or it produced an unparseable "
-                    "diagram) or timed out — either way it's excluded from the "
-                    "Modifiability Score, not counted as zero or as a large "
-                    "distance."
-                )
-
-            chart = _scenario_chart(report["scenarios"])
-            if chart is not None:
-                st.altair_chart(chart, use_container_width=True)
-                st.caption("Bars are colored by magnitude — darker means a bigger expected change.")
-
-            with st.expander("📋 Scenario table", expanded=chart is None):
-                st.dataframe(_scenario_table_rows(report["scenarios"]), use_container_width=True)
-
-            if report.get("by_magnitude"):
-                st.markdown("#### Total Weighted GED by Magnitude")
-                st.caption(
-                    "Sanity check: larger-magnitude scenarios should generally "
-                    "sum to a bigger total than smaller ones."
-                )
-                st.bar_chart(report["by_magnitude"])
-
-            visualizable = _visualizable_scenarios(report["scenarios"])
-            original_puml_path = Path("run") / project_name / ORIGINAL_DIAGRAM_RELATIVE_PATH
-            if visualizable and original_puml_path.exists():
-                st.markdown("#### 🔍 Visualize an Edit Distance Example")
-                st.caption(
-                    "See what actually changed for one scenario — the original "
-                    "diagram side by side with the minimally-edited one. Sorted "
-                    "by biggest change first."
-                )
-                options = {
-                    f"{(s.get('description') or '')[:70]} (GED={s['ged']})": s
-                    for s in visualizable
-                }
-                choice = st.selectbox(
-                    "Choose a scenario to visualize",
-                    list(options.keys()),
-                    key="modifiability_visualize_select",
-                )
-                selected = options[choice]
-                modified_puml_path = Path(selected["artifacts_dir"]) / "component_diagram.puml"
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown("**Original**")
-                    st.image(
-                        plantuml_image_url(original_puml_path.read_text(encoding="utf-8")),
-                        use_container_width=True,
-                    )
-                with col2:
-                    st.markdown(f"**Modified** (GED = {selected['ged']})")
-                    if modified_puml_path.exists():
-                        st.image(
-                            plantuml_image_url(modified_puml_path.read_text(encoding="utf-8")),
-                            use_container_width=True,
-                        )
-                    else:
-                        st.warning("Modified diagram artifact not found on disk.")
