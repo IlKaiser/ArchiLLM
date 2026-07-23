@@ -235,6 +235,68 @@ def test_run_regenerates_scenarios_when_requested(tmp_path, monkeypatch):
     assert second_report["scenarios"][0]["description"] == "Regenerated scenario"
 
 
+def test_build_updated_spec_appends_new_story_with_next_number():
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n1. As a user, I want to place orders.\n2. As a user, I want to cancel orders."
+    )
+
+    updated = modifiability._build_updated_spec(
+        original, "As a user, I want to receive SMS notifications, so that I stay informed."
+    )
+
+    assert original in updated
+    assert updated.endswith(
+        "3. As a user, I want to receive SMS notifications, so that I stay informed.\n"
+    )
+
+
+def test_build_updated_spec_starts_at_one_when_no_numbered_stories():
+    updated = modifiability._build_updated_spec(
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n# USER STORIES:\n", "A brand new story."
+    )
+    assert updated.endswith("1. A brand new story.\n")
+
+
+def test_run_writes_updated_spec_per_scenario(tmp_path, monkeypatch):
+    """Each scenario's full updated spec (original user stories + the new
+    one) must be saved to disk alongside the modified architecture/diagram,
+    so the exact input that drove that variation is inspectable.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {
+            "description": "As a user, I want to receive SMS notifications, so that I stay informed.",
+            "weight": 3, "magnitude": "small",
+        },
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    spec_path = tmp_path / "run" / "demo" / "modifiability" / "scenario_01" / "input.txt"
+    assert spec_path.exists()
+    content = spec_path.read_text(encoding="utf-8")
+    # The fixture's original story ("1. As a user, I want to place orders.")
+    # must still be present, plus the new one appended as "2.".
+    assert "1. As a user, I want to place orders." in content
+    assert content.endswith(
+        "2. As a user, I want to receive SMS notifications, so that I stay informed.\n"
+    )
+
+
 def test_run_writes_intermediate_artifacts_per_scenario(tmp_path, monkeypatch):
     """Each scenario's modified architecture.json and rendered
     component_diagram.puml must be saved to disk, not just held in memory
