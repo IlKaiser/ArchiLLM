@@ -16,6 +16,7 @@ from Evaluation.modifiability import run as run_modifiability
 from src.plantuml_render import plantuml_image_url
 
 REPORT_RELATIVE_PATH = "modifiability/report.json"
+SCENARIOS_RELATIVE_PATH = "modifiability/scenarios.json"
 ORIGINAL_DIAGRAM_RELATIVE_PATH = "component_diagram.puml"
 
 # Magnitude is ordinal (small < medium < large), not an arbitrary category, so
@@ -30,6 +31,14 @@ def _load_existing_report(project_name: str, run_dir: str = "run") -> dict | Non
     if not report_path.exists():
         return None
     return json.loads(report_path.read_text(encoding="utf-8"))
+
+
+def _scenarios_cached(project_name: str, run_dir: str = "run") -> bool:
+    """Whether this project already has a saved scenarios.json — used only
+    to pick an accurate spinner label (generating vs. loading) before a run,
+    not to control run_modifiability's own caching behavior.
+    """
+    return (Path(run_dir) / project_name / SCENARIOS_RELATIVE_PATH).exists()
 
 
 def _scenario_table_rows(scenarios: list[dict]) -> list[dict]:
@@ -246,16 +255,26 @@ def render(project_name: str) -> None:
         if existing and not regenerate:
             st.info("Already showing the existing analysis above. Check 'Regenerate Analysis' to force a fresh run.")
         else:
-            progress_bar = st.progress(0.0, text="Generating future scenarios…")
+            # Scenario generation is a single LLM call with no sub-steps to
+            # report incrementally, so it gets an animated spinner (genuine
+            # motion for an indeterminate wait) rather than sitting on a
+            # progress bar frozen at 0% — the bar only becomes meaningful
+            # once per-scenario scoring starts and on_progress fires.
+            will_generate_fresh = regenerate_scenarios or not _scenarios_cached(project_name)
+            spinner_label = (
+                "Generating new scenarios…" if will_generate_fresh else "Loading saved scenarios…"
+            )
+            progress_bar = st.progress(0.0, text=spinner_label)
 
             def _on_progress(completed: int, total: int, result: dict) -> None:
                 label = (result.get("description") or "")[:60]
                 progress_bar.progress(completed / total, text=f"Scored {completed}/{total}: {label}")
 
             try:
-                report = run_modifiability(
-                    project_name, on_progress=_on_progress, regenerate_scenarios=regenerate_scenarios
-                )
+                with st.spinner(spinner_label):
+                    report = run_modifiability(
+                        project_name, on_progress=_on_progress, regenerate_scenarios=regenerate_scenarios
+                    )
                 progress_bar.progress(1.0, text="Done.")
                 st.success(
                     f"Analyzed {report['n_scenarios']} scenario(s) in "
