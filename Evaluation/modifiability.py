@@ -7,7 +7,9 @@ a weighted Modifiability Score (lower is better).
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
+from typing import Callable
 
 from Evaluation.modifiability_graph import build_graph, compute_ged
 from Evaluation.modifiability_scenarios import (
@@ -36,14 +38,40 @@ def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict]:
     return architecture, parsed_original
 
 
-def _score_one_scenario(scenario: dict, architecture: dict, g_original, timeout: float) -> dict:
+def _score_one_scenario(
+    scenario: dict,
+    architecture: dict,
+    g_original,
+    timeout: float,
+    scenario_dir: Path | None = None,
+    cost_tracker: list[float] | None = None,
+) -> dict:
     """Run the edit -> render -> parse -> GED steps for one scenario. Never
     raises — records an "error" key in the returned dict on any failure
     instead, so one bad scenario doesn't abort the whole batch.
+
+    scenario_dir: if given, the intermediate modified architecture.json and
+        rendered component_diagram.puml are written there as soon as each is
+        produced — so a partial artifact (e.g. the edit succeeded but the
+        render failed) is still saved for inspection, not just the final
+        aggregated report.
+    cost_tracker: if given, forwarded to each LLM call so their USD costs
+        accumulate into it (see Evaluation.modifiability_scenarios._complete).
     """
     try:
-        modified_arch = modify_architecture(architecture, scenario["description"])
-        rendered = render_scenario_diagram(modified_arch)
+        modified_arch = modify_architecture(
+            architecture, scenario["description"], cost_tracker=cost_tracker
+        )
+        if scenario_dir is not None:
+            scenario_dir.mkdir(parents=True, exist_ok=True)
+            (scenario_dir / "architecture.json").write_text(
+                json.dumps(modified_arch, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+
+        rendered = render_scenario_diagram(modified_arch, cost_tracker=cost_tracker)
+        if scenario_dir is not None:
+            (scenario_dir / "component_diagram.puml").write_text(rendered, encoding="utf-8")
+
         parsed_modified = UMLParser().parse(rendered)
         g_modified = build_graph(parsed_modified)
 
@@ -69,16 +97,39 @@ def run(
     timeout: float = 10.0,
     run_dir: str = "run",
     dataset_dir: str = "dataset/student_projects",
+    on_progress: Callable[[int, int, dict], None] | None = None,
 ) -> dict:
+    """
+    on_progress: optional callback invoked as on_progress(completed, total,
+        result) immediately after each scenario is scored, so a caller (e.g.
+        a Streamlit UI) can report incremental progress instead of waiting
+        silently for the whole batch.
+    """
+    start_time = time.time()
+    cost_tracker: list[float] = []
+
     architecture, parsed_original = _load_original(run_dir, project_name)
     g_original = build_graph(parsed_original)
 
     input_path = Path(dataset_dir) / project_name / "input.txt"
     input_text = input_path.read_text(encoding="utf-8")
 
-    scenarios = generate_scenarios(input_text, n=n_scenarios)
+    scenarios = generate_scenarios(input_text, n=n_scenarios, cost_tracker=cost_tracker)
 
-    scored = [_score_one_scenario(s, architecture, g_original, timeout) for s in scenarios]
+    report_dir = Path(run_dir) / project_name / "modifiability"
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    total = len(scenarios)
+    scored = []
+    for i, s in enumerate(scenarios, start=1):
+        scenario_dir = report_dir / f"scenario_{i:02d}"
+        result = _score_one_scenario(
+            s, architecture, g_original, timeout, scenario_dir=scenario_dir, cost_tracker=cost_tracker
+        )
+        result["artifacts_dir"] = str(scenario_dir)
+        scored.append(result)
+        if on_progress is not None:
+            on_progress(i, total, result)
 
     modifiability_score = sum(
         s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None
@@ -96,12 +147,18 @@ def run(
         "scenarios": scored,
         "modifiability_score": round(modifiability_score, 2),
         "by_magnitude": {k: round(v, 2) for k, v in by_magnitude.items()},
+        "original_node_count": g_original.number_of_nodes(),
+        "original_edge_count": g_original.number_of_edges(),
+        "execution_time_seconds": round(time.time() - start_time, 2),
+        "total_cost_usd": round(sum(cost_tracker), 4),
     }
 
-    report_dir = Path(run_dir) / project_name / "modifiability"
-    report_dir.mkdir(parents=True, exist_ok=True)
     (report_dir / "report.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print(
+        f"[modifiability] {project_name}: Time: {report['execution_time_seconds']:.2f}s "
+        f"| Cost: ${report['total_cost_usd']:.4f}"
     )
 
     return report

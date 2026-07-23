@@ -65,3 +65,40 @@ def test_render_scenario_diagram_returns_plain_puml_text(monkeypatch):
     result = ms.render_scenario_diagram({"microservices": []}, model="test/model", api_key="test-key")
 
     assert result == "@startuml\n[order_service]\n@enduml"
+
+
+def test_complete_appends_cost_to_tracker_when_given(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    monkeypatch.setattr(ms.litellm, "completion", MagicMock(return_value=fake_response))
+    monkeypatch.setattr(ms.litellm, "completion_cost", MagicMock(return_value=0.0042))
+
+    cost_tracker: list[float] = []
+    ms._complete("a prompt", model="test/model", api_key="test-key", cost_tracker=cost_tracker)
+
+    assert cost_tracker == [0.0042]
+
+
+def test_complete_swallows_cost_calculation_failure(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    monkeypatch.setattr(ms.litellm, "completion", MagicMock(return_value=fake_response))
+    monkeypatch.setattr(ms.litellm, "completion_cost", MagicMock(side_effect=Exception("unknown model")))
+
+    cost_tracker: list[float] = []
+    result = ms._complete("a prompt", model="test/model", api_key="test-key", cost_tracker=cost_tracker)
+
+    assert result == "some text"
+    assert cost_tracker == []
+
+
+def test_generate_scenarios_forwards_cost_tracker(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = '```json\n[{"description": "X", "weight": 1, "magnitude": "small"}]\n```'
+    monkeypatch.setattr(ms.litellm, "completion", MagicMock(return_value=fake_response))
+    monkeypatch.setattr(ms.litellm, "completion_cost", MagicMock(return_value=0.001))
+
+    cost_tracker: list[float] = []
+    ms.generate_scenarios("input", n=1, cost_tracker=cost_tracker)
+
+    assert cost_tracker == [0.001]

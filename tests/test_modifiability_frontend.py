@@ -70,6 +70,22 @@ def test_scenario_chart_builds_altair_chart_with_magnitude_color_encoding():
     assert color_spec["scale"]["scheme"] == "blues"
 
 
+def test_visualizable_scenarios_excludes_non_exact_and_sorts_by_weighted_ged_desc():
+    scenarios = [
+        {"description": "Small change", "weight": 2, "ged": 1.0, "exact": True,
+         "weighted_ged": 2.0, "artifacts_dir": "/tmp/scenario_01"},
+        {"description": "Failed", "weight": 3, "ged": None, "exact": False,
+         "weighted_ged": None, "artifacts_dir": "/tmp/scenario_02"},
+        {"description": "Big change", "weight": 5, "ged": 4.0, "exact": True,
+         "weighted_ged": 20.0, "artifacts_dir": "/tmp/scenario_03"},
+        {"description": "No artifacts dir", "weight": 1, "ged": 1.0, "exact": True, "weighted_ged": 1.0},
+    ]
+
+    result = modifiability_frontend._visualizable_scenarios(scenarios)
+
+    assert [s["description"] for s in result] == ["Big change", "Small change"]
+
+
 def test_load_existing_report_reads_json(tmp_path):
     report_dir = tmp_path / "demo" / "modifiability"
     report_dir.mkdir(parents=True)
