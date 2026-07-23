@@ -83,6 +83,127 @@ def test_run_scores_scenarios_and_writes_report(tmp_path, monkeypatch):
     assert json.loads(report_path.read_text(encoding="utf-8")) == report
 
 
+def test_load_or_generate_scenarios_generates_and_saves_when_no_cache(tmp_path, monkeypatch):
+    fake_scenarios = [{"description": "Add SMS notifications", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+
+    report_dir = tmp_path / "modifiability"
+    report_dir.mkdir()
+
+    scenarios = modifiability._load_or_generate_scenarios(
+        report_dir, "some input text", n_scenarios=1, regenerate_scenarios=False,
+    )
+
+    assert scenarios == fake_scenarios
+    scenarios_path = report_dir / "scenarios.json"
+    assert scenarios_path.exists()
+    assert json.loads(scenarios_path.read_text(encoding="utf-8")) == fake_scenarios
+
+
+def test_load_or_generate_scenarios_reuses_saved_scenarios(tmp_path, monkeypatch):
+    report_dir = tmp_path / "modifiability"
+    report_dir.mkdir()
+    original_scenarios = [{"description": "Original scenario", "weight": 2, "magnitude": "medium"}]
+    (report_dir / "scenarios.json").write_text(json.dumps(original_scenarios), encoding="utf-8")
+
+    # If this were called, it would return a DIFFERENT scenario set — proving
+    # that reuse (not regeneration) is what actually happened.
+    def should_not_be_called(input_text, n, **kwargs):
+        raise AssertionError("generate_scenarios must not be called when a cache exists")
+
+    monkeypatch.setattr(modifiability, "generate_scenarios", should_not_be_called)
+
+    scenarios = modifiability._load_or_generate_scenarios(
+        report_dir, "some input text", n_scenarios=1, regenerate_scenarios=False,
+    )
+
+    assert scenarios == original_scenarios
+
+
+def test_load_or_generate_scenarios_regenerates_when_requested(tmp_path, monkeypatch):
+    report_dir = tmp_path / "modifiability"
+    report_dir.mkdir()
+    original_scenarios = [{"description": "Original scenario", "weight": 2, "magnitude": "medium"}]
+    (report_dir / "scenarios.json").write_text(json.dumps(original_scenarios), encoding="utf-8")
+
+    new_scenarios = [{"description": "New scenario", "weight": 4, "magnitude": "large"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: new_scenarios)
+
+    scenarios = modifiability._load_or_generate_scenarios(
+        report_dir, "some input text", n_scenarios=1, regenerate_scenarios=True,
+    )
+
+    assert scenarios == new_scenarios
+    assert json.loads((report_dir / "scenarios.json").read_text(encoding="utf-8")) == new_scenarios
+
+
+def test_run_reuses_saved_scenarios_across_separate_calls(tmp_path, monkeypatch):
+    """Once run() has generated scenarios for a project, a second call must
+    score the SAME scenarios by default (not roll a new random set), so
+    results stay comparable across re-scoring runs.
+    """
+    _write_project(tmp_path)
+
+    first_scenarios = [{"description": "First-run scenario", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: first_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    first_report = modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+    assert first_report["scenarios"][0]["description"] == "First-run scenario"
+
+    # A second call, even with a generate_scenarios mock that would return
+    # something completely different, must reuse the saved scenario set.
+    def should_not_be_called(input_text, n, **kwargs):
+        raise AssertionError("generate_scenarios must not be called on a re-run with saved scenarios")
+
+    monkeypatch.setattr(modifiability, "generate_scenarios", should_not_be_called)
+
+    second_report = modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+    assert second_report["scenarios"][0]["description"] == "First-run scenario"
+
+
+def test_run_regenerates_scenarios_when_requested(tmp_path, monkeypatch):
+    _write_project(tmp_path)
+
+    first_scenarios = [{"description": "First-run scenario", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: first_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    second_scenarios = [{"description": "Regenerated scenario", "weight": 4, "magnitude": "large"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: second_scenarios)
+
+    second_report = modifiability.run(
+        "demo", n_scenarios=1, regenerate_scenarios=True,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+    assert second_report["scenarios"][0]["description"] == "Regenerated scenario"
+
+
 def test_run_writes_intermediate_artifacts_per_scenario(tmp_path, monkeypatch):
     """Each scenario's modified architecture.json and rendered
     component_diagram.puml must be saved to disk, not just held in memory

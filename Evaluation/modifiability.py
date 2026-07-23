@@ -38,6 +38,29 @@ def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict]:
     return architecture, parsed_original
 
 
+def _load_or_generate_scenarios(
+    report_dir: Path,
+    input_text: str,
+    n_scenarios: int,
+    regenerate_scenarios: bool,
+    cost_tracker: list[float] | None = None,
+) -> list[dict]:
+    """Once a project's scenarios are generated, they're saved to
+    scenarios.json and kept fixed across future runs — re-scoring (e.g.
+    after tweaking timeout, or after the architecture changed) compares
+    against the SAME scenarios by default, so results stay comparable run to
+    run. Pass regenerate_scenarios=True to explicitly roll a fresh set.
+    """
+    scenarios_path = report_dir / "scenarios.json"
+    if scenarios_path.exists() and not regenerate_scenarios:
+        print(f"[modifiability] reusing saved scenarios from {scenarios_path}")
+        return json.loads(scenarios_path.read_text(encoding="utf-8"))
+
+    scenarios = generate_scenarios(input_text, n=n_scenarios, cost_tracker=cost_tracker)
+    scenarios_path.write_text(json.dumps(scenarios, indent=2, ensure_ascii=False), encoding="utf-8")
+    return scenarios
+
+
 def _score_one_scenario(
     scenario: dict,
     architecture: dict,
@@ -98,12 +121,17 @@ def run(
     run_dir: str = "run",
     dataset_dir: str = "dataset/student_projects",
     on_progress: Callable[[int, int, dict], None] | None = None,
+    regenerate_scenarios: bool = False,
 ) -> dict:
     """
     on_progress: optional callback invoked as on_progress(completed, total,
         result) immediately after each scenario is scored, so a caller (e.g.
         a Streamlit UI) can report incremental progress instead of waiting
         silently for the whole batch.
+    regenerate_scenarios: once scenarios are generated for a project, they're
+        saved to {run_dir}/{project_name}/modifiability/scenarios.json and
+        reused on every subsequent call by default (kept fixed so results are
+        comparable across re-scoring runs). Set True to roll a fresh set.
     """
     start_time = time.time()
     cost_tracker: list[float] = []
@@ -114,10 +142,12 @@ def run(
     input_path = Path(dataset_dir) / project_name / "input.txt"
     input_text = input_path.read_text(encoding="utf-8")
 
-    scenarios = generate_scenarios(input_text, n=n_scenarios, cost_tracker=cost_tracker)
-
     report_dir = Path(run_dir) / project_name / "modifiability"
     report_dir.mkdir(parents=True, exist_ok=True)
+
+    scenarios = _load_or_generate_scenarios(
+        report_dir, input_text, n_scenarios, regenerate_scenarios, cost_tracker=cost_tracker
+    )
 
     total = len(scenarios)
     scored = []
@@ -143,7 +173,7 @@ def run(
 
     report = {
         "project": project_name,
-        "n_scenarios": n_scenarios,
+        "n_scenarios": total,
         "scenarios": scored,
         "modifiability_score": round(modifiability_score, 2),
         "by_magnitude": {k: round(v, 2) for k, v in by_magnitude.items()},
@@ -171,7 +201,14 @@ if __name__ == "__main__":
     parser.add_argument("--project", required=True)
     parser.add_argument("--n-scenarios", type=int, default=5)
     parser.add_argument("--timeout", type=float, default=10.0)
+    parser.add_argument(
+        "--regenerate-scenarios", action="store_true",
+        help="Roll a fresh scenario set instead of reusing any saved scenarios.json",
+    )
     args = parser.parse_args()
 
-    result = run(args.project, n_scenarios=args.n_scenarios, timeout=args.timeout)
+    result = run(
+        args.project, n_scenarios=args.n_scenarios, timeout=args.timeout,
+        regenerate_scenarios=args.regenerate_scenarios,
+    )
     print(f"Modifiability Score for {args.project}: {result['modifiability_score']}")

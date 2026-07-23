@@ -119,6 +119,18 @@ def render(project_name: str) -> None:
         return
 
     regenerate = st.checkbox("🔄 Regenerate Analysis", value=False, key="chk_modifiability_regenerate")
+    regenerate_scenarios = False
+    if regenerate:
+        regenerate_scenarios = st.checkbox(
+            "🎲 Also generate new scenarios (instead of reusing the saved ones)",
+            value=False,
+            key="chk_modifiability_regenerate_scenarios",
+            help=(
+                "Once scenarios are generated for a project, they're saved and "
+                "reused by default so re-scoring stays comparable across runs. "
+                "Check this to roll a brand-new set instead."
+            ),
+        )
 
     if st.button("🔀 Run Modifiability Analysis", key="btn_run_modifiability"):
         existing = _load_existing_report(project_name)
@@ -134,7 +146,9 @@ def render(project_name: str) -> None:
                 progress_bar.progress(completed / total, text=f"Scored {completed}/{total}: {label}")
 
             try:
-                report = run_modifiability(project_name, on_progress=_on_progress)
+                report = run_modifiability(
+                    project_name, on_progress=_on_progress, regenerate_scenarios=regenerate_scenarios
+                )
                 progress_bar.progress(1.0, text="Done.")
                 st.success(
                     f"Analyzed {report['n_scenarios']} scenario(s) in "
