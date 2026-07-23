@@ -297,6 +297,121 @@ def test_run_writes_updated_spec_per_scenario(tmp_path, monkeypatch):
     )
 
 
+def test_compute_spec_delta_shows_only_the_added_line():
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n1. As a user, I want to place orders.\n"
+    )
+    updated = modifiability._build_updated_spec(
+        original, "As a user, I want to receive SMS notifications, so that I stay informed."
+    )
+
+    delta = modifiability._compute_spec_delta(original, updated)
+
+    assert "+2. As a user, I want to receive SMS notifications, so that I stay informed." in delta
+    # The unchanged original line must not show up as a removal.
+    assert "-1. As a user, I want to place orders." not in delta
+
+
+def test_compute_spec_delta_empty_when_texts_are_identical():
+    text = "# SYSTEM DESCRIPTION:\nAn order system.\n"
+    assert modifiability._compute_spec_delta(text, text) == ""
+
+
+def test_compute_spec_delta_ignores_missing_trailing_newline_on_original():
+    """A source input.txt with no trailing newline (common) must not make
+    the last unchanged line show up as both removed and re-added just
+    because _build_updated_spec appends a newline before the new story.
+    """
+    original = (
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
+        "# USER STORIES:\n1. As a user, I want to place orders."  # no trailing \n
+    )
+    updated = modifiability._build_updated_spec(original, "A brand new story.")
+
+    delta = modifiability._compute_spec_delta(original, updated)
+
+    assert "-1. As a user, I want to place orders." not in delta
+    assert "+2. A brand new story." in delta
+
+
+def test_run_writes_spec_delta_per_scenario(tmp_path, monkeypatch):
+    """Each scenario's textual delta (vs. the original spec) must be saved
+    to disk as its own artifact, not just be derivable by manually diffing
+    input.txt files.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {
+            "description": "As a user, I want to receive SMS notifications, so that I stay informed.",
+            "weight": 3, "magnitude": "small",
+        },
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    delta_path = tmp_path / "run" / "demo" / "modifiability" / "scenario_01" / "spec_delta.txt"
+    assert delta_path.exists()
+    content = delta_path.read_text(encoding="utf-8")
+    assert "+2. As a user, I want to receive SMS notifications, so that I stay informed." in content
+
+
+def test_backfill_spec_deltas_writes_missing_deltas_for_existing_scenarios(tmp_path):
+    """Scenario directories generated before spec_delta.txt existed (they
+    only have input.txt) must get a delta computed and written on demand,
+    without needing to re-run the whole (LLM-driven) analysis.
+    """
+    _write_project(tmp_path)
+
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    scenario_dir = modifiability_dir / "scenario_01"
+    scenario_dir.mkdir(parents=True)
+    (scenario_dir / "input.txt").write_text(
+        "# SYSTEM DESCRIPTION:\nAn order system.\n\n# USER STORIES:\n"
+        "1. As a user, I want to place orders.\n"
+        "2. As a user, I want to receive SMS notifications, so that I stay informed.\n",
+        encoding="utf-8",
+    )
+    # A scenario directory with no input.txt at all (e.g. it failed before
+    # any artifact was written) must be silently skipped, not raise.
+    (modifiability_dir / "scenario_02").mkdir(parents=True)
+
+    written = modifiability.backfill_spec_deltas(
+        "demo", run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    assert written == 1
+    delta_path = scenario_dir / "spec_delta.txt"
+    assert delta_path.exists()
+    assert "+2. As a user, I want to receive SMS notifications, so that I stay informed." in (
+        delta_path.read_text(encoding="utf-8")
+    )
+    assert not (modifiability_dir / "scenario_02" / "spec_delta.txt").exists()
+
+
+def test_backfill_spec_deltas_returns_zero_when_no_scenarios_exist(tmp_path):
+    _write_project(tmp_path)
+    (tmp_path / "run" / "demo" / "modifiability").mkdir(parents=True)
+
+    written = modifiability.backfill_spec_deltas(
+        "demo", run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+    assert written == 0
+
+
 def test_run_writes_intermediate_artifacts_per_scenario(tmp_path, monkeypatch):
     """Each scenario's modified architecture.json and rendered
     component_diagram.puml must be saved to disk, not just held in memory
