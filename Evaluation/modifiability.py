@@ -9,7 +9,9 @@ from __future__ import annotations
 import difflib
 import json
 import re
+import shutil
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
@@ -44,11 +46,22 @@ def _load_original(run_dir: str, project_name: str) -> tuple[dict, dict, str]:
     return architecture, parsed_original, original_puml_text
 
 
+def _archive_if_exists(src: Path, archive_dir: Path | None) -> None:
+    """Move src (a file or directory) into archive_dir if both exist/are
+    given — a no-op if src doesn't exist yet or no archive_dir was passed.
+    """
+    if archive_dir is None or not src.exists():
+        return
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(src), str(archive_dir / src.name))
+
+
 def _load_or_generate_scenarios(
     report_dir: Path,
     input_text: str,
     n_scenarios: int,
     regenerate_scenarios: bool,
+    archive_dir: Path | None = None,
     cost_tracker: list[float] | None = None,
 ) -> list[dict]:
     """Once a project's scenarios are generated, they're saved to
@@ -56,11 +69,19 @@ def _load_or_generate_scenarios(
     after tweaking timeout, or after the architecture changed) compares
     against the SAME scenarios by default, so results stay comparable run to
     run. Pass regenerate_scenarios=True to explicitly roll a fresh set.
+
+    archive_dir: if given and scenarios.json already exists AND is about to
+        be regenerated (regenerate_scenarios=True), the old scenarios.json
+        is moved there first instead of being silently overwritten. Reused
+        (not regenerated) scenarios are never archived — nothing is
+        changing for them.
     """
     scenarios_path = report_dir / "scenarios.json"
     if scenarios_path.exists() and not regenerate_scenarios:
         print(f"[modifiability] reusing saved scenarios from {scenarios_path}")
         return json.loads(scenarios_path.read_text(encoding="utf-8"))
+
+    _archive_if_exists(scenarios_path, archive_dir)
 
     scenarios = generate_scenarios(input_text, n=n_scenarios, cost_tracker=cost_tracker)
     scenarios_path.write_text(json.dumps(scenarios, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -263,6 +284,12 @@ def run(
         saved to {run_dir}/{project_name}/modifiability/scenarios.json and
         reused on every subsequent call by default (kept fixed so results are
         comparable across re-scoring runs). Set True to roll a fresh set.
+
+    Nothing from a previous run is silently overwritten: any existing
+    report.json, scenario_*/ directory, and (only when regenerate_scenarios
+    replaces it) scenarios.json are moved into a timestamped
+    modifiability/archive/{timestamp}/ folder before this run writes its
+    own output.
     """
     start_time = time.time()
     cost_tracker: list[float] = []
@@ -276,8 +303,14 @@ def run(
     report_dir = Path(run_dir) / project_name / "modifiability"
     report_dir.mkdir(parents=True, exist_ok=True)
 
+    archive_dir = report_dir / "archive" / datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    _archive_if_exists(report_dir / "report.json", archive_dir)
+    for scenario_dir in sorted(report_dir.glob("scenario_*")):
+        _archive_if_exists(scenario_dir, archive_dir)
+
     scenarios = _load_or_generate_scenarios(
-        report_dir, input_text, n_scenarios, regenerate_scenarios, cost_tracker=cost_tracker
+        report_dir, input_text, n_scenarios, regenerate_scenarios,
+        archive_dir=archive_dir, cost_tracker=cost_tracker,
     )
 
     total = len(scenarios)

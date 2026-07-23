@@ -236,6 +236,114 @@ def test_run_regenerates_scenarios_when_requested(tmp_path, monkeypatch):
     assert second_report["scenarios"][0]["description"] == "Regenerated scenario"
 
 
+def test_archive_if_exists_moves_file_into_archive_dir(tmp_path):
+    src = tmp_path / "report.json"
+    src.write_text("{}", encoding="utf-8")
+    archive_dir = tmp_path / "archive" / "20260101_000000_000000"
+
+    modifiability._archive_if_exists(src, archive_dir)
+
+    assert not src.exists()
+    assert (archive_dir / "report.json").read_text(encoding="utf-8") == "{}"
+
+
+def test_archive_if_exists_noop_when_source_missing(tmp_path):
+    archive_dir = tmp_path / "archive" / "20260101_000000_000000"
+    modifiability._archive_if_exists(tmp_path / "does_not_exist.json", archive_dir)
+    assert not archive_dir.exists()
+
+
+def test_archive_if_exists_noop_when_no_archive_dir_given(tmp_path):
+    src = tmp_path / "report.json"
+    src.write_text("{}", encoding="utf-8")
+    modifiability._archive_if_exists(src, None)
+    assert src.exists()  # left in place, since no archive_dir was given
+
+
+def _run_demo(tmp_path, monkeypatch, description, weight="3", magnitude="small", **run_kwargs):
+    scenarios = [{"description": description, "weight": int(weight), "magnitude": magnitude}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+    return modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+        **run_kwargs,
+    )
+
+
+def test_run_archives_previous_report_and_scenario_dirs_before_overwriting(tmp_path, monkeypatch):
+    _write_project(tmp_path)
+
+    _run_demo(tmp_path, monkeypatch, "First run scenario")
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    first_run_input = (modifiability_dir / "scenario_01" / "input.txt").read_text(encoding="utf-8")
+    assert "First run scenario" in first_run_input
+
+    _run_demo(tmp_path, monkeypatch, "Second run scenario", regenerate_scenarios=True)
+
+    # The live scenario_01/ must now reflect the SECOND run.
+    second_run_input = (modifiability_dir / "scenario_01" / "input.txt").read_text(encoding="utf-8")
+    assert "Second run scenario" in second_run_input
+    assert "First run scenario" not in second_run_input
+
+    # The FIRST run's report + scenario_01 must be preserved somewhere under archive/.
+    archive_root = modifiability_dir / "archive"
+    assert archive_root.exists()
+    timestamped_dirs = list(archive_root.iterdir())
+    assert len(timestamped_dirs) == 1
+    archived_input = (timestamped_dirs[0] / "scenario_01" / "input.txt").read_text(encoding="utf-8")
+    assert "First run scenario" in archived_input
+    assert (timestamped_dirs[0] / "report.json").exists()
+
+
+def test_run_does_not_archive_scenarios_json_when_only_rescoring(tmp_path, monkeypatch):
+    """Reusing the same saved scenarios (not regenerating them) must leave
+    scenarios.json in place, untouched — nothing is changing for it.
+    """
+    _write_project(tmp_path)
+
+    _run_demo(tmp_path, monkeypatch, "A scenario")
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    original_scenarios_json = (modifiability_dir / "scenarios.json").read_text(encoding="utf-8")
+
+    # Second call: regenerate_scenarios defaults to False, so this re-scores
+    # the SAME cached scenario, not a new one — the mock returning a
+    # different description is irrelevant since generate_scenarios won't be
+    # called again.
+    _run_demo(tmp_path, monkeypatch, "Would-be different scenario")
+
+    assert (modifiability_dir / "scenarios.json").read_text(encoding="utf-8") == original_scenarios_json
+    assert not (modifiability_dir / "archive").exists() or not any(
+        (d / "scenarios.json").exists() for d in (modifiability_dir / "archive").iterdir()
+    )
+
+
+def test_run_archives_old_scenarios_json_when_regenerating(tmp_path, monkeypatch):
+    _write_project(tmp_path)
+
+    _run_demo(tmp_path, monkeypatch, "First scenario")
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    first_scenarios_json = (modifiability_dir / "scenarios.json").read_text(encoding="utf-8")
+
+    _run_demo(tmp_path, monkeypatch, "Second scenario", regenerate_scenarios=True)
+
+    new_scenarios_json = (modifiability_dir / "scenarios.json").read_text(encoding="utf-8")
+    assert new_scenarios_json != first_scenarios_json
+    assert "Second scenario" in new_scenarios_json
+
+    archive_root = modifiability_dir / "archive"
+    archived_scenarios = [d / "scenarios.json" for d in archive_root.iterdir() if (d / "scenarios.json").exists()]
+    assert len(archived_scenarios) == 1
+    assert archived_scenarios[0].read_text(encoding="utf-8") == first_scenarios_json
+
+
 def test_build_updated_spec_appends_new_story_with_next_number():
     original = (
         "# SYSTEM DESCRIPTION:\nAn order system.\n\n"
