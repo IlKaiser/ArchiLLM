@@ -47,14 +47,14 @@ def test_run_scores_scenarios_and_writes_report(tmp_path, monkeypatch):
         {"description": "Add SMS notifications", "weight": 3, "magnitude": "small"},
         {"description": "Support multi-region deployment", "weight": 5, "magnitude": "large"},
     ]
-    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
     monkeypatch.setattr(
         modifiability, "modify_architecture",
-        lambda arch, desc: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
     )
     monkeypatch.setattr(
         modifiability, "render_scenario_diagram",
-        lambda arch: "@startuml\n[order_service]\n[new_service]\n@enduml",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
     )
 
     report = modifiability.run(
@@ -73,9 +73,118 @@ def test_run_scores_scenarios_and_writes_report(tmp_path, monkeypatch):
     assert "small" in report["by_magnitude"]
     assert "large" in report["by_magnitude"]
 
+    # The fixture's original diagram ("@startuml\n[order_service]\n@enduml")
+    # has exactly 1 component and 0 dependency edges.
+    assert report["original_node_count"] == 1
+    assert report["original_edge_count"] == 0
+
     report_path = tmp_path / "run" / "demo" / "modifiability" / "report.json"
     assert report_path.exists()
     assert json.loads(report_path.read_text(encoding="utf-8")) == report
+
+
+def test_run_writes_intermediate_artifacts_per_scenario(tmp_path, monkeypatch):
+    """Each scenario's modified architecture.json and rendered
+    component_diagram.puml must be saved to disk, not just held in memory
+    for the final aggregated report.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {"description": "Add SMS notifications", "weight": 3, "magnitude": "small"},
+        {"description": "Support multi-region deployment", "weight": 5, "magnitude": "large"},
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    report = modifiability.run(
+        "demo", n_scenarios=2,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    for i, scenario in enumerate(report["scenarios"], start=1):
+        scenario_dir = modifiability_dir / f"scenario_{i:02d}"
+        assert scenario["artifacts_dir"] == str(scenario_dir)
+
+        arch_path = scenario_dir / "architecture.json"
+        puml_path = scenario_dir / "component_diagram.puml"
+        assert arch_path.exists()
+        assert puml_path.exists()
+        assert json.loads(arch_path.read_text(encoding="utf-8")) == {
+            "microservices": [{"name": "order_service"}, {"name": "new_service"}]
+        }
+        assert puml_path.read_text(encoding="utf-8") == "@startuml\n[order_service]\n[new_service]\n@enduml"
+
+
+def test_run_saves_partial_artifacts_when_render_fails_after_edit_succeeds(tmp_path, monkeypatch):
+    """If modify_architecture succeeds but render_scenario_diagram then
+    fails, the already-produced architecture.json must still be saved for
+    inspection, not discarded just because the scenario ultimately errored.
+    """
+    _write_project(tmp_path)
+
+    fake_scenarios = [{"description": "Will partially fail", "weight": 3, "magnitude": "small"}]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+
+    def failing_render(arch, **kwargs):
+        raise ValueError("render exploded")
+
+    monkeypatch.setattr(modifiability, "render_scenario_diagram", failing_render)
+
+    report = modifiability.run(
+        "demo", n_scenarios=1,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+    )
+
+    scenario = report["scenarios"][0]
+    assert scenario["ged"] is None
+    assert "error" in scenario
+
+    scenario_dir = tmp_path / "run" / "demo" / "modifiability" / "scenario_01"
+    assert (scenario_dir / "architecture.json").exists()
+    assert not (scenario_dir / "component_diagram.puml").exists()
+
+
+def test_run_calls_on_progress_for_each_scenario(tmp_path, monkeypatch):
+    _write_project(tmp_path)
+
+    fake_scenarios = [
+        {"description": "Add SMS notifications", "weight": 3, "magnitude": "small"},
+        {"description": "Support multi-region deployment", "weight": 5, "magnitude": "large"},
+    ]
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
+    monkeypatch.setattr(
+        modifiability, "modify_architecture",
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "new_service"}]},
+    )
+    monkeypatch.setattr(
+        modifiability, "render_scenario_diagram",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[new_service]\n@enduml",
+    )
+
+    calls = []
+    modifiability.run(
+        "demo", n_scenarios=2,
+        run_dir=str(tmp_path / "run"), dataset_dir=str(tmp_path / "dataset"),
+        on_progress=lambda completed, total, result: calls.append((completed, total, result["description"])),
+    )
+
+    assert calls == [
+        (1, 2, "Add SMS notifications"),
+        (2, 2, "Support multi-region deployment"),
+    ]
 
 
 def test_run_continues_after_one_scenario_failure(tmp_path, monkeypatch):
@@ -85,9 +194,9 @@ def test_run_continues_after_one_scenario_failure(tmp_path, monkeypatch):
         {"description": "Will fail", "weight": 2, "magnitude": "small"},
         {"description": "Will succeed", "weight": 4, "magnitude": "medium"},
     ]
-    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
 
-    def flaky_modify(architecture, description):
+    def flaky_modify(architecture, description, **kwargs):
         if description == "Will fail":
             raise ValueError("LLM exploded")
         return {"microservices": [{"name": "order_service"}, {"name": "extra"}]}
@@ -95,7 +204,7 @@ def test_run_continues_after_one_scenario_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(modifiability, "modify_architecture", flaky_modify)
     monkeypatch.setattr(
         modifiability, "render_scenario_diagram",
-        lambda arch: "@startuml\n[order_service]\n[extra]\n@enduml",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[extra]\n@enduml",
     )
 
     report = modifiability.run(
@@ -126,14 +235,14 @@ def test_run_continues_when_scenario_has_malformed_weight(tmp_path, monkeypatch)
         {"description": "Bad weight type", "weight": "not-a-number", "magnitude": "medium"},
         {"description": "Will succeed", "weight": 4, "magnitude": "large"},
     ]
-    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
     monkeypatch.setattr(
         modifiability, "modify_architecture",
-        lambda arch, desc: {"microservices": [{"name": "order_service"}, {"name": "extra"}]},
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}, {"name": "extra"}]},
     )
     monkeypatch.setattr(
         modifiability, "render_scenario_diagram",
-        lambda arch: "@startuml\n[order_service]\n[extra]\n@enduml",
+        lambda arch, **kwargs: "@startuml\n[order_service]\n[extra]\n@enduml",
     )
 
     report = modifiability.run(
@@ -175,10 +284,10 @@ def test_run_treats_unparseable_render_as_inconclusive(tmp_path, monkeypatch):
         {"description": "Renders to garbage", "weight": 3, "magnitude": "large"},
         {"description": "Will succeed", "weight": 2, "magnitude": "small"},
     ]
-    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n: fake_scenarios)
+    monkeypatch.setattr(modifiability, "generate_scenarios", lambda input_text, n, **kwargs: fake_scenarios)
     monkeypatch.setattr(
         modifiability, "modify_architecture",
-        lambda arch, desc: {"microservices": [{"name": "order_service"}]},
+        lambda arch, desc, **kwargs: {"microservices": [{"name": "order_service"}]},
     )
 
     # Distinguish the two scenarios by call order via a stateful closure,
@@ -186,7 +295,7 @@ def test_run_treats_unparseable_render_as_inconclusive(tmp_path, monkeypatch):
     # and scenarios are scored in order.
     calls = {"n": 0}
 
-    def render_by_call_order(arch):
+    def render_by_call_order(arch, **kwargs):
         calls["n"] += 1
         if calls["n"] == 1:
             return "not a plantuml diagram at all"

@@ -13,8 +13,10 @@ import pandas as pd
 import streamlit as st
 
 from Evaluation.modifiability import run as run_modifiability
+from src.plantuml_render import plantuml_image_url
 
 REPORT_RELATIVE_PATH = "modifiability/report.json"
+ORIGINAL_DIAGRAM_RELATIVE_PATH = "component_diagram.puml"
 
 # Magnitude is ordinal (small < medium < large), not an arbitrary category, so
 # it gets a fixed-order sequential color scale (one hue, light -> dark) rather
@@ -43,6 +45,20 @@ def _scenario_table_rows(scenarios: list[dict]) -> list[dict]:
             "Exact": s.get("exact", False),
         })
     return rows
+
+
+def _visualizable_scenarios(scenarios: list[dict]) -> list[dict]:
+    """Scenarios with a real, on-disk rendered diagram to compare against the
+    original — only "exact" (successfully-scored) scenarios qualify, since a
+    failed/inconclusive one may have no diagram or a garbage one. Sorted by
+    weighted_ged descending so the most illustrative example (the biggest
+    change) is offered first.
+    """
+    return sorted(
+        (s for s in scenarios if s.get("exact") and s.get("artifacts_dir")),
+        key=lambda s: s["weighted_ged"],
+        reverse=True,
+    )
 
 
 def _scenario_chart(scenarios: list[dict]) -> alt.Chart | None:
@@ -89,6 +105,14 @@ def _scenario_chart(scenarios: list[dict]) -> alt.Chart | None:
 def render(project_name: str) -> None:
     st.markdown("---")
     st.subheader("🔀 Modifiability Analysis")
+    st.caption(
+        "Measures how much this architecture would need to change to support "
+        "plausible future requirements. An LLM proposes new scenarios from the "
+        "project's user stories, minimally edits the architecture for each one, "
+        "and the real graph edit distance (via networkx) between the original "
+        "and edited component diagrams is computed and weighted by how "
+        "important each scenario is. **Lower total = more flexible.**"
+    )
 
     if not project_name:
         st.info("Select a project above to run modifiability analysis.")
@@ -103,25 +127,120 @@ def render(project_name: str) -> None:
             st.info("Using existing analysis. Check 'Regenerate Analysis' to force a fresh run.")
             report = existing
         else:
+            progress_bar = st.progress(0.0, text="Generating future scenarios…")
+
+            def _on_progress(completed: int, total: int, result: dict) -> None:
+                label = (result.get("description") or "")[:60]
+                progress_bar.progress(completed / total, text=f"Scored {completed}/{total}: {label}")
+
             try:
-                with st.spinner(f"Analyzing modifiability for {project_name}…"):
-                    report = run_modifiability(project_name)
-                st.success(f"Analyzed {report['n_scenarios']} scenario(s).")
+                report = run_modifiability(project_name, on_progress=_on_progress)
+                progress_bar.progress(1.0, text="Done.")
+                st.success(
+                    f"Analyzed {report['n_scenarios']} scenario(s) in "
+                    f"{report.get('execution_time_seconds', 0):.1f}s "
+                    f"(~${report.get('total_cost_usd', 0):.4f})."
+                )
             except FileNotFoundError as e:
                 st.error(str(e))
             except Exception as e:
                 st.error(f"Modifiability analysis failed: {e}")
 
         if report is not None:
-            st.metric("Modifiability Score (lower = more flexible)", report["modifiability_score"])
+            n_nodes = report.get("original_node_count")
+            n_edges = report.get("original_edge_count")
+            if n_nodes is not None:
+                st.caption(
+                    f"📐 Base graph (`{project_name}`'s current diagram): "
+                    f"**{n_nodes}** component(s), **{n_edges}** dependency edge(s)."
+                )
+            exec_time = report.get("execution_time_seconds")
+            total_cost = report.get("total_cost_usd")
+            if exec_time is not None:
+                st.caption(f"⏱️ Took **{exec_time:.1f}s** · 💰 ~**${total_cost:.4f}**")
+
+            st.metric(
+                "Modifiability Score (lower = more flexible)",
+                report["modifiability_score"],
+                help=(
+                    "Sum of each scenario's Weighted GED (Weight × Graph Edit "
+                    "Distance). A lower score means fewer/cheaper changes were "
+                    "needed to accommodate the generated future scenarios."
+                ),
+            )
+
+            with st.expander("ℹ️ How to read this"):
+                st.markdown(
+                    "- **Weight** (1-5): the LLM's estimate of how important or "
+                    "likely this future scenario is.\n"
+                    "- **Magnitude** (small / medium / large): the LLM's own "
+                    "estimate of how big a change the scenario would require — "
+                    "shown so you can sanity-check that bigger scenarios really "
+                    "do produce bigger distances.\n"
+                    "- **GED**: the real graph edit distance (via networkx) "
+                    "between the original component diagram and the one edited "
+                    "for this scenario — the minimum number of node/edge "
+                    "insertions, deletions, or substitutions needed.\n"
+                    "- **Weighted GED**: Weight × GED. These sum to the "
+                    "Modifiability Score above.\n"
+                    "- **Exact**: whether the GED computation finished within "
+                    "its time budget. A scenario showing GED = “—” either failed "
+                    "(its LLM call errored, or it produced an unparseable "
+                    "diagram) or timed out — either way it's excluded from the "
+                    "Modifiability Score, not counted as zero or as a large "
+                    "distance."
+                )
 
             chart = _scenario_chart(report["scenarios"])
             if chart is not None:
                 st.altair_chart(chart, use_container_width=True)
+                st.caption("Bars are colored by magnitude — darker means a bigger expected change.")
 
             with st.expander("📋 Scenario table", expanded=chart is None):
                 st.dataframe(_scenario_table_rows(report["scenarios"]), use_container_width=True)
 
             if report.get("by_magnitude"):
                 st.markdown("#### Total Weighted GED by Magnitude")
+                st.caption(
+                    "Sanity check: larger-magnitude scenarios should generally "
+                    "sum to a bigger total than smaller ones."
+                )
                 st.bar_chart(report["by_magnitude"])
+
+            visualizable = _visualizable_scenarios(report["scenarios"])
+            original_puml_path = Path("run") / project_name / ORIGINAL_DIAGRAM_RELATIVE_PATH
+            if visualizable and original_puml_path.exists():
+                st.markdown("#### 🔍 Visualize an Edit Distance Example")
+                st.caption(
+                    "See what actually changed for one scenario — the original "
+                    "diagram side by side with the minimally-edited one. Sorted "
+                    "by biggest change first."
+                )
+                options = {
+                    f"{(s.get('description') or '')[:70]} (GED={s['ged']})": s
+                    for s in visualizable
+                }
+                choice = st.selectbox(
+                    "Choose a scenario to visualize",
+                    list(options.keys()),
+                    key="modifiability_visualize_select",
+                )
+                selected = options[choice]
+                modified_puml_path = Path(selected["artifacts_dir"]) / "component_diagram.puml"
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown("**Original**")
+                    st.image(
+                        plantuml_image_url(original_puml_path.read_text(encoding="utf-8")),
+                        use_container_width=True,
+                    )
+                with col2:
+                    st.markdown(f"**Modified** (GED = {selected['ged']})")
+                    if modified_puml_path.exists():
+                        st.image(
+                            plantuml_image_url(modified_puml_path.read_text(encoding="utf-8")),
+                            use_container_width=True,
+                        )
+                    else:
+                        st.warning("Modified diagram artifact not found on disk.")

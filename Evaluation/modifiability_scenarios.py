@@ -106,7 +106,17 @@ def _extract_json(raw: str):
     return json.loads(json_str)
 
 
-def _complete(prompt: str, model: str | None = None, api_key: str | None = None) -> str:
+def _complete(
+    prompt: str,
+    model: str | None = None,
+    api_key: str | None = None,
+    cost_tracker: list[float] | None = None,
+) -> str:
+    """cost_tracker: if given, the USD cost of this call (via
+    litellm.completion_cost) is appended to it. Cost calculation can fail for
+    unknown/local models — that's swallowed, not raised, since cost tracking
+    must never break the actual LLM call.
+    """
     model = model or os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929")
     api_key = api_key or os.getenv("LLM_API_KEY")
     response = litellm.completion(
@@ -114,31 +124,47 @@ def _complete(prompt: str, model: str | None = None, api_key: str | None = None)
         api_key=api_key,
         messages=[{"role": "user", "content": prompt}],
     )
+    if cost_tracker is not None:
+        try:
+            cost_tracker.append(litellm.completion_cost(completion_response=response))
+        except Exception:
+            pass
     return response.choices[0].message.content
 
 
 def generate_scenarios(
-    input_text: str, n: int = 5, model: str | None = None, api_key: str | None = None
+    input_text: str,
+    n: int = 5,
+    model: str | None = None,
+    api_key: str | None = None,
+    cost_tracker: list[float] | None = None,
 ) -> list[dict]:
     prompt = SCENARIO_GENERATION_PROMPT.format(input_text=input_text, n=n)
-    raw = _complete(prompt, model=model, api_key=api_key)
+    raw = _complete(prompt, model=model, api_key=api_key, cost_tracker=cost_tracker)
     return _extract_json(raw)
 
 
 def modify_architecture(
-    architecture: dict, scenario_description: str, model: str | None = None, api_key: str | None = None
+    architecture: dict,
+    scenario_description: str,
+    model: str | None = None,
+    api_key: str | None = None,
+    cost_tracker: list[float] | None = None,
 ) -> dict:
     prompt = ARCHITECTURE_EDIT_PROMPT.format(
         architecture_json=json.dumps(architecture, indent=2),
         scenario_description=scenario_description,
         knowledge_base=KNOWLEDGE_BASE,
     )
-    raw = _complete(prompt, model=model, api_key=api_key)
+    raw = _complete(prompt, model=model, api_key=api_key, cost_tracker=cost_tracker)
     return _extract_json(raw)
 
 
 def render_scenario_diagram(
-    architecture: dict, model: str | None = None, api_key: str | None = None
+    architecture: dict,
+    model: str | None = None,
+    api_key: str | None = None,
+    cost_tracker: list[float] | None = None,
 ) -> str:
     prompt = SCENARIO_RENDER_PROMPT.format(architecture_json=json.dumps(architecture, indent=2))
-    return _complete(prompt, model=model, api_key=api_key)
+    return _complete(prompt, model=model, api_key=api_key, cost_tracker=cost_tracker)
