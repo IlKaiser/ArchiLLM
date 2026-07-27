@@ -9,6 +9,9 @@ from src import modifiability_frontend
 
 HARNESS_PATH = str(Path(__file__).parent / "fixtures" / "modifiability_frontend_harness.py")
 HARNESS_EMPTY_PATH = str(Path(__file__).parent / "fixtures" / "modifiability_frontend_harness_empty.py")
+DOUBLE_RENDER_HARNESS_PATH = str(
+    Path(__file__).parent / "fixtures" / "modifiability_double_render_harness.py"
+)
 
 
 def test_render_shows_run_button_when_project_selected():
@@ -17,6 +20,19 @@ def test_render_shows_run_button_when_project_selected():
     assert not at.exception
     button_labels = [b.label for b in at.button]
     assert "🔀 Run Modifiability Analysis" in button_labels
+
+
+def test_render_report_twice_in_one_run_does_not_collide_on_widget_keys():
+    """Regression test: render() calls _render_report once to preload an
+    existing report and again after a fresh run, both in the same Streamlit
+    script pass. Every widget with an explicit key (e.g. the "Visualize an
+    Edit Distance Example" selectbox) must stay unique across that pair of
+    calls, or Streamlit raises a duplicate-key error.
+    """
+    at = AppTest.from_file(DOUBLE_RENDER_HARNESS_PATH)
+    at.run()
+    assert not at.exception
+    assert len(at.selectbox) == 2
 
 
 def test_render_shows_info_when_no_project_selected():
