@@ -111,9 +111,15 @@ def _scenario_chart(scenarios: list[dict]) -> alt.Chart | None:
     )
 
 
-def _render_report(report: dict, project_name: str) -> None:
+def _render_report(report: dict, project_name: str, key_suffix: str) -> None:
     """Render one modifiability report — shared by the preload-on-load path
     and the just-finished-a-run path, so both look identical.
+
+    key_suffix: both call sites can execute in the SAME Streamlit script run
+        (preload shows the existing report, then a button click renders a
+        freshly-computed one further down) — every widget with an explicit
+        key must stay unique across that pair of calls, or Streamlit raises
+        a duplicate-key error.
     """
     n_nodes = report.get("original_node_count")
     n_edges = report.get("original_edge_count")
@@ -193,7 +199,7 @@ def _render_report(report: dict, project_name: str) -> None:
         choice = st.selectbox(
             "Choose a scenario to visualize",
             list(options.keys()),
-            key="modifiability_visualize_select",
+            key=f"modifiability_visualize_select_{key_suffix}",
         )
         selected = options[choice]
         modified_puml_path = Path(selected["artifacts_dir"]) / "component_diagram.puml"
@@ -235,7 +241,7 @@ def render(project_name: str) -> None:
     existing = _load_existing_report(project_name)
     if existing:
         st.caption(f"📁 Showing existing analysis for `{project_name}` from disk.")
-        _render_report(existing, project_name)
+        _render_report(existing, project_name, key_suffix="preload")
 
     regenerate = st.checkbox("🔄 Regenerate Analysis", value=False, key="chk_modifiability_regenerate")
     regenerate_scenarios = False
@@ -281,7 +287,7 @@ def render(project_name: str) -> None:
                     f"{report.get('execution_time_seconds', 0):.1f}s "
                     f"(~${report.get('total_cost_usd', 0):.4f})."
                 )
-                _render_report(report, project_name)
+                _render_report(report, project_name, key_suffix="run")
             except FileNotFoundError as e:
                 st.error(str(e))
             except Exception as e:

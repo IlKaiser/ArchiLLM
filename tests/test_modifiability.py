@@ -768,6 +768,53 @@ def test_modifiability_score_is_zero_when_no_scenario_scores_successfully(tmp_pa
     assert report["modifiability_score"] == 0.0
 
 
+def test_compute_aggregates_matches_run_output():
+    scored = [
+        {"weighted_ged": 12.0, "magnitude": "small"},
+        {"weighted_ged": 40.0, "magnitude": "medium"},
+        {"weighted_ged": None, "magnitude": "large"},  # excluded: inconclusive/failed
+    ]
+    score, by_magnitude = modifiability._compute_aggregates(scored)
+    assert score == 26.0  # mean of [12.0, 40.0], not their sum (52.0)
+    assert by_magnitude == {"small": 12.0, "medium": 40.0}
+    assert "large" not in by_magnitude
+
+
+def test_recompute_aggregates_fixes_a_stale_sum_based_report(tmp_path):
+    """A report.json written by an older version of this module (one that
+    summed weighted_ged instead of averaging it) must be corrected in place
+    without re-running any LLM calls or GED computation.
+    """
+    modifiability_dir = tmp_path / "run" / "demo" / "modifiability"
+    modifiability_dir.mkdir(parents=True)
+    stale_report = {
+        "project": "demo",
+        "n_scenarios": 2,
+        "scenarios": [
+            {"description": "A", "weight": 3, "magnitude": "small", "ged": 4.0, "exact": True, "weighted_ged": 12.0},
+            {"description": "B", "weight": 5, "magnitude": "large", "ged": 8.0, "exact": True, "weighted_ged": 40.0},
+        ],
+        "modifiability_score": 52.0,  # stale: sum, not average
+        "by_magnitude": {"small": 12.0, "large": 40.0},
+    }
+    (modifiability_dir / "report.json").write_text(json.dumps(stale_report), encoding="utf-8")
+
+    result = modifiability.recompute_aggregates("demo", run_dir=str(tmp_path / "run"))
+
+    assert result["modifiability_score"] == 26.0
+    # Untouched fields must survive the recompute.
+    assert result["scenarios"] == stale_report["scenarios"]
+    assert result["project"] == "demo"
+
+    on_disk = json.loads((modifiability_dir / "report.json").read_text(encoding="utf-8"))
+    assert on_disk["modifiability_score"] == 26.0
+
+
+def test_recompute_aggregates_raises_when_no_report_exists(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        modifiability.recompute_aggregates("does-not-exist", run_dir=str(tmp_path / "run"))
+
+
 def test_run_calls_on_progress_for_each_scenario(tmp_path, monkeypatch):
     _write_project(tmp_path)
 

@@ -326,21 +326,14 @@ def run(
         if on_progress is not None:
             on_progress(i, total, result)
 
-    weighted_geds = [s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None]
-    modifiability_score = sum(weighted_geds) / len(weighted_geds) if weighted_geds else 0.0
-    by_magnitude: dict = {}
-    for s in scored:
-        if s.get("weighted_ged") is None:
-            continue
-        magnitude = s.get("magnitude", "unknown")
-        by_magnitude[magnitude] = by_magnitude.get(magnitude, 0.0) + s["weighted_ged"]
+    modifiability_score, by_magnitude = _compute_aggregates(scored)
 
     report = {
         "project": project_name,
         "n_scenarios": total,
         "scenarios": scored,
-        "modifiability_score": round(modifiability_score, 2),
-        "by_magnitude": {k: round(v, 2) for k, v in by_magnitude.items()},
+        "modifiability_score": modifiability_score,
+        "by_magnitude": by_magnitude,
         "original_node_count": g_original.number_of_nodes(),
         "original_edge_count": g_original.number_of_edges(),
         "execution_time_seconds": round(time.time() - start_time, 2),
@@ -355,6 +348,47 @@ def run(
         f"| Cost: ${report['total_cost_usd']:.4f}"
     )
 
+    return report
+
+
+def _compute_aggregates(scored: list[dict]) -> tuple[float, dict]:
+    """Compute (modifiability_score, by_magnitude) from a list of
+    already-scored scenario dicts. Factored out so run() and
+    recompute_aggregates() share exactly one implementation — a report
+    written by an older version of this aggregation logic can be corrected
+    without re-deriving the formula by hand.
+    """
+    weighted_geds = [s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None]
+    modifiability_score = sum(weighted_geds) / len(weighted_geds) if weighted_geds else 0.0
+    by_magnitude: dict = {}
+    for s in scored:
+        if s.get("weighted_ged") is None:
+            continue
+        magnitude = s.get("magnitude", "unknown")
+        by_magnitude[magnitude] = by_magnitude.get(magnitude, 0.0) + s["weighted_ged"]
+    return round(modifiability_score, 2), {k: round(v, 2) for k, v in by_magnitude.items()}
+
+
+def recompute_aggregates(project_name: str, run_dir: str = "run") -> dict:
+    """Recompute modifiability_score and by_magnitude for an existing
+    report.json from its already-scored scenarios, using the CURRENT
+    aggregation logic — no LLM calls, no GED recomputation. Useful when a
+    report.json was written by an older version of this module (e.g. one
+    that summed weighted_ged instead of averaging it). Writes the corrected
+    report.json back in place and returns it.
+    """
+    report_path = Path(run_dir) / project_name / "modifiability" / "report.json"
+    if not report_path.exists():
+        raise FileNotFoundError(
+            f"No report.json found for '{project_name}' at {report_path} — "
+            f"run the modifiability analysis for this project first."
+        )
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    modifiability_score, by_magnitude = _compute_aggregates(report["scenarios"])
+    report["modifiability_score"] = modifiability_score
+    report["by_magnitude"] = by_magnitude
+    report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report
 
 
@@ -404,11 +438,23 @@ if __name__ == "__main__":
             "but no spec_delta.txt yet (from a run before this artifact existed)."
         ),
     )
+    parser.add_argument(
+        "--recompute-aggregates", action="store_true",
+        help=(
+            "Skip the analysis run entirely; instead recompute "
+            "modifiability_score/by_magnitude in the existing report.json "
+            "from its already-scored scenarios, using the current "
+            "aggregation logic (no LLM calls, no GED recomputation)."
+        ),
+    )
     args = parser.parse_args()
 
     if args.backfill_deltas:
         count = backfill_spec_deltas(args.project)
         print(f"Backfilled spec_delta.txt for {count} scenario(s) in {args.project}.")
+    elif args.recompute_aggregates:
+        result = recompute_aggregates(args.project)
+        print(f"Recomputed modifiability_score for {args.project}: {result['modifiability_score']}")
     else:
         result = run(
             args.project, n_scenarios=args.n_scenarios, timeout=args.timeout,
