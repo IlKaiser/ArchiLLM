@@ -1,6 +1,6 @@
 # SYSTEM DESCRIPTION:
 eShopOnContainers is an archived reference implementation of a microservices-based e-commerce platform built using .NET technologies and containerized architecture. The system demonstrates modern software architecture patterns including microservices, containerization with Docker, and cloud-native development practices for building scalable online retail applications. It serves as an educational resource and sample implementation for developers, architects, and teams looking to understand how to design and implement enterprise-grade e-commerce solutions using Microsoft's technology stack. The application has been migrated to a new repository as of November 2023, with this version serving as a read-only archive of the original implementation.
-
+c
 # USER STORIES:
 1. As a customer, I want to browse product catalogs so that I can discover items to purchase.
 2. As a customer, I want to search for specific products so that I can quickly find what I need.

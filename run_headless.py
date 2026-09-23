@@ -49,8 +49,10 @@ import csv
 import json
 import os
 import shutil
+import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -72,6 +74,71 @@ if _EVAL_DIR not in sys.path:
     sys.path.insert(0, _EVAL_DIR)
 
 from src.prompt import DiagramPrompt, KNOWLEDGE_BASE
+
+
+class RunProgress:
+    """Atomically publish batch state for the static live dashboard."""
+
+    def __init__(self, path: str, projects: list[str], args, model: str):
+        self.path = Path(path).resolve()
+        self.repo = Path(__file__).resolve().parent
+        now = datetime.now(timezone.utc).isoformat()
+        self.state = {
+            "schema_version": 1,
+            "run_id": self.path.stem,
+            "phase": "microservice_generation",
+            "status": "running",
+            "pid": os.getpid(),
+            "started_at": now,
+            "updated_at": now,
+            "finished_at": None,
+            "dataset": str(args.dataset),
+            "output": str(args.output),
+            "report": str(args.report),
+            "backend": args.local_backend or "cloud",
+            "model": model,
+            "total": len(projects),
+            "projects": [
+                {"name": name, "status": "pending", "time_seconds": None, "cost": None, "error": None}
+                for name in projects
+            ],
+        }
+        self.dashboard_live = bool(args.dashboard_live)
+        self.write()
+
+    def update_project(self, name: str, status: str, result: dict | None = None) -> None:
+        entry = next(p for p in self.state["projects"] if p["name"] == name)
+        entry["status"] = status
+        if status == "running":
+            entry["started_at"] = datetime.now(timezone.utc).isoformat()
+        if result is not None:
+            entry["time_seconds"] = result.get("time_seconds")
+            entry["cost"] = result.get("cost")
+            entry["error"] = result.get("error")
+            entry["finished_at"] = datetime.now(timezone.utc).isoformat()
+        self.write()
+
+    def finish(self) -> None:
+        self.state["status"] = "failed" if any(
+            p["status"] == "error" for p in self.state["projects"]
+        ) else "complete"
+        self.state["finished_at"] = datetime.now(timezone.utc).isoformat()
+        self.write()
+
+    def write(self) -> None:
+        self.state["updated_at"] = datetime.now(timezone.utc).isoformat()
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = self.path.with_suffix(self.path.suffix + ".tmp")
+        temp_path.write_text(json.dumps(self.state, indent=2), encoding="utf-8")
+        os.replace(temp_path, self.path)
+        if self.dashboard_live:
+            subprocess.run(
+                [sys.executable, str(self.repo / "dashboard" / "generate.py")],
+                cwd=self.repo,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
 
 
 def plantuml_encode(text: str) -> str:
@@ -108,8 +175,21 @@ def render_puml_to_png(puml_path: Path) -> bool:
             png_path.write_bytes(resp.read())
         return True
     except Exception as e:
-        print(f"  ⚠ PNG render failed: {e}")
-        return False
+        # Some PlantUML CDN edges reject long encoded URLs from urllib while
+        # accepting the identical URL through curl. Keep that interoperable
+        # fallback so a valid diagram does not remain stuck with a stale PNG.
+        try:
+            subprocess.run(
+                ["curl", "-fsSL", url, "-o", str(png_path)],
+                check=True,
+                timeout=30,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return True
+        except Exception:
+            print(f"  ⚠ PNG render failed: {e}")
+            return False
 
 
 def setup_arg_parser() -> argparse.ArgumentParser:
@@ -193,6 +273,20 @@ def setup_arg_parser() -> argparse.ArgumentParser:
         help="Maximum total cost budget in USD (default: 50.0)",
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help=(
+            "Number of projects to process concurrently, each in its own OS "
+            "process (not a thread pool — run_pipeline() calls os.chdir() "
+            "internally, which is process-wide, so threads would race on it). "
+            "Default: 1 (sequential, unchanged behavior). Note: the --max-cost "
+            "check only runs between completions, so with N workers spend can "
+            "overshoot the budget by up to N-1 in-flight projects before new "
+            "ones stop being started."
+        ),
+    )
+    parser.add_argument(
         "--metrics",
         type=str,
         default="all",
@@ -227,8 +321,19 @@ def setup_arg_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             "Base URL for the local inference server "
-            "(default: http://localhost:11434 for Ollama, http://localhost:8080 for HF/vLLM)"
+            "(default: http://localhost:11434 for Ollama, http://localhost:8080 for HF, "
+            "http://localhost:8000 for vLLM)"
         ),
+    )
+    parser.add_argument(
+        "--progress-file",
+        default=None,
+        help="Write atomic JSON run progress to this path",
+    )
+    parser.add_argument(
+        "--dashboard-live",
+        action="store_true",
+        help="Regenerate dashboard/index.html whenever run progress changes",
     )
     return parser
 
@@ -845,6 +950,95 @@ def read_csv_report(report_path: str) -> list[dict]:
     return results
 
 
+def process_one_project(
+    project: str,
+    dataset_path: Path,
+    args,
+    llm_judge_key: str,
+    llm_judge_url: str,
+    judge_model: str,
+    local_llm_config: dict | None,
+) -> dict:
+    """Generate (or skip) + evaluate a single project. Pulled out of main()'s
+    loop so both the sequential and --workers > 1 paths call the same code."""
+    skip_existing = args.skip_existing and not args.force and not args.override
+    force = args.force or args.override
+
+    result = run_pipeline(
+        project_name=project,
+        dataset_dir=str(dataset_path),
+        output_dir=args.output,
+        use_multi_agent=args.multi_agent,
+        use_validator=args.validator,
+        skip_existing=skip_existing,
+        force=force,
+        local_llm_config=local_llm_config,
+    )
+
+    if result["status"] in ("success", "skipped"):
+        puml_path = Path(args.output) / project / "component_diagram.puml"
+        png_path = puml_path.with_suffix(".png")
+        if puml_path.exists():
+            needs_render = (
+                not png_path.exists()
+                or puml_path.stat().st_mtime > png_path.stat().st_mtime
+            )
+            if needs_render:
+                if render_puml_to_png(puml_path):
+                    print(f"  ✓ PNG updated → {png_path}")
+
+    if args.eval and result["status"] in ("success", "skipped"):
+        print(f"  → Running evaluation...")
+        eval_data = evaluate_project(
+            project_name=project,
+            dataset_dir=str(dataset_path),
+            output_dir=args.output,
+            llm_judge_key=llm_judge_key,
+            llm_judge_url=llm_judge_url,
+            judge_model=judge_model,
+            metrics=args.metrics,
+            verbose=args.verbose,
+        )
+        result["evaluation"] = eval_data
+        if eval_data.get("eval_cost"):
+            result["eval_cost"] = eval_data["eval_cost"]
+
+    return result
+
+
+def _run_one_project_in_subprocess(
+    i: int,
+    project: str,
+    dataset_path: Path,
+    args,
+    llm_judge_key: str,
+    llm_judge_url: str,
+    judge_model: str,
+    local_llm_config: dict | None,
+) -> tuple[int, str, str, dict]:
+    """--workers > 1 entry point, run by ProcessPoolExecutor. Each project
+    gets its own OS process (own PID, own CWD) rather than a thread, because
+    process_one_project()'s run_pipeline() calls os.chdir() internally —
+    that's process-wide, so threads sharing one process would stomp on each
+    other's working directory mid-run. Separate processes sidestep that
+    entirely. Output is captured to a temp file (redirect_stdout is safe here
+    since each process only has one top-level caller) and read back so the
+    parent can print each project's full log as one uninterrupted block.
+    """
+    import contextlib
+    import os
+    import tempfile
+
+    log_path = Path(tempfile.gettempdir()) / f"arthur_worker_{os.getpid()}_{i}.log"
+    with open(log_path, "w", encoding="utf-8") as f, contextlib.redirect_stdout(f):
+        result = process_one_project(
+            project, dataset_path, args, llm_judge_key, llm_judge_url, judge_model, local_llm_config,
+        )
+    log_text = log_path.read_text(encoding="utf-8", errors="replace")
+    log_path.unlink(missing_ok=True)
+    return i, project, log_text, result
+
+
 def main():
     parser = setup_arg_parser()
     args = parser.parse_args()
@@ -888,8 +1082,8 @@ def main():
         # LLM Judge config for evaluation
         llm_judge_key = os.getenv("LLM_JUDGE_KEY") or os.getenv("LLM_API_KEY")
         llm_judge_url = os.getenv("LLM_JUDGE_URL", "https://api.openai.com/v1")
-        judge_model = os.getenv("JUDGE_MODEL", "gpt-5.5")
-        
+        judge_model = os.getenv("JUDGE_MODEL", "gpt-5.6-luna")
+
         print(f"Dataset: {dataset_path}")
         print(f"Projects: {len(projects)}")
         print(f"Output dir: {args.output}")
@@ -967,7 +1161,7 @@ def main():
         sys.exit(0)
     
     # Validate environment
-    if not os.getenv("LLM_API_KEY"):
+    if not args.local_backend and not os.getenv("LLM_API_KEY"):
         print("Error: LLM_API_KEY environment variable not set", file=sys.stderr)
         sys.exit(1)
     
@@ -999,9 +1193,9 @@ def main():
     # LLM Judge config for evaluation
     llm_judge_key = os.getenv("LLM_JUDGE_KEY") or os.getenv("LLM_API_KEY")
     llm_judge_url = os.getenv("LLM_JUDGE_URL", "https://api.openai.com/v1")
-    judge_model = os.getenv("JUDGE_MODEL", "gpt-5.5")
+    judge_model = os.getenv("JUDGE_MODEL", "gpt-5.6-luna")
 
-    # Local model inference config (ollama / huggingface)
+    # Local model inference config (Ollama / HuggingFace TGI / vLLM)
     local_llm_config = None
     if args.local_backend:
         if not args.local_model:
@@ -1017,8 +1211,14 @@ def main():
         print(f"⚡ LOCAL INFERENCE MODE")
         print(f"  Backend : {args.local_backend}")
         print(f"  {describe_local_config(local_llm_config)}")
-        print(f"  (native tool-calling disabled, temperature=0.7)")
+        print(f"  (native tool-calling enabled, temperature=0.0)")
         print(f"{'═'*60}\n")
+
+    progress = None
+    if args.progress_file or args.dashboard_live:
+        progress_path = args.progress_file or "dashboard/run_progress/current.json"
+        active_model = args.local_model if args.local_backend else os.getenv("LLM_MODEL", "")
+        progress = RunProgress(progress_path, projects, args, active_model)
 
     results = []
     total_cost = 0.0
@@ -1026,74 +1226,86 @@ def main():
     accumulated_time = 0.0
 
     print(f"Budget: ${args.max_cost:.2f} max cost\n")
-    
-    for i, project in enumerate(projects):
-        # Check cost budget before processing
-        if total_cost >= args.max_cost:
-            print(f"\n⚠ Cost budget (${args.max_cost:.2f}) reached. Stopping.")
-            break
-        
-        print(f"\n[{i+1}/{len(projects)}] Processing: {project} (accumulated: ${total_cost:.4f})")
-        
-        # Determine skip behavior (skip_existing unless force is set)
-        skip_existing = args.skip_existing and not args.force and not args.override
-        force = args.force or args.override
-        
-        # Run pipeline
-        result = run_pipeline(
-            project_name=project,
-            dataset_dir=str(dataset_path),
-            output_dir=args.output,
-            use_multi_agent=args.multi_agent,
-            use_validator=args.validator,
-            skip_existing=skip_existing,
-            force=force,
-            local_llm_config=local_llm_config,
-        )
-        
-        # Render/update PNG for successful and skipped projects
-        if result["status"] in ("success", "skipped"):
-            puml_path = Path(args.output) / project / "component_diagram.puml"
-            png_path = puml_path.with_suffix(".png")
-            if puml_path.exists():
-                needs_render = (
-                    not png_path.exists()
-                    or puml_path.stat().st_mtime > png_path.stat().st_mtime
-                )
-                if needs_render:
-                    if render_puml_to_png(puml_path):
-                        print(f"  ✓ PNG updated → {png_path}")
 
-        # Run evaluation if requested and pipeline succeeded
-        if args.eval and result["status"] in ("success", "skipped"):
-            print(f"  → Running evaluation...")
-            eval_data = evaluate_project(
-                project_name=project,
-                dataset_dir=str(dataset_path),
-                output_dir=args.output,
-                llm_judge_key=llm_judge_key,
-                llm_judge_url=llm_judge_url,
-                judge_model=judge_model,
-                metrics=args.metrics,
-                verbose=args.verbose,
-            )
-            result["evaluation"] = eval_data
-            if eval_data.get("eval_cost"):
-                result["eval_cost"] = eval_data["eval_cost"]
-                total_eval_cost += eval_data["eval_cost"]
-        
+    def record(i: int, project: str, result: dict) -> None:
+        nonlocal total_cost, total_eval_cost, accumulated_time
         results.append(result)
         total_cost += result.get("cost", 0)
         accumulated_time += result.get("time_seconds", 0)
-        
-        # Show running totals
+        if result.get("eval_cost"):
+            total_eval_cost += result["eval_cost"]
         eval_cost_str = f" | eval ~${total_eval_cost:.4f}" if total_eval_cost else ""
         print(f"  → Running totals: ${total_cost:.4f} pipeline cost | {accumulated_time:.1f}s time{eval_cost_str}")
-        
-        # Brief pause between projects
-        if i < len(projects) - 1:
-            time.sleep(1)
-    
+        if progress:
+            progress.update_project(project, result.get("status", "error"), result)
+
+    if args.workers <= 1:
+        for i, project in enumerate(projects):
+            if total_cost >= args.max_cost:
+                print(f"\n⚠ Cost budget (${args.max_cost:.2f}) reached. Stopping.")
+                break
+            print(f"\n[{i+1}/{len(projects)}] Processing: {project} (accumulated: ${total_cost:.4f})")
+            if progress:
+                progress.update_project(project, "running")
+            result = process_one_project(
+                project, dataset_path, args, llm_judge_key, llm_judge_url, judge_model, local_llm_config,
+            )
+            record(i, project, result)
+            if i < len(projects) - 1:
+                time.sleep(1)
+    else:
+        # Concurrent path: one OS process per project, not a thread pool.
+        # process_one_project()'s run_pipeline() calls os.chdir() internally,
+        # which is process-wide — concurrent threads sharing one process would
+        # race on that and corrupt each other's relative-path resolution
+        # (confirmed: this broke DataMetrics.json lookups under threading).
+        # Separate processes each get their own CWD, so this is safe.
+        import concurrent.futures
+
+        print(f"⚡ Running with {args.workers} parallel workers (separate processes)\n")
+
+        project_iter = iter(enumerate(projects))
+        budget_hit = False
+        with concurrent.futures.ProcessPoolExecutor(max_workers=args.workers) as pool:
+            in_flight: dict = {}
+
+            def submit_next() -> bool:
+                try:
+                    i, project = next(project_iter)
+                except StopIteration:
+                    return False
+                print(f"\n[{i+1}/{len(projects)}] Submitting: {project} (accumulated: ${total_cost:.4f})")
+                if progress:
+                    progress.update_project(project, "running")
+                fut = pool.submit(
+                    _run_one_project_in_subprocess,
+                    i, project, dataset_path, args, llm_judge_key, llm_judge_url, judge_model, local_llm_config,
+                )
+                in_flight[fut] = project
+                return True
+
+            for _ in range(args.workers):
+                if not submit_next():
+                    break
+
+            while in_flight:
+                done, _ = concurrent.futures.wait(in_flight.keys(), return_when=concurrent.futures.FIRST_COMPLETED)
+                for fut in done:
+                    in_flight.pop(fut)
+                    i, project, log, result = fut.result()
+                    print(f"\n{'─'*60}\n[{i+1}/{len(projects)}] {project} finished\n{'─'*60}")
+                    print(log, end="")
+                    record(i, project, result)
+                    if total_cost >= args.max_cost:
+                        if not budget_hit:
+                            print(
+                                f"\n⚠ Cost budget (${args.max_cost:.2f}) reached. "
+                                f"Letting {len(in_flight)} in-flight project(s) finish; no new ones will start."
+                            )
+                        budget_hit = True
+                    elif not budget_hit:
+                        submit_next()
+
     # Summary
     print(f"\n{'═'*60}")
     print("Summary")
@@ -1121,6 +1333,9 @@ def main():
     
     # Write report
     write_csv_report(results, args.report)
+
+    if progress:
+        progress.finish()
     
     # Generate visualizations if requested
     if args.visualize:

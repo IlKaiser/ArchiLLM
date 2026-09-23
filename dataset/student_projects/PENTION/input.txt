@@ -1,0 +1,77 @@
+# SYSTEM DESCRIPTION:
+PENTION is an EU security research project developing a dual-modality vapour detection system to combat synthetic drug manufacturing and trafficking. The system comprises PENTION-S (static) for high-throughput screening of parcels and warehouse environments, and PENTION-M (mobile) for vehicle-mounted open-area sweeps and checkpoint operations. Both configurations utilize high-flow vapour sampling coupled with Differential Mobility Analyzer-Mass Spectrometry (DMA-MS) to detect synthetic drugs, precursors, and by-products at very low concentrations (parts per quadrillion range), addressing critical gaps in current law enforcement capabilities where reliance on trained dogs and laboratory analysis creates operational bottlenecks.
+
+At the core of the detection capability lies the Situational-Intelligence Tool (SIT), an AI-driven analytics engine that performs real-time peak deconvolution, interference filtering, and classification of chemical signatures. The system delivers automatic, explainable results with full chain-of-evidence documentation, integrating directly with Risk Management Systems (RMS) to prioritize suspicious cargo and parcels. A secured Machine-Learning Operations (MLOps) pipeline ensures continuous model updates as background chemistries and concealment tactics evolve, supported by an open, FAIR-compliant database of substances that maintains detection relevance against emerging threats.
+
+Designed specifically for Law Enforcement Agencies (LEAs) and Customs, PENTION addresses the need for non-intrusive, rapid screening (<3 minutes sampling, <1 minute analysis) with high detection rates (>80-90%) and low false alarms (<5%). The solution emphasizes field autonomy through lightweight, battery-operated designs (>5 hours) requiring no mains power or specialist consumables, while ensuring GDPR-compliant data handling and AI transparency for legal admissibility. Beyond operational deployment, the project strengthens EU technological sovereignty by providing SMEs with a pathway to market for advanced detection technologies, reducing dependence on non-EU suppliers while delivering measurable impact against EMPACT priorities for disrupting synthetic drug distribution across Europe.
+
+# USER STORIES:
+1. As a EU, LEAs, Customs, Citizens, I want to disrupt and reduce synthetic drug manufacturing and distribution in Europe, so that synthetic drug manufacturing and distribution in Europe are disrupted and reduced.
+2. As a LEAs, Customs, I want to detect synthetic drugs, their precursors, and by-products at very low concentrations, so that we can identify these substances even in trace amounts.
+3. As a LEAs, Prosecutors, I want support with reliable, explainable, and legally admissible evidence, so that prosecutions can proceed successfully and evidence holds up in court.
+4. As a SMEs, EU policy, I want a pathway to market adoption of advanced detection technology, so that EU SMEs can commercialize and deploy advanced detection solutions.
+5. As a EU, SMEs, I want to strengthen EU sovereignty and reduce dependence on non-EU suppliers in security tech, so that the EU has autonomous security capabilities.
+6. As a LEAs, I want portable, mobile, and static solutions for labs, vehicles, and parcels, so that I can deploy detection capabilities across various operational contexts.
+7. As a Customs, I want fast, non-intrusive, high-throughput parcel/container screening, so that trade flow is maintained while security is ensured.
+8. As a Courts, Prosecutors, I want trustworthy detection results admissible as evidence, so that they can be used in legal proceedings.
+9. As a SMEs, I want innovation access to civil security markets, so that we can commercialize our innovations.
+10. As a EU Policy, I want measurable impact against EMPACT 2022-2025 priorities, so that policy objectives are met and drug trafficking is effectively combated.
+11. As a LEAs, Customs, I want to detect synthetic drugs (MDMA, methamphetamine, amphetamine) and at least 6 precursors/sub-products, so that we can identify a broad range of illicit substances and their components.
+12. As a LEAs, Customs, I want mobile detection (PENTION-M) and static detection (PENTION-S), so that flexible deployment in both mobile and fixed scenarios is enabled.
+13. As a LEAs, I want automatic identification of clandestine labs using vapour dispersion models with GNSS data, so that we can locate illegal drug production facilities.
+14. As a LEAs, Customs, I want integration with open, continuously updateable databases of substances, so that the system stays current with new substances and threats.
+15. As a LEAs, RTOs, I want AI-based peak/interference analysis for accurate identification, so that detection accuracy is maximized despite complex chemical backgrounds.
+16. As a LEAs, Customs, I want automatic reporting to operators (zero manual interpretation), so that rapid decision-making is possible without requiring expert chemical knowledge in the field.
+17. As a Customs, I want synergy with Risk Management Systems for prioritisation of suspicious cargo/parcels, so that resources are focused on highest-risk items.
+18. As a LEAs, Customs, I want sampling time under 1–3 minutes depending on scenario, so that high-throughput operations are maintained.
+19. As a LEAs, Customs, I want analysis time under 1 minute, so that rapid screening and minimal delays are achieved.
+20. As a LEAs, Customs, I want a detection rate greater than 80% in open areas and greater than 90% in semi-closed areas, so that high confidence that threats are identified is ensured.
+21. As a LEAs, Customs, I want a false alarm rate below 5%, so that operational efficiency is maintained and resources are not wasted on false positives.
+22. As a Operators, I want user-friendly interfaces for non-experts, so that personnel without specialized training can effectively operate the system.
+23. As a SMEs, Buyers, I want affordable acquisition and operation costs less than dogs and less than ETDs, so that cost-effective deployment and maintenance are achieved.
+24. As a SMEs, Buyers, I want minimal consumables, auto-cleaning, and low environmental impact, so that sustainable and economical operation is achieved.
+25. As a LEAs, I want a lightweight, autonomous system with battery life greater than 5 hours, so that extended field operations without power constraints are possible.
+26. As a LEAs, Customs, I want continuous 24/7 operation robust against interferents, so that persistent monitoring capability in challenging environments is ensured.
+27. As a LEAs, Prosecutors, I want results interpretable by LEAs backed by AI transparency, so that legal admissibility and trust in automated decisions are ensured.
+28. As a Citizens, LEAs, I want non-intrusive, GDPR-compliant, secure data sharing, so that privacy rights are protected while maintaining security.
+29. As a RTOs, SMEs, I want vapour detection sensitivity in the ppq range, so that detection of extremely low concentration substances is possible.
+30. As a RTOs, LEAs, I want atmospheric dispersion modelling with Gaussian plume and AI/ML hybrids, so that accurate source location of clandestine labs is achieved.
+31. As a RTOs, SMEs, I want materials innovation for selective adsorbents such as MOFs and polymeric materials, so that enhanced capture and detection of target substances is achieved.
+32. As a RTOs, I want an AI/MLOps pipeline for self-optimising detection routines (SIT), so that the system adapts and improves detection accuracy over time.
+33. As a LEAs, I want GNSS/Galileo integration for mobile operations, so that accurate geolocation of detection events and source identification is achieved.
+34. As a EU, RTOs, I want open science and FAIR data compliance for non-classified results, so that research findings are reusable and accessible to the scientific community.
+35. As a Consortium, EU, I want TRL7 prototypes by project end, so that validated system readiness for operational demonstration is achieved.
+36. As a Consortium, EU, I want effective detection of (pre)precursors and illegal drugs in multi-usable systems for public and private scenarios, so that versatile application across different security contexts is achieved.
+37. As a Consortium, EU, I want to lower detection barriers both from a technical and operational perspective, so that wider adoption and easier deployment of detection technology is achieved.
+38. As a Consortium, EU, I want to develop a mobile drug sniffer or sampler/detector that can identify pre-/pre-pre-cursors and substances, so that mobile capability to detect early-stage production materials is achieved.
+39. As a Consortium, EU, I want to overcome insufficient time constraints for sampling and analysis at high throughput border crossings, so that border operations remain efficient.
+40. As a Consortium, EU, I want to create a tool that detects drugs or precursors without damaging scenarios and equipment/matrices, so that non-destructive testing preserves evidence and operational integrity.
+41. As a Consortium, EU, I want to detect drug production operations proactively rather than only when operations go wrong (e.g., fires) or first-trial attempts fail, so that proactive intervention and prevention are possible.
+42. As a Consortium, EU, I want to develop a device to detect low concentrations of synthetic drugs, precursors and pre-precursors, so that early detection of illicit activity is achieved.
+43. As a Consortium, EU, I want an alternative to trained dogs and swabs for detection in relevant cases, so that more reliable and scalable detection methods are available.
+44. As a Consortium, EU, I want the PENTIUM project to contribute as complementary technology to others and as a guide for further investigation, so that synergistic effects with existing technologies and future research guidance are achieved.
+45. As a Consortium, EU, I want the technology to match the skills and competences of users and have appropriate dimensions, so that usability and practical deployment are ensured.
+46. As a Consortium, EU, I want AI to be rigged to retrain for every operational theater and be subject to all requirements as policies, so that contextual adaptation and compliance are ensured.
+47. As a Consortium, EU, I want reliability, precision, accuracy, and robustness in detection, so that trustworthy and consistent performance is ensured.
+48. As a Consortium, EU, I want field deployable operation with no mains power required and relatively easy use without in-field method development, so that autonomous field operation and ease of use are achieved.
+49. As a Consortium, EU, I want to address insufficient time to execute sampling and analysis for high throughput border crossing areas, so that efficient border processing is maintained.
+50. As a Consortium, EU, I want careful handling of samples using appropriate precautions such as gloves, protective cover, and refrigeration if not analyzed immediately, so that sample integrity and operator safety are ensured.
+51. As a Consortium, EU, I want sampling methodology that requires operator training to focus on areas likely to hide contraband, so that effective targeting and detection are achieved.
+52. As a Consortium, EU, I want to prevent sample overload with other chemicals from cargo types that potentially cause positive or negative alarms, so that detection accuracy is maintained without interference.
+53. As a Consortium, EU, I want autonomous power solutions such as generators for locations without mains power at border crossings or seaports, so that operational capability in remote locations is ensured.
+54. As a Consortium, EU, I want to use meteorological stations to determine wind direction, speed, etc. when screening for hidden illicit labs, so that accurate location of vapor sources is achieved.
+55. As a Consortium, EU, I want high sensitivity and low detection limit for specific substances so that drugs or precursors can be detected at very low concentrations, so that detection of trace amounts is achieved.
+56. As a Consortium, EU, I want selectivity to distinguish different synthetic drugs and their precursors without false positives, so that accurate identification is ensured.
+57. As a Consortium, EU, I want real-time or fast detection without the need for laboratory analysis so that judgements are quickly possible on the spot, so that immediate decision making is enabled.
+58. As a Consortium, EU, I want robustness against interfering substances that occur in ambient air such as other vapours and dust particles, so that reliable operation in real-world environments is ensured.
+59. As a Consortium, EU, I want the ability to take air samples in various environments such as closed containers, homes and packaging, so that versatile detection capabilities are achieved.
+60. As a Consortium, EU, I want user-friendliness for operators without specialised technical knowledge such as simple operation and clear reading, so that broad usability without extensive training is achieved.
+61. As a Consortium, EU, I want portability and compactness so that the device can be used on location in various environments such as during container inspection or postal control, so that flexible field deployment is achieved.
+62. As a Consortium, EU, I want fast operational deployment with minimal calibration and maintenance, so that readiness and reduced downtime are ensured.
+63. As a Consortium, EU, I want the possibility of data registration and transfer for reporting and evidence, so that documentation and legal admissibility are ensured.
+64. As a Consortium, EU, I want safety in use without exposure to hazardous substances for the operator, so that operator health protection is ensured.
+65. As a Consortium, EU, I want field deployable operation with no mains power required, so that autonomous field operation is achieved.
+66. As a Consortium, EU, I want relatively easy to use operation with no in-field method development required, so that immediate operational capability is ensured.
+67. As a Consortium, EU, I want rapid detection with few minutes response time, so that timely results are achieved.
+68. As a Consortium, EU, I want operation without specialist materials such as gas cylinders or liquid N2, so that logistical simplicity and safety are achieved.
+69. As a Consortium, EU, I want the system to be usable away from a lab environment, so that field deployment capability is ensured.

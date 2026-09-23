@@ -1,0 +1,54 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Storage / Database Layer"
+      ],
+      "predicted_nodes": [
+        "CQRS::search_result_cache\\n(cache)",
+        "Global::Event Sourcing"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted search-result cache and event-sourcing mechanism represent data persistence and storage concerns, which are semantically consistent with the GT storage/database layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::Network / Gateway Layer"
+      ],
+      "predicted_nodes": [
+        "API Composition::API Gateway",
+        "Global::API Composition"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted API Gateway and API Composition components provide request routing and aggregation responsibilities, matching the GT network/gateway layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::Service / Backend Layer"
+      ],
+      "predicted_nodes": [
+        "CQRS::Literature Search Service",
+        "Global::Saga",
+        "Global::Domain Event",
+        "Domain Event::Scholar Profile Service",
+        "Saga::Institution Service",
+        "Event Sourcing::Achievement Service",
+        "Event Sourcing::Appeal Service",
+        "Domain Event::Data Collection Service",
+        "Saga::User Account Service",
+        "CQRS::Recommendation Service",
+        "Domain Event::Comment Service",
+        "Global::CQRS"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted domain services, account, institution, achievement, appeal, data collection, recommendation, comment, search, saga, domain-event, event-sourcing, and CQRS components are all backend business or application-layer capabilities. Their more specific architectural package names do not indicate a context or layer violation."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Client Layer"
+  ],
+  "unmatched_predicted_nodes": []
+}

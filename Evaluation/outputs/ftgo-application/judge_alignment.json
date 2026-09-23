@@ -2,104 +2,59 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::RestaurantService"
-      ],
-      "predicted_nodes": [
-        "Global::restaurant_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the restaurant management microservice. The boundary attribution is the same Global boundary."
-    },
-    {
-      "gt_nodes": [
         "Global::Order Service"
       ],
       "predicted_nodes": [
-        "Global::order_service"
+        "Global::Saga (Order Orchestration)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the order processing microservice. The boundary attribution is the same Global boundary."
+      "reasoning": "The predicted node represents saga-based order orchestration, which is functionally associated with the Order Service. Both are placed in the global service architecture scope, so there is no boundary attribution error."
     },
     {
       "gt_nodes": [
-        "Global::Consumer Service"
+        "Global::Order History Service"
       ],
       "predicted_nodes": [
-        "Global::consumer_service"
+        "Global::CQRS (Order History Read Model)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the consumer/customer management microservice. The boundary attribution is the same Global boundary."
+      "reasoning": "The predicted CQRS read model corresponds to the Order History Service, whose stated responsibility is order history querying. The global attribution is consistent."
     },
     {
       "gt_nodes": [
-        "Global::OrderHistoryService"
+        "Global::API Gateway",
+        "Global::graphqlgateway"
       ],
       "predicted_nodes": [
-        "Global::order_history_service"
+        "Global::API Composition (Gateways)"
       ],
-      "match_type": "1:1",
+      "match_type": "N:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the order history service used for querying historical orders. The boundary attribution is the same Global boundary."
+      "reasoning": "The predicted API Composition node aggregates the gateway responsibilities represented by both the API Gateway and GraphQL gateway. This is an aggregation of gateway components, and all nodes have the same global architectural attribution."
     },
     {
       "gt_nodes": [
-        "Global::Accounting Service"
+        "Global::mysql",
+        "Global::dynamodb"
       ],
       "predicted_nodes": [
-        "Global::accounting_service"
+        "Global::Domain Aggregates (Database per Service)"
       ],
-      "match_type": "1:1",
+      "match_type": "N:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the accounting/payment-related microservice. The boundary attribution is the same Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::Kitchen Service"
-      ],
-      "predicted_nodes": [
-        "Global::kitchen_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the kitchen operations service responsible for tickets and preparation tracking. The boundary attribution is the same Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::API Gateway"
-      ],
-      "predicted_nodes": [
-        "Global::api_gateway",
-        "Global::API Gateway Layer (API Composition)"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "The GT API Gateway is represented by the predicted concrete api_gateway node and an additional API composition gateway-layer node. These are semantically part of the same API gateway responsibility, and the boundary attribution remains Global."
-    },
-    {
-      "gt_nodes": [
-        "Global::DynamoDB"
-      ],
-      "predicted_nodes": [
-        "Global::CQRS Read Model"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted CQRS Read Model corresponds functionally to the GT DynamoDB-backed read model used for order history queries. Although the predicted node is less technology-specific, it represents the same read-side storage concern. The boundary attribution is Global in both cases."
+      "reasoning": "The predicted node describes domain data ownership and the database-per-service pattern, which encompasses the separately represented MySQL and DynamoDB stores. Although the prediction abstracts away the specific database technologies, its global data-layer attribution is not incorrectly assigned."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Kafka",
-    "Global::GraphQL API Gateway",
-    "Global::CDCService",
-    "Global::Zookeeper",
-    "Global::MySQL Database"
+    "Global::Consumer Service",
+    "Global::kafka",
+    "Global::Accounting Service",
+    "Global::Kitchen Service",
+    "Global::zookeeper",
+    "Global::Restaurant Service",
+    "Global::cdcservice"
   ],
-  "unmatched_predicted_nodes": [
-    "Global::delivery_service",
-    "Global::Event Sourced Service",
-    "Global::Core Business Services (Database per Service)"
-  ]
+  "unmatched_predicted_nodes": []
 }

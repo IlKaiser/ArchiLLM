@@ -1,71 +1,22 @@
 {
-  "matched_pairs": [
-    {
-      "gt_nodes": [
-        "Global::web"
-      ],
-      "predicted_nodes": [
-        "Global::API Gateway Layer"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The GT web component in Stan's Robot Shop serves as the external-facing web entry point and commonly proxies or coordinates calls to backend microservices, which is semantically close to an API gateway layer. Both are placed in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::user"
-      ],
-      "predicted_nodes": [
-        "Global::customer"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The GT user service provides user registration, authentication, and profile management. The predicted customer node refers to the same customer/user domain concept. Both are in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::catalogue",
-        "Global::ratings"
-      ],
-      "predicted_nodes": [
-        "Global::Product Detail Aggregation (API Composition)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Product Detail Aggregation node represents a higher-level API composition of product catalogue data and ratings/reviews, which corresponds to the GT catalogue and ratings services being used together for product detail pages. The predicted node is more abstract, but the functional aggregation is valid and all nodes are in the Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::mysql",
-        "Global::mongodb",
-        "Global::redis"
-      ],
-      "predicted_nodes": [
-        "Global::Core Data Isolation (Database per Service)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Core Data Isolation node abstracts the database-per-service persistence pattern, which corresponds to the GT data stores MySQL, MongoDB, and Redis. Although the prediction is a pattern-level aggregation rather than concrete database nodes, it is functionally related and remains in the same Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::payment",
-        "Global::shipping",
-        "Global::dispatch",
-        "Global::rabbitmq"
-      ],
-      "predicted_nodes": [
-        "Global::Order Processing Workflow (Saga + Domain Events)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Order Processing Workflow aggregates the order-related runtime flow involving payment, shipping, dispatch, and asynchronous messaging through RabbitMQ. The GT represents these as concrete services and infrastructure, while the prediction represents them as a single workflow abstraction. The boundary attribution is correct because all are placed in the Global boundary."
-    }
-  ],
+  "matched_pairs": [],
   "unmatched_gt_nodes": [
-    "Global::istio",
-    "Global::loadgen",
-    "Global::cart"
+    "Global::Dispatch",
+    "Global::User",
+    "Global::Load Generator",
+    "Global::MongoDB",
+    "Global::Catalogue",
+    "Global::Cart",
+    "Global::MySQL",
+    "Global::RabbitMQ",
+    "Global::Ratings",
+    "Global::Istio Gateway",
+    "Global::Web",
+    "Global::Shipping",
+    "Global::Payment",
+    "Global::Redis"
   ],
-  "unmatched_predicted_nodes": []
+  "unmatched_predicted_nodes": [
+    "Global::Architectural pattern: Database per Service (each microservice owns a private datastore)"
+  ]
 }

@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
-from Evaluation.modifiability_graph import build_graph, compute_ged
+from Evaluation.modifiability_graph import build_graph, canonicalize_for_ged, compute_ged, normalize_ged
 from Evaluation.modifiability_scenarios import (
     generate_scenarios,
     modify_architecture,
@@ -248,22 +248,35 @@ def _score_one_scenario(
             (scenario_dir / "component_diagram.puml").write_text(rendered, encoding="utf-8")
 
         parsed_modified = UMLParser().parse(rendered)
-        g_modified = build_graph(parsed_modified)
+        g_modified = build_graph(canonicalize_for_ged(parsed_modified))
 
         if g_modified.number_of_nodes() == 0 and g_original.number_of_nodes() > 0:
             raise ValueError("Rendered diagram for this scenario has no parseable components")
 
         ged = compute_ged(g_original, g_modified, timeout=timeout)
         weighted_ged = scenario["weight"] * ged if ged is not None else None
+        normalized_ged = normalize_ged(ged, g_original)
+        weighted_normalized_ged = (
+            scenario["weight"] * normalized_ged if normalized_ged is not None else None
+        )
     except Exception as e:
         print(f"[modifiability] scenario failed: {scenario.get('description', '')[:60]!r} — {e}")
-        return {**scenario, "error": str(e), "ged": None, "exact": False, "weighted_ged": None}
+        return {
+            **scenario, "error": str(e), "ged": None, "exact": False, "weighted_ged": None,
+            "normalized_ged": None, "weighted_normalized_ged": None,
+        }
 
     if ged is None:
         print(f"[modifiability] GED inconclusive (timeout) for: {scenario.get('description', '')[:60]!r}")
-        return {**scenario, "ged": None, "exact": False, "weighted_ged": None}
+        return {
+            **scenario, "ged": None, "exact": False, "weighted_ged": None,
+            "normalized_ged": None, "weighted_normalized_ged": None,
+        }
 
-    return {**scenario, "ged": ged, "exact": True, "weighted_ged": weighted_ged}
+    return {
+        **scenario, "ged": ged, "exact": True, "weighted_ged": weighted_ged,
+        "normalized_ged": normalized_ged, "weighted_normalized_ged": weighted_normalized_ged,
+    }
 
 
 def run(
@@ -295,7 +308,7 @@ def run(
     cost_tracker: list[float] = []
 
     architecture, parsed_original, original_puml_text = _load_original(run_dir, project_name)
-    g_original = build_graph(parsed_original)
+    g_original = build_graph(canonicalize_for_ged(parsed_original))
 
     input_path = Path(dataset_dir) / project_name / "input.txt"
     input_text = input_path.read_text(encoding="utf-8")
@@ -326,13 +339,14 @@ def run(
         if on_progress is not None:
             on_progress(i, total, result)
 
-    modifiability_score, by_magnitude = _compute_aggregates(scored)
+    modifiability_score, normalized_modifiability_score, by_magnitude = _compute_aggregates(scored)
 
     report = {
         "project": project_name,
         "n_scenarios": total,
         "scenarios": scored,
         "modifiability_score": modifiability_score,
+        "normalized_modifiability_score": normalized_modifiability_score,
         "by_magnitude": by_magnitude,
         "original_node_count": g_original.number_of_nodes(),
         "original_edge_count": g_original.number_of_edges(),
@@ -351,22 +365,43 @@ def run(
     return report
 
 
-def _compute_aggregates(scored: list[dict]) -> tuple[float, dict]:
-    """Compute (modifiability_score, by_magnitude) from a list of
-    already-scored scenario dicts. Factored out so run() and
-    recompute_aggregates() share exactly one implementation — a report
-    written by an older version of this aggregation logic can be corrected
-    without re-deriving the formula by hand.
+def _compute_aggregates(scored: list[dict]) -> tuple[float, float, dict]:
+    """Compute (modifiability_score, normalized_modifiability_score,
+    by_magnitude) from a list of already-scored scenario dicts. Factored out
+    so run() and recompute_aggregates()/recompute_ged() share exactly one
+    implementation — a report written by an older version of this
+    aggregation logic can be corrected without re-deriving the formula by
+    hand.
+
+    normalized_modifiability_score is the same weighted mean but built from
+    each scenario's weighted_normalized_ged (raw GED divided by the
+    baseline graph's own node+edge count — see normalize_ged) instead of
+    weighted_ged, so it's comparable across projects of very different
+    size. 0.0 (like modifiability_score) when no scenario has one — e.g.
+    reports written before normalization existed.
     """
     weighted_geds = [s["weighted_ged"] for s in scored if s.get("weighted_ged") is not None]
     modifiability_score = sum(weighted_geds) / len(weighted_geds) if weighted_geds else 0.0
+
+    weighted_normalized_geds = [
+        s["weighted_normalized_ged"] for s in scored if s.get("weighted_normalized_ged") is not None
+    ]
+    normalized_modifiability_score = (
+        sum(weighted_normalized_geds) / len(weighted_normalized_geds) if weighted_normalized_geds else 0.0
+    )
+
     by_magnitude: dict = {}
     for s in scored:
         if s.get("weighted_ged") is None:
             continue
         magnitude = s.get("magnitude", "unknown")
         by_magnitude[magnitude] = by_magnitude.get(magnitude, 0.0) + s["weighted_ged"]
-    return round(modifiability_score, 2), {k: round(v, 2) for k, v in by_magnitude.items()}
+
+    return (
+        round(modifiability_score, 2),
+        round(normalized_modifiability_score, 4),
+        {k: round(v, 2) for k, v in by_magnitude.items()},
+    )
 
 
 def recompute_aggregates(project_name: str, run_dir: str = "run") -> dict:
@@ -385,9 +420,84 @@ def recompute_aggregates(project_name: str, run_dir: str = "run") -> dict:
         )
 
     report = json.loads(report_path.read_text(encoding="utf-8"))
-    modifiability_score, by_magnitude = _compute_aggregates(report["scenarios"])
+    modifiability_score, normalized_modifiability_score, by_magnitude = _compute_aggregates(report["scenarios"])
     report["modifiability_score"] = modifiability_score
+    report["normalized_modifiability_score"] = normalized_modifiability_score
     report["by_magnitude"] = by_magnitude
+    report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    return report
+
+
+def recompute_ged(
+    project_name: str,
+    run_dir: str = "run",
+    timeout: float = 10.0,
+) -> dict:
+    """Recompute ged/weighted_ged/normalized_ged/weighted_normalized_ged/
+    modifiability_score/normalized_modifiability_score/by_magnitude for an
+    existing report.json using the CURRENT graph-canonicalization logic
+    (canonicalize_for_ged) — no LLM calls. Re-parses the original diagram
+    and each scenario's already-rendered component_diagram.puml from disk
+    (under its recorded "artifacts_dir") and recomputes graph edit distance
+    against the canonicalized graphs, so a report.json scored before a GED
+    methodology fix (e.g. dropping package/boundary nodes from node
+    identity, see canonicalize_for_ged) can be corrected without re-running
+    the expensive, LLM-driven scenario generation/edit/render pipeline. Also
+    refreshes original_node_count/original_edge_count to the canonicalized
+    baseline graph's size, since normalized_ged is computed relative to it
+    (see normalize_ged) — those two fields would otherwise describe a
+    different, stale graph than the one the scores are actually based on.
+
+    A scenario missing its artifacts_dir/rendered diagram, or whose diagram
+    has no parseable components, is recorded as inconclusive (ged: None,
+    exact: False, normalized_ged: None) — the same shape _score_one_scenario
+    uses — rather than raising, so one bad scenario doesn't block
+    recomputing the rest.
+    """
+    report_path = Path(run_dir) / project_name / "modifiability" / "report.json"
+    if not report_path.exists():
+        raise FileNotFoundError(
+            f"No report.json found for '{project_name}' at {report_path} — "
+            f"run the modifiability analysis for this project first."
+        )
+
+    _, parsed_original, _ = _load_original(run_dir, project_name)
+    g_original = build_graph(canonicalize_for_ged(parsed_original))
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    for scenario in report["scenarios"]:
+        weight = scenario.get("weight")
+        artifacts_dir = scenario.get("artifacts_dir")
+        puml_path = Path(artifacts_dir) / "component_diagram.puml" if artifacts_dir else None
+
+        if weight is None or puml_path is None or not puml_path.exists():
+            scenario["ged"], scenario["exact"], scenario["weighted_ged"] = None, False, None
+            scenario["normalized_ged"], scenario["weighted_normalized_ged"] = None, None
+            continue
+
+        parsed_modified = UMLParser().parse(puml_path.read_text(encoding="utf-8"))
+        g_modified = build_graph(canonicalize_for_ged(parsed_modified))
+        if g_modified.number_of_nodes() == 0 and g_original.number_of_nodes() > 0:
+            scenario["ged"], scenario["exact"], scenario["weighted_ged"] = None, False, None
+            scenario["normalized_ged"], scenario["weighted_normalized_ged"] = None, None
+            continue
+
+        ged = compute_ged(g_original, g_modified, timeout=timeout)
+        normalized_ged = normalize_ged(ged, g_original)
+        scenario["ged"] = ged
+        scenario["exact"] = ged is not None
+        scenario["weighted_ged"] = (weight * ged) if ged is not None else None
+        scenario["normalized_ged"] = normalized_ged
+        scenario["weighted_normalized_ged"] = (
+            (weight * normalized_ged) if normalized_ged is not None else None
+        )
+
+    modifiability_score, normalized_modifiability_score, by_magnitude = _compute_aggregates(report["scenarios"])
+    report["modifiability_score"] = modifiability_score
+    report["normalized_modifiability_score"] = normalized_modifiability_score
+    report["by_magnitude"] = by_magnitude
+    report["original_node_count"] = g_original.number_of_nodes()
+    report["original_edge_count"] = g_original.number_of_edges()
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report
 
@@ -447,6 +557,16 @@ if __name__ == "__main__":
             "aggregation logic (no LLM calls, no GED recomputation)."
         ),
     )
+    parser.add_argument(
+        "--recompute-ged", action="store_true",
+        help=(
+            "Skip the analysis run entirely; instead re-parse the original "
+            "diagram and each scenario's already-rendered "
+            "component_diagram.puml from disk and recompute ged/"
+            "weighted_ged/modifiability_score/by_magnitude using the "
+            "current canonicalize_for_ged logic (no LLM calls)."
+        ),
+    )
     args = parser.parse_args()
 
     if args.backfill_deltas:
@@ -454,6 +574,9 @@ if __name__ == "__main__":
         print(f"Backfilled spec_delta.txt for {count} scenario(s) in {args.project}.")
     elif args.recompute_aggregates:
         result = recompute_aggregates(args.project)
+        print(f"Recomputed modifiability_score for {args.project}: {result['modifiability_score']}")
+    elif args.recompute_ged:
+        result = recompute_ged(args.project, timeout=args.timeout)
         print(f"Recomputed modifiability_score for {args.project}: {result['modifiability_score']}")
     else:
         result = run(

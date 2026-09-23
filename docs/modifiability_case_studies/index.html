@@ -1,0 +1,1185 @@
+<title>Modifiability Case Studies</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F1F3EE;
+    --surface:#FFFFFF;
+    --surface-2:#E7EAE1;
+    --line:#D6DACE;
+    --ink:#1B231F;
+    --ink-2:#4C5850;
+    --ink-3:#7C8A80;
+    --accent:#276B6E;
+    --accent-soft:#DCEBE9;
+    --rust:#A0562D;
+    --rust-soft:#F3E3D6;
+    --good:#3D7A4D;
+    --good-soft:#E4F1E4;
+    --bad:#A23E3E;
+    --bad-soft:#F5E4E2;
+    --shadow: 0 1px 2px rgba(20,30,25,.06), 0 8px 24px -12px rgba(20,30,25,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#101513;
+      --surface:#161C19;
+      --surface-2:#1D2521;
+      --line:#2B352F;
+      --ink:#E7ECE6;
+      --ink-2:#A8B5AD;
+      --ink-3:#748078;
+      --accent:#5FBAB6;
+      --accent-soft:#1C3634;
+      --rust:#E0946A;
+      --rust-soft:#3A2A1F;
+      --good:#7FCB8E;
+      --good-soft:#1E3323;
+      --bad:#E28A8A;
+      --bad-soft:#3A2323;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#101513;
+    --surface:#161C19;
+    --surface-2:#1D2521;
+    --line:#2B352F;
+    --ink:#E7ECE6;
+    --ink-2:#A8B5AD;
+    --ink-3:#748078;
+    --accent:#5FBAB6;
+    --accent-soft:#1C3634;
+    --rust:#E0946A;
+    --rust-soft:#3A2A1F;
+    --good:#7FCB8E;
+    --good-soft:#1E3323;
+    --bad:#E28A8A;
+    --bad-soft:#3A2323;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:40px 20px 80px;}
+
+  h1,h2,h3,h4{
+    font-family:"IBM Plex Sans Condensed",system-ui,sans-serif;
+    font-weight:700;
+    text-wrap:balance;
+    margin:0;
+    color:var(--ink);
+  }
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  /* ---- tabs ---- */
+  nav.tabs{display:flex;gap:10px;padding:26px 0 0;flex-wrap:wrap;}
+  .tab{
+    font-family:"IBM Plex Sans Condensed",sans-serif;
+    font-weight:600;font-size:15px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--ink-2);
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;flex-direction:column;gap:3px;align-items:flex-start;
+    text-align:left;
+    transition:border-color .15s,color .15s,background .15s;
+    flex:0 1 200px;
+  }
+  .tab span{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:11.5px;color:var(--ink-3);letter-spacing:.02em;}
+  .tab:hover{border-color:var(--accent);}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .tab.active span{color:var(--paper);opacity:.72;}
+  .tab.active.case{background:var(--rust);border-color:var(--rust);}
+  .tab.active.worst{background:var(--bad);border-color:var(--bad);}
+
+  .panel{display:none;padding-top:30px;}
+  .panel.active{display:block;}
+
+  .panel-head{
+    display:flex;gap:14px;flex-wrap:wrap;align-items:stretch;
+    margin-bottom:6px;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 16px;
+    min-width:118px;
+    box-shadow:var(--shadow);
+  }
+  .stat .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+  .stat .v{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:22px;margin-top:3px;font-variant-numeric:tabular-nums;}
+  .stat .v.accent{color:var(--accent);}
+  .stat .v.rust{color:var(--rust);}
+  .stat .v.bad{color:var(--bad);}
+  .rank-note{color:var(--ink-2);font-size:14px;margin:14px 0 0;max-width:62ch;}
+  .rank-note b{color:var(--ink);}
+
+  article.block{margin-top:40px;}
+  article.block > h3{font-size:19px;margin-bottom:6px;}
+  .block-sub{color:var(--ink-3);font-size:13px;font-family:"IBM Plex Mono",monospace;margin-bottom:16px;}
+
+  .sys-desc{color:var(--ink-2);}
+  .sys-desc p{margin:0 0 12px;}
+
+  ol.stories{
+    columns:2;
+    column-gap:28px;
+    padding-left:0;
+    margin:16px 0 0;
+    list-style:none;
+    counter-reset:story;
+  }
+  ol.stories li{
+    counter-increment:story;
+    break-inside:avoid;
+    display:flex;
+    gap:9px;
+    font-size:14.5px;
+    color:var(--ink-2);
+    padding:6px 0;
+    border-bottom:1px solid var(--line);
+  }
+  ol.stories li::before{
+    content:counter(story);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    color:var(--ink-3);
+    flex:0 0 auto;
+    padding-top:2px;
+    min-width:18px;
+  }
+  @media (max-width:640px){ ol.stories{columns:1;} }
+
+  figure{margin:16px 0 0;}
+  .diagram-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px;
+    box-shadow:var(--shadow);
+    overflow:auto;
+  }
+  .diagram-card img{
+    display:block;width:100%;height:auto;border-radius:4px;
+    cursor:zoom-in;
+  }
+  figcaption{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;
+    color:var(--ink-3);
+    margin-top:8px;
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+  .diff-legend{display:inline-flex;gap:12px;}
+  .diff-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .diff-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+  .diff-legend i.add{background:var(--good);}
+  .diff-legend i.rem{background:var(--bad);border:1px dashed var(--bad);}
+
+  .scenario{
+    margin-top:44px;
+    padding-top:34px;
+    border-top:1px dashed var(--line);
+  }
+  .scenario-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;}
+  .scenario-head h3{font-size:19px;}
+  .scenario-tag{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-3);
+  }
+  .scenario-desc{color:var(--ink-2);margin:8px 0 16px;font-size:15.5px;max-width:64ch;}
+
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .badge{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:20px;
+    background:var(--surface-2);
+    color:var(--ink-2);
+    border:1px solid var(--line);
+    display:inline-flex;gap:6px;align-items:center;
+  }
+  .badge b{color:var(--ink);font-weight:600;}
+  .badge.weight-low{background:var(--accent-soft);border-color:transparent;color:var(--accent);}
+  .badge.weight-high{background:var(--rust-soft);border-color:transparent;color:var(--rust);}
+
+  .delta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+  @media (max-width:640px){ .delta-grid{grid-template-columns:1fr;} }
+  .delta-col{
+    border-radius:10px;
+    padding:14px 16px;
+    border:1px solid var(--line);
+  }
+  .delta-col.added{background:var(--good-soft);}
+  .delta-col.removed{background:var(--bad-soft);}
+  .delta-col h4{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+    margin:0 0 10px;
+  }
+  .delta-col.added h4{color:var(--good);}
+  .delta-col.removed h4{color:var(--bad);}
+  .delta-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .delta-col li{font-size:13.5px;color:var(--ink-2);display:flex;gap:7px;}
+  .delta-col.added li::before{content:"+";color:var(--good);font-weight:700;}
+  .delta-col.removed li{text-decoration:line-through;color:var(--ink-3);}
+  .delta-col.removed li::before{content:"\2212";color:var(--bad);font-weight:700;}
+  .delta-col .none{color:var(--ink-3);font-size:13px;font-style:italic;}
+
+  .diagram-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){ .diagram-pair{grid-template-columns:1fr;} }
+
+  .impact-note{
+    margin-top:14px;
+    font-size:14px;
+    color:var(--ink-2);
+    background:var(--surface);
+    border-left:3px solid var(--accent);
+    padding:11px 15px;
+    border-radius:0 8px 8px 0;
+  }
+  .scenario.complex .impact-note{border-left-color:var(--rust);}
+  .impact-note b{color:var(--ink);}
+  .impact-note .mono{color:var(--ink-3);}
+
+  .design-diff{margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);}
+  .design-diff-head{
+    font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-3);padding:9px 15px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  }
+  .diff-row{display:flex;gap:10px;padding:8px 15px;font-size:13.5px;align-items:baseline;border-bottom:1px solid var(--line);}
+  .diff-row:last-child{border-bottom:none;}
+  .diff-tag{
+    flex:0 0 auto;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:700;
+    padding:2px 7px;border-radius:5px;line-height:1.5;white-space:nowrap;
+  }
+  .diff-tag.add{background:var(--good-soft);color:var(--good);}
+  .diff-tag.remove{background:var(--bad-soft);color:var(--bad);}
+  .diff-tag.pattern{background:var(--accent-soft);color:var(--accent);}
+  .diff-body{color:var(--ink-2);}
+  .diff-body .mono{color:var(--ink);font-weight:600;}
+  .diff-body .proto{color:var(--ink-3);font-size:12px;}
+
+  .table-wrap{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);}
+  table.rank-table{
+    width:100%;border-collapse:collapse;
+    font-size:13.5px;background:var(--surface);
+    min-width:520px;
+  }
+  table.rank-table th, table.rank-table td{
+    padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  table.rank-table th{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--ink-3);font-weight:500;
+    background:var(--surface-2);
+  }
+  table.rank-table td.mono, table.rank-table th{font-variant-numeric:tabular-nums;}
+  table.rank-table td:not(.mono){font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--ink);}
+  table.rank-table tbody tr:last-child td{border-bottom:none;}
+  table.rank-table tr.hl-best td{background:var(--accent-soft);}
+  table.rank-table tr.hl-good td{background:var(--good-soft);}
+  table.rank-table tr.hl-case td{background:var(--rust-soft);}
+  table.rank-table tr.hl-worst td{background:var(--bad-soft);}
+  .delta-up{color:var(--good);}
+  .delta-down{color:var(--bad);}
+  .delta-flat{color:var(--ink-3);}
+
+  footer{
+    margin-top:60px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    color:var(--ink-3);
+    font-size:12.5px;
+    font-family:"IBM Plex Mono",monospace;
+  }
+
+  /* ---- lightbox ---- */
+  .lightbox{
+    position:fixed;inset:0;
+    background:rgba(10,14,12,.86);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:28px;
+    z-index:100;
+    cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{
+    max-width:100%;max-height:100%;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .lightbox .lb-caption{
+    position:fixed;
+    bottom:20px;left:0;right:0;
+    text-align:center;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12.5px;
+    color:#EDEFEA;
+  }
+  .lightbox .lb-close{
+    position:fixed;top:18px;right:22px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12px;color:#EDEFEA;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:20px;padding:6px 14px;
+    background:rgba(255,255,255,.08);
+  }
+
+  /* ---- pattern badges + ADR modal ---- */
+  .pattern-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .pattern-badge{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    padding:6px 12px;
+    border-radius:20px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    border:1px solid transparent;
+    cursor:pointer;
+    display:inline-flex;gap:6px;align-items:center;
+    transition:transform .1s;
+  }
+  .pattern-badge:hover{transform:translateY(-1px);border-color:var(--accent);}
+  .pattern-badge::before{content:"?";display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--accent);color:var(--surface);font-size:10px;font-weight:700;}
+  .pattern-note{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);margin-top:12px;font-style:italic;}
+
+  .adr-modal{
+    position:fixed;inset:0;
+    background:rgba(10,14,12,.72);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:24px;
+    z-index:110;
+  }
+  .adr-modal.open{display:flex;}
+  .adr-card{
+    background:var(--surface);
+    color:var(--ink);
+    border-radius:14px;
+    max-width:640px;width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    padding:28px 30px 26px;
+    box-shadow:0 24px 70px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .adr-card .adr-close{
+    position:absolute;top:18px;right:18px;
+    font-family:"IBM Plex Mono",monospace;font-size:12px;
+    color:var(--ink-3);background:var(--surface-2);
+    border:1px solid var(--line);border-radius:20px;
+    padding:5px 12px;cursor:pointer;
+  }
+  .adr-card .adr-source{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.06em;
+    padding:4px 10px;border-radius:20px;margin-bottom:12px;
+  }
+  .adr-card .adr-source.catalogue{background:var(--accent-soft);color:var(--accent);}
+  .adr-card .adr-source.project{background:var(--rust-soft);color:var(--rust);}
+  .adr-card h4{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:20px;margin:0 0 4px;padding-right:70px;}
+  .adr-card .adr-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);margin-bottom:16px;}
+  .adr-card h5{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin:18px 0 6px;}
+  .adr-card p{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin:0 0 4px;}
+  .adr-card ul{margin:4px 0 0;padding-left:20px;color:var(--ink-2);font-size:14px;}
+  .adr-card li{margin-bottom:5px;}
+</style>
+
+<div class="wrap">
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="efarmers" onclick="selectTab('efarmers')">
+      EFarmers <span>near-best &middot; score 7.6</span>
+    </button>
+    <button class="tab worst" data-tab="pention" onclick="selectTab('pention')">
+      PENTION <span>worst of 19 &middot; score 34.8</span>
+    </button>
+    <button class="tab case" data-tab="smartcuisine" onclick="selectTab('smartcuisine')">
+      SmartCuisine <span>corrected by fix &middot; score 14.8</span>
+    </button>
+  </nav>
+
+  <!-- ======================= EFARMERS ======================= -->
+  <section id="panel-efarmers" class="panel active">
+
+    <div class="panel-head">
+      <div class="stat"><div class="k">Modifiability score</div><div class="v accent">7.6</div></div>
+      <div class="stat"><div class="k">Normalized score</div><div class="v accent">0.109</div></div>
+      <div class="stat"><div class="k">Rank</div><div class="v">2 / 19</div></div>
+      <div class="stat"><div class="k">Baseline graph</div><div class="v">28 nodes</div></div>
+      <div class="stat"><div class="k">Baseline edges</div><div class="v">42</div></div>
+    </div>
+    <p class="rank-note">EFarmers is a local-produce marketplace decomposed into 14 microservices using Database-per-Service,
+      Saga, Event Sourcing, CQRS, Domain Events and API Composition. Across five future scenarios its weighted graph-edit
+      distance averaged just <b>7.6</b> &mdash; a near-best score, second only to EventTicket (1.4) among all 19
+      projects evaluated.</p>
+
+    <article class="block">
+      <h3>Original specification</h3>
+      <div class="block-sub">dataset/student_projects/EFarmers/input.txt &middot; 36 user stories</div>
+      <div class="sys-desc">
+        <p>E-Farmers is an e-commerce website that aims to connect local farmers with customers who are interested in
+        buying fresh and locally sourced products. Our platform allows farmers to showcase their products by publishing
+        insertions, while customers can easily browse and purchase these goods. Whether you are a farmer looking
+        to sell your products or a customers seeking high-quality &ldquo;farm-to-table&rdquo; items, E-Farmers has something for
+        everyone. Moreover, if you cannot reach the farmer&rsquo;s warehouse yourself, you can rely on riders who can ship
+        the products to your home.</p>
+      </div>
+      <ol class="stories">
+        <li>As a visitor, I want to register to the website with an email</li>
+        <li>As a user, I want to logout from my account</li>
+        <li>As a user, I want to reach a login page so that I can login into my account</li>
+        <li>As a farmer, I want to publish a new insertion</li>
+        <li>As a user, I want to access the home page</li>
+        <li>As a user, I want to access my personal page, so that I can see my informations</li>
+        <li>As a customer, I can check on calendar all seasonal foodstuff</li>
+        <li>As a user or visitor, I can search for farmer&rsquo;s insertions</li>
+        <li>As a the owner of an insertion, I want to delete one of my insertions</li>
+        <li>As a farmer, I want to modify my insertions</li>
+        <li>As a user, I want to see the expiring boxes</li>
+        <li>As a customer, I want to update my status to Farmer</li>
+        <li>As a user, I want to access a farmer page, so I can see his information</li>
+        <li>As a customer, I want to add a product in my cart, so that I buy this product</li>
+        <li>As a customer, I want to delete the boxes added to the shopping cart</li>
+        <li>As a customer, I want to generate an order which contains items from my shopping cart</li>
+        <li>As a customer, I want to be able to checkout and pay for my order using a secure payment gateway.</li>
+        <li>As a customer, I want to book a product from the calendar</li>
+        <li>As a customer, I can subscribe to a farmer, so I will be notify for his every new insertion</li>
+        <li>As a customer, I want to have a list of the farmers that I am subscribed to</li>
+        <li>As a farmer, I want to accept or decline incoming requests for booked boxes</li>
+        <li>As a customer, I want to check my order history, so I can remember past purchases</li>
+        <li>As a user that bought a box, I want to leave a comment to the farmer</li>
+        <li>As a customer, I want to update my status to Rider, so that I can deliver stuffs.</li>
+        <li>As a rider, I want to have a personal delivery page</li>
+        <li>As a rider, I want to change my availability status to available so that I can receive delivery requests</li>
+        <li>As a customer, I want to select a delivery option, so that I can receive the products at home</li>
+        <li>As a farmer, I want to earn badges so that my achievements are showcased on my profile page</li>
+        <li>As a visitor, I want to register to the website with OAuth</li>
+        <li>As a user, I want to be able to modify my informations</li>
+        <li>As a the owner of an insertion, I want to be able to add boxes on my insertion</li>
+        <li>As a user, I want to see the status of my requests for booked boxes</li>
+        <li>As a user, I want to see my cart, so I can see all the products I am about to purchase</li>
+        <li>As a rider, I want to be able to update the status of an order that i have delivered</li>
+        <li>As a customer, I want to be able to unsubscribe from a farmer, so that I no longer receive notifications for his insertions</li>
+        <li>As a customer, I want to have a notification center, so I can read my notifications</li>
+      </ol>
+    </article>
+
+    <article class="block">
+      <h3>Original component diagram</h3>
+      <div class="block-sub">results/student_projects/EFarmers/component_diagram.puml &middot; rendered PlantUML</div>
+      <figure>
+        <div class="diagram-card">
+          <img class="zoomable" src="efarmers/original.png" alt="EFarmers original UML component diagram: 14 microservices grouped by pattern (API Composition, Saga, Event Sourcing, Aggregate, Domain Event, CQRS, Database per Service) with REST, gRPC, event and WebSocket edges.">
+        </div>
+        <figcaption><span>14 microservices &middot; 14 private datastores &middot; REST / gRPC / event / WebSocket edges</span><span>Click to zoom</span></figcaption>
+      </figure>
+    </article>
+
+    <!-- SIMPLE SCENARIO -->
+    <article class="scenario simple">
+      <div class="scenario-head">
+        <h3>Scenario A &mdash; Add voice-activated reordering</h3>
+        <span class="scenario-tag">Simple &middot; lowest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Add voice-activated reordering for past purchases.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-low">weight <b>2</b> / 5</span>
+        <span class="badge">magnitude <b>small</b></span>
+        <span class="badge">graph-edit distance <b>0</b></span>
+        <span class="badge">weighted GED <b>2 &times; 0 = 0.0</b></span>
+        <span class="badge">normalized GED <b>0 &divide; 70 = 0.000</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec</h4>
+          <ul>
+            <li>As a customer, I want to reorder a past purchase using a voice command, so that I can shop hands-free.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec</h4>
+          <p class="none">Nothing removed &mdash; purely additive.</p>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="efarmers/original.png" alt="EFarmers component diagram before this scenario"></div>
+          <figcaption><span>Before</span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="efarmers/scenario-simple.png" alt="EFarmers component diagram after adding voice reordering, structurally identical to the original"></div>
+          <figcaption><span>After &mdash; identical graph</span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>No structural change.</b> Voice reordering is a new client-side trigger over
+        capability the <span class="mono">order_service</span> / <span class="mono">cart_service</span> pair already
+        exposes &mdash; same nodes, same edges, nothing to highlight. This is what a modifiability score of <b>0</b> for
+        a scenario looks like: the spec grew, the architecture didn&rsquo;t have to.</p>
+      <p class="pattern-note">No pattern was added or changed by this modification &mdash; nothing to click through to.</p>
+    </article>
+
+    <!-- COMPLEX SCENARIO -->
+    <article class="scenario complex">
+      <div class="scenario-head">
+        <h3>Scenario B &mdash; Replace subscriptions with a social follow/feed model</h3>
+        <span class="scenario-tag">Complex &middot; highest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Replace farmer subscription with a social follow/feed model.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-high">weight <b>4</b> / 5</span>
+        <span class="badge">magnitude <b>large</b></span>
+        <span class="badge">graph-edit distance <b>5</b></span>
+        <span class="badge">weighted GED <b>4 &times; 5 = 20.0</b></span>
+        <span class="badge">normalized GED <b>5 &divide; 70 = 0.071</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec</h4>
+          <ul>
+            <li>As a customer, I want to follow a farmer, so that I can see their new insertions and updates in my personalized feed.</li>
+            <li>As a customer, I want to view a personalized feed of products from farmers I follow, so that I can discover relevant local products.</li>
+            <li>As a customer, I want to unfollow or mute a farmer, so that I can control what appears in my feed.</li>
+            <li>As a farmer, I want to post farm updates and announcements, so that my followers stay engaged and informed.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec &middot; original numbering</h4>
+          <ul>
+            <li>#19 &mdash; subscribe to a farmer for new-insertion notifications</li>
+            <li>#20 &mdash; list of subscribed farmers</li>
+            <li>#35 &mdash; unsubscribe from a farmer</li>
+          </ul>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="efarmers/original.png" alt="EFarmers component diagram before this scenario, without a Farm Update Service"></div>
+          <figcaption><span>Before</span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="efarmers/scenario-complex.png" alt="EFarmers component diagram after this scenario, with a new Farm Update Service and farm_updates_db highlighted in green, added and wired to the API gateway and notification service"></div>
+          <figcaption><span>After &mdash; new service added</span><span class="diff-legend"><span><i class="add"></i>added</span></span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>One new service, four new edges &mdash; highlighted in green above.</b> Rather than
+        deleting <span class="mono">subscription_service</span>, the model layered a new
+        <span class="mono">farm_update_service</span> (+ <span class="mono">farm_updates_db</span>) beside it, wired
+        to <span class="mono">api_gateway</span> and into the existing <span class="mono">notification_service</span>
+        event fan-in. Five edit operations at weight 4 gives a weighted GED of 20 &mdash; the single largest of the
+        five values averaged into EFarmers&rsquo; 7.6 score, and the only one of its five scenarios that moves the
+        needle much.</p>
+      <div class="design-diff">
+        <div class="design-diff-head">vs. original</div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">farm_update_service</span> + <span class="mono">farm_updates_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ edge</span><span class="diff-body"><span class="mono">api_gateway</span> &rarr; <span class="mono">farm_update_service</span> <span class="proto">REST</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ edge</span><span class="diff-body"><span class="mono">farm_update_service</span> &rarr; <span class="mono">notification_service</span> <span class="proto">event</span></span></div>
+        <div class="diff-row"><span class="diff-tag pattern">joins</span><span class="diff-body">CQRS, API Composition, Domain Event</span></div>
+      </div>
+      <div class="pattern-badges">
+        <button class="pattern-badge" onclick="openAdr('CQRS','cqrs','results/student_projects/EFarmers/modifiability/scenario_01/architecture.json','notification_service maintains a denormalized, query-optimized read model of notifications (story 36). It subscribes to domain events from insertion, subscription, order, booking, delivery and farm update services and keeps the view up to date, so the notification center can be read quickly without joining data owned by other services.')">Why CQRS here?</button>
+        <button class="pattern-badge" onclick="openAdr('API Composition','api-composition','results/student_projects/EFarmers/modifiability/scenario_01/architecture.json','The personalized feed (story 38) combines insertions and farm updates from farmers the customer follows. api_gateway queries subscription_service for followed/muted farmers, insertion_service for their insertions, and farm_update_service for their updates, then filters muted farmers and joins/sorts the results in memory.')">Why API Composition here?</button>
+        <button class="pattern-badge" onclick="openAdr('Domain Event','domain-event','results/student_projects/EFarmers/modifiability/scenario_01/architecture.json','When a farmer posts, edits or deletes an update/announcement (story 40), farm_update_service publishes domain events. notification_service consumes them to notify followers (stories 36, 40) without farm_update_service knowing its consumers.')">Why Domain Event here?</button>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ======================= PENTION ======================= -->
+  <section id="panel-pention" class="panel">
+
+    <div class="panel-head">
+      <div class="stat"><div class="k">Modifiability score</div><div class="v bad">34.8</div></div>
+      <div class="stat"><div class="k">Normalized score</div><div class="v bad">0.773</div></div>
+      <div class="stat"><div class="k">Rank</div><div class="v">19 / 19</div></div>
+      <div class="stat"><div class="k">Baseline graph</div><div class="v">20 nodes</div></div>
+      <div class="stat"><div class="k">Baseline edges</div><div class="v">25</div></div>
+    </div>
+    <p class="rank-note">PENTION is an EU security-research system for detecting synthetic-drug vapour signatures,
+      built around a Situational-Intelligence Tool (SIT) and ten services spanning Saga, API Composition, Domain Event,
+      CQRS, Event Sourcing and Aggregate patterns. Its weighted graph-edit distance averages <b>34.8</b> &mdash;
+      the worst (highest) of all 19 projects evaluated. It was originally included here as a deliberate contrast to
+      EFarmers; after a metric fix corrected several other projects&rsquo; inflated scores downward, PENTION&rsquo;s
+      own score barely moved (36.2 &rarr; 34.8) and it ended up as the genuine worst performer, which makes it an
+      even sharper contrast than intended.</p>
+
+    <article class="block">
+      <h3>Original specification</h3>
+      <div class="block-sub">dataset/student_projects/PENTION/input.txt &middot; 69 user stories</div>
+      <div class="sys-desc">
+        <p>PENTION is an EU security research project developing a dual-modality vapour detection system to combat
+        synthetic drug manufacturing and trafficking. The system comprises PENTION-S (static) for high-throughput
+        screening of parcels and warehouse environments, and PENTION-M (mobile) for vehicle-mounted open-area sweeps
+        and checkpoint operations. Both configurations utilize high-flow vapour sampling coupled with Differential
+        Mobility Analyzer&ndash;Mass Spectrometry (DMA-MS) to detect synthetic drugs, precursors, and by-products at
+        very low concentrations (parts per quadrillion range), addressing critical gaps in current law enforcement
+        capabilities where reliance on trained dogs and laboratory analysis creates operational bottlenecks.</p>
+        <p>At the core of the detection capability lies the Situational-Intelligence Tool (SIT), an AI-driven
+        analytics engine that performs real-time peak deconvolution, interference filtering, and classification of
+        chemical signatures. The system delivers automatic, explainable results with full chain-of-evidence
+        documentation, integrating directly with Risk Management Systems (RMS) to prioritize suspicious cargo and
+        parcels. A secured Machine-Learning Operations (MLOps) pipeline ensures continuous model updates as background
+        chemistries and concealment tactics evolve, supported by an open, FAIR-compliant database of substances that
+        maintains detection relevance against emerging threats.</p>
+        <p>Designed specifically for Law Enforcement Agencies (LEAs) and Customs, PENTION addresses the need for
+        non-intrusive, rapid screening (&lt;3 minutes sampling, &lt;1 minute analysis) with high detection rates
+        (&gt;80&ndash;90%) and low false alarms (&lt;5%). The solution emphasizes field autonomy through lightweight,
+        battery-operated designs (&gt;5 hours) requiring no mains power or specialist consumables, while ensuring
+        GDPR-compliant data handling and AI transparency for legal admissibility. Beyond operational deployment, the
+        project strengthens EU technological sovereignty by providing SMEs with a pathway to market for advanced
+        detection technologies, reducing dependence on non-EU suppliers while delivering measurable impact against
+        EMPACT priorities for disrupting synthetic drug distribution across Europe.</p>
+      </div>
+      <ol class="stories">
+        <li>As a EU, LEAs, Customs, Citizens, I want to disrupt and reduce synthetic drug manufacturing and distribution in Europe, so that synthetic drug manufacturing and distribution in Europe are disrupted and reduced.</li>
+        <li>As a LEAs, Customs, I want to detect synthetic drugs, their precursors, and by-products at very low concentrations, so that we can identify these substances even in trace amounts.</li>
+        <li>As a LEAs, Prosecutors, I want support with reliable, explainable, and legally admissible evidence, so that prosecutions can proceed successfully and evidence holds up in court.</li>
+        <li>As a SMEs, EU policy, I want a pathway to market adoption of advanced detection technology, so that EU SMEs can commercialize and deploy advanced detection solutions.</li>
+        <li>As a EU, SMEs, I want to strengthen EU sovereignty and reduce dependence on non-EU suppliers in security tech, so that the EU has autonomous security capabilities.</li>
+        <li>As a LEAs, I want portable, mobile, and static solutions for labs, vehicles, and parcels, so that I can deploy detection capabilities across various operational contexts.</li>
+        <li>As a Customs, I want fast, non-intrusive, high-throughput parcel/container screening, so that trade flow is maintained while security is ensured.</li>
+        <li>As a Courts, Prosecutors, I want trustworthy detection results admissible as evidence, so that they can be used in legal proceedings.</li>
+        <li>As a SMEs, I want innovation access to civil security markets, so that we can commercialize our innovations.</li>
+        <li>As a EU Policy, I want measurable impact against EMPACT 2022-2025 priorities, so that policy objectives are met and drug trafficking is effectively combated.</li>
+        <li>As a LEAs, Customs, I want to detect synthetic drugs (MDMA, methamphetamine, amphetamine) and at least 6 precursors/sub-products, so that we can identify a broad range of illicit substances and their components.</li>
+        <li>As a LEAs, Customs, I want mobile detection (PENTION-M) and static detection (PENTION-S), so that flexible deployment in both mobile and fixed scenarios is enabled.</li>
+        <li>As a LEAs, I want automatic identification of clandestine labs using vapour dispersion models with GNSS data, so that we can locate illegal drug production facilities.</li>
+        <li>As a LEAs, Customs, I want integration with open, continuously updateable databases of substances, so that the system stays current with new substances and threats.</li>
+        <li>As a LEAs, RTOs, I want AI-based peak/interference analysis for accurate identification, so that detection accuracy is maximized despite complex chemical backgrounds.</li>
+        <li>As a LEAs, Customs, I want automatic reporting to operators (zero manual interpretation), so that rapid decision-making is possible without requiring expert chemical knowledge in the field.</li>
+        <li>As a Customs, I want synergy with Risk Management Systems for prioritisation of suspicious cargo/parcels, so that resources are focused on highest-risk items.</li>
+        <li>As a LEAs, Customs, I want sampling time under 1&ndash;3 minutes depending on scenario, so that high-throughput operations are maintained.</li>
+        <li>As a LEAs, Customs, I want analysis time under 1 minute, so that rapid screening and minimal delays are achieved.</li>
+        <li>As a LEAs, Customs, I want a detection rate greater than 80% in open areas and greater than 90% in semi-closed areas, so that high confidence that threats are identified is ensured.</li>
+        <li>As a LEAs, Customs, I want a false alarm rate below 5%, so that operational efficiency is maintained and resources are not wasted on false positives.</li>
+        <li>As a Operators, I want user-friendly interfaces for non-experts, so that personnel without specialized training can effectively operate the system.</li>
+        <li>As a SMEs, Buyers, I want affordable acquisition and operation costs less than dogs and less than ETDs, so that cost-effective deployment and maintenance are achieved.</li>
+        <li>As a SMEs, Buyers, I want minimal consumables, auto-cleaning, and low environmental impact, so that sustainable and economical operation is achieved.</li>
+        <li>As a LEAs, I want a lightweight, autonomous system with battery life greater than 5 hours, so that extended field operations without power constraints are possible.</li>
+        <li>As a LEAs, Customs, I want continuous 24/7 operation robust against interferents, so that persistent monitoring capability in challenging environments is ensured.</li>
+        <li>As a LEAs, Prosecutors, I want results interpretable by LEAs backed by AI transparency, so that legal admissibility and trust in automated decisions are ensured.</li>
+        <li>As a Citizens, LEAs, I want non-intrusive, GDPR-compliant, secure data sharing, so that privacy rights are protected while maintaining security.</li>
+        <li>As a RTOs, SMEs, I want vapour detection sensitivity in the ppq range, so that detection of extremely low concentration substances is possible.</li>
+        <li>As a RTOs, LEAs, I want atmospheric dispersion modelling with Gaussian plume and AI/ML hybrids, so that accurate source location of clandestine labs is achieved.</li>
+        <li>As a RTOs, SMEs, I want materials innovation for selective adsorbents such as MOFs and polymeric materials, so that enhanced capture and detection of target substances is achieved.</li>
+        <li>As a RTOs, I want an AI/MLOps pipeline for self-optimising detection routines (SIT), so that the system adapts and improves detection accuracy over time.</li>
+        <li>As a LEAs, I want GNSS/Galileo integration for mobile operations, so that accurate geolocation of detection events and source identification is achieved.</li>
+        <li>As a EU, RTOs, I want open science and FAIR data compliance for non-classified results, so that research findings are reusable and accessible to the scientific community.</li>
+        <li>As a Consortium, EU, I want TRL7 prototypes by project end, so that validated system readiness for operational demonstration is achieved.</li>
+        <li>As a Consortium, EU, I want effective detection of (pre)precursors and illegal drugs in multi-usable systems for public and private scenarios, so that versatile application across different security contexts is achieved.</li>
+        <li>As a Consortium, EU, I want to lower detection barriers both from a technical and operational perspective, so that wider adoption and easier deployment of detection technology is achieved.</li>
+        <li>As a Consortium, EU, I want to develop a mobile drug sniffer or sampler/detector that can identify pre-/pre-pre-cursors and substances, so that mobile capability to detect early-stage production materials is achieved.</li>
+        <li>As a Consortium, EU, I want to overcome insufficient time constraints for sampling and analysis at high throughput border crossings, so that border operations remain efficient.</li>
+        <li>As a Consortium, EU, I want to create a tool that detects drugs or precursors without damaging scenarios and equipment/matrices, so that non-destructive testing preserves evidence and operational integrity.</li>
+        <li>As a Consortium, EU, I want to detect drug production operations proactively rather than only when operations go wrong (e.g., fires) or first-trial attempts fail, so that proactive intervention and prevention are possible.</li>
+        <li>As a Consortium, EU, I want to develop a device to detect low concentrations of synthetic drugs, precursors and pre-precursors, so that early detection of illicit activity is achieved.</li>
+        <li>As a Consortium, EU, I want an alternative to trained dogs and swabs for detection in relevant cases, so that more reliable and scalable detection methods are available.</li>
+        <li>As a Consortium, EU, I want the PENTIUM project to contribute as complementary technology to others and as a guide for further investigation, so that synergistic effects with existing technologies and future research guidance are achieved.</li>
+        <li>As a Consortium, EU, I want the technology to match the skills and competences of users and have appropriate dimensions, so that usability and practical deployment are ensured.</li>
+        <li>As a Consortium, EU, I want AI to be rigged to retrain for every operational theater and be subject to all requirements as policies, so that contextual adaptation and compliance are ensured.</li>
+        <li>As a Consortium, EU, I want reliability, precision, accuracy, and robustness in detection, so that trustworthy and consistent performance is ensured.</li>
+        <li>As a Consortium, EU, I want field deployable operation with no mains power required and relatively easy use without in-field method development, so that autonomous field operation and ease of use are achieved.</li>
+        <li>As a Consortium, EU, I want to address insufficient time to execute sampling and analysis for high throughput border crossing areas, so that efficient border processing is maintained.</li>
+        <li>As a Consortium, EU, I want careful handling of samples using appropriate precautions such as gloves, protective cover, and refrigeration if not analyzed immediately, so that sample integrity and operator safety are ensured.</li>
+        <li>As a Consortium, EU, I want sampling methodology that requires operator training to focus on areas likely to hide contraband, so that effective targeting and detection are achieved.</li>
+        <li>As a Consortium, EU, I want to prevent sample overload with other chemicals from cargo types that potentially cause positive or negative alarms, so that detection accuracy is maintained without interference.</li>
+        <li>As a Consortium, EU, I want autonomous power solutions such as generators for locations without mains power at border crossings or seaports, so that operational capability in remote locations is ensured.</li>
+        <li>As a Consortium, EU, I want to use meteorological stations to determine wind direction, speed, etc. when screening for hidden illicit labs, so that accurate location of vapor sources is achieved.</li>
+        <li>As a Consortium, EU, I want high sensitivity and low detection limit for specific substances so that drugs or precursors can be detected at very low concentrations, so that detection of trace amounts is achieved.</li>
+        <li>As a Consortium, EU, I want selectivity to distinguish different synthetic drugs and their precursors without false positives, so that accurate identification is ensured.</li>
+        <li>As a Consortium, EU, I want real-time or fast detection without the need for laboratory analysis so that judgements are quickly possible on the spot, so that immediate decision making is enabled.</li>
+        <li>As a Consortium, EU, I want robustness against interfering substances that occur in ambient air such as other vapours and dust particles, so that reliable operation in real-world environments is ensured.</li>
+        <li>As a Consortium, EU, I want the ability to take air samples in various environments such as closed containers, homes and packaging, so that versatile detection capabilities are achieved.</li>
+        <li>As a Consortium, EU, I want user-friendliness for operators without specialised technical knowledge such as simple operation and clear reading, so that broad usability without extensive training is achieved.</li>
+        <li>As a Consortium, EU, I want portability and compactness so that the device can be used on location in various environments such as during container inspection or postal control, so that flexible field deployment is achieved.</li>
+        <li>As a Consortium, EU, I want fast operational deployment with minimal calibration and maintenance, so that readiness and reduced downtime are ensured.</li>
+        <li>As a Consortium, EU, I want the possibility of data registration and transfer for reporting and evidence, so that documentation and legal admissibility are ensured.</li>
+        <li>As a Consortium, EU, I want safety in use without exposure to hazardous substances for the operator, so that operator health protection is ensured.</li>
+        <li>As a Consortium, EU, I want field deployable operation with no mains power required, so that autonomous field operation is achieved.</li>
+        <li>As a Consortium, EU, I want relatively easy to use operation with no in-field method development required, so that immediate operational capability is ensured.</li>
+        <li>As a Consortium, EU, I want rapid detection with few minutes response time, so that timely results are achieved.</li>
+        <li>As a Consortium, EU, I want operation without specialist materials such as gas cylinders or liquid N2, so that logistical simplicity and safety are achieved.</li>
+        <li>As a Consortium, EU, I want the system to be usable away from a lab environment, so that field deployment capability is ensured.</li>
+      </ol>
+    </article>
+
+    <article class="block">
+      <h3>Original component diagram</h3>
+      <div class="block-sub">results/student_projects/PENTION/component_diagram.puml &middot; rendered PlantUML</div>
+      <figure>
+        <div class="diagram-card">
+          <img class="zoomable" src="pention/original.png" alt="PENTION original UML component diagram: 10 microservices grouped by pattern (Saga, API Composition, Domain Event, Database per Service) including Sampling Control, Spectrometry, SIT Analytics, Evidence, RMS Integration, Operator Interface, Substance Database, Geolocation and Dispersion, MLOps and Data Governance services.">
+        </div>
+        <figcaption><span>10 microservices &middot; 10 private datastores &middot; REST / gRPC / event / WebSocket edges</span><span>Click to zoom</span></figcaption>
+      </figure>
+    </article>
+
+    <!-- SIMPLE SCENARIO -->
+    <article class="scenario simple">
+      <div class="scenario-head">
+        <h3>Scenario A &mdash; Wastewater environmental surveillance integration</h3>
+        <span class="scenario-tag">Simple &middot; lowest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Integrate PENTION with wastewater-based environmental surveillance for community-level drug lab detection.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-low">weight <b>3</b> / 5</span>
+        <span class="badge">magnitude <b>medium</b></span>
+        <span class="badge">graph-edit distance <b>10</b></span>
+        <span class="badge">weighted GED <b>3 &times; 10 = 30.0</b></span>
+        <span class="badge">normalized GED <b>10 &divide; 45 = 0.222</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec &middot; new #70&ndash;72</h4>
+          <ul>
+            <li>As a LEAs, I want to integrate PENTION vapour data with wastewater sampling at sewage treatment plants, so that regional synthetic drug production hotspots can be identified.</li>
+            <li>As a RTOs, I want automated pre-concentration and DMA-MS analysis of water samples using PENTION consumables, so that trace drug residues can be monitored without a separate laboratory workflow.</li>
+            <li>As a EU Policy, I want anonymized community-level drug residue dashboards, so that policy impact and emerging trends can be measured.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec</h4>
+          <p class="none">Nothing removed &mdash; purely additive.</p>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="pention/original.png" alt="PENTION component diagram before this scenario"></div>
+          <figcaption><span>Before</span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="pention/scenario-simple.png" alt="PENTION component diagram after adding Water Sample Processing Service and Policy Dashboard Service, both highlighted in green with their new edges"></div>
+          <figcaption><span>After &mdash; two services added</span><span class="diff-legend"><span><i class="add"></i>added</span></span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>Two new services, four new datastores and edges &mdash; highlighted in green above.</b>
+        A <span class="mono">water_sample_processing_service</span> (+ <span class="mono">water_sample_db</span>) joins
+        the detection saga and feeds <span class="mono">spectrometry_service</span> and the geolocation pipeline; a
+        separate <span class="mono">policy_dashboard_service</span> (+ <span class="mono">policy_dashboard_db</span>)
+        is added purely for the EU-policy dashboard story. Ten edit operations for a &ldquo;lower&rdquo;-weight,
+        medium-magnitude scenario is still substantial &mdash; more than half the raw edit cost of the large-magnitude
+        scenario below (GED 19) &mdash; a reminder that a scenario&rsquo;s self-reported weight and its actual
+        structural cost don&rsquo;t always move together.</p>
+      <div class="design-diff">
+        <div class="design-diff-head">vs. original</div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">water_sample_processing_service</span> + <span class="mono">water_sample_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">policy_dashboard_service</span> + <span class="mono">policy_dashboard_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ edge</span><span class="diff-body"><span class="mono">water_sample_processing_service</span> &rarr; <span class="mono">spectrometry_service</span>, <span class="mono">geolocation_dispersion_service</span> <span class="proto">event</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ edge</span><span class="diff-body"><span class="mono">policy_dashboard_service</span> &rarr; <span class="mono">data_governance_service</span> <span class="proto">REST</span></span></div>
+        <div class="diff-row"><span class="diff-tag pattern">joins</span><span class="diff-body">Saga, Aggregate, Domain Event (water_sample), API Composition (policy_dashboard)</span></div>
+      </div>
+      <div class="pattern-badges">
+        <button class="pattern-badge" onclick="openAdr('Saga','saga','results/student_projects/PENTION/modifiability/scenario_03/architecture.json','A single detection transaction spans several services (sample acquisition, spectral analysis, AI classification, evidence sealing and risk referral) that each own separate databases. Because a distributed ACID transaction is not viable, the end-to-end detection workflow is modelled as a choreographed saga of local transactions with compensating actions (e.g. invalidating an evidence record if downstream risk referral fails) to maintain consistency across services.')">Why Saga here?</button>
+        <button class="pattern-badge" onclick="openAdr('Domain Event','domain-event','results/student_projects/PENTION/modifiability/scenario_03/architecture.json','Services emit domain events (sample ready, spectra captured, detection classified, evidence sealed, model updated) whenever their aggregates change. These events decouple producers from consumers, drive the choreographed saga and feed the CQRS read models without tight runtime coupling.')">Why Domain Event here?</button>
+        <button class="pattern-badge" onclick="openAdr('API Composition','api-composition','results/student_projects/PENTION/modifiability/scenario_03/architecture.json','The EU policy dashboard needs anonymized community-level drug residue indicators that are aggregated from detection data. The policy dashboard service invokes the data governance service, which owns the anonymized aggregates, and performs an in-memory join with dashboard configuration to present policy impact and emerging trends without exposing personal data.')">Why API Composition here?</button>
+        <button class="pattern-badge" onclick="openAdr('Aggregate',null,'results/student_projects/PENTION/modifiability/scenario_03/architecture.json','Business logic is organised as DDD aggregates that enforce consistency boundaries locally: a SamplingJob aggregate, a SpectraSet aggregate, a DetectionResult aggregate, a EvidenceCase aggregate and a WaterSample aggregate. Each aggregate is the unit of consistency that emits domain events, keeping invariants within a single service database.')">Why Aggregate here?</button>
+      </div>
+    </article>
+
+    <!-- COMPLEX SCENARIO -->
+    <article class="scenario complex">
+      <div class="scenario-head">
+        <h3>Scenario B &mdash; Autonomous UAV swarm with tomographic plume mapping</h3>
+        <span class="scenario-tag">Complex &middot; highest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Add autonomous UAV swarm with tomographic plume mapping for clandestine lab localization.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-high">weight <b>4</b> / 5</span>
+        <span class="badge">magnitude <b>large</b></span>
+        <span class="badge">graph-edit distance <b>19</b></span>
+        <span class="badge">weighted GED <b>4 &times; 19 = 76.0</b></span>
+        <span class="badge">normalized GED <b>19 &divide; 45 = 0.422</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec</h4>
+          <ul>
+            <li>As a LEAs, I want a swarm of UAVs carrying lightweight PENTION-M vapour sensors, so that large open areas and complex sites can be searched rapidly.</li>
+            <li>As a LEAs, I want autonomous plume-following and source-seeking flight paths, so that clandestine labs can be located without manual piloting.</li>
+            <li>As a RTOs, I want tomographic reconstruction of vapour concentration fields from multiple UAVs, so that source location is more accurate than single-point dispersion modelling.</li>
+            <li>As a EU Policy, I want counter-UAS and airspace deconfliction compliance for PENTION UAV operations, so that aerial detection can be legally and safely deployed near critical infrastructure.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec &middot; original numbering</h4>
+          <ul>
+            <li>#13 &mdash; clandestine-lab identification via GNSS dispersion models</li>
+            <li>#30 &mdash; atmospheric dispersion modelling with Gaussian plume + AI/ML hybrids</li>
+          </ul>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="pention/scenario-complex-before.png" alt="PENTION component diagram before this scenario, with the Geolocation and Dispersion Service and its edges highlighted in red dashed lines to mark what gets removed"></div>
+          <figcaption><span>Before &mdash; marked for removal</span><span class="diff-legend"><span><i class="rem"></i>removed next</span></span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="pention/scenario-complex.png" alt="PENTION component diagram after this scenario: Geolocation and Dispersion Service is gone, replaced by a UAV Swarm Service, Tomographic Source Location Service and Airspace Compliance Service, all highlighted in green"></div>
+          <figcaption><span>After &mdash; a service is retired, three appear</span><span class="diff-legend"><span><i class="add"></i>added</span></span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>A service gets retired, not just added to.</b> Removing the two dispersion-modelling
+        stories let the model retire <span class="mono">geolocation_dispersion_service</span> (+
+        <span class="mono">geospatial_db</span>) entirely &mdash; marked red in the &ldquo;before&rdquo; diagram
+        &mdash; and replace it with a three-service cluster, marked green in the &ldquo;after&rdquo;:
+        <span class="mono">uav_swarm_service</span>, <span class="mono">tomographic_source_location_service</span>,
+        <span class="mono">airspace_compliance_service</span> &mdash; each with its own datastore and rewired
+        <span class="mono">operator_interface_service</span> / <span class="mono">sit_analytics_service</span> edges.
+        Node removal plus six-node addition plus a dozen new edges is why this single scenario carries a weighted GED
+        of 76.0 &mdash; by far the largest of PENTION&rsquo;s five scenarios (the next is 48.0), and the single
+        biggest reason its average lands at 34.8, the worst of all 19 projects. It is also the most structurally
+        disruptive scenario across all three featured projects.</p>
+      <div class="design-diff">
+        <div class="design-diff-head">vs. original</div>
+        <div class="diff-row"><span class="diff-tag remove">&minus; service</span><span class="diff-body"><span class="mono">geolocation_dispersion_service</span> + <span class="mono">geospatial_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">uav_swarm_service</span> + <span class="mono">uav_mission_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">tomographic_source_location_service</span> + <span class="mono">tomographic_field_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">airspace_compliance_service</span> + <span class="mono">airspace_compliance_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ 11 edges</span><span class="diff-body">rewiring <span class="mono">operator_interface_service</span> and <span class="mono">sit_analytics_service</span> onto the new cluster</span></div>
+        <div class="diff-row"><span class="diff-tag pattern">joins</span><span class="diff-body">API Composition, Domain Event, Database per Service</span></div>
+      </div>
+      <div class="pattern-badges">
+        <button class="pattern-badge" onclick="openAdr('API Composition','api-composition','results/student_projects/PENTION/modifiability/scenario_04/architecture.json','The operator console needs a single unified view that joins detection results, reference substance details, tomographic source-location estimates, UAV swarm status and airspace compliance status, which live in different services. An API composer in the operator interface service invokes the owning services and performs an in-memory join, hiding the fine-grained backend APIs from non-expert field operators.')">Why API Composition here?</button>
+        <button class="pattern-badge" onclick="openAdr('Domain Event','domain-event','results/student_projects/PENTION/modifiability/scenario_04/architecture.json','Services emit domain events (sample ready, spectra captured, detection classified, evidence sealed, model updated, UAV telemetry, tomographic field updated, airspace clearance issued) whenever their aggregates change. These events decouple producers from consumers, drive the choreographed saga and feed the CQRS read models without tight runtime coupling.')">Why Domain Event here?</button>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ======================= SMARTCUISINE ======================= -->
+  <section id="panel-smartcuisine" class="panel">
+
+    <div class="panel-head">
+      <div class="stat"><div class="k">Modifiability score</div><div class="v rust">14.8</div></div>
+      <div class="stat"><div class="k">Normalized score</div><div class="v rust">0.617</div></div>
+      <div class="stat"><div class="k">Rank (raw)</div><div class="v">8 / 19</div></div>
+      <div class="stat"><div class="k">Rank (normalized)</div><div class="v">15 / 19</div></div>
+      <div class="stat"><div class="k">Baseline graph</div><div class="v">11 nodes</div></div>
+      <div class="stat"><div class="k">Baseline edges</div><div class="v">13</div></div>
+    </div>
+    <p class="rank-note">SmartCuisine is a recipe-and-nutrition planner built on just five microservices (Ingredient
+      Storage, Shopping List, Notification, Recipe, User), covering Event Sourcing, Saga, CQRS, API Composition and
+      Aggregate patterns. It is featured here because of where it <em>used</em> to sit: it originally posted <b>90.0</b>,
+      the highest (worst) average weighted graph-edit distance of all 19 projects &mdash; and turned out to be the
+      clearest case of the GED-scorer bug described in the intro. With the fix applied and the score recomputed from
+      the same on-disk diagrams (no new LLM calls), SmartCuisine now averages <b>14.8</b> &mdash; solidly mid-pack,
+      tied for rank 8. Nothing about SmartCuisine&rsquo;s architecture changed; only the measurement did. One more
+      wrinkle: SmartCuisine is a small system (11 real components, 13 edges), so the same raw edits count for more
+      once normalized by baseline size &mdash; its normalized score (0.617) actually ranks 15th of 19, worse than its
+      raw rank suggests. See the &ldquo;All 19&rdquo; tab for the full comparison.</p>
+
+    <article class="block">
+      <h3>Original specification</h3>
+      <div class="block-sub">dataset/student_projects/SmartCuisine/input.txt &middot; 22 user stories</div>
+      <div class="sys-desc">
+        <p>Smart Cuisine aims to develop an application to discover new recipes and check their nutritional values in
+        order to monitor the daily intake of macronutrients. This application aims to improve the quality of the food
+        intake and to give new ideas to people who want to eat in a healthier way, without giving up on tasty meals.
+        The application meets the needs of the users with dietary restrictions given by health issues, intolerances
+        and religious or moral choices. To achieve the previous purposes the system allows short-term and medium-term
+        meal planning for the following days. The type of users which could be interested about this application are
+        personal trainers, people who can&rsquo;t afford a dietist or prefer to plan their meals by themselves.
+        Another possible user could be a person who uses the application to write down his shopping list and check
+        the nutritional values of the items in the list.</p>
+      </div>
+      <ol class="stories">
+        <li>As a not registered user, I want to subscribe with email and password so that being a registered user.</li>
+        <li>As a registered user, I want to log in with email and password so that logging in my account.</li>
+        <li>As a registered user, I want to access my profile so that I can visualize my personal data.</li>
+        <li>As a registered user, I want to delete my account so that being no more a registered user.</li>
+        <li>As a registered user, I want to modify my email address so that I can update it.</li>
+        <li>As a registered user, I want to modify my password so that I can update it.</li>
+        <li>As a registered user, I want to modify my gender so that I can update it.</li>
+        <li>As a registered user, I want to add my ingredients to the storage so that I can keep track of the ingredients I have at home.</li>
+        <li>As a registered user, I want to delete an ingredient from my storage so that I can delete an ingredient I used for a recipe.</li>
+        <li>As a registered user, I want to search for recipes so that I can find ideas for meals.</li>
+        <li>As a registered user, I want to save recipes so that I can access them easily in the future.</li>
+        <li>As a registered user, I want to add the ingredients to my shopping list so that I can keep track of what I need to buy.</li>
+        <li>As a registered user, I want to delete a saved recipe so that I can remove it if I don&rsquo;t like it.</li>
+        <li>As a registered user, I want to search recipes containing a specific ingredient so that I can find something I can cook with the ingredients I have in storage.</li>
+        <li>As a registered user, I want to move the ingredients from my shopping list to my ingredients storage so that I can keep track of what I bought.</li>
+        <li>As a registered user, I want to delete an ingredient from my shopping list so that I can remove it if I already have it.</li>
+        <li>As a registered user, I want to set the expiration date for the ingredients in my storage so that I can remember when they will expire.</li>
+        <li>As a registered user, I want to receive notifications 1 day before my ingredients expire so that I have time to cook them before the expiration date.</li>
+        <li>As a registered user, I want to set the quantity for the ingredient in my storage so that I can know the quantities of each ingredient in the storage.</li>
+        <li>As a registered user, I want to create a shopping list, so that I can keep track of what I want to buy.</li>
+        <li>As a registered user, I want to delete a shopping list, so that I can keep track of what I want to buy.</li>
+        <li>As a registered user, I want to read my shopping lists, so that I know what to buy.</li>
+      </ol>
+    </article>
+
+    <article class="block">
+      <h3>Original component diagram</h3>
+      <div class="block-sub">results/student_projects/SmartCuisine/component_diagram.puml &middot; rendered PlantUML</div>
+      <figure>
+        <div class="diagram-card">
+          <img class="zoomable" src="smartcuisine/original.png" alt="SmartCuisine original UML component diagram: 5 microservices (Ingredient Storage, Shopping List, Notification, Recipe, User) each in its own pattern package, with REST, event and WebSocket edges.">
+        </div>
+        <figcaption><span>5 microservices &middot; 6 private datastores &middot; REST / event / WebSocket edges</span><span>Click to zoom</span></figcaption>
+      </figure>
+    </article>
+
+    <!-- SIMPLE SCENARIO -->
+    <article class="scenario simple">
+      <div class="scenario-head">
+        <h3>Scenario A &mdash; Add recipe ratings and reviews</h3>
+        <span class="scenario-tag">Simple &middot; lowest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Add recipe ratings and reviews.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-low">weight <b>3</b> / 5</span>
+        <span class="badge">magnitude <b>small</b></span>
+        <span class="badge">graph-edit distance <b>0</b></span>
+        <span class="badge">weighted GED <b>3 &times; 0 = 0.0</b></span>
+        <span class="badge">normalized GED <b>0 &divide; 24 = 0.000</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec</h4>
+          <ul>
+            <li>As a registered user, I want to rate and review a recipe so that I can share my experience and help other users choose meals.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec</h4>
+          <p class="none">Nothing removed &mdash; purely additive.</p>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="smartcuisine/original.png" alt="SmartCuisine component diagram before this scenario"></div>
+          <figcaption><span>Before</span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="smartcuisine/scenario-simple.png" alt="SmartCuisine component diagram after adding recipe ratings, structurally identical to the original"></div>
+          <figcaption><span>After &mdash; identical graph</span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>No structural change, and the wording of the diagram stayed byte-identical too.</b>
+        A rating is just a new attribute on data <span class="mono">recipe_service</span> already owns &mdash; same
+        five services, same package titles, same edges. Notably, this is also the <em>only</em> SmartCuisine scenario
+        that re-rendered the surrounding PlantUML wording exactly as before (see the note on Scenario B) &mdash; which
+        is exactly why it is the one scenario that scores a clean <b>0</b>.</p>
+      <p class="pattern-note">No pattern was added or changed by this modification &mdash; nothing to click through to.</p>
+    </article>
+
+    <!-- COMPLEX SCENARIO -->
+    <article class="scenario complex">
+      <div class="scenario-head">
+        <h3>Scenario B &mdash; Shared household accounts and collaborative lists</h3>
+        <span class="scenario-tag">Complex &middot; highest weight in this project</span>
+      </div>
+      <p class="scenario-desc">&ldquo;Support shared household accounts and collaborative lists.&rdquo;</p>
+      <div class="badges">
+        <span class="badge weight-high">weight <b>4</b> / 5</span>
+        <span class="badge">magnitude <b>large</b></span>
+        <span class="badge">graph-edit distance <b>6</b></span>
+        <span class="badge">weighted GED <b>4 &times; 6 = 24.0</b></span>
+        <span class="badge">normalized GED <b>6 &divide; 24 = 0.250</b></span>
+      </div>
+      <div class="delta-grid">
+        <div class="delta-col added">
+          <h4>Added to the spec</h4>
+          <ul>
+            <li>As a registered user, I want to create or join a household so that I can share meal planning and shopping with family members.</li>
+            <li>As a household member, I want to manage a shared ingredient storage so that everyone knows what is available at home.</li>
+            <li>As a household member, I want to create a shared shopping list so that my household can plan purchases together.</li>
+            <li>As a household member, I want to read the shared shopping list so that I know what we need to buy.</li>
+            <li>As a household member, I want to delete a shared shopping list so that we can remove old lists.</li>
+          </ul>
+        </div>
+        <div class="delta-col removed">
+          <h4>Removed from the spec &middot; original numbering</h4>
+          <ul>
+            <li>#20 &mdash; create a personal shopping list</li>
+            <li>#21 &mdash; delete a personal shopping list</li>
+            <li>#22 &mdash; read personal shopping lists</li>
+          </ul>
+        </div>
+      </div>
+      <div class="diagram-pair">
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="smartcuisine/original.png" alt="SmartCuisine component diagram before this scenario"></div>
+          <figcaption><span>Before</span></figcaption>
+        </figure>
+        <figure>
+          <div class="diagram-card"><img class="zoomable" src="smartcuisine/scenario-complex.png" alt="SmartCuisine component diagram after this scenario, with a new Household Service and Household DB highlighted in green, wired to User, Ingredient Storage and Shopping List services"></div>
+          <figcaption><span>After &mdash; one service added</span><span class="diff-legend"><span><i class="add"></i>added</span></span></figcaption>
+        </figure>
+      </div>
+      <p class="impact-note"><b>GED 6 is now correct, and it matches the diagram.</b> The real diagram delta is one
+        new service, highlighted in green above: <span class="mono">household_service</span> (+
+        <span class="mono">household_db</span>), with three new edges into <span class="mono">user_service</span>,
+        <span class="mono">ingredient_storage_service</span> and <span class="mono">shopping_list_service</span>
+        &mdash; roughly the same size as EFarmers&rsquo; own &ldquo;large&rdquo; scenario above (GED 5). This scenario
+        originally scored <b>GED 43</b>, though, because the regenerated diagram also renamed its outer wrapping
+        package from &ldquo;Database per Service (mandatory for every microservice)&rdquo; to &ldquo;<i>Private</i>
+        Database per Service (mandatory for every microservice)&rdquo;. The parser this benchmark used identified
+        every component by its <em>full nested-package path</em>, so that one-word rename silently changed the
+        identity of all 10 components nested inside the package &mdash; the search could no longer match any of them
+        to the original graph, and scored the whole diagram as replaced. The same thing happened in SmartCuisine&rsquo;s
+        scenarios 2 and 4, which rename the same package (GED 38 and 48, now 1 and 9); scenarios 1 and 3 kept the
+        title byte-identical and were unaffected (GED 0 and 5, unchanged). We fixed this in
+        <span class="mono">Evaluation/modifiability_graph.py::canonicalize_for_ged</span> &mdash; it drops
+        grouping/package nodes from the comparison entirely and identifies each real component by its own name, so a
+        cosmetic package rename can no longer cascade into a false rewrite. SmartCuisine&rsquo;s score moved from
+        90.0 (worst of 19) to 14.8 (rank 8) purely from this fix, with zero LLM calls and zero changes to any
+        diagram.</p>
+      <div class="design-diff">
+        <div class="design-diff-head">vs. original</div>
+        <div class="diff-row"><span class="diff-tag add">+ service</span><span class="diff-body"><span class="mono">household_service</span> + <span class="mono">household_db</span></span></div>
+        <div class="diff-row"><span class="diff-tag add">+ edge</span><span class="diff-body"><span class="mono">household_service</span> &harr; <span class="mono">user_service</span>, <span class="mono">ingredient_storage_service</span>, <span class="mono">shopping_list_service</span> <span class="proto">REST</span></span></div>
+        <div class="diff-row"><span class="diff-tag pattern">joins</span><span class="diff-body">Aggregate, Database per Service</span></div>
+      </div>
+      <div class="pattern-badges">
+        <button class="pattern-badge" onclick="openAdr('Aggregate',null,'results/student_projects/SmartCuisine/modifiability/scenario_05/architecture.json','Each service organizes its business logic as DDD aggregates that act as consistency boundaries: a User account aggregate (user_service), a Household aggregate that enforces membership invariants (household_service), a Recipe aggregate (recipe_service), an Ingredient storage aggregate that guards household quantity and expiration invariants (ingredient_storage_service), and a ShoppingList aggregate that enforces its shared item invariants (shopping_list_service). All changes within an aggregate are atomic local transactions.')">Why Aggregate here?</button>
+      </div>
+    </article>
+
+  </section>
+
+  <footer>
+    Source: results/student_projects/{EFarmers,PENTION,SmartCuisine}/modifiability/report.json, recomputed with
+    <span class="mono">Evaluation.modifiability.recompute_ged()</span> &middot; graph-edit distance via networkx,
+    node-identity aware, canonicalized to drop grouping/package nodes and identify components by their own name
+    (<span class="mono">Evaluation/modifiability_graph.py::canonicalize_for_ged</span>, see SmartCuisine Scenario B)
+    &middot; five LLM-generated future scenarios per project, weighted by importance (1&ndash;5) &middot;
+    modifiability score = mean(weight &times; GED) across scenarios, lower is better. Diagram highlights (green =
+    added, red dashed = about to be removed) are this page&rsquo;s own annotation, layered onto the project&rsquo;s
+    own PlantUML source for illustration &mdash; not part of the original benchmark output.
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">Close ✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lb-caption" id="lightbox-caption"></div>
+</div>
+
+<div class="adr-modal" id="adr-modal" onclick="if(event.target.id==='adr-modal') closeAdr()">
+  <div class="adr-card" id="adr-card"></div>
+</div>
+
+<script>
+  // Condensed from docs/adr/*.md — the project's reference ADR catalogue,
+  // one per architectural pattern, generated once and shared across every
+  // project (not per-scenario). Clicking a pattern badge on a scenario
+  // looks up the pattern it introduced here.
+  var ADR_CATALOGUE = {
+    saga: {
+      title: "Saga",
+      file: "docs/adr/002-saga.md",
+      context: "Database per Service means a business transaction that spans multiple services can't use a single local ACID transaction — two-phase commit isn't an option either.",
+      decision: "Implement each cross-service business transaction as a saga: a sequence of local transactions, each updating its own database and publishing an event to trigger the next step. If a step fails, the saga runs compensating transactions to undo what the earlier steps did.",
+      benefits: ["Maintains data consistency across services without distributed transactions"],
+      drawbacks: ["No automatic rollback — compensating transactions must be designed explicitly", "No isolation between concurrent sagas — needs countermeasures against data anomalies"],
+    },
+    "api-composition": {
+      title: "API Composition",
+      file: "docs/adr/004-api-composition.md",
+      context: "With Database per Service, a query that needs data owned by several services can no longer be a single join.",
+      decision: "Implement the query with an API Composer: a component that invokes each owning service and performs an in-memory join of the results before returning them to the caller.",
+      benefits: [],
+      drawbacks: [],
+    },
+    cqrs: {
+      title: "CQRS (Command Query Responsibility Segregation)",
+      file: "docs/adr/005-command-query-responsibility-segregation-cqrs.md",
+      context: "Database per Service (and Event Sourcing, if used) makes a query spanning multiple services' data hard to implement directly.",
+      decision: "Maintain a separate, read-only view database purpose-built for the query, kept up to date by subscribing to the domain events published by the services that own the data.",
+      benefits: ["Denormalized views that are scalable and fast to read", "Cleaner separation between the command and query models"],
+      drawbacks: ["Added complexity and some code duplication", "Views are eventually consistent, not immediately up to date"],
+    },
+    "domain-event": {
+      title: "Domain Event",
+      file: "docs/adr/006-domain-event.md",
+      context: "A service often needs to tell the rest of the system when its data changes — to keep a CQRS view current, or to drive a choreography-based saga.",
+      decision: "Structure the service's business logic as DDD aggregates that emit domain events whenever they're created or updated, and publish those events for other services to consume.",
+      benefits: [],
+      drawbacks: [],
+    },
+  };
+
+  // key: a slug into ADR_CATALOGUE, or null when this scenario's pattern
+  // (e.g. "Aggregate") has no entry there. scenarioFile/scenarioText: the
+  // EXACT explanation for THIS modification, pulled from that scenario's
+  // own architecture.json "explanation" field — always shown first and
+  // never swapped for another scenario's or the pattern's generic text,
+  // so what you read is what actually motivated this specific change.
+  function openAdr(patternTitle, key, scenarioFile, scenarioText){
+    var card = document.getElementById('adr-card');
+    var a = key ? ADR_CATALOGUE[key] : null;
+    var html = '<button class="adr-close" onclick="closeAdr()">Close ✕</button>';
+    html += '<span class="adr-source ' + (a ? 'catalogue' : 'project') + '">' +
+      (a ? 'This modification + reference ADR' : 'This modification — no catalogue ADR for this pattern') + '</span>';
+    html += '<h4>' + patternTitle + '</h4>';
+    html += '<div class="adr-meta">' + scenarioFile + '</div>';
+    html += '<h5>Why THIS modification uses it</h5><p>' + scenarioText + '</p>';
+    if(a){
+      html += '<h5>The pattern in general &mdash; ' + a.file + '</h5>';
+      html += '<p><b>Context:</b> ' + a.context + '</p>';
+      html += '<p><b>Decision &amp; rationale:</b> ' + a.decision + '</p>';
+      if(a.benefits.length) html += '<ul>' + a.benefits.map(function(b){return '<li>+ '+b+'</li>';}).join('') + '</ul>';
+      if(a.drawbacks.length) html += '<ul>' + a.drawbacks.map(function(b){return '<li>− '+b+'</li>';}).join('') + '</ul>';
+    }
+    card.innerHTML = html;
+    document.getElementById('adr-modal').classList.add('open');
+  }
+  function closeAdr(){
+    document.getElementById('adr-modal').classList.remove('open');
+  }
+
+  function selectTab(name){
+    document.querySelectorAll('.tab').forEach(function(el){
+      el.classList.toggle('active', el.dataset.tab === name);
+    });
+    document.querySelectorAll('.panel').forEach(function(el){
+      el.classList.toggle('active', el.id === 'panel-' + name);
+    });
+  }
+
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  var lightboxCaption = document.getElementById('lightbox-caption');
+
+  function openLightbox(src, alt){
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightboxCaption.textContent = alt || '';
+    lightbox.classList.add('open');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+  }
+  document.addEventListener('click', function(e){
+    var img = e.target.closest('img.zoomable');
+    if (img){
+      openLightbox(img.getAttribute('src'), img.getAttribute('alt'));
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>

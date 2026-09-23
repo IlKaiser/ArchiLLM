@@ -2,76 +2,70 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Eureka Server"
+        "Global::mysql"
       ],
       "predicted_nodes": [
-        "Global::Service Discovery"
+        "Global::Private Data Store per Service (Database per Service)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node represents the service registry/discovery capability, which corresponds to the Eureka Server in the GT. Both are placed in the Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::Zipkin Server",
-        "Global::Hystrix Dashboard",
-        "Global::Hystrix Turbine"
-      ],
-      "predicted_nodes": [
-        "Global::Observability"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Observability node aggregates tracing, circuit breaker dashboarding, and metrics aggregation capabilities represented separately in the GT by Zipkin Server, Hystrix Dashboard, and Hystrix Turbine. The Global boundary is consistent."
-    },
-    {
-      "gt_nodes": [
-        "Global::Simple UI"
-      ],
-      "predicted_nodes": [
-        "Global::web_ui",
-        "Global::Frontend"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "Both predicted nodes refer to the Angular/web frontend user interface represented in the GT as Simple UI. Although the prediction duplicates the frontend concept, the boundary attribution remains Global and is therefore correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::Config Server"
-      ],
-      "predicted_nodes": [
-        "Global::Configuration Management"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Configuration Management node corresponds to the centralized Spring Cloud Config Server in the GT. Both are in the Global boundary."
+      "reasoning": "Both represent the database persistence layer. The predicted node describes the database-per-service pattern, while the GT node identifies the MySQL datastore. Both are assigned to the global architecture scope, so the boundary attribution is compatible."
     },
     {
       "gt_nodes": [
         "Global::API Gateway"
       ],
       "predicted_nodes": [
-        "Global::api_gateway",
-        "Global::API Composition Layer"
+        "Global::Gateway Data Composition (API Composition)"
       ],
-      "match_type": "1:N",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted api_gateway directly matches the GT API Gateway, while API Composition Layer is an architectural abstraction of the same gateway/unified-entry capability. Both predicted nodes are placed in the same Global boundary."
+      "reasoning": "API composition is a gateway responsibility for aggregating or composing backend responses. The predicted node therefore corresponds functionally to the GT API Gateway, and both use the global scope."
+    },
+    {
+      "gt_nodes": [
+        "Global::thriftserver",
+        "Global::thriftclient",
+        "Global::finaglethriftserver",
+        "Global::finaglethriftclient"
+      ],
+      "predicted_nodes": [
+        "Global::RPC Integration (gRPC / Thrift)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted RPC integration node aggregates the GT Thrift client/server components and their Finagle-based variants. Although gRPC is additionally mentioned in the predicted label, the Thrift and Finagle RPC functionality is represented, and the global attribution is consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::simpleui",
+        "Global::zipkin",
+        "Global::turbine"
+      ],
+      "predicted_nodes": [
+        "Global::Client & Observability Platform"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the client UI and observability capabilities represented by the GT Angular UI, Zipkin tracing, and Turbine metrics aggregation components. The aggregation is broad but functionally covers these components, and all nodes are placed in the global scope."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::UAA Service",
+    "Global::finaglethriftserver",
+    "Global::dummyservice",
+    "Global::uaa",
     "Global::Simple Service",
-    "Global::Finagle Thrift Client",
-    "Global::Dummy Service",
-    "Global::Finagle Thrift Server",
-    "Global::MySQL",
-    "Global::Thrift Server",
-    "Global::Thrift Client",
-    "Global::Simple Service B"
+    "Global::thriftserver",
+    "Global::hystrix",
+    "Global::simpleserviceb",
+    "Global::zipkin",
+    "Global::thriftclient",
+    "Global::eureka",
+    "Global::config",
+    "Global::finaglethriftclient"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Event Bus Infrastructure"
+    "Global::User Domain Consistency Boundary (Aggregate)",
+    "Global::Configuration Change Propagation (Domain Event)"
   ]
 }

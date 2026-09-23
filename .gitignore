@@ -26,3 +26,21 @@ print_totals.py
 AGENTS.md
 .worktrees/
 .superpowers/
+
+# Editor/tool-specific config — not shared across machines
+.claude/
+.codegraph/
+.cursor/
+
+# Generated experiment output — regenerated locally on each machine, not archived in git
+results/
+run_kimi_baseline/
+
+# Local-only compose override (e.g. macOS/no-GPU Ollama workaround) — per-machine, not shared
+docker-compose.override.yml
+docker-compose copy.yml
+
+# Dashboard: ship the generator code, not the per-machine generated state
+dashboard/index.html
+dashboard/run_progress/
+dashboard/__pycache__/

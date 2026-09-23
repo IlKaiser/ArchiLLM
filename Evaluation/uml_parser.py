@@ -54,6 +54,25 @@ class UMLParser:
                 r'(?i)^\s*component\s+(\w+)\s+as\s+"([^"]+)"'
                 r'(?:\s+<<([^>]+)>>)?\s*$'
             ),
+            # Reversed shorthand some generators (e.g. Kimi) emit:
+            # [snake_case_alias] as "Readable Display Name" — the bracket
+            # holds the alias, not the label. Without this, that line
+            # matches neither component_shorthand (which requires an
+            # unquoted \w+ alias after "as", not a quoted phrase) nor the
+            # edge pattern (no --/-> in it), so it's silently skipped: the
+            # service is never registered as an explicit leaf, only ever as
+            # a same-named fallback node the first time an edge mentions it
+            # — which then gets excluded as non-explicit by
+            # canonicalize_for_ged, silently dropping the service AND every
+            # edge touching it from the graph entirely.
+            "component_shorthand_unquoted": re.compile(
+                r'(?i)^\s*\[(\w+)\]\s+as\s+"([^"]+)"'
+                r'(?:\s+<<([^>]+)>>)?\s*$'
+            ),
+            "component_bracket_unquoted": re.compile(
+                r'(?i)^\s*component\s+\[(\w+)\]\s+as\s+"([^"]+)"'
+                r'(?:\s+<<([^>]+)>>)?\s*$'
+            ),
         }
 
         self.edge_pattern = re.compile(
@@ -140,8 +159,12 @@ class UMLParser:
                 elif node_type == "component_shorthand":
                     name = m.group(1)
                     alias = m.group(2)
-                elif node_type in ("database_unquoted", "component_unquoted"):
-                    # For "database db_id as 'DB Name'" format, use the quoted name (group 2)
+                elif node_type in (
+                    "database_unquoted", "component_unquoted",
+                    "component_shorthand_unquoted", "component_bracket_unquoted",
+                ):
+                    # For "database db_id as 'DB Name'" format (and the
+                    # bracket-shorthand equivalents), use the quoted name (group 2)
                     name = m.group(2)
                     alias = m.group(1)  # The identifier is the alias
                 else:

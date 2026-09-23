@@ -1,0 +1,26 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Account \"0..*"
+      ],
+      "predicted_nodes": [
+        "Global::Event-sourced account state (event sourcing)",
+        "Global::Account read model (CQRS)",
+        "Global::Account opening and ending workflow (saga)",
+        "Global::Account state change events (domain event)",
+        "Global::Account lifecycle aggregate (aggregate)"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "These predicted nodes collectively decompose the Account domain object and its lifecycle behavior into an aggregate, event-sourced state, read model, lifecycle workflow, and domain events. All nodes remain in the Global boundary, which is consistent with the GT attribution."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::0..*\" Accountholder"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Accountholder account listing (API composition)",
+    "Global::Private data per service (database per service)"
+  ]
+}

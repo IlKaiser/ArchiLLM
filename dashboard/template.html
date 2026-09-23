@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARTHUR Batch Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F5F6F9; --surface:#FFFFFF; --surface-alt:#EEF0F5; --border:#DCE0E8;
+    --ink:#12151C; --ink-secondary:#565F70; --ink-muted:#8890A0;
+    --accent:#3548C4; --accent-soft:#E7E9FB;
+    --success:#14875A; --success-soft:#E1F5EC;
+    --running:#B4680C; --running-soft:#FCEEDB;
+    --pending:#8890A0; --pending-soft:#EEF0F5;
+    --danger:#C0332B; --danger-soft:#FBE7E5;
+    --term-bg:#12151C; --term-text:#D7DBE6; --term-muted:#6B7385;
+    --font-sans:'IBM Plex Sans',-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1116; --surface:#161A22; --surface-alt:#1E232D; --border:#2A3040;
+      --ink:#EDEFF4; --ink-secondary:#A7AFC0; --ink-muted:#6B7385;
+      --accent:#8593FF; --accent-soft:#232B55;
+      --success:#3FCB93; --success-soft:#16332A;
+      --running:#E8A23A; --running-soft:#3A2A12;
+      --pending:#7A8194; --pending-soft:#232733;
+      --danger:#F0685F; --danger-soft:#3B1E1C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1116; --surface:#161A22; --surface-alt:#1E232D; --border:#2A3040;
+    --ink:#EDEFF4; --ink-secondary:#A7AFC0; --ink-muted:#6B7385;
+    --accent:#8593FF; --accent-soft:#232B55;
+    --success:#3FCB93; --success-soft:#16332A;
+    --running:#E8A23A; --running-soft:#3A2A12;
+    --pending:#7A8194; --pending-soft:#232733;
+    --danger:#F0685F; --danger-soft:#3B1E1C;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);margin:0;padding-inline:20px;padding-block:32px 64px;}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px;}
+
+  header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;}
+  .eyebrow{font:600 12px/1 var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 8px;}
+  h1{font:700 30px/1.15 var(--font-sans);letter-spacing:-.01em;margin:0;text-wrap:balance;}
+  header p.sub{margin:6px 0 0;color:var(--ink-secondary);font-size:14.5px;max-width:60ch;}
+  .status-block{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .status-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:100px;font:600 12.5px var(--font-sans);white-space:nowrap;}
+  .status-pill.done{background:var(--success-soft);color:var(--success);}
+  .status-pill.running{background:var(--running-soft);color:var(--running);}
+  .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .meta-line{font:400 12.5px var(--font-mono);color:var(--ink-muted);}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .tile{background:var(--surface);padding:18px 18px 16px;display:flex;flex-direction:column;gap:4px;}
+  .tile .label{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);}
+  .tile .value{font:700 24px/1.1 var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  .tile .value small{font-size:13px;color:var(--ink-secondary);font-weight:500;}
+
+  section.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px 22px;}
+  .panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px;}
+  .panel-title{display:flex;align-items:baseline;gap:10px;}
+  .panel-title h2{font:600 16px var(--font-sans);margin:0;}
+  .panel-title code{font:500 12.5px var(--font-mono);color:var(--ink-muted);}
+  .panel-frac{font:600 13px var(--font-mono);color:var(--ink-secondary);font-variant-numeric:tabular-nums;}
+  .bar-track{height:6px;border-radius:4px;background:var(--surface-alt);overflow:hidden;margin-bottom:16px;}
+  .bar-fill{height:100%;background:var(--accent);border-radius:4px;}
+
+  .table-scroll{overflow-x:auto;}
+  .run-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 16px;padding-bottom:2px;}
+  .run-tab{border:1px solid var(--border);border-radius:999px;background:var(--surface-alt);color:var(--ink-secondary);padding:7px 12px;font:600 12px var(--font-sans);cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+  .run-tab:hover{border-color:var(--accent);color:var(--ink);}
+  .run-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px;}
+  th{text-align:left;font:600 11px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);padding:0 10px 8px;border-bottom:1px solid var(--border);}
+  td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr.clickable{cursor:pointer;}
+  tr.clickable:hover{background:var(--surface-alt);}
+  tr.clickable:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-soft);}
+  .view-link{color:var(--accent);font-weight:600;font-size:12px;white-space:nowrap;}
+  td.name{font:500 13.5px var(--font-mono);}
+  td.num{font:400 13px var(--font-mono);font-variant-numeric:tabular-nums;color:var(--ink-secondary);text-align:right;}
+  th.num{text-align:right;}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:100px;font:600 11.5px var(--font-sans);white-space:nowrap;}
+  .pill.success{background:var(--success-soft);color:var(--success);}
+  .pill.failed{background:var(--danger-soft);color:var(--danger);}
+  .pill.pending{background:var(--pending-soft);color:var(--pending);}
+  .pill.running{background:var(--running-soft);color:var(--running);}
+  .pill.running .dot{animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .pill .dot{width:6px;height:6px;}
+
+  .compare-table td.delta-up{color:var(--success);font-weight:600;}
+  .compare-table td.delta-down{color:var(--danger);font-weight:600;}
+  .live-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:100px;background:var(--running-soft);color:var(--running);font:600 11px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;}
+  .live-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.4s ease-in-out infinite;}
+
+  .score-good{color:var(--success);font-weight:600;}
+  .score-mid{color:var(--running);font-weight:600;}
+  .score-low{color:var(--danger);font-weight:600;}
+
+  .models-note{display:flex;flex-wrap:wrap;gap:8px 18px;font:400 12.5px var(--font-mono);color:var(--ink-muted);}
+  .models-note b{color:var(--ink-secondary);font-weight:600;}
+
+  footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--ink-muted);font:400 12px var(--font-mono);}
+
+  /* ---------- detail overlay ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(10,12,16,.5);display:flex;justify-content:flex-end;z-index:50;}
+  .overlay[hidden]{display:none;}
+  .detail{background:var(--surface);width:min(760px,100%);height:100%;overflow-y:auto;padding:24px 26px 60px;box-shadow:-8px 0 30px rgba(0,0,0,.15);}
+  .detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;}
+  .detail-head h2{margin:0 0 4px;font:700 22px var(--font-sans);}
+  .detail-head p{margin:0;color:var(--ink-secondary);font:400 13px var(--font-mono);}
+  .close-btn{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;font-size:16px;line-height:1;cursor:pointer;color:var(--ink-secondary);flex:none;}
+  .close-btn:hover{color:var(--ink);}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+  .metric-tile{background:var(--surface-alt);padding:10px 12px;}
+  .metric-tile .l{font:600 10px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);}
+  .metric-tile .v{font:700 18px var(--font-mono);font-variant-numeric:tabular-nums;}
+  .detail img.diagram{width:100%;border:1px solid var(--border);border-radius:8px;background:#fff;margin-bottom:16px;cursor:zoom-in;transition:opacity .15s;}
+  .detail img.diagram:hover{opacity:.85;}
+  .detail h3{font:600 14px var(--font-sans);margin:22px 0 10px;}
+  .reasoning-block{background:var(--surface-alt);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.55;color:var(--ink-secondary);margin-bottom:10px;}
+  .reasoning-block b{color:var(--ink);}
+  .match-pair{border-left:3px solid var(--accent);padding:8px 12px;margin-bottom:8px;background:var(--surface-alt);border-radius:0 6px 6px 0;font-size:12.5px;}
+  .match-pair .nodes{font:500 12.5px var(--font-mono);color:var(--ink);margin-bottom:3px;}
+  .match-pair .reasoning{color:var(--ink-secondary);}
+  .scenario-card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+  .scenario-card .sc-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;}
+  .scenario-card .sc-title{font:600 13.5px var(--font-sans);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:100px;font:600 11px var(--font-mono);background:var(--accent-soft);color:var(--accent);margin-right:6px;}
+  .scenario-card .sc-desc{font-size:13px;color:var(--ink-secondary);margin-bottom:10px;}
+  .scenario-card .sc-error{font-size:12.5px;color:var(--danger);background:var(--danger-soft);border-radius:6px;padding:8px 10px;}
+  .diagram-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  .diagram-compare figure{margin:0;}
+  .diagram-compare figcaption{font:600 10px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:5px;}
+  .diagram-compare img{width:100%;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:zoom-in;transition:opacity .15s;}
+  .diagram-compare img:hover{opacity:.85;}
+
+  /* ---------- diagram lightbox ---------- */
+  .lightbox{position:fixed;inset:0;background:rgba(6,8,11,.92);display:flex;align-items:center;justify-content:center;z-index:100;cursor:zoom-out;padding:32px;}
+  .lightbox[hidden]{display:none;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:6px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.4);cursor:default;}
+  .lightbox .close-btn{position:fixed;top:20px;right:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;}
+  .lightbox .close-btn:hover{color:#fff;background:rgba(255,255,255,.22);}
+
+  @media (max-width:520px){
+    h1{font-size:24px;}
+    header{flex-direction:column;align-items:flex-start;}
+    .diagram-compare{grid-template-columns:1fr;}
+    .detail{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">ArchiLLM / ARTHUR &middot; batch results</p>
+      <h1>Diagram-generation &amp; evaluation dashboard</h1>
+      <p class="sub">Full results for <code style="font-family:var(--font-mono)">run_all_datasets.sh</code>: diagram generation, LLM evaluation, and modifiability scenario analysis. Click any project row for the full breakdown and rendered diagrams.</p>
+    </div>
+    <div class="status-block">
+      <span class="status-pill done" id="status-pill"><span class="dot"></span>Complete</span>
+      <span class="meta-line" id="generated-line">—</span>
+    </div>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Overall completion</h2></div>
+      <span class="panel-frac" id="overall-frac">—</span>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--surface-alt)" stroke-width="9"/>
+        <circle id="ring-arc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="9"
+                stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="238.76"
+                transform="rotate(-90 44 44)"/>
+        <text x="44" y="49" text-anchor="middle" style="font:700 22px var(--font-mono)" fill="var(--ink)" id="ring-pct">0%</text>
+      </svg>
+      <div id="ring-legend" style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-secondary)"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="generation-runs-panel" style="display:none">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Generation runs</h2><code>live run_headless progress</code></div>
+      <span id="generation-live" style="display:none" class="live-badge"><span class="dot"></span>live</span>
+    </div>
+    <div class="run-tabs" id="generation-run-tabs" role="tablist" aria-label="Generation run filters"></div>
+    <div id="generation-runs-summary"></div>
+    <div id="generation-runs-body"></div>
+  </section>
+
+  <section class="panel" id="kimi-summary-panel" style="display:none">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Kimi run &mdash; overall completion</h2><code>run_kimi_baseline + results/student_projects_kimi_full</code></div>
+      <span class="panel-frac" id="kimi-overall-frac">&mdash;</span>
+    </div>
+    <div class="tiles" id="kimi-tiles" style="margin-bottom:18px"></div>
+    <div style="display:flex;gap:20px;align-items:center;">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--surface-alt)" stroke-width="9"/>
+        <circle id="kimi-ring-arc" cx="44" cy="44" r="38" fill="none" stroke="var(--running)" stroke-width="9"
+                stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="238.76"
+                transform="rotate(-90 44 44)"/>
+        <text x="44" y="49" text-anchor="middle" style="font:700 22px var(--font-mono)" fill="var(--ink)" id="kimi-ring-pct">0%</text>
+      </svg>
+      <div id="kimi-ring-legend" style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-secondary)"></div>
+    </div>
+  </section>
+
+  <div id="dataset-panels"></div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Modifiability analysis</h2><code>dataset/student_projects</code></div>
+      <span class="panel-frac" id="mod-frac">—</span>
+    </div>
+    <div id="mod-body"></div>
+  </section>
+
+  <section class="panel" id="mod-other-panel" style="display:none">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Modifiability &mdash; other datasets</h2><code>DeepSeek-Flash, same methodology as student projects</code></div>
+    </div>
+    <div id="mod-other-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Modifiability &mdash; actor model comparison</h2><code>results/student_projects vs results/student_projects_kimi</code></div>
+      <span id="cmp-live" style="display:none" class="live-badge"><span class="dot"></span>live</span>
+    </div>
+    <div id="cmp-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div class="panel-title"><h2>Models used</h2></div></div>
+    <div class="models-note" id="models-note"></div>
+  </section>
+
+  <footer>
+    <span>Regenerate with <span style="font-family:var(--font-mono)">python dashboard/generate.py</span></span>
+    <span id="footer-generated"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="detail" id="detail-panel"></div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="close-btn" onclick="closeLightbox(event)">&times;</button>
+  <img id="lightbox-img" src="" alt="Full-size diagram">
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const GENERATION_TAB_STORAGE_KEY = 'archillm-generation-run-tab';
+function storedGenerationRunFilter(){
+  try { return localStorage.getItem(GENERATION_TAB_STORAGE_KEY) || 'all'; }
+  catch(_err) { return 'all'; }
+}
+function storeGenerationRunFilter(value){
+  try { localStorage.setItem(GENERATION_TAB_STORAGE_KEY, value); }
+  catch(_err) { /* file:// and privacy modes may disable storage */ }
+}
+let generationRunFilter = storedGenerationRunFilter();
+
+const DATASET_META = {
+  student_projects: {title:'Student projects', sub:'dataset/student_projects'},
+  open_source_projects: {title:'Open-source projects', sub:'dataset/open_source_projects'},
+  microservice_dataset: {title:'MicroserviceDataset', sub:'MicroserviceDataset'},
+};
+
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function fmtSec(s){ if(s==null) return '—'; if(s<60) return s.toFixed(0)+'s'; const m=Math.floor(s/60), r=Math.round(s%60); return `${m}m ${r}s`; }
+function fmtCost(c){ return c==null ? '—' : '$'+c.toFixed(4); }
+function fmtScore(v,d=3){ return (v==null) ? '—' : Number(v).toFixed(d); }
+function pill(status){
+  if(status==='success') return `<span class="pill success"><span class="dot"></span>done</span>`;
+  if(status==='skipped') return `<span class="pill success"><span class="dot"></span>skipped</span>`;
+  if(status==='running') return `<span class="pill running"><span class="dot"></span>running</span>`;
+  if(status==='waiting') return `<span class="pill running"><span class="dot"></span>waiting</span>`;
+  if(status==='error') return `<span class="pill failed"><span class="dot"></span>failed</span>`;
+  if(status==='failed') return `<span class="pill failed"><span class="dot"></span>failed</span>`;
+  if(status==='stopped') return `<span class="pill pending"><span class="dot"></span>stopped</span>`;
+  return `<span class="pill pending"><span class="dot"></span>pending</span>`;
+}
+function scoreBand(v, good, mid){
+  if(v==null) return '';
+  return v>=good ? 'score-good' : v>=mid ? 'score-mid' : 'score-low';
+}
+
+function openDetail(html){
+  document.getElementById('detail-panel').innerHTML = html;
+  document.getElementById('overlay').hidden = false;
+}
+function closeDetail(){ document.getElementById('overlay').hidden = true; }
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeDetail(); });
+
+function openLightbox(src){
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').hidden = false;
+}
+
+function generationDetailHtml(p, run){
+  return `<div class="detail-head">
+    <div><h2>${esc(p.name)}</h2><p>${esc(run.model)} · ${run.phase==='modifiability'?'Modifiability':'Microservice generation'}</p></div>
+    <button class="close-btn" onclick="closeDetail()" aria-label="Close">&times;</button>
+  </div>
+  <div class="metric-grid">
+    <div class="metric-tile"><div class="l">Status</div><div class="v" style="font-size:14px">${esc(p.status)}</div></div>
+    <div class="metric-tile"><div class="l">Time</div><div class="v">${fmtSec(p.time_seconds)}</div></div>
+    <div class="metric-tile"><div class="l">Cost</div><div class="v">${fmtCost(p.cost)}</div></div>
+  </div>
+  <h3>Generated component diagram</h3>
+  <img class="diagram" src="${esc(p.diagram_png)}" alt="Component diagram for ${esc(p.name)}">
+  <p style="color:var(--ink-muted);font-size:12px">Click the diagram to view it full size.</p>`;
+}
+function closeLightbox(e){ if(e) e.stopPropagation(); document.getElementById('lightbox').hidden = true; }
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox') closeLightbox(); });
+document.getElementById('detail-panel').addEventListener('click', e=>{
+  const img = e.target.closest('img.diagram, .diagram-compare img');
+  if(img) openLightbox(img.getAttribute('src'));
+});
+
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  if(!document.getElementById('lightbox').hidden) closeLightbox();
+  else closeDetail();
+});
+
+function datasetDetailHtml(p, datasetLabel){
+  const metrics = [
+    {l:'Node F1', v:fmtScore(p.node_f1)}, {l:'Edge F1', v:fmtScore(p.edge_f1)},
+    {l:'GED', v:fmtScore(p.ged,2)}, {l:'Boundary Acc.', v:fmtScore(p.boundary_accuracy)},
+    {l:'Completeness', v:p.completeness ?? '—'}, {l:'Accuracy', v:p.accuracy ?? '—'},
+    {l:'Rationality', v:p.rationality ?? '—'}, {l:'Readability', v:p.readability ?? '—'},
+    {l:'Cost', v:fmtCost(p.cost)}, {l:'Time', v:fmtSec(p.time_seconds)},
+  ];
+  let alignmentHtml = '';
+  if(p.judge_alignment && p.judge_alignment.matched_pairs){
+    alignmentHtml = `<h3>Semantic alignment (GT &harr; predicted)</h3>` + p.judge_alignment.matched_pairs.map(m=>`
+      <div class="match-pair">
+        <div class="nodes">${esc((m.gt_nodes||[]).join(', '))} &harr; ${esc((m.predicted_nodes||[]).join(', '))} ${m.is_boundary_correct?'✓ boundary':'✗ boundary'}</div>
+        <div class="reasoning">${esc(m.reasoning||'')}</div>
+      </div>`).join('');
+  }
+  let scoreHtml = '';
+  if(p.arch_score && p.arch_score.scores){
+    const s = p.arch_score.scores;
+    scoreHtml = `<h3>Judge rubric reasoning</h3>
+      ${p.arch_score.chain_of_thought ? `<div class="reasoning-block"><b>Overall:</b> ${esc(p.arch_score.chain_of_thought)}</div>` : ''}
+      ${Object.entries(s).map(([k,v])=>`<div class="reasoning-block"><b>${esc(k)} (${v.score}/5):</b> ${esc(v.reasoning)}</div>`).join('')}`;
+  }
+  return `
+    <div class="detail-head">
+      <div><h2>${esc(p.name)}</h2><p>${esc(datasetLabel)} &middot; ${pill(p.status)}</p></div>
+      <button class="close-btn" onclick="closeDetail()">&times;</button>
+    </div>
+    ${p.error ? `<div class="scenario-card"><div class="sc-error">${esc(p.error)}</div></div>` : ''}
+    <div class="metric-grid">${metrics.map(m=>`<div class="metric-tile"><div class="l">${m.l}</div><div class="v">${m.v}</div></div>`).join('')}</div>
+    ${p.diagram_png ? `<img class="diagram" src="${esc(p.diagram_png)}" alt="${esc(p.name)} component diagram">` : '<p style="color:var(--ink-muted);font-size:13px">No diagram rendered.</p>'}
+    ${alignmentHtml}
+    ${scoreHtml}
+  `;
+}
+
+function modifiabilityDetailHtml(p){
+  const scenarios = (p.scenarios||[]).map(s=>{
+    const hasErr = !!s.error;
+    return `
+    <div class="scenario-card">
+      <div class="sc-head">
+        <span class="sc-title">Scenario ${s.index}: ${esc(s.description||'')}</span>
+      </div>
+      <div style="margin-bottom:8px">
+        <span class="badge">weight ${s.weight ?? '—'}</span>
+        <span class="badge">${esc(s.magnitude||'—')}</span>
+        ${!hasErr ? `<span class="badge">GED ${s.ged ?? '—'}</span><span class="badge">weighted ${s.weighted_ged ?? '—'}</span>` : ''}
+      </div>
+      ${hasErr ? `<div class="sc-error">${esc(s.error)}</div>` : `
+        <div class="diagram-compare">
+          <figure><figcaption>Original</figcaption>${p.original_diagram_png ? `<img src="${esc(p.original_diagram_png)}">` : '<p style="color:var(--ink-muted);font-size:12px">n/a</p>'}</figure>
+          <figure><figcaption>Modified (this scenario)</figcaption>${s.diagram_png ? `<img src="${esc(s.diagram_png)}">` : '<p style="color:var(--ink-muted);font-size:12px">not rendered</p>'}</figure>
+        </div>`}
+    </div>`;
+  }).join('');
+
+  const byMag = p.by_magnitude ? Object.entries(p.by_magnitude).map(([k,v])=>
+    `<div class="metric-tile"><div class="l">${esc(k)}</div><div class="v">${v}</div></div>`).join('') : '';
+
+  return `
+    <div class="detail-head">
+      <div><h2>${esc(p.name)} &mdash; modifiability</h2><p>Score ${fmtScore(p.modifiability_score,1)} &middot; ${p.pct_of_own_max_case!=null?p.pct_of_own_max_case+'% of own worst case':''}</p></div>
+      <button class="close-btn" onclick="closeDetail()">&times;</button>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-tile"><div class="l">Score</div><div class="v">${fmtScore(p.modifiability_score,1)}</div></div>
+      <div class="metric-tile"><div class="l">Own worst case</div><div class="v">${p.own_max_case_weighted_ged ?? '—'}</div></div>
+      <div class="metric-tile"><div class="l">Scenarios</div><div class="v">${p.n_scenarios ?? '—'}</div></div>
+      <div class="metric-tile"><div class="l">Cost</div><div class="v">${fmtCost(p.cost)}</div></div>
+      <div class="metric-tile"><div class="l">Time</div><div class="v">${fmtSec(p.time_seconds)}</div></div>
+      ${byMag}
+    </div>
+    <h3>Scenarios</h3>
+    ${scenarios}
+  `;
+}
+
+function renderTiles(){
+  const generationRuns = (DATA.generation_runs || []).filter(run=>run.status!=='stopped');
+  if(generationRuns.length){
+    const runProjects = generationRuns.flatMap(run=>run.projects||[]);
+    const done = runProjects.filter(p=>p.status==='success'||p.status==='skipped');
+    const failed = runProjects.filter(p=>p.status==='failed'||p.status==='error');
+    const totalSteps = generationRuns.reduce((sum,run)=>sum+(Number(run.total)||0),0);
+    const completedPct = totalSteps ? Math.round(100*done.length/totalSteps) : 0;
+    const timed = done.filter(p=>p.time_seconds!=null);
+    const avgTime = timed.length ? timed.reduce((sum,p)=>sum+(Number(p.time_seconds)||0),0)/timed.length : null;
+    const totalCost = done.reduce((sum,p)=>sum+(Number(p.cost)||0),0);
+    const tiles = [
+      {label:'Generation steps total', value: totalSteps},
+      {label:'Completed', value: `${done.length}/${totalSteps}`, small: `${completedPct}%`},
+      {label:'Failed', value: failed.length},
+      {label:'Avg. time / step', value: fmtSec(avgTime)},
+      {label:'Total spend', value: fmtCost(totalCost)},
+    ];
+    document.getElementById('tiles').innerHTML = tiles.map(t=>`
+      <div class="tile"><span class="label">${t.label}</span><span class="value">${t.value}${t.small?` <small>${t.small}</small>`:''}</span></div>`).join('');
+    const circumference = 238.76;
+    document.getElementById('ring-arc').setAttribute('stroke-dashoffset', (circumference*(1-completedPct/100)).toFixed(2));
+    document.getElementById('ring-pct').textContent = completedPct+'%';
+    document.getElementById('overall-frac').textContent = `${done.length} / ${totalSteps} run steps (${completedPct}%)`;
+    document.getElementById('ring-legend').innerHTML = `
+      <div><b style="color:var(--ink)">${done.length}</b> generation steps complete across all models</div>
+      <div>${failed.length} failed &middot; ${totalSteps-done.length-failed.length} pending</div>`;
+    return;
+  }
+
+  // Historical dashboard fallback when no live/generic generation runs exist.
+  const allProjects = DATA.datasets.flatMap(d=>d.projects);
+  const done = allProjects.filter(p=>p.status==='success');
+  const failed = allProjects.filter(p=>p.status==='failed');
+  const totalProjects = DATA.datasets.reduce((a,d)=>a+d.total,0);
+  const modDone = DATA.modifiability.projects.filter(p=>p.status==='success');
+  const totalCost = done.reduce((a,p)=>a+(p.cost||0),0) + modDone.reduce((a,p)=>a+(p.cost||0),0);
+  const avgTime = done.length ? done.reduce((a,p)=>a+(p.time_seconds||0),0)/done.length : null;
+  const studentTotal = DATA.datasets.find(d=>d.key==='student_projects')?.total || 0;
+  const totalSteps = totalProjects + studentTotal;
+  const completedSteps = done.length + modDone.length;
+  const completedPct = totalSteps ? Math.round(100*completedSteps/totalSteps) : 0;
+
+  const tiles = [
+    {label:'Projects total', value: totalProjects},
+    {label:'Completed', value: `${completedSteps}/${totalSteps}`, small: `${completedPct}%`},
+    {label:'Failed', value: failed.length},
+    {label:'Avg. time / project', value: fmtSec(avgTime)},
+    {label:'Total spend', value: fmtCost(totalCost)},
+  ];
+  document.getElementById('tiles').innerHTML = tiles.map(t=>`
+    <div class="tile"><span class="label">${t.label}</span><span class="value">${t.value}${t.small?` <small>${t.small}</small>`:''}</span></div>`).join('');
+
+  const pct = totalSteps ? Math.round(100*completedSteps/totalSteps) : 0;
+  const circumference = 238.76;
+  document.getElementById('ring-arc').setAttribute('stroke-dashoffset', (circumference*(1-pct/100)).toFixed(2));
+  document.getElementById('ring-pct').textContent = pct+'%';
+  document.getElementById('overall-frac').textContent = `${completedSteps} / ${totalSteps} steps (${pct}%)`;
+  document.getElementById('ring-legend').innerHTML = `
+    <div><b style="color:var(--ink)">${completedSteps}</b> steps complete (diagram gen + eval + modifiability)</div>
+    <div>${failed.length} failed &middot; ${totalSteps-completedSteps-failed.length} pending</div>`;
+}
+
+function renderGenerationRuns(){
+  const allRuns = DATA.generation_runs || [];
+  const panel = document.getElementById('generation-runs-panel');
+  if(!allRuns.length){ panel.style.display='none'; return; }
+  panel.style.display='';
+  const shortModel = model => {
+    if(/gemma/i.test(model||'')) return 'Gemma';
+    if(/qwen/i.test(model||'')) return 'Qwen';
+    if(/deepseek/i.test(model||'')) return 'DeepSeek';
+    return model || 'Unknown model';
+  };
+  const phaseLabel = run => run.phase==='modifiability' ? 'Modifiability' : 'Baseline';
+  const groupKey = run => `${shortModel(run.model)}::${run.phase||'baseline'}`;
+  const tabDefs = [{key:'all', label:'All runs'}];
+  const seenTabs = new Set();
+  allRuns.forEach(run=>{
+    const key = groupKey(run);
+    if(seenTabs.has(key)) return;
+    seenTabs.add(key);
+    tabDefs.push({key, label:`${shortModel(run.model)} · ${phaseLabel(run)}`});
+  });
+  if(!tabDefs.some(tab=>tab.key===generationRunFilter)){
+    generationRunFilter = 'all';
+    storeGenerationRunFilter(generationRunFilter);
+  }
+  const tabs = document.getElementById('generation-run-tabs');
+  tabs.innerHTML = tabDefs.map(tab=>`<button type="button" class="run-tab${generationRunFilter===tab.key?' active':''}" data-run-filter="${esc(tab.key)}" role="tab" aria-selected="${generationRunFilter===tab.key?'true':'false'}">${esc(tab.label)}</button>`).join('');
+  const visible = allRuns.map((run, runIdx)=>({run, runIdx})).filter(item=>
+    generationRunFilter==='all' || groupKey(item.run)===generationRunFilter);
+  const runs = visible.map(item=>item.run);
+  const anyLive = allRuns.some(r=>r.status==='running'||r.status==='waiting');
+  document.getElementById('generation-live').style.display = anyLive ? 'inline-flex' : 'none';
+  const statusPill = document.getElementById('status-pill');
+  if(anyLive){
+    statusPill.className = 'status-pill running';
+    statusPill.innerHTML = '<span class="dot"></span>Running';
+  }
+
+  // Treat baseline generation + modifiability with the same model/output as
+  // one experiment. This makes the headline percentage describe the whole
+  // requested run rather than either phase in isolation.
+  const experiments = new Map();
+  for(const run of runs){
+    const key = `${run.model}|${run.dataset}|${run.output}`;
+    if(!experiments.has(key)) experiments.set(key, []);
+    experiments.get(key).push(run);
+  }
+  document.getElementById('generation-runs-summary').innerHTML = [...experiments.values()].map(group=>{
+    const first = group[0];
+    const totalSteps = group.reduce((n,r)=>n+r.total,0);
+    const completedSteps = group.reduce((n,r)=>n+r.projects.filter(p=>p.status==='success'||p.status==='skipped').length,0);
+    const pct = totalSteps ? Math.round(100*completedSteps/totalSteps) : 0;
+    const names = [...new Set(group.flatMap(r=>r.projects.map(p=>p.name)))];
+    const fullyComplete = names.filter(name=>group.every(r=>{
+      const p=r.projects.find(x=>x.name===name);
+      return p && (p.status==='success'||p.status==='skipped');
+    }));
+    const fullTimes = fullyComplete.map(name=>group.reduce((sum,r)=>{
+      const p=r.projects.find(x=>x.name===name);
+      return sum+(Number(p?.time_seconds)||0);
+    },0));
+    const avgProjectTime = fullTimes.length ? fullTimes.reduce((a,b)=>a+b,0)/fullTimes.length : null;
+    const active = group.reduce((n,r)=>n+r.projects.filter(p=>p.status==='running').length,0);
+    return `<div style="margin-bottom:20px">
+      <div class="panel-frac" style="margin-bottom:8px"><b style="color:var(--ink)">${esc(first.model)}</b> · ${group.length>1 ? 'complete experiment' : phaseLabel(first)}</div>
+      <div class="tiles" style="margin-bottom:12px">
+        <div class="tile"><span class="label">Overall completion</span><span class="value">${pct}%</span><small>${completedSteps}/${totalSteps} phase steps</small></div>
+        <div class="tile"><span class="label">Average time / project</span><span class="value">${fmtSec(avgProjectTime)}</span><small>fully completed projects</small></div>
+        <div class="tile"><span class="label">Projects fully complete</span><span class="value">${fullyComplete.length}/${names.length}</span></div>
+        <div class="tile"><span class="label">Running now</span><span class="value">${active}</span></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--running)"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('generation-runs-body').innerHTML = visible.map(({run,runIdx})=>{
+    const complete = run.projects.filter(p=>p.status==='success'||p.status==='skipped').length;
+    const failed = run.projects.filter(p=>p.status==='error'||p.status==='failed').length;
+    const running = run.projects.filter(p=>p.status==='running');
+    const pct = run.total ? Math.round(100*complete/run.total) : 0;
+    const completedTimes = run.projects
+      .filter(p=>(p.status==='success'||p.status==='skipped') && p.time_seconds!=null)
+      .map(p=>Number(p.time_seconds));
+    const avgTime = completedTimes.length ? completedTimes.reduce((a,b)=>a+b,0)/completedTimes.length : null;
+    const rows = run.projects.map((p,projectIdx)=>{
+      const started = p.started_at ? new Date(p.started_at) : null;
+      const liveSeconds = p.status==='running' && started ? (Date.now()-started.getTime())/1000 : null;
+      const scenarioProgress = run.phase==='modifiability' && p.status==='running'
+        ? ` <span class="panel-frac">${p.scenarios_completed||0}/${p.scenarios_total||5}</span>` : '';
+      const canView = Boolean(p.diagram_png);
+      return `<tr${canView ? ` class="clickable" tabindex="0" role="button" data-run-idx="${runIdx}" data-project-idx="${projectIdx}" aria-label="View project diagram"` : ''}>
+        <td class="name">${esc(p.name)}</td><td>${pill(p.status)}${scenarioProgress}</td>
+        <td class="num">${fmtSec(p.time_seconds ?? liveSeconds)}</td>
+        <td class="num">${fmtCost(p.cost)}</td>
+        <td>${p.error ? esc(p.error) : (canView ? '<span class="view-link">View diagram →</span>' : '—')}</td>
+      </tr>`;
+    }).join('');
+    return `<div style="margin-bottom:22px">
+      <div class="panel-frac" style="display:flex;justify-content:space-between;gap:12px;margin-bottom:7px">
+        <span><b style="color:var(--ink)">${esc(run.model)}</b> · ${run.phase==='modifiability'?'Modifiability':'Microservice generation'} · ${esc(run.backend)} · <code>${esc(run.dataset)}</code></span>
+        <span>${complete}/${run.total} (${pct}%) · avg ${fmtSec(avgTime)} / project${running.length?` · ${running.length} running`:''}${failed?` · ${failed} failed`:''}${run.vllm_stats?.output_tokens_per_second?` · ${run.vllm_stats.output_tokens_per_second.toFixed(1)} tok/s`:''}${run.estimated_remaining_seconds!=null&&pct<100?` · ETA ${fmtSec(run.estimated_remaining_seconds)}`:''}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${run.status==='running'?'var(--running)':'var(--accent)'}"></div></div>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Project</th><th>Status</th><th class="num">Time</th><th class="num">Cost</th><th>Error</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  }).join('');
+}
+
+function renderDatasetPanel(d){
+  const meta = DATASET_META[d.key] || {title:d.key, sub:d.label};
+  const done = d.projects.filter(p=>p.status==='success').length;
+  const pct = d.total ? Math.round(100*done/d.total) : 0;
+  const rows = d.projects.map((p,i)=>`
+    <tr class="clickable" data-ds="${d.key}" data-idx="${i}">
+      <td class="name">${esc(p.name)}</td>
+      <td>${pill(p.status)}</td>
+      <td class="num">${fmtSec(p.time_seconds)}</td>
+      <td class="num">${fmtCost(p.cost)}</td>
+      <td class="num">${fmtScore(p.node_f1)}</td>
+      <td class="num">${fmtScore(p.edge_f1)}</td>
+      <td class="num ${scoreBand(p.completeness,4,3)}">${p.completeness ?? '—'}</td>
+    </tr>`).join('');
+  return `
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title"><h2>${meta.title}</h2><code>${meta.sub}</code></div>
+        <span class="panel-frac">${done} / ${d.total} (${pct}%)</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Project</th><th>Status</th><th class="num">Time</th><th class="num">Cost</th><th class="num">Node F1</th><th class="num">Edge F1</th><th class="num">Judge: complete</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
+}
+
+function renderModifiability(){
+  const mod = DATA.modifiability;
+  const total = DATA.datasets.find(d=>d.key==='student_projects')?.total || 0;
+  const modDone = mod.projects.filter(p=>p.status==='success').length;
+  const modPct = total ? Math.round(100*modDone/total) : 0;
+  document.getElementById('mod-frac').textContent = `${modDone} / ${total} (${modPct}%)`;
+
+  const modScoreBand = pct => pct==null ? '' : pct>=66 ? 'score-low' : pct>=33 ? 'score-mid' : 'score-good';
+  const rows = mod.projects.map((p,i)=>{
+    const pct = p.pct_of_own_max_case;
+    return `
+    <tr class="clickable" data-mod-idx="${i}">
+      <td class="name">${esc(p.name)}</td>
+      <td>${pill(p.status)}</td>
+      <td class="num">${p.modifiability_score!=null?p.modifiability_score.toFixed(1):'—'}</td>
+      <td class="num ${modScoreBand(pct)}">
+        ${pct!=null ? `<span style="display:inline-flex;align-items:center;gap:6px;justify-content:flex-end">
+            <span style="width:48px;height:5px;border-radius:3px;background:var(--surface-alt);overflow:hidden;display:inline-block">
+              <span style="display:block;height:100%;width:${Math.min(pct,100)}%;background:currentColor;border-radius:3px"></span>
+            </span>${pct.toFixed(0)}%</span>` : '—'}
+      </td>
+      <td class="num">${p.n_scenarios ?? '—'}</td>
+      <td class="num">${fmtCost(p.cost)}</td>
+      <td class="num">${fmtSec(p.time_seconds)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('mod-body').innerHTML = `
+    <div style="background:var(--surface-alt);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12.5px;color:var(--ink-secondary);display:flex;flex-direction:column;gap:4px">
+      <div style="font:600 11px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted)">How &ldquo;% of worst case&rdquo; is computed &mdash; per project</div>
+      <div>Each scenario's GED is weighted by its importance (1&ndash;5): <code style="font-family:var(--font-mono)">weighted_ged = weight &times; GED</code>. A project's score is its average weighted_ged across 5 scenarios; the % shown is that score against <em>this project's own</em> single worst scenario.</div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Project</th><th>Status</th><th class="num">Score</th><th class="num">% of own worst case</th><th class="num">Scenarios</th><th class="num">Cost</th><th class="num">Time</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <p style="color:var(--ink-muted);font-size:13px;margin-top:10px">Lower score = cheaper to modify. Click a row for the full scenario breakdown and before/after diagrams.</p>`;
+}
+
+function runningPill(p){
+  if(p.status==='running'){
+    const total = p.n_scenarios_expected;
+    const frac = total ? `${p.n_scenarios_done}/${total}` : `${p.n_scenarios_done}`;
+    return `<span class="pill running"><span class="dot"></span>editing ${frac}</span>`;
+  }
+  return pill(p.status);
+}
+
+// Combines the two Kimi phases into one status for a project: which one is
+// actually happening right now, not just the modifiability phase's status
+// alone. Without this, a project sitting in baseline generation (which can
+// run several minutes with nothing on disk yet — see
+// find_active_baseline_project in generate.py) looked identical to a
+// project that hadn't been touched at all.
+function kimiPhaseStatus(name){
+  const kb = DATA.kimi_baseline;
+  const mod = (DATA.modifiability_runs || {}).kimi;
+  const bp = kb ? kb.projects.find(p=>p.name===name) : null;
+  const mp = mod ? mod.projects.find(p=>p.name===name) : null;
+
+  if(mp) return runningPill(mp); // modifiability started — its own status/progress wins
+  if(bp && bp.status==='running'){
+    return `<span class="pill running"><span class="dot"></span>generating</span>`;
+  }
+  if(bp && bp.status==='failed'){
+    return `<span class="pill failed"><span class="dot"></span>gen failed</span>`;
+  }
+  if(bp && bp.status==='success'){
+    return `<span class="pill pending"><span class="dot"></span>queued</span>`; // baseline ready, modifiability not started yet
+  }
+  return pill('pending');
+}
+
+function renderModifiabilityOtherDatasets(){
+  const byDataset = DATA.modifiability_by_dataset || {};
+  const others = Object.entries(byDataset).filter(([key]) => key !== 'student_projects');
+  const panel = document.getElementById('mod-other-panel');
+  const anyStarted = others.some(([,d]) => d.projects.some(p => p.status !== 'pending'));
+  if(!others.length || !anyStarted){ panel.style.display = 'none'; return; }
+  panel.style.display = '';
+
+  const blocks = others.map(([key, d]) => {
+    const done = d.projects.filter(p=>p.status==='success');
+    const running = d.projects.filter(p=>p.status==='running');
+    const total = d.projects.length;
+    const pct = total ? Math.round(100*done.length/total) : 0;
+    const totalCost = done.reduce((a,p)=>a+(p.cost||0), 0);
+
+    const rows = d.projects.map((p,i) => `
+      <tr class="clickable" data-mod-other-key="${esc(key)}" data-mod-other-idx="${i}">
+        <td class="name">${esc(p.name)}</td>
+        <td>${runningPill(p)}</td>
+        <td class="num">${p.status==='success' ? fmtScore(p.modifiability_score,1) : '—'}</td>
+        <td class="num">${p.status==='success' && p.normalized_modifiability_score!=null ? p.normalized_modifiability_score.toFixed(3) : '—'}</td>
+        <td class="num">${fmtCost(p.cost)}</td>
+        <td class="num">${fmtSec(p.time_seconds)}</td>
+      </tr>`).join('');
+
+    return `
+      <div style="margin-bottom:22px">
+        <div class="panel-frac" style="margin-bottom:6px;display:flex;justify-content:space-between;">
+          <span style="font:600 13px var(--font-sans);color:var(--ink)">${esc(d.label)} <code style="font-family:var(--font-mono);color:var(--ink-muted);font-weight:400">${esc(d.dataset_dir)}</code></span>
+          <span>${done.length} / ${total} (${pct}%) &middot; ${fmtCost(totalCost)}${running.length?` &middot; ${running.length} running`:''}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Project</th><th>Status</th><th class="num">Score</th><th class="num">Normalized</th><th class="num">Cost</th><th class="num">Time</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('mod-other-body').innerHTML = blocks;
+  document.getElementById('mod-other-body').addEventListener('click', e=>{
+    const tr = e.target.closest('tr.clickable');
+    if(!tr) return;
+    const d = byDataset[tr.dataset.modOtherKey];
+    const p = d.projects[Number(tr.dataset.modOtherIdx)];
+    if(p.status==='success') openDetail(modifiabilityDetailHtml(p));
+  });
+}
+
+function renderKimiSummary(){
+  const kb = DATA.kimi_baseline;
+  const mod = (DATA.modifiability_runs || {}).kimi;
+  const panel = document.getElementById('kimi-summary-panel');
+  if(!kb && !mod){ panel.style.display = 'none'; return; }
+  panel.style.display = '';
+
+  const baselineProjects = kb ? kb.projects : [];
+  const modProjects = mod ? mod.projects : [];
+
+  const bDone = baselineProjects.filter(p=>p.status==='success');
+  const bFailed = baselineProjects.filter(p=>p.status==='failed');
+  const bRunning = baselineProjects.filter(p=>p.status==='running');
+  const mDone = modProjects.filter(p=>p.status==='success');
+  const mRunning = modProjects.filter(p=>p.status==='running');
+
+  const totalSteps = baselineProjects.length + modProjects.length;
+  const completedSteps = bDone.length + mDone.length;
+  const failedSteps = bFailed.length; // modifiability has no project-level failure state — a
+                                       // project either has a report.json (success) or doesn't
+  const runningSteps = bRunning.length + mRunning.length;
+  const pct = totalSteps ? Math.round(100*completedSteps/totalSteps) : 0;
+
+  const timedCosts = [...baselineProjects, ...modProjects].filter(p=>p.cost!=null);
+  const totalSpend = timedCosts.reduce((a,p)=>a+p.cost, 0);
+  const timedTimes = [...baselineProjects, ...modProjects].filter(p=>p.time_seconds!=null);
+  const avgTime = timedTimes.length ? timedTimes.reduce((a,p)=>a+p.time_seconds,0)/timedTimes.length : null;
+
+  const tiles = [
+    {label:'Projects total', value: Math.max(baselineProjects.length, modProjects.length) || 0},
+    {label:'Completed', value: `${completedSteps}/${totalSteps}`, small: `${pct}%`},
+    {label:'Running now', value: runningSteps},
+    {label:'Failed', value: failedSteps},
+    {label:'Avg. time / step', value: fmtSec(avgTime)},
+    {label:'Total spend', value: fmtCost(totalSpend)},
+  ];
+  document.getElementById('kimi-tiles').innerHTML = tiles.map(t=>`
+    <div class="tile"><span class="label">${t.label}</span><span class="value">${t.value}${t.small?` <small>${t.small}</small>`:''}</span></div>`).join('');
+
+  const circumference = 238.76;
+  document.getElementById('kimi-ring-arc').setAttribute('stroke-dashoffset', (circumference*(1-pct/100)).toFixed(2));
+  document.getElementById('kimi-ring-pct').textContent = pct+'%';
+  document.getElementById('kimi-overall-frac').textContent = `${completedSteps} / ${totalSteps} steps (${pct}%)`;
+  document.getElementById('kimi-ring-legend').innerHTML = `
+    <div><b style="color:var(--ink)">${completedSteps}</b> steps complete (baseline architecture + modifiability, 1 each per project)</div>
+    <div>${runningSteps} running now &middot; ${failedSteps} failed &middot; ${totalSteps-completedSteps-failedSteps-runningSteps} pending</div>`;
+}
+
+function renderModelComparison(){
+  const runs = DATA.modifiability_runs || {};
+  const base = runs.deepseek;
+  const other = runs.kimi;
+  const liveBadge = document.getElementById('cmp-live');
+  liveBadge.style.display = DATA.live ? 'inline-flex' : 'none';
+
+  if(!base){
+    document.getElementById('cmp-body').innerHTML = `<p style="color:var(--ink-muted);font-size:13px">No DeepSeek modifiability run found.</p>`;
+    return;
+  }
+  if(!other){
+    document.getElementById('cmp-body').innerHTML = `<p style="color:var(--ink-muted);font-size:13px">No second run yet — only ${esc(base.label)} (<code style="font-family:var(--font-mono)">${esc(base.run_dir)}</code>) has been run.</p>`;
+    return;
+  }
+
+  const total = base.projects.length;
+  const otherDone = other.projects.filter(p=>p.status==='success').length;
+  const kb = DATA.kimi_baseline;
+  const generatingNow = kb ? kb.projects.filter(p=>p.status==='running').length : 0;
+  const otherRunning = other.projects.filter(p=>p.status==='running').length + generatingNow;
+  const pct = total ? Math.round(100*otherDone/total) : 0;
+
+  const byName = {};
+  for(const p of other.projects) byName[p.name] = p;
+
+  const rows = base.projects.map(bp=>{
+    const op = byName[bp.name];
+    const bScore = bp.status==='success' ? bp.modifiability_score : null;
+    const bNorm = bp.status==='success' ? bp.normalized_modifiability_score : null;
+    const oScore = op && op.status==='success' ? op.modifiability_score : null;
+    const oNorm = op && op.status==='success' ? op.normalized_modifiability_score : null;
+    const delta = (bScore!=null && oScore!=null) ? oScore - bScore : null;
+    const deltaCls = delta==null ? '' : delta < 0 ? 'delta-up' : delta > 0 ? 'delta-down' : '';
+    const deltaTxt = delta==null ? '—' : (delta>0?'+':'') + delta.toFixed(1);
+    return `
+    <tr>
+      <td class="name">${esc(bp.name)}</td>
+      <td class="num">${fmtScore(bScore,1)}</td>
+      <td class="num">${bNorm!=null?bNorm.toFixed(3):'—'}</td>
+      <td>${kimiPhaseStatus(bp.name)}</td>
+      <td class="num">${fmtScore(oScore,1)}</td>
+      <td class="num">${oNorm!=null?oNorm.toFixed(3):'—'}</td>
+      <td class="num ${deltaCls}">${deltaTxt}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('cmp-body').innerHTML = `
+    <div class="panel-frac" style="margin-bottom:8px">${esc(other.label)}: ${otherDone} / ${total} complete${otherRunning?` &middot; ${otherRunning} running now`:''} (${pct}%)</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(--running)"></div></div>
+    <div class="table-scroll">
+      <table class="compare-table">
+        <thead><tr>
+          <th>Project</th>
+          <th class="num">${esc(base.label)} score</th>
+          <th class="num">${esc(base.label)} normalized</th>
+          <th>${esc(other.label)} status</th>
+          <th class="num">${esc(other.label)} score</th>
+          <th class="num">${esc(other.label)} normalized</th>
+          <th class="num">&Delta; score</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <p style="color:var(--ink-muted);font-size:13px;margin-top:10px">Both runs share the exact same baseline architecture/diagram and the exact same five scenarios per project (copied from the ${esc(base.label)} run) &mdash; only the actor model that edits the architecture and renders each scenario's diagram differs. &Delta; score = ${esc(other.label)} &minus; ${esc(base.label)}; negative (green) means ${esc(other.label)} required less structural change.</p>`;
+}
+
+function renderModelsNote(){
+  const models = DATA.actor_models || {};
+  const entries = Object.values(models).map(m=>`<span><b>${esc(m.label)}</b> ${esc(m.model)}</span>`);
+  entries.push(`<span><b>Evaluation judge</b> gpt-5.6-luna</span>`);
+  document.getElementById('models-note').innerHTML = entries.join('');
+}
+
+function render(){
+  renderTiles();
+  renderGenerationRuns();
+  renderKimiSummary();
+  document.getElementById('dataset-panels').innerHTML = DATA.datasets.map(renderDatasetPanel).join('');
+  renderModifiability();
+  renderModifiabilityOtherDatasets();
+  renderModelComparison();
+  renderModelsNote();
+
+  document.getElementById('generation-run-tabs').addEventListener('click', e=>{
+    const tab = e.target.closest('.run-tab');
+    if(!tab) return;
+    generationRunFilter = tab.dataset.runFilter || 'all';
+    storeGenerationRunFilter(generationRunFilter);
+    renderGenerationRuns();
+  });
+
+  const genDate = new Date(DATA.generated_at);
+  document.getElementById('generated-line').textContent = 'generated ' + genDate.toLocaleString();
+  document.getElementById('footer-generated').textContent = 'generated ' + genDate.toISOString();
+
+  document.getElementById('dataset-panels').addEventListener('click', e=>{
+    const tr = e.target.closest('tr.clickable');
+    if(!tr) return;
+    const ds = DATA.datasets.find(d=>d.key===tr.dataset.ds);
+    const p = ds.projects[Number(tr.dataset.idx)];
+    openDetail(datasetDetailHtml(p, DATASET_META[ds.key]?.sub || ds.label));
+  });
+  const openGenerationDiagram = tr=>{
+    const run = (DATA.generation_runs||[])[Number(tr.dataset.runIdx)];
+    const p = run?.projects[Number(tr.dataset.projectIdx)];
+    if(p?.diagram_png) openDetail(generationDetailHtml(p, run));
+  };
+  document.getElementById('generation-runs-body').addEventListener('click', e=>{
+    const tr = e.target.closest('tr.clickable[data-run-idx]');
+    if(tr) openGenerationDiagram(tr);
+  });
+  document.getElementById('generation-runs-body').addEventListener('keydown', e=>{
+    if(e.key!=='Enter' && e.key!==' ') return;
+    const tr = e.target.closest('tr.clickable[data-run-idx]');
+    if(!tr) return;
+    e.preventDefault();
+    openGenerationDiagram(tr);
+  });
+  document.getElementById('mod-body').addEventListener('click', e=>{
+    const tr = e.target.closest('tr.clickable');
+    if(!tr) return;
+    const p = DATA.modifiability.projects[Number(tr.dataset.modIdx)];
+    if(p.status==='success') openDetail(modifiabilityDetailHtml(p));
+  });
+}
+render();
+
+// Unconditional 20s auto-reload — deliberately NOT gated on DATA.live.
+// A gated version only re-arms itself on a reload that happens to see
+// live===true; a tab loaded (or reloaded) during a live===false snapshot
+// — even a transient one, e.g. the gap right after a new project starts
+// but before generate.py has re-run — never schedules the next reload at
+// all and is then stuck showing that stale snapshot forever, with no way
+// to recover short of a manual hard refresh. Reloading a local static file
+// every 20s regardless is essentially free, so there's no real cost to
+// just always doing it — leave the tab open and it stays current for the
+// life of the run; close it once you're done watching.
+function reloadWhenIdle(){
+  // Do not close a diagram the user is actively inspecting. Resume the live
+  // refresh cycle shortly after both overlays are closed.
+  if(!document.getElementById('overlay').hidden || !document.getElementById('lightbox').hidden){
+    setTimeout(reloadWhenIdle, 5000);
+    return;
+  }
+  location.reload();
+}
+setTimeout(reloadWhenIdle, 20000);
+</script>
+</body>
+</html>
