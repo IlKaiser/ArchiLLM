@@ -203,7 +203,7 @@ def setup_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--project",
-        help="Specific project name to process (if omitted, processes all)",
+        help="Comma-separated project name(s) to process (if omitted, processes all)",
     )
     parser.add_argument(
         "--multi-agent",
@@ -1071,10 +1071,10 @@ def main():
         
         # Get projects to process
         if args.project:
-            projects = [args.project]
+            projects = [name.strip() for name in args.project.split(",") if name.strip()]
         else:
             projects = get_dataset_projects(str(dataset_path))
-        
+
         if not projects:
             print("No projects found in dataset", file=sys.stderr)
             sys.exit(1)
@@ -1172,10 +1172,10 @@ def main():
     
     # Get projects to process
     if args.project:
-        projects = [args.project]
+        projects = [name.strip() for name in args.project.split(",") if name.strip()]
     else:
         projects = get_dataset_projects(str(dataset_path))
-    
+
     if not projects:
         print("No projects found in dataset", file=sys.stderr)
         sys.exit(1)
