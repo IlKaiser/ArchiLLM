@@ -2,39 +2,73 @@
   "matched_pairs": [
     {
       "gt_nodes": [
+        "Global::Position Service"
+      ],
+      "predicted_nodes": [
+        "Saga::Driver Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The predicted Driver Service can provide the position and driver-status functionality of the GT Position Service, but it is placed inside the Saga boundary instead of being represented as the standalone global position service."
+    },
+    {
+      "gt_nodes": [
+        "Global::Intention Service"
+      ],
+      "predicted_nodes": [
+        "Saga::Intention Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches ride-intention creation and management, but the AI places the service inside a Saga boundary that is not present in the GT design."
+    },
+    {
+      "gt_nodes": [
         "Global::Order Service"
       ],
       "predicted_nodes": [
-        "Global::Order State Management (Event Sourcing)"
+        "Event Sourcing::Order Service",
+        "Saga::Billing Service"
       ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted node refers to order state management with event sourcing, which is a core responsibility of the GT Order Service. However, it is narrower and more pattern-oriented than the full Order Service, which also includes workflow orchestration and business rule enforcement. Since both are in the Global boundary, the boundary attribution is correct."
+      "match_type": "1:N",
+      "is_boundary_correct": false,
+      "reasoning": "The predicted Order Service and Billing Service together cover order lifecycle management, billing, and order completion from the GT Order Service. However, the functionality is split across Event Sourcing and Saga boundaries rather than remaining within the GT global order-service attribution."
     },
     {
       "gt_nodes": [
         "Global::API Gateway"
       ],
       "predicted_nodes": [
-        "Global::Client Data Aggregation (API Composition)"
+        "API Composition::API Gateway"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node describes API composition/client data aggregation, which can be a responsibility of an API Gateway in a microservices system. It is not a precise service name and omits routing/load balancing/service discovery aspects, but it is semantically related to the GT API Gateway. Both are in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "Both nodes represent the API gateway entry point. API Composition is a semantically compatible architectural role for the gateway and does not introduce a conflicting business context."
+    },
+    {
+      "gt_nodes": [
+        "Global::Redis"
+      ],
+      "predicted_nodes": [
+        "Saga::booking_lock_store\\n(Redis, cache)",
+        "Saga::driver_location_cache\\n(Redis, cache)"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": false,
+      "reasoning": "The predicted nodes correctly identify Redis-based storage for distributed booking locks and driver-location caching, but they place these infrastructure components inside the Saga boundary instead of retaining the GT global Redis attribution."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Redis",
-    "Global::Intention Service",
-    "Global::Eureka Discovery",
+    "Global::Eureka Server",
+    "Global::Test Client",
     "Global::MySQL",
     "Global::RabbitMQ",
-    "Global::Test Client",
-    "Global::Position Service",
-    "Global::User Center Service"
+    "Global::UC Service",
+    "Global::Zipkin"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Read-Write Optimization (CQRS)",
-    "Global::Distributed Transaction Coordination (Saga)"
+    "Global::Saga",
+    "Global::Event Sourcing",
+    "Global::API Composition"
   ]
 }

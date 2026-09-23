@@ -10,9 +10,11 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 
 import litellm
 
+import src.deepseek_pricing  # noqa: F401 — side effect: registers deepseek-flash cost with litellm
 from src.prompt import KNOWLEDGE_BASE
 
 SCENARIO_GENERATION_PROMPT = """
@@ -162,28 +164,154 @@ def _extract_json(raw: str):
     """Parse a JSON object/array out of an LLM response, tolerating a
     ```json fenced code block around it."""
     m = re.search(r"```(?:json)?\s*(.*?)\s*```", raw, re.DOTALL | re.IGNORECASE)
-    json_str = m.group(1) if m else raw
-    return json.loads(json_str)
+    json_str = (m.group(1) if m else raw).strip()
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError:
+        starts = [position for position in (json_str.find("{"), json_str.find("[")) if position >= 0]
+        if not starts:
+            raise
+        value, _ = json.JSONDecoder().raw_decode(json_str[min(starts):])
+        return value
+
+
+def _json_is_complete(raw: str) -> bool:
+    try:
+        _extract_json(raw)
+        return True
+    except (json.JSONDecodeError, ValueError):
+        return False
+
+
+def _render_architecture(architecture: dict) -> str:
+    """Deterministically render the shared architecture schema to PlantUML."""
+    def alias(value: str) -> str:
+        return re.sub(r"[^a-zA-Z0-9_]", "_", value).strip("_").lower() or "unnamed"
+
+    services = architecture.get("microservices", architecture.get("services", []))
+    patterns = architecture.get("patterns", [])
+    datastores = architecture.get("datastores", [])
+    service_aliases = {s.get("name", "unknown"): alias(s.get("name", "unknown")) for s in services}
+    groups: dict[str, list[dict]] = {}
+    for service in services:
+        name = service.get("name", "unknown")
+        matching_patterns = []
+        for pattern in patterns:
+            involved = pattern.get("involved_microservices", pattern.get("services", []))
+            if name in involved:
+                matching_patterns.append(pattern)
+        primary = next(
+            (
+                pattern for pattern in matching_patterns
+                if pattern.get("implementation_pattern", pattern.get("pattern", "")).strip().lower()
+                != "database per service"
+            ),
+            matching_patterns[0] if matching_patterns else None,
+        )
+        group = (
+            primary.get("group_name", primary.get("implementation_pattern", "uncategorized"))
+            if primary else "uncategorized"
+        )
+        groups.setdefault(group, []).append(service)
+
+    lines = ["@startuml", "skinparam componentStyle rectangle", ""]
+    datastore_links = []
+    for group, grouped_services in groups.items():
+        lines.append(f'package "{group}" as pkg_{alias(group)} {{')
+        for service in grouped_services:
+            name = service.get("name", "unknown")
+            service_alias = service_aliases[name]
+            memberships = [
+                str(pattern.get("implementation_pattern", pattern.get("pattern", "")))
+                for pattern in patterns
+                if name in pattern.get("involved_microservices", pattern.get("services", []))
+            ]
+            stereotype = f' <<{"; ".join(dict.fromkeys(memberships))}>>' if memberships else ""
+            lines.append(f'  component "{name}" as {service_alias}{stereotype}')
+            for datastore in datastores:
+                owner = datastore.get("associated_microservice", datastore.get("owner", ""))
+                if owner == name:
+                    datastore_name = datastore.get("datastore_name", datastore.get("name", "db"))
+                    datastore_alias = alias(datastore_name)
+                    lines.append(f'  database "{datastore_name}" as {datastore_alias}')
+                    datastore_links.append((service_alias, datastore_alias))
+        lines.extend(["}", ""])
+    lines.extend(f"{service} -- {datastore}" for service, datastore in datastore_links)
+    for dependency in architecture.get("dependencies", []):
+        source = service_aliases.get(dependency.get("from", ""), alias(dependency.get("from", "")))
+        target = service_aliases.get(dependency.get("to", ""), alias(dependency.get("to", "")))
+        lines.append(f"{source} --> {target} : {dependency.get('protocol', 'REST')}")
+    lines.extend(["", "@enduml"])
+    return "\n".join(lines) + "\n"
 
 
 def _complete(
     prompt: str,
     model: str | None = None,
     api_key: str | None = None,
+    base_url: str | None = None,
     cost_tracker: list[float] | None = None,
+    timeout: float | None = None,
 ) -> str:
     """cost_tracker: if given, the USD cost of this call (via
     litellm.completion_cost) is appended to it. Cost calculation can fail for
     unknown/local models — that's swallowed, not raised, since cost tracking
     must never break the actual LLM call.
+
+    timeout: request timeout in seconds, forwarded to litellm.completion().
+    litellm/the underlying provider SDK apply NO timeout by default — a
+    stalled connection hangs forever rather than raising, which a caller
+    can't distinguish from "still legitimately working." Defaults to
+    LLM_REQUEST_TIMEOUT (env, seconds) or 180.0.
     """
     model = model or os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929")
     api_key = api_key or os.getenv("LLM_API_KEY")
-    response = litellm.completion(
+    base_url = base_url or os.getenv("LLM_BASE_URL")
+    timeout = timeout if timeout is not None else float(os.getenv("LLM_REQUEST_TIMEOUT", "180"))
+    request_kwargs = dict(
         model=model,
         api_key=api_key,
         messages=[{"role": "user", "content": prompt}],
+        timeout=timeout,
     )
+    if base_url:
+        request_kwargs["api_base"] = base_url.rstrip("/")
+    max_output_tokens = os.getenv("LLM_MAX_OUTPUT_TOKENS")
+    if max_output_tokens:
+        request_kwargs["max_tokens"] = int(max_output_tokens)
+    if os.getenv("LLM_DISABLE_THINKING", "").lower() in ("1", "true", "yes"):
+        request_kwargs["extra_body"] = {
+            "chat_template_kwargs": {"enable_thinking": False},
+        }
+    stream_early = os.getenv("LLM_STREAM_EARLY_STOP", "").lower() in ("1", "true", "yes")
+    if stream_early:
+        parts: list[str] = []
+        response = litellm.completion(**request_kwargs, stream=True)
+        last_update = time.monotonic()
+        expects_puml = "@startuml" in prompt and "@enduml" in prompt
+        try:
+            for chunk in response:
+                choices = getattr(chunk, "choices", None) or []
+                delta = getattr(choices[0], "delta", None) if choices else None
+                content = getattr(delta, "content", None) if delta is not None else None
+                if content:
+                    parts.append(content)
+                combined = "".join(parts)
+                now = time.monotonic()
+                if now - last_update >= 15:
+                    print(f"[modifiability] streamed {len(combined)} chars", flush=True)
+                    last_update = now
+                if (expects_puml and "@enduml" in combined.lower()) or (
+                    not expects_puml and combined and _json_is_complete(combined)
+                ):
+                    break
+        finally:
+            close = getattr(response, "close", None)
+            if callable(close):
+                close()
+        return "".join(parts)
+
+    response = litellm.completion(**request_kwargs)
     if cost_tracker is not None:
         try:
             cost_tracker.append(litellm.completion_cost(completion_response=response))
@@ -237,6 +365,8 @@ def render_scenario_diagram(
         differently each time (different aliases, grouping order), which
         would inflate GED with noise unrelated to the actual user story.
     """
+    if os.getenv("LLM_DETERMINISTIC_RENDER", "").lower() in ("1", "true", "yes"):
+        return _render_architecture(architecture)
     if original_diagram:
         prompt = SCENARIO_ADAPT_PROMPT.format(
             original_diagram=original_diagram,

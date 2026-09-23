@@ -169,7 +169,11 @@ services:
     restart: unless-stopped
 
   # ── ARTHUR headless batch runner ───────────────────────────────────────
+  # Opt-in only: not started by `docker compose up`. Enable with
+  # `docker compose --profile headless run headless` (or set
+  # COMPOSE_PROFILES=headless in your .env to include it by default).
   headless:
+    profiles: ["headless"]
     build: .
     container_name: arthur-headless
     volumes:
@@ -197,6 +201,15 @@ services:
       - LOCAL_BACKEND=${LOCAL_BACKEND:-}
       - LOCAL_MODEL=${LOCAL_MODEL:-}
       - LOCAL_BASE_URL=${LOCAL_BASE_URL:-http://ollama:11434}
+      # Local-model tuning knobs, read directly by src/local_llm.py — see
+      # docs/local_inference_setup.md for what each does and proven values.
+      - LOCAL_ENABLE_THINKING=${LOCAL_ENABLE_THINKING:-0}
+      - LOCAL_STRICT_TOOL_USE=${LOCAL_STRICT_TOOL_USE:-0}
+      - LOCAL_REASONING_EFFORT=${LOCAL_REASONING_EFFORT:-}
+      - LOCAL_MAX_OUTPUT_TOKENS=${LOCAL_MAX_OUTPUT_TOKENS:-32768}
+      - LOCAL_MAX_AGENT_ITERATIONS=${LOCAL_MAX_AGENT_ITERATIONS:-30}
+      - LOCAL_LLM_TIMEOUT=${LOCAL_LLM_TIMEOUT:-3600}
+      - LOCAL_LLM_RETRIES=${LOCAL_LLM_RETRIES:-2}
     depends_on:
       lmnr-app-server:
         condition: service_started
@@ -223,6 +236,60 @@ services:
           --skip-existing \
           $$LOCAL_FLAGS \
           $$HEADLESS_EXTRA_ARGS
+
+  # ── ARTHUR modifiability batch runner ──────────────────────────────────
+  # Companion to `headless`: scores the already-generated baseline diagrams
+  # against 5 LLM-generated future scenarios each. Opt-in, same profile.
+  # Run after (or alongside, since it polls) the matching `headless` run —
+  # point MOD_WAIT_FOR_PROGRESS at that run's HEADLESS_PROGRESS_FILE.
+  modifiability:
+    profiles: ["headless"]
+    build: .
+    container_name: arthur-modifiability
+    volumes:
+      - .:/app
+      - ./patches/laminar.py:/opt/conda/envs/env_name/lib/python3.13/site-packages/openhands/sdk/observability/laminar.py:ro
+    env_file:
+      - .env
+    environment:
+      - LMNR_PROJECT_API_KEY=${LMNR_PROJECT_API_KEY}
+      - LMNR_BASE_URL=http://lmnr-app-server:8001
+      - MOD_DATASET=${MOD_DATASET:-dataset/student_projects}
+      - MOD_RUN_DIR=${MOD_RUN_DIR}
+      - MOD_MODEL=${MOD_MODEL}
+      - MOD_BASE_URL=${MOD_BASE_URL}
+      - MOD_N_SCENARIOS=${MOD_N_SCENARIOS:-5}
+      - MOD_GED_TIMEOUT=${MOD_GED_TIMEOUT:-30}
+      - MOD_WAIT_FOR_PROGRESS=${MOD_WAIT_FOR_PROGRESS:-}
+      - MOD_PROGRESS_FILE=${MOD_PROGRESS_FILE:-}
+      - MOD_EXTRA_ARGS=${MOD_EXTRA_ARGS:-}
+      - LOCAL_LLM_TIMEOUT=${LOCAL_LLM_TIMEOUT:-3600}
+      - LOCAL_LLM_RETRIES=${LOCAL_LLM_RETRIES:-2}
+    depends_on:
+      lmnr-app-server:
+        condition: service_started
+    command:
+      - /bin/bash
+      - -c
+      - |
+        WAIT_FLAG=""
+        if [ -n "$$MOD_WAIT_FOR_PROGRESS" ]; then
+          WAIT_FLAG="--wait-for-progress $$MOD_WAIT_FOR_PROGRESS"
+        fi
+        PROGRESS_FLAG=""
+        if [ -n "$$MOD_PROGRESS_FILE" ]; then
+          PROGRESS_FLAG="--progress-file $$MOD_PROGRESS_FILE --dashboard-live"
+        fi
+        exec python run_modifiability_batch.py \
+          --dataset "$$MOD_DATASET" \
+          --run-dir "$$MOD_RUN_DIR" \
+          --model "$$MOD_MODEL" \
+          --base-url "$$MOD_BASE_URL" \
+          --api-key local \
+          --max-output-tokens "$$LOCAL_MAX_OUTPUT_TOKENS" \
+          --workers 1 --n-scenarios "$$MOD_N_SCENARIOS" --ged-timeout "$$MOD_GED_TIMEOUT" \
+          $$WAIT_FLAG $$PROGRESS_FLAG \
+          $$MOD_EXTRA_ARGS
 
 volumes:
   lmnr-postgres-data:

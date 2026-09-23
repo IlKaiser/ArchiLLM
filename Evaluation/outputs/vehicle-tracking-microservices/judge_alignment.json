@@ -2,59 +2,54 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Ping Service"
+        "Global::Event Sourcing Middleware"
       ],
       "predicted_nodes": [
-        "Event Sourcing::ping_service"
+        "Global::Event Sourcing (Append-only Ledger)"
       ],
       "match_type": "1:1",
-      "is_boundary_correct": false,
-      "reasoning": "The functionality matches: both represent the Ping Service responsible for receiving vehicle status pings. However, the GT places it in the global microservice set, while the prediction incorrectly places it inside the Event Sourcing boundary. Ping Service may publish events, but it is not itself an event sourcing component."
+      "is_boundary_correct": true,
+      "reasoning": "Both represent the event-sourcing capability used to record system state changes and maintain an append-only history. The predicted node uses a more storage-oriented description, but it remains in the global system architecture boundary and does not introduce a context or layer-crossing error."
+    },
+    {
+      "gt_nodes": [
+        "Global::RabbitMQ"
+      ],
+      "predicted_nodes": [
+        "Global::Domain Event Propagation"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Domain event propagation corresponds to the asynchronous messaging capability implemented by RabbitMQ in the ground truth. Both are attributed globally, so the boundary placement is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Ping Service",
+        "Global::Customer Service",
+        "Global::Vehicle Service"
+      ],
+      "predicted_nodes": [
+        "Global::DDD Aggregates (Command Side)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The command-side DDD aggregates broadly cover the domain operations performed by the Ping, Customer, and Vehicle services, including receiving vehicle updates and managing customer and vehicle state. The predicted node is more abstract and aggregates several ground-truth services, but it remains in the global backend/domain boundary."
     },
     {
       "gt_nodes": [
         "Global::Tracking Service"
       ],
       "predicted_nodes": [
-        "CQRS::tracking_service"
+        "Global::CQRS & API Composition (Query Side)"
       ],
       "match_type": "1:1",
-      "is_boundary_correct": false,
-      "reasoning": "The functionality matches: both refer to the Tracking Service used for monitoring vehicle status. However, the prediction places it under CQRS, which is an architectural pattern rather than the service boundary shown in the GT."
-    },
-    {
-      "gt_nodes": [
-        "Global::Redis Cache"
-      ],
-      "predicted_nodes": [
-        "CQRS::Distributed Cache\\n(Redis)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": false,
-      "reasoning": "The functionality matches because Redis is correctly identified as the distributed cache. However, the GT places Redis as a global infrastructure component, while the prediction places it under CQRS, which is not a semantically equivalent boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::Event Sourcing Middleware"
-      ],
-      "predicted_nodes": [
-        "Event Sourcing::event_sourcing_middleware"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": false,
-      "reasoning": "The functionality matches: both refer to the Event Sourcing Middleware. However, the GT does not assign it to a separate Event Sourcing boundary, while the prediction introduces such a boundary. This does not reproduce the manual boundary attribution."
+      "is_boundary_correct": true,
+      "reasoning": "The Tracking Service provides query-oriented vehicle status retrieval and filtering, which corresponds to the query side of CQRS and API composition. The abstraction is broader than the ground-truth service, but there is no incorrect boundary attribution."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Vehicle Service",
-    "Global::Customer Service",
-    "Global::SQL Server",
-    "Global::RabbitMQ"
+    "Global::Redis Cache",
+    "Global::SQL Server"
   ],
-  "unmatched_predicted_nodes": [
-    "Global::CQRS",
-    "Global::api_gateway",
-    "Global::API Composition",
-    "Global::Event Sourcing"
-  ]
+  "unmatched_predicted_nodes": []
 }

@@ -50,7 +50,7 @@ Use the following pattern catalogue as reference when identifying and assigning 
 - DO NOT generate any implementation code.
 - DO NOT generate any diagrams.
 - Only read the input files, reason about the architecture, and save the JSON.
-"""
+{extra_instructions}"""
 
 DIAGRAM_RENDER_PROMPT = """
 ## Task
@@ -91,7 +91,7 @@ Use the following pattern catalogue when grouping microservices into packages an
 - DO NOT generate any implementation code.
 - Output only two files: `{workspace_dir}/component_diagram.puml` and `{workspace_dir}/architecture_summary.md`.
 - The PlantUML must be syntactically valid.
-"""
+{extra_instructions}"""
 
 DIAGRAM_VALIDATE_PROMPT = """
 ## Task
@@ -477,11 +477,21 @@ class DiagramPrompt:
     def __init__(self, title: str):
         self.title = title
 
-    def get_extract_prompt(self, workspace_dir: str) -> str:
-        return DIAGRAM_EXTRACT_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE, workspace_dir=workspace_dir)
+    def get_extract_prompt(self, workspace_dir: str, extra_instructions: str = "") -> str:
+        return DIAGRAM_EXTRACT_PROMPT.format(
+            title=self.title,
+            knowledge_base=KNOWLEDGE_BASE,
+            workspace_dir=workspace_dir,
+            extra_instructions=extra_instructions,
+        )
 
-    def get_render_prompt(self, workspace_dir: str) -> str:
-        return DIAGRAM_RENDER_PROMPT.format(title=self.title, knowledge_base=KNOWLEDGE_BASE, workspace_dir=workspace_dir)
+    def get_render_prompt(self, workspace_dir: str, extra_instructions: str = "") -> str:
+        return DIAGRAM_RENDER_PROMPT.format(
+            title=self.title,
+            knowledge_base=KNOWLEDGE_BASE,
+            workspace_dir=workspace_dir,
+            extra_instructions=extra_instructions,
+        )
 
     def get_validate_prompt(self) -> str:
         return DIAGRAM_VALIDATE_PROMPT.format(title=self.title)

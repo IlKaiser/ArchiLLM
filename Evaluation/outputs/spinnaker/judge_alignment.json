@@ -1,116 +1,26 @@
 {
-  "matched_pairs": [
-    {
-      "gt_nodes": [
-        "Global::Monitoring Systems"
-      ],
-      "predicted_nodes": [
-        "Global::monitoring"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent external or platform monitoring systems used by Spinnaker. The boundary attribution is consistent because both are placed in the global scope."
-    },
-    {
-      "gt_nodes": [
-        "Global::Cloud Providers"
-      ],
-      "predicted_nodes": [
-        "Global::cloud_providers"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes refer to external cloud provider targets such as AWS, GCP, Azure, and Kubernetes. The boundary attribution is correct because both are in the global scope."
-    },
-    {
-      "gt_nodes": [
-        "Global::CI Systems"
-      ],
-      "predicted_nodes": [
-        "Global::external_ci"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent external CI/CD systems such as Jenkins or similar build systems integrated with Spinnaker. The boundary attribution is consistent because both are global external systems."
-    },
-    {
-      "gt_nodes": [
-        "Global::deck",
-        "Global::deck-kayenta"
-      ],
-      "predicted_nodes": [
-        "Global::deck"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Deck node represents the Spinnaker web UI. It reasonably aggregates the base Deck UI and the Kayenta-specific Deck UI module from the GT. Both are placed in the global scope, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::gate",
-        "Global::spin"
-      ],
-      "predicted_nodes": [
-        "Global::API Gateway & Client Layer"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "Gate is Spinnaker's API gateway, while spin is the CLI/client used to interact with Spinnaker APIs. The predicted node aggregates the API gateway and client layer concepts. Since both GT and predicted nodes are in the global scope, the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::orca",
-        "Global::orca-sagas"
-      ],
-      "predicted_nodes": [
-        "Global::Orchestration Engine (Event Sourcing + Saga)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "Orca is Spinnaker's orchestration engine for pipeline execution, and orca-sagas relates to saga-based orchestration behavior. The predicted node aggregates these concepts accurately. Boundary attribution is correct because both are global."
-    },
-    {
-      "gt_nodes": [
-        "Global::clouddriver",
-        "Global::clouddriver-aws",
-        "Global::clouddriver-kubernetes",
-        "Global::clouddriver-alicloud",
-        "Global::clouddriver-azure",
-        "Global::clouddriver-google",
-        "Global::cats"
-      ],
-      "predicted_nodes": [
-        "Global::Cloud Operations (Aggregate Pattern)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "Clouddriver and its provider-specific modules manage cloud infrastructure operations, while CATS handles cloud resource aggregation/caching. The predicted Cloud Operations aggregate captures this combined responsibility. Boundary attribution is correct because all nodes are global."
-    },
-    {
-      "gt_nodes": [
-        "Global::igor",
-        "Global::echo"
-      ],
-      "predicted_nodes": [
-        "Global::Integration Services"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "Igor integrates with CI/CD systems, and Echo handles events, triggers, and notifications. The predicted Integration Services node broadly aggregates these integration-facing responsibilities. Boundary attribution is correct because all nodes are in the global scope."
-    }
-  ],
+  "matched_pairs": [],
   "unmatched_gt_nodes": [
-    "Global::All Services",
-    "Global::redis",
-    "Global::fiat",
-    "Global::External Git",
-    "Global::kayenta",
+    "Global::Clouddriver",
+    "Global::Igor",
+    "Global::Rosco",
+    "Global::S3/GCS",
+    "Global::Deck",
+    "Global::Echo",
+    "Global::Front50",
     "Global::SQL Database",
-    "Global::front50",
-    "Global::rosco",
-    "Global::halyard"
+    "Global::Orca",
+    "Global::Gate",
+    "Global::Kayenta",
+    "Global::Redis",
+    "Global::Keel",
+    "Global::Fiat"
   ],
   "unmatched_predicted_nodes": [
-    "Global::external_notifications"
+    "Global::Saga — Cross-Service Pipeline Execution Consistency",
+    "Global::Domain Event — Event Publication from State Changes",
+    "Global::Database per Service — Independent Service Data Ownership",
+    "Global::API Composition — Unified Client Access & Aggregated Views",
+    "Global::CQRS — Read-Optimized Views for Queries"
   ]
 }

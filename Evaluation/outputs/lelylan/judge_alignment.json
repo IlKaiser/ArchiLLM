@@ -5,146 +5,93 @@
         "Global::subscriptions"
       ],
       "predicted_nodes": [
-        "Global::subscription_service"
+        "Global::Device State Domain Events"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the subscription service for real-time device data subscription and notification handling. Both are placed in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::webhooks"
-      ],
-      "predicted_nodes": [
-        "Global::webhook_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent webhook callback delivery for real-time HTTP notifications. Both are in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::websockets"
-      ],
-      "predicted_nodes": [
-        "Global::websocket_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent WebSocket-based real-time bidirectional communication. Both are in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "Both represent event-driven propagation of device state changes to interested subscribers. The predicted node is a more architectural description of the subscription/event mechanism, and both are placed in the global system scope."
     },
     {
       "gt_nodes": [
         "Global::physicals"
       ],
       "predicted_nodes": [
-        "Global::device_proxy_service"
+        "Global::Device Command Propagation Saga"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The GT physicals service corresponds to the physical device proxy that forwards requests to hardware devices. The predicted device_proxy_service is semantically equivalent. Both are in the Global boundary."
+      "reasoning": "The command propagation saga corresponds functionally to forwarding device commands through the physical-device proxy layer. The predicted node uses a workflow-oriented name, but it remains in the correct global backend context."
     },
     {
       "gt_nodes": [
         "Global::devices"
       ],
       "predicted_nodes": [
-        "Global::device_service"
+        "Global::Real-time Read Models"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the core device management service. Both are placed in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::types"
-      ],
-      "predicted_nodes": [
-        "Global::device_type_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent device type definition and management. Both are in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::profiles"
-      ],
-      "predicted_nodes": [
-        "Global::user_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The GT profiles service aligns with user profile management functionality. The predicted user_service is a reasonable semantic equivalent for this responsibility. Both are in the Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::people"
-      ],
-      "predicted_nodes": [
-        "Global::auth_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The GT people service is associated with user identity/account handling and OAuth-related user concerns. The predicted auth_service captures the authentication/authorization aspect. Both are placed in the Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::dev-center"
-      ],
-      "predicted_nodes": [
-        "Global::developer_center_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the developer center with documentation, tutorials, and developer-facing resources. Both are in the Global boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::mqtt"
-      ],
-      "predicted_nodes": [
-        "Global::mqtt_service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent MQTT protocol support for publish/subscribe device communication. Both are placed in the Global boundary."
+      "reasoning": "The real-time read models represent materialized device state used for monitoring and querying, which is functionally associated with the devices service. No boundary mismatch is introduced because both are global backend components."
     },
     {
       "gt_nodes": [
         "Global::api-proxy"
       ],
       "predicted_nodes": [
-        "Global::api_gateway",
-        "Global::rate_limiter_service"
+        "Global::API Gateway Composition"
       ],
-      "match_type": "1:N",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The GT api-proxy is a centralized API proxy/gateway component. The AI split this into an api_gateway and a separate rate_limiter_service, which is functionally consistent with API gateway responsibilities described in the PRD. All nodes are in the Global boundary."
+      "reasoning": "The API proxy implements the API Gateway pattern and provides unified composition and access to backend services. The predicted node is an architectural description of the same gateway responsibility."
     },
     {
       "gt_nodes": [
-        "Global::devices-dashboard",
-        "Global::types-dashboard"
+        "Global::devices"
       ],
       "predicted_nodes": [
-        "Global::dashboard_service"
+        "Global::Device State Event Sourcing"
       ],
-      "match_type": "N:1",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The GT contains separate dashboards for devices and types, while the AI aggregated them into a generic dashboard_service. This is a reasonable functional aggregation of web-based dashboard capabilities. All nodes are in the Global boundary."
+      "reasoning": "Device state event sourcing is an implementation model for persisting and reconstructing device state, corresponding to the device management service. The predicted node does not cross into another functional context or layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::mongodb"
+      ],
+      "predicted_nodes": [
+        "Global::Database per Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The service-per-database pattern is implemented in the ground-truth architecture through dedicated MongoDB instances for service domains. The predicted node is broader than the concrete database component, but its attribution remains semantically consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::devices",
+        "Global::types"
+      ],
+      "predicted_nodes": [
+        "Global::Device and Device Type Aggregates"
+      ],
+      "match_type": "2:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted aggregate groups the two domain responsibilities represented separately by the devices and types services. This is an allowed aggregation, and both responsibilities remain in the correct global backend context."
     }
   ],
   "unmatched_gt_nodes": [
     "Global::nginx-proxy",
-    "Global::mongodb",
-    "Global::memcached",
+    "Global::profiles",
+    "Global::redis",
+    "Global::dev-center",
+    "Global::types-dashboard",
+    "Global::mqtt",
     "Global::nodes",
-    "Global::redis"
+    "Global::memcached",
+    "Global::devices-dashboard",
+    "Global::webhooks",
+    "Global::people",
+    "Global::websockets"
   ],
-  "unmatched_predicted_nodes": [
-    "Global::Database per Service Pattern",
-    "Global::event_store_service",
-    "Global::Supporting Services"
-  ]
+  "unmatched_predicted_nodes": []
 }

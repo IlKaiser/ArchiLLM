@@ -125,6 +125,71 @@ def test_complete_swallows_cost_calculation_failure(monkeypatch):
     assert cost_tracker == []
 
 
+def test_complete_passes_a_timeout_to_litellm_by_default(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+    monkeypatch.delenv("LLM_REQUEST_TIMEOUT", raising=False)
+
+    ms._complete("a prompt", model="test/model", api_key="test-key")
+
+    assert fake_completion.call_args.kwargs["timeout"] == 180.0
+
+
+def test_complete_respects_llm_request_timeout_env_var(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+    monkeypatch.setenv("LLM_REQUEST_TIMEOUT", "45")
+
+    ms._complete("a prompt", model="test/model", api_key="test-key")
+
+    assert fake_completion.call_args.kwargs["timeout"] == 45.0
+
+
+def test_complete_explicit_timeout_overrides_env_and_default(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+    monkeypatch.setenv("LLM_REQUEST_TIMEOUT", "45")
+
+    ms._complete("a prompt", model="test/model", api_key="test-key", timeout=12.5)
+
+    assert fake_completion.call_args.kwargs["timeout"] == 12.5
+
+
+def test_complete_passes_openai_compatible_base_url(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+    monkeypatch.setenv("LLM_BASE_URL", "http://192.168.0.155:8000/v1/")
+
+    ms._complete("a prompt", model="openai/Qwen/Qwen3.8-27B", api_key="local")
+
+    assert fake_completion.call_args.kwargs["api_base"] == "http://192.168.0.155:8000/v1"
+
+
+def test_complete_can_disable_thinking_and_bound_output(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.choices[0].message.content = "some text"
+    fake_completion = MagicMock(return_value=fake_response)
+    monkeypatch.setattr(ms.litellm, "completion", fake_completion)
+    monkeypatch.setenv("LLM_DISABLE_THINKING", "1")
+    monkeypatch.setenv("LLM_MAX_OUTPUT_TOKENS", "8192")
+
+    ms._complete("a prompt", model="openai/Qwen/Qwen3.8-27B", api_key="local")
+
+    kwargs = fake_completion.call_args.kwargs
+    assert kwargs["max_tokens"] == 8192
+    assert kwargs["extra_body"] == {
+        "chat_template_kwargs": {"enable_thinking": False},
+    }
+
+
 def test_generate_scenarios_forwards_cost_tracker(monkeypatch):
     fake_response = MagicMock()
     fake_response.choices[0].message.content = '```json\n[{"description": "X", "weight": 1, "magnitude": "small"}]\n```'

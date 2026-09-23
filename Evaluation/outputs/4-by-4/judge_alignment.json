@@ -1,0 +1,29 @@
+{
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Application Layer / Backend Services"
+      ],
+      "predicted_nodes": [
+        "Domain event::Match History Service\\n(completed matches & replays)",
+        "Event sourcing::Game Service\\n(authoritative real-time engine)",
+        "CQRS::Statistics Service\\n(aggregate read model)",
+        "API Composition::API Gateway\\n(single client entry point)"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted nodes decompose the GT's generic backend-services layer into specific backend components for gameplay, match history, statistics, and API access. Although the predicted package names use architectural patterns rather than the GT's broad layer name, all four components remain semantically within the application/backend boundary."
+    }
+  ],
+  "unmatched_gt_nodes": [
+    "Global::Data Layer / Storage",
+    "Global::Presentation Layer / Frontend",
+    "Global::User Layer / Client Layer"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Event sourcing",
+    "Global::Domain event",
+    "Global::API Composition",
+    "Global::CQRS"
+  ]
+}

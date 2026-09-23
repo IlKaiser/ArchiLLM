@@ -86,7 +86,7 @@ def main():
     # LLM config — strip provider prefix so OpenAI SDK gets a bare model name
     api_key  = args.judge_api_key  or os.environ.get("LLM_JUDGE_KEY") or os.environ.get("JUDGE_API_KEY") or os.environ.get("LLM_API_KEY",  "")
     base_url = args.judge_base_url or os.environ.get("LLM_JUDGE_URL") or os.environ.get("JUDGE_BASE_URL") or os.environ.get("LLM_BASE_URL", "https://api.openai.com/v1")
-    raw_model = args.judge_model or os.environ.get("JUDGE_MODEL") or os.environ.get("LLM_MODEL", "gpt-5.5")
+    raw_model = args.judge_model or os.environ.get("JUDGE_MODEL") or os.environ.get("LLM_MODEL", "gpt-5.6-luna")
     model = _strip_provider_prefix(raw_model)
 
     if not args.no_llm:

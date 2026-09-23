@@ -1,21 +1,21 @@
 {
-  "chain_of_thought": "The diagram covers the main microservice skeleton: API Gateway, Customer, Policy, Communication, Risk Management, User Management, and per-service databases. Applying no-double-jeopardy, missing items such as explicit frontend apps, notification service, message broker, monitoring, address validation/city lookup, and risk client tools are counted under completeness only. Accuracy is affected by fabricated or overly specific patterns and stores not stated in the PRD, such as CQRS, Saga, Event Sourcing, event store, and specific document/cache choices. Architecturally, the drawn graph is mostly runnable and follows common microservice practices, though it has some tight inter-service coupling. The PlantUML is well organized with packages, notes, comments, and a legend.",
+  "chain_of_thought": "The diagram covers the main customer, policy, risk, self-service, gateway, and monitoring areas, but omits several explicitly required capabilities such as notifications, interaction logging, authentication components, API documentation, logging/error handling, load balancing/nginx, and an explicit messaging broker. Accuracy is reduced by numerous unsupported architectural additions, including event stores, session cache, event sourcing, CQRS, saga annotations, and several questionable inter-service links. The topology is broadly service-oriented, but the bidirectional risk-policy dependencies and backend-to-backend WebSocket chat path introduce logical concerns. The PlantUML is well grouped and syntactically organized, so readability is comparatively strong.",
   "scores": {
     "completeness": {
-      "score": 4,
-      "reasoning": "The core business services and API Gateway are present, including customer, policy, communication, risk, and user management domains. However, several expected elements are missing or only implicit, such as frontend/client applications, notification system, message broker, address validation/city lookup, monitoring/admin dashboards, and risk management client tools."
+      "score": 3,
+      "reasoning": "The core microservices and primary workflows for customer, policy, risk, self-service, and monitoring are present. However, important required capabilities are absent or not explicitly represented, including notifications, interaction and audit logging, authentication and authorization, message acknowledgment, API documentation, nginx/load balancing, and explicit broker infrastructure."
     },
     "accuracy": {
-      "score": 3,
-      "reasoning": "The main components are broadly faithful, but the diagram introduces several unmentioned specifics such as Event Sourcing, CQRS, Saga Pattern, event stores, document stores, and a user session cache. Some dependencies are plausible but not clearly grounded in the PRD, such as user management calling customer service and the detailed event relationships."
+      "score": 2,
+      "reasoning": "The diagram introduces many elements not supported by the PRD, such as separate event stores, a session cache, event sourcing, CQRS, and saga classifications. Several relationships are also questionable, especially the direct bidirectional policy-risk calls/events and the customer-management-backend-to-self-service-backend WebSocket connection without a clear chat or agent endpoint."
     },
     "rationality": {
-      "score": 4,
-      "reasoning": "The topology is generally reasonable for a microservices system, with an API Gateway, service-owned databases, and synchronous/asynchronous interactions. There is some tight coupling and cyclic dependency among customer, policy, and risk services, but not enough to make the system fundamentally unrunnable."
+      "score": 3,
+      "reasoning": "The overall gateway-to-service topology and database-per-service ownership are generally viable. However, the policy-risk circular dependency can create event or request loops, and the backend-to-backend WebSocket design does not provide a clear, runnable customer-to-call-center-agent communication path."
     },
     "readability": {
-      "score": 5,
-      "reasoning": "The diagram code is clearly organized with packages, comments, consistent naming, notes explaining patterns, and a useful legend. It makes effective use of PlantUML structure and visual grouping."
+      "score": 4,
+      "reasoning": "The PlantUML uses packages, aliases, consistent styling, comments, notes, and a legend to organize the architecture clearly. Grouping primarily by architectural pattern rather than business domain makes the structure somewhat less intuitive, but the code remains well organized and readable."
     }
   }
 }

@@ -1,21 +1,21 @@
 {
-  "chain_of_thought": "The diagram covers the main Spinnaker microservices and most major external integration categories, but it omits some required integration areas such as artifact repositories and Git/source control. For accuracy, omissions are not double-penalized; the main issues are fabricated architectural patterns and many specific private datastores/caches not stated in the PRD. Ignoring the PRD, the topology is mostly runnable and layered, though there are some bidirectional service interactions. Structurally, the PlantUML is well grouped and documented, with minor notation inconsistencies.",
+  "chain_of_thought": "The diagram includes a plausible Spinnaker microservice skeleton with gateway, orchestration, cloud integration, authorization, persistence, canary analysis, and event-related services. However, it omits several explicitly required platform capabilities such as a frontend, queue-based task processing, external authentication, secure credential management, monitoring, tracing, centralized logging, and service-mesh/network isolation. Accuracy is reduced by numerous unsupported architectural claims and fabricated service-specific datastores and patterns, while the topology itself is generally coherent; the explicit omission penalty is applied only to completeness.",
   "scores": {
     "completeness": {
-      "score": 4,
-      "reasoning": "All core Spinnaker services listed in the PRD are present, including Gate, Deck, Orca, Clouddriver, Echo, Front50, Rosco, Igor, Fiat, Kayenta, and Keel. However, artifact management integrations such as Docker registries/S3/GCS and Git repository/source-control integrations are missing or not explicitly modeled."
+      "score": 3,
+      "reasoning": "The main deployment, orchestration, cloud-provider, authorization, canary, CI, artifact, and persistence skeleton is represented. Important required elements are missing, including the web interface, queue/message infrastructure, external authentication providers, credential security, monitoring/metrics, tracing, centralized logging, vulnerability scanning, and service-mesh/network isolation."
     },
     "accuracy": {
       "score": 3,
-      "reasoning": "The core service relationships are mostly plausible, but the diagram adds many unrequested specifics such as per-service private databases, event sourcing, CQRS, saga, and DDD aggregate patterns. These are significant hallucinations relative to the PRD, even if some would be reasonable engineering choices."
+      "reasoning": "The major service relationships are broadly plausible, but the diagram introduces many elements not established by the PRD, including Saga, CQRS, event sourcing, aggregates, API composition, multiple relational/document/event stores, and direct event relationships without a depicted broker. These are substantial hallucinated architectural details rather than merely minor implementation choices."
     },
     "rationality": {
       "score": 4,
-      "reasoning": "The drawn architecture is generally coherent, with clients going through Gate, services having private stores, and external systems accessed by integration services. Minor concerns include bidirectional dependencies such as Orca/Echo and Orca/Keel, but these are not severe enough to make the system unworkable."
+      "reasoning": "The drawn topology has reasonable service boundaries, gateway-mediated access, service-owned persistence, and mostly sensible synchronous versus asynchronous interactions. The direct event links and the Orca/Echo feedback path could create coupling or event-cycle risks because no broker, retry, or circuit-breaker boundary is shown, but there is no clearly disastrous anti-pattern such as frontend-to-database access."
     },
     "readability": {
-      "score": 4,
-      "reasoning": "The code is clearly organized into packages with comments, notes, and a legend, making the hierarchy easy to understand. There are minor notation inconsistencies, such as the legend indicating async dotted arrows while event links use solid arrows."
+      "score": 5,
+      "reasoning": "The PlantUML is well organized with descriptive packages, consistent aliases, comments, ownership relationships, notes, and a legend. Defining each service once and documenting cross-pattern participation improves maintainability and prevents visual duplication."
     }
   }
 }

@@ -1,0 +1,45 @@
+{
+  "database-per-service-mandatory-for-all-microservices": {
+    "score": 5,
+    "reasoning": "The ADR faithfully captures all major elements from the source pattern description, including the problem, all six forces, the precise solution (database per service with private data via API), and the complete resulting context with benefits, drawbacks, and patterns for handling cross-service transactions and queries. The only minor formatting enhancement is the addition of a 'MANDATORY' qualifier and a 'Critical User Journey' section, which do not misrepresent the pattern.",
+    "missing_elements": []
+  },
+  "saga": {
+    "score": 5,
+    "reasoning": "The ADR faithfully captures every major element from the source pattern description: the context (Database per Service), the problem (spanning transactions without 2PC), the solution (saga with local transactions and compensation), and all documented consequences, drawbacks, and implementation issues. It also correctly lists related patterns like Event Sourcing and Transactional Outbox as options for atomic message publishing.",
+    "missing_elements": []
+  },
+  "command-side-replica": {
+    "score": 5,
+    "reasoning": "The ADR comprehensively captures all essential elements from the source pattern description, including the context, problem statement, all ten dark energy and dark matter forces, the solution components, and the detailed benefits and drawbacks. The only minor deviation is that the 'Prefer ACID over BASE' benefit is accurately represented as 'the replica is potentially stale,' which correctly reflects the trade-off noted in the source.",
+    "missing_elements": []
+  },
+  "api-composition": {
+    "score": 3,
+    "reasoning": "The ADR correctly reproduces the core context, problem, and solution (API Composer with in-memory join) from the source. However, it omits the entire 'API Gateway' context and the specific forces (different client needs, network performance, dynamic service locations) that are part of the source pattern description, and no consequences or trade-offs are captured.",
+    "missing_elements": [
+      "The API Gateway pattern context and problem (how clients access services) are missing",
+      "Forces such as different client needs, network performance differences, and dynamic service locations are not mentioned",
+      "No consequences, benefits, or drawbacks of the API Composer solution are provided"
+    ]
+  },
+  "command-query-responsibility-segregation-cqrs": {
+    "score": 5,
+    "reasoning": "The ADR faithfully captures all key elements from the source pattern: the context, problem statement, solution (view database as a read-only replica updated via domain events), and the full list of benefits and drawbacks. It also correctly references the API Composition alternative, matching the meticulous completeness required for a top score.",
+    "missing_elements": []
+  },
+  "domain-event": {
+    "score": 3,
+    "reasoning": "The ADR accurately captures the context, problem, and core solution from the source pattern description. However, it fails to represent any consequences, trade-offs, or forces related to the decision, and the 'Considered Options' section incorrectly lists related patterns (like Saga and CQRS) as viable options rather than distinguishing them as drivers or related patterns.",
+    "missing_elements": [
+      "No consequences, benefits, or drawbacks are specified",
+      "The 'Considered Options' misrepresents related patterns as decision alternatives",
+      "Lacks any trade-off analysis or discussion of forces"
+    ]
+  },
+  "event-sourcing": {
+    "score": 5,
+    "reasoning": "The ADR comprehensively captures all core elements of the pattern: it fully articulates the context, problem, and forces (including the atomicity requirement and ordering constraint), accurately describes event sourcing as the solution with details on the event store, and lists all benefits and drawbacks from the source pattern description. No material information is omitted or misrepresented.",
+    "missing_elements": []
+  }
+}

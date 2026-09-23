@@ -770,14 +770,21 @@ def test_modifiability_score_is_zero_when_no_scenario_scores_successfully(tmp_pa
 
 def test_compute_aggregates_matches_run_output():
     scored = [
-        {"weighted_ged": 12.0, "magnitude": "small"},
-        {"weighted_ged": 40.0, "magnitude": "medium"},
-        {"weighted_ged": None, "magnitude": "large"},  # excluded: inconclusive/failed
+        {"weighted_ged": 12.0, "weighted_normalized_ged": 0.3, "magnitude": "small"},
+        {"weighted_ged": 40.0, "weighted_normalized_ged": 1.0, "magnitude": "medium"},
+        {"weighted_ged": None, "weighted_normalized_ged": None, "magnitude": "large"},  # excluded
     ]
-    score, by_magnitude = modifiability._compute_aggregates(scored)
+    score, normalized_score, by_magnitude = modifiability._compute_aggregates(scored)
     assert score == 26.0  # mean of [12.0, 40.0], not their sum (52.0)
+    assert normalized_score == 0.65  # mean of [0.3, 1.0]
     assert by_magnitude == {"small": 12.0, "medium": 40.0}
     assert "large" not in by_magnitude
+
+
+def test_compute_aggregates_normalized_score_is_zero_when_none_present():
+    scored = [{"weighted_ged": 12.0, "magnitude": "small"}]  # no weighted_normalized_ged key at all
+    _, normalized_score, _ = modifiability._compute_aggregates(scored)
+    assert normalized_score == 0.0
 
 
 def test_recompute_aggregates_fixes_a_stale_sum_based_report(tmp_path):
@@ -813,6 +820,111 @@ def test_recompute_aggregates_fixes_a_stale_sum_based_report(tmp_path):
 def test_recompute_aggregates_raises_when_no_report_exists(tmp_path):
     with pytest.raises(FileNotFoundError):
         modifiability.recompute_aggregates("does-not-exist", run_dir=str(tmp_path / "run"))
+
+
+def test_recompute_ged_fixes_a_stale_report_without_llm_calls(tmp_path, monkeypatch):
+    """A report.json scored before a GED methodology fix (e.g. package
+    titles no longer counting as part of a component's identity) must be
+    correctable by re-parsing the already-rendered diagrams on disk — no
+    generate_scenarios/modify_architecture/render_scenario_diagram calls.
+    """
+    _write_project(tmp_path)
+    run_dir = tmp_path / "run"
+    modifiability_dir = run_dir / "demo" / "modifiability"
+    scenario_dir = modifiability_dir / "scenario_01"
+    scenario_dir.mkdir(parents=True)
+    # A rendered diagram that renamed the wrapping package but added no real
+    # component — canonicalize_for_ged should score this as ged 0.
+    (scenario_dir / "component_diagram.puml").write_text(
+        '@startuml\npackage "Renamed Package" {\n  [order_service]\n}\n@enduml',
+        encoding="utf-8",
+    )
+
+    stale_report = {
+        "project": "demo",
+        "n_scenarios": 1,
+        "scenarios": [
+            {
+                "description": "Cosmetic rename only", "weight": 4, "magnitude": "large",
+                "ged": 17.0, "exact": True, "weighted_ged": 68.0,  # stale: pre-fix inflated GED
+                "artifacts_dir": str(scenario_dir),
+            },
+        ],
+        "modifiability_score": 68.0,
+        "by_magnitude": {"large": 68.0},
+        "original_node_count": 1,
+        "original_edge_count": 0,
+    }
+    report_path = modifiability_dir / "report.json"
+    report_path.write_text(json.dumps(stale_report), encoding="utf-8")
+
+    def should_not_be_called(*args, **kwargs):
+        raise AssertionError("recompute_ged must not call any LLM-driven step")
+
+    monkeypatch.setattr(modifiability, "generate_scenarios", should_not_be_called)
+    monkeypatch.setattr(modifiability, "modify_architecture", should_not_be_called)
+    monkeypatch.setattr(modifiability, "render_scenario_diagram", should_not_be_called)
+
+    result = modifiability.recompute_ged("demo", run_dir=str(run_dir))
+
+    assert result["scenarios"][0]["ged"] == 0
+    assert result["scenarios"][0]["weighted_ged"] == 0.0
+    assert result["scenarios"][0]["normalized_ged"] == 0.0
+    assert result["scenarios"][0]["weighted_normalized_ged"] == 0.0
+    assert result["modifiability_score"] == 0.0
+    assert result["normalized_modifiability_score"] == 0.0
+    # original_node_count/edge_count must be refreshed to the canonicalized
+    # baseline graph (1 leaf component, 0 edges) — not left at the stale
+    # pre-fix values (1, 0 here happen to coincide, so this also guards
+    # against the field silently not being touched at all).
+    assert result["original_node_count"] == 1
+    assert result["original_edge_count"] == 0
+
+    on_disk = json.loads(report_path.read_text(encoding="utf-8"))
+    assert on_disk["modifiability_score"] == 0.0
+    assert on_disk["normalized_modifiability_score"] == 0.0
+
+
+def test_recompute_ged_marks_scenario_inconclusive_when_diagram_missing(tmp_path):
+    _write_project(tmp_path)
+    run_dir = tmp_path / "run"
+    modifiability_dir = run_dir / "demo" / "modifiability"
+    scenario_dir = modifiability_dir / "scenario_01"
+    scenario_dir.mkdir(parents=True)
+    # No component_diagram.puml written for this scenario.
+
+    stale_report = {
+        "project": "demo",
+        "n_scenarios": 1,
+        "scenarios": [
+            {
+                "description": "Missing render", "weight": 3, "magnitude": "medium",
+                "ged": 5.0, "exact": True, "weighted_ged": 15.0,
+                "artifacts_dir": str(scenario_dir),
+            },
+        ],
+        "modifiability_score": 15.0,
+        "by_magnitude": {"medium": 15.0},
+    }
+    report_path = modifiability_dir / "report.json"
+    report_path.write_text(json.dumps(stale_report), encoding="utf-8")
+
+    result = modifiability.recompute_ged("demo", run_dir=str(run_dir))
+
+    assert result["scenarios"][0]["ged"] is None
+    assert result["scenarios"][0]["exact"] is False
+    assert result["scenarios"][0]["weighted_ged"] is None
+    assert result["scenarios"][0]["normalized_ged"] is None
+    assert result["scenarios"][0]["weighted_normalized_ged"] is None
+    assert result["modifiability_score"] == 0.0
+    assert result["normalized_modifiability_score"] == 0.0
+    assert result["by_magnitude"] == {}
+
+
+def test_recompute_ged_raises_when_no_report_exists(tmp_path):
+    _write_project(tmp_path)
+    with pytest.raises(FileNotFoundError):
+        modifiability.recompute_ged("demo", run_dir=str(tmp_path / "run"))
 
 
 def test_run_calls_on_progress_for_each_scenario(tmp_path, monkeypatch):

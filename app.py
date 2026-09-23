@@ -103,17 +103,27 @@ if st.sidebar.button("🔄 Reload Keys from .env"):
     st.rerun()
 
 # ── Local inference toggle
-use_local_llm = st.sidebar.checkbox("⚡ Use Local Model (Ollama / HuggingFace)", value=False, key="chk_local_llm")
+use_local_llm = st.sidebar.checkbox("⚡ Use Local Model (Ollama / HuggingFace / vLLM)", value=False, key="chk_local_llm")
 local_llm_config = None
 if use_local_llm:
     st.sidebar.subheader("Local Inference")
-    local_backend = st.sidebar.selectbox("Backend", ["ollama", "huggingface"], key="local_backend")
+    local_backend = st.sidebar.selectbox("Backend", ["ollama", "huggingface", "vllm"], key="local_backend")
+    _model_defaults = {
+        "ollama": "qwen2.5-coder:32b",
+        "huggingface": "mistralai/Mistral-7B-Instruct-v0.3",
+        "vllm": "Qwen/Qwen3.8-27B",
+    }
     local_model = st.sidebar.text_input(
         "Model name",
-        value="qwen2.5-coder:32b" if local_backend == "ollama" else "mistralai/Mistral-7B-Instruct-v0.3",
+        value=_model_defaults[local_backend],
         key="local_model",
     )
-    _default_url = "http://localhost:11434" if local_backend == "ollama" else "http://localhost:8080"
+    _url_defaults = {
+        "ollama": "http://localhost:11434",
+        "huggingface": "http://localhost:8080",
+        "vllm": "http://localhost:8000",
+    }
+    _default_url = _url_defaults[local_backend]
     local_url = st.sidebar.text_input("Server URL", value=_default_url, key="local_url")
     try:
         from src.local_llm import get_local_llm_config
@@ -123,11 +133,11 @@ if use_local_llm:
         st.sidebar.error(str(_e))
 
 st.sidebar.subheader("Primary LLM (Cloud)")
-llm_model = st.sidebar.text_input("LLM_MODEL", value=os.environ.get("LLM_MODEL", "moonshot/kimi-k2.6"), disabled=use_local_llm)
+llm_model = st.sidebar.text_input("LLM_MODEL", value=os.environ.get("LLM_MODEL", "deepseek/deepseek-flash"), disabled=use_local_llm)
 llm_api_key = st.sidebar.text_input("LLM_API_KEY", type="password", value=os.environ.get("LLM_API_KEY", ""), disabled=use_local_llm)
 llm_base_url = st.sidebar.text_input("LLM_JUDGE_URL", value=os.environ.get("LLM_JUDGE_URL", "https://api.openai.com/v1"), help="OpenAI-compatible base URL for the judge LLM")
 llm_judge_key = st.sidebar.text_input("LLM_JUDGE_KEY", type="password", value=os.environ.get("LLM_JUDGE_KEY", ""), help="API key for the judge LLM (falls back to LLM_API_KEY if blank)")
-llm_judge_model = st.sidebar.text_input("JUDGE_MODEL", value=os.environ.get("JUDGE_MODEL", "gpt-5.5"), help="Model used for LLM-as-a-judge evaluation")
+llm_judge_model = st.sidebar.text_input("JUDGE_MODEL", value=os.environ.get("JUDGE_MODEL", "gpt-5.6-luna"), help="Model used for LLM-as-a-judge evaluation")
 
 st.sidebar.subheader("🧑‍⚖️ DeepSeek Judge (ADR scoring)")
 deepseek_api_key = st.sidebar.text_input("DEEPSEEK_API_KEY", type="password", value=os.environ.get("DEEPSEEK_API_KEY", ""))
@@ -207,7 +217,7 @@ execute_trigger = st.button("📐 Run Diagram Pipeline", type="primary")
 if execute_trigger:
     if not proj_name:
         st.error("Please select a project.")
-    elif not llm_api_key:
+    elif not use_local_llm and not llm_api_key:
         st.error("LLM_API_KEY is required in the sidebar.")
     elif not st.session_state.get("is_running", False):
         _existing_puml = os.path.join(os.getcwd(), "run", proj_name, "component_diagram.puml")

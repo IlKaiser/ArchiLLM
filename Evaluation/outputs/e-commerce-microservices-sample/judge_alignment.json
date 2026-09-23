@@ -1,18 +1,111 @@
 {
-  "matched_pairs": [],
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Products Service"
+      ],
+      "predicted_nodes": [
+        "Domain Event & CQRS::Product Catalog Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the product catalog domain service. The predicted Domain Event & CQRS grouping is a semantically compatible domain-service layer attribution."
+    },
+    {
+      "gt_nodes": [
+        "Global::Users Service"
+      ],
+      "predicted_nodes": [],
+      "match_type": "1:0",
+      "is_boundary_correct": false,
+      "reasoning": "The ground-truth user management service is omitted from the predicted architecture."
+    },
+    {
+      "gt_nodes": [
+        "Global::Cart Service"
+      ],
+      "predicted_nodes": [
+        "Event Sourcing::Cart Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "Both nodes represent the cart service, but the predicted node is placed under an Event Sourcing boundary rather than the cart or general backend service context. This incorrectly conflates a cross-cutting persistence pattern with the cart bounded context."
+    },
+    {
+      "gt_nodes": [
+        "Global::MongoDB"
+      ],
+      "predicted_nodes": [
+        "Domain Event & CQRS::Product Catalog DB (MongoDB)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both represent the MongoDB datastore used for product catalog persistence. The product catalog data boundary is semantically consistent with the ground-truth database node."
+    },
+    {
+      "gt_nodes": [
+        "Global::Store UI"
+      ],
+      "predicted_nodes": [
+        "API Composition / API Gateway::Storefront UI"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "Both nodes represent the storefront UI, but the predicted node places a frontend component inside the API Composition/API Gateway boundary. The UI should be attributed to a frontend or storefront boundary, not the backend gateway layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::PostgreSQL"
+      ],
+      "predicted_nodes": [
+        "Saga::Order DB (PostgreSQL)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent PostgreSQL persistence. The predicted attribution identifies the database as supporting order and checkout orchestration, which is a semantically valid specialization of the ground-truth PostgreSQL node."
+    },
+    {
+      "gt_nodes": [
+        "Global::ElasticSearch"
+      ],
+      "predicted_nodes": [
+        "Domain Event & CQRS::Product Search Index (Elasticsearch)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent Elasticsearch-based search indexing. The predicted product-search index attribution is consistent with the search data layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::Search Service"
+      ],
+      "predicted_nodes": [
+        "Domain Event & CQRS::Search Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the product search service. Placement in the domain/search processing layer is semantically compatible with the ground-truth search service."
+    },
+    {
+      "gt_nodes": [
+        "Global::Redis"
+      ],
+      "predicted_nodes": [
+        "Event Sourcing::Cart Cache (Redis)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent Redis infrastructure used for cart-related state or caching. The predicted node provides a more specific role attribution without crossing into an incompatible system boundary."
+    }
+  ],
   "unmatched_gt_nodes": [
-    "Global::Products Service",
-    "Global::Cart Service",
-    "Global::MongoDB",
-    "Global::Redis",
-    "Global::PostgreSQL",
-    "Global::Store UI",
-    "Global::ElasticSearch",
-    "Global::Users Service",
-    "Global::Search Service"
+    "Global::Users Service"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Core Microservices Data Isolation (Database per Service)",
-    "Global::UI Data Aggregation (API Composition)"
+    "Global::API Composition / API Gateway",
+    "Global::Event Sourcing",
+    "Global::Saga",
+    "Saga::Checkout Service",
+    "Global::Domain Event & CQRS"
   ]
 }

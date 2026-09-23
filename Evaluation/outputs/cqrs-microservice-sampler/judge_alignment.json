@@ -2,54 +2,44 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::gateway"
+        "Global::Command Side",
+        "Global::Query Side"
       ],
       "predicted_nodes": [
-        "Global::API Gateway"
+        "Global::CQRS - Product Write/Read Separation"
       ],
-      "match_type": "1:1",
+      "match_type": "N:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes refer to the API gateway responsible for unified request routing to command and query services. Both are placed in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "The predicted node aggregates the command and query sides into a single CQRS architectural concept. This is functionally equivalent to the GT separation, and both are attributed to the global architecture level."
     },
     {
       "gt_nodes": [
-        "Global::rabbitmq"
-      ],
-      "predicted_nodes": [
-        "Global::rabbitmq"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes refer to RabbitMQ as the asynchronous message broker used for event propagation between the command and query sides. Both are placed in the Global boundary, so the boundary attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::mongodb",
+        "Global::rabbitmq",
         "Global::config",
+        "Global::mongodb",
         "Global::discovery"
       ],
       "predicted_nodes": [
-        "Global::Infrastructure Services"
+        "Global::Service Infrastructure"
       ],
       "match_type": "N:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates several supporting infrastructure components from the GT, including MongoDB, configuration service, and service discovery. Although less detailed than the GT, the functional grouping is semantically reasonable and remains in the same Global boundary."
+      "reasoning": "The predicted Service Infrastructure node aggregates the messaging broker, external configuration, command-side persistence database, and service discovery infrastructure. Although it loses component granularity, the attribution remains semantically consistent because all nodes are global infrastructure concerns."
     },
     {
       "gt_nodes": [
-        "Global::Product Query Side",
-        "Global::Product Command Side"
+        "Global::gateway"
       ],
       "predicted_nodes": [
-        "Global::CQRS Pattern"
+        "Global::API Composition - Single Entry Point"
       ],
-      "match_type": "N:1",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node abstracts the command and query sides into the broader CQRS architectural pattern. This is a coarser representation and loses the explicit separation shown in the GT, but it semantically refers to the same command/query responsibility separation. Both are placed in the Global boundary."
+      "reasoning": "Both nodes represent the API gateway and single external entry point for routing requests to backend services. The global boundary attribution is correct."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Common Things"
+    "Global::common"
   ],
   "unmatched_predicted_nodes": []
 }

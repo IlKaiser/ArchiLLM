@@ -2,51 +2,57 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Card Statement Composite"
+        "Global::RabbitMQ"
       ],
       "predicted_nodes": [
-        "Global::card_statement_composite"
+        "Global::Asynchronous Domain Event Flow (domain event)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node refers to the same composite microservice that aggregates card and statement data. Both are placed in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "The predicted asynchronous domain event flow represents the asynchronous messaging infrastructure provided by RabbitMQ. Both nodes are attributed globally, so the boundary placement is consistent."
     },
     {
       "gt_nodes": [
         "Global::EdgeServer"
       ],
       "predicted_nodes": [
-        "Global::edge_server"
+        "Global::Edge Gateway (api gateway)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node refers to the same API gateway or edge server component. Both are placed in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "Both nodes represent the API gateway or edge entry point for routing external requests to backend services. The global attribution is correct."
     },
     {
       "gt_nodes": [
-        "Global::MonitorDashboard"
+        "Global::CardStatementComposite"
       ],
       "predicted_nodes": [
-        "Global::monitor_dashboard"
+        "Global::Unified Card-Statement Composition (api composition)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node refers to the same monitoring dashboard component. Both are placed in the Global boundary, so the boundary attribution is correct."
+      "reasoning": "Both nodes represent the composite service that aggregates card and statement information into a unified API. The global boundary attribution is consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::CardService",
+        "Global::StatementService"
+      ],
+      "predicted_nodes": [
+        "Global::Card and Statement Aggregates (aggregate)"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the card and statement business capabilities represented by the two separate GT services. Although the AI merged them into one conceptual node, the global attribution does not introduce a boundary or layer error."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::RabbitMQ",
     "Global::ConfigServer",
-    "Global::Turbine",
     "Global::DiscoveryService",
-    "Global::Card Service",
-    "Global::Statement Service"
+    "Global::Turbine",
+    "Global::MonitorDashboard"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Database Per Service (Infrastructure)",
-    "Global::Service Health Monitoring",
-    "Global::Domain Event Pattern",
-    "Global::Database Per Service (Core Business)",
-    "Global::API Composition Pattern"
+    "Global::Private Database per Service (database per service)"
   ]
 }

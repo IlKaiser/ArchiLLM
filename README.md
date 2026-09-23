@@ -50,8 +50,14 @@ Copy `.env.template` to `.env` and fill in:
 ```bash
 # Primary LLM for diagram generation
 LLM_API_KEY=<your-key>
-LLM_MODEL=anthropic/claude-sonnet-4-5-20250929   # any LiteLLM-compatible model string
-LLM_BASE_URL=                                     # leave blank for cloud; set for local/proxy
+LLM_MODEL=deepseek/deepseek-flash   # any LiteLLM-compatible model string; current default
+LLM_BASE_URL=                        # leave blank for cloud; set for local/proxy
+
+# Other primary LLM options tested with this repo (set LLM_MODEL + a matching LLM_API_KEY):
+#   deepseek/deepseek-flash            — DeepSeek V4.1 Flash (current default; LLM_API_KEY =
+#                                         your DeepSeek API key, leave LLM_BASE_URL blank)
+#   moonshot/kimi-k2.5                 — Moonshot Kimi
+#   anthropic/claude-sonnet-4-5-...    — Anthropic
 
 # Secondary LLM (used by EffortRouter in multi-agent mode)
 SECONDARY_LLM_API_KEY=<your-key>
@@ -60,7 +66,7 @@ SECONDARY_LLM_MODEL=openhands/devstral-medium-2507
 # LLM-as-a-judge (evaluation only)
 LLM_JUDGE_KEY=<your-key>
 LLM_JUDGE_URL=https://api.openai.com/v1
-JUDGE_MODEL=gpt-4o
+JUDGE_MODEL=gpt-5.6-luna
 
 # ADR pattern-fidelity judge (DeepSeek, evaluation only)
 DEEPSEEK_API_KEY=<your-deepseek-key>
@@ -99,7 +105,7 @@ streamlit run app.py
 streamlit run app.py          # or: docker compose up agent-orchestrator
 ```
 
-Select a project, optionally enable **Multi-Agent (EffortRouter)** or **Validation Agent**, then click **Run Diagram Pipeline**. The sidebar also has a **⚡ Use Local Model** toggle for Ollama/HuggingFace inference.
+Select a project, optionally enable **Multi-Agent (EffortRouter)** or **Validation Agent**, then click **Run Diagram Pipeline**. The sidebar also has a **⚡ Use Local Model** toggle for Ollama, HuggingFace TGI, and vLLM inference.
 
 ### Headless Batch Runner
 
@@ -136,6 +142,7 @@ python run_headless.py --charts-only --report headless_report.csv
 | `--output` | `./run` | Output directory for generated files |
 | `--report` | `headless_report.csv` | CSV report path |
 | `--max-cost` | `50.0` | Stop when pipeline cost exceeds this ($) |
+| `--workers` | `1` | Process this many projects concurrently, each its own OS process. Budget check only runs between completions, so cost can overshoot by up to N-1 in-flight projects |
 | `--eval` | off | Run evaluation after generation |
 | `--eval-only` | off | Skip generation, only run evaluation |
 | `--metrics` | `all` | `ged`, `structural`, `judge`, or `all` |
@@ -161,18 +168,35 @@ LOCAL_BACKEND=ollama LOCAL_MODEL=qwen2.5-coder:32b \
 
 ### Local Model Inference
 
-Both the CLI and the Streamlit sidebar support local inference via **Ollama** or **HuggingFace TGI / vLLM**:
+Both the CLI and the Streamlit sidebar support local inference via **Ollama**, **HuggingFace TGI**, or **vLLM**:
 
 ```bash
 # Ollama
 python run_headless.py --dataset dataset/student_projects --output ./run \
   --local-backend ollama --local-model qwen2.5-coder:32b
 
-# vLLM / HuggingFace TGI
+# HuggingFace TGI
 python run_headless.py --dataset dataset/student_projects --output ./run \
   --local-backend huggingface \
   --local-model mistralai/Mistral-7B-Instruct-v0.3 \
   --local-url http://localhost:8080
+
+# vLLM (OpenAI-compatible API); publish per-project progress to the dashboard
+python run_headless.py --dataset dataset/student_projects --output ./run_qwen \
+  --local-backend vllm \
+  --local-model Qwen/Qwen3.8-27B \
+  --local-url http://192.168.0.155:8000 \
+  --progress-file dashboard/run_progress/qwen38-27b.json \
+  --dashboard-live
+
+# Queue the matching modifiability phase alongside it. This waits for the
+# baseline progress file and writes only below the same isolated run folder.
+python run_modifiability_batch.py \
+  --dataset dataset/student_projects --run-dir ./run_qwen \
+  --model openai/Qwen/Qwen3.8-27B --base-url http://192.168.0.155:8000/v1 \
+  --wait-for-progress dashboard/run_progress/qwen38-27b.json \
+  --progress-file dashboard/run_progress/qwen38-27b-modifiability.json \
+  --workers 4 --skip-existing --dashboard-live
 ```
 
 > Local models run with `native_tool_calling=False` and `temperature=0.7`. The evaluation judge always uses the cloud LLM configured via `LLM_JUDGE_KEY`.
@@ -229,6 +253,19 @@ ARTHUR evaluates generated diagrams on two axes:
 - **Readability** — clarity and navigability of the diagram
 
 Results are written to `headless_report.csv` and visualised as bar charts + a radar chart (`--visualize`).
+
+### Results Dashboard
+
+`dashboard/index.html` is a self-contained, static results dashboard covering every dataset run plus modifiability analysis — no server needed, just open the file. It embeds all metrics inline and links to the actual rendered diagrams under `results/`, so it only makes sense from within a checkout that has those outputs on disk (not portable on its own). Click any project row for its full score breakdown — judge reasoning, semantic alignment, or (for modifiability) every scenario's before/after diagram.
+
+Regenerate it after a new run:
+```bash
+python dashboard/generate.py
+```
+This reads `results/reports/*.csv` and `results/*/modifiability/report.json`; it doesn't render diagrams itself. If a modifiability scenario is missing its PNG (only the `.puml` is written during a run), render them first:
+```bash
+python dashboard/render_scenario_diagrams.py
+```
 
 ---
 

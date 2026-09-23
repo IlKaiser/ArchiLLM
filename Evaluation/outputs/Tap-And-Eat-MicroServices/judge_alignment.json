@@ -2,40 +2,102 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::StoreService",
-        "Global::AccountService",
-        "Global::FoodTrayService",
-        "Global::ItemService",
-        "Global::CustomerService",
-        "Global::PriceService",
-        "Global::customerDB",
-        "Global::itemDB",
-        "Global::priceDB",
-        "Global::accountDB",
-        "Global::storeDB"
+        "Global::ConfigService"
       ],
       "predicted_nodes": [
-        "Global::Core Business Services\\n(Database per Service Pattern)"
+        "Database per Service::Config Service"
       ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the domain microservices and their per-service databases into a single high-level core business services component. Although it lacks the GT's service-level and database-level granularity, it semantically covers account, price, customer, store, item, food tray services, and the database-per-service concept. Both GT and predicted nodes are placed under Global, so there is no boundary/layer mismatch."
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the configuration management service, but the predicted node is placed under a database-oriented boundary instead of the global/configuration service layer."
     },
     {
       "gt_nodes": [
-        "Global::config",
-        "Global::discovery"
+        "Global::DiscoveryService"
       ],
       "predicted_nodes": [
-        "Global::Infrastructure Services"
+        "Database per Service::Discovery Service"
       ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Infrastructure Services node aggregates the centralized configuration service and service discovery service from the GT. This is semantically consistent with the PRD infrastructure services. Both are under the Global boundary, so the boundary attribution is correct."
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the service discovery component, but it is incorrectly attributed to the database-per-service boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::ItemService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::Domain Aggregates::Item Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the item management service, but the service is incorrectly placed under a database/domain aggregate boundary rather than the global service layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::PriceService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::Domain Aggregates::Price Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the price management service, but the predicted attribution places the service inside a database/domain aggregate boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::AccountService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::Domain Aggregates::Account Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the account management service, but the service is incorrectly attributed to the database/domain aggregate layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::StoreService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::Domain Aggregates::Store Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the store management service, but the predicted node is placed under a database/domain aggregate boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::CustomerService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::Domain Aggregates::Customer Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the customer management service, but the service is incorrectly placed in a database/domain aggregate boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::FoodTrayService"
+      ],
+      "predicted_nodes": [
+        "Database per Service::API Composition::Food Tray Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "The functionality matches the food tray ordering service, but the predicted node is incorrectly attributed to a database/API composition boundary rather than the global service layer."
     }
   ],
   "unmatched_gt_nodes": [],
   "unmatched_predicted_nodes": [
-    "Global::API Gateway\\n(API Composition Pattern)"
+    "Database per Service::Domain Aggregates::Item DB\\n(relational)",
+    "Database per Service::Domain Aggregates::Price DB\\n(relational)",
+    "Database per Service::Domain Aggregates::Account DB\\n(relational)",
+    "Database per Service::Domain Aggregates::Store DB\\n(relational)",
+    "Database per Service::Service Registry\\n(cache)",
+    "Database per Service::API Composition::Food Tray DB\\n(relational)",
+    "Database per Service::Config Repo\\n(document)",
+    "Database per Service::Domain Aggregates::Customer DB\\n(relational)"
   ]
 }

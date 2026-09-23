@@ -1,15 +1,15 @@
 {
   "matched_pairs": [],
   "unmatched_gt_nodes": [
-    "Global::eShopOnContainers"
+    "Global::Repository Archive"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Database Per Service Pattern",
-    "Global::clients",
-    "Global::CQRS Pattern - Read Models",
-    "Global::Saga Pattern - Order Processing",
-    "Global::API Composition Pattern",
-    "Global::customer_service",
-    "Global::api_gateway"
+    "Global::Read model projection (CQRS)",
+    "Global::Order Placement Saga (orchestration)",
+    "Global::Core services (Database per Service)",
+    "Global::Client-facing view composition (API Composition)",
+    "Global::line.",
+    "Global::Domain Aggregates (DDD)",
+    "Global::with a plain"
   ]
 }
