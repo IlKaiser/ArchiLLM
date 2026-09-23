@@ -210,6 +210,11 @@ services:
       - LOCAL_MAX_AGENT_ITERATIONS=${LOCAL_MAX_AGENT_ITERATIONS:-30}
       - LOCAL_LLM_TIMEOUT=${LOCAL_LLM_TIMEOUT:-3600}
       - LOCAL_LLM_RETRIES=${LOCAL_LLM_RETRIES:-2}
+    # Lets a container reach a vLLM server that's only reachable from the Docker
+    # *host* (e.g. via an SSH reverse tunnel bridging to a remote LAN) — point
+    # LOCAL_BASE_URL at http://host.docker.internal:<port> in that case.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       lmnr-app-server:
         condition: service_started
@@ -266,6 +271,8 @@ services:
       - LOCAL_MAX_OUTPUT_TOKENS=${LOCAL_MAX_OUTPUT_TOKENS:-32768}
       - LOCAL_LLM_TIMEOUT=${LOCAL_LLM_TIMEOUT:-3600}
       - LOCAL_LLM_RETRIES=${LOCAL_LLM_RETRIES:-2}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       lmnr-app-server:
         condition: service_started
