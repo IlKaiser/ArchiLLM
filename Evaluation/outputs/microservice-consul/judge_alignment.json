@@ -1,31 +1,19 @@
 {
-  "matched_pairs": [
-    {
-      "gt_nodes": [
-        "Global::Apache HTTP"
-      ],
-      "predicted_nodes": [
-        "Global::Unified Entry Point Fan-out (API Composition)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both represent the system's unified HTTP entry point responsible for routing requests to backend services. The predicted node uses an API composition description, while the ground-truth node names the Apache HTTP implementation. Both are placed at the global/system entry boundary."
-    }
-  ],
+  "matched_pairs": [],
   "unmatched_gt_nodes": [
-    "Global::Consul",
-    "Global::Catalog Service",
     "Global::Filebeat",
     "Global::Customer Service",
-    "Global::Kibana",
+    "Global::Catalog Service",
+    "Global::Apache HTTP",
+    "Global::Order Service",
+    "Global::Consul",
     "Global::Prometheus",
     "Global::Elasticsearch",
-    "Global::Order Service",
-    "Global::Zipkin"
+    "Global::Zipkin",
+    "Global::Kibana"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Service Data Isolation (Database per Service)",
-    "Global::Order View Composition (API Composition)",
-    "Global::Order Consistency Boundary (Aggregate)"
+    "Global::Gateway-driven request composition",
+    "Global::Private data ownership per service"
   ]
 }

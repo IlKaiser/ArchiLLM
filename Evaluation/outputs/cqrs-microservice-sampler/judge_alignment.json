@@ -2,44 +2,90 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Command Side",
-        "Global::Query Side"
+        "Global::config"
       ],
       "predicted_nodes": [
-        "Global::CQRS - Product Write/Read Separation"
+        "Global::Config Service"
       ],
-      "match_type": "N:1",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the command and query sides into a single CQRS architectural concept. This is functionally equivalent to the GT separation, and both are attributed to the global architecture level."
-    },
-    {
-      "gt_nodes": [
-        "Global::rabbitmq",
-        "Global::config",
-        "Global::mongodb",
-        "Global::discovery"
-      ],
-      "predicted_nodes": [
-        "Global::Service Infrastructure"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted Service Infrastructure node aggregates the messaging broker, external configuration, command-side persistence database, and service discovery infrastructure. Although it loses component granularity, the attribution remains semantically consistent because all nodes are global infrastructure concerns."
+      "reasoning": "Both represent the external configuration management service. The naming differs, but both are placed in the global architecture scope."
     },
     {
       "gt_nodes": [
         "Global::gateway"
       ],
       "predicted_nodes": [
-        "Global::API Composition - Single Entry Point"
+        "Global::API Gateway"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the API gateway and single external entry point for routing requests to backend services. The global boundary attribution is correct."
+      "reasoning": "Both represent the API gateway serving as the external entry point and routing requests to backend services. The global boundary is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::Command Side"
+      ],
+      "predicted_nodes": [
+        "Global::Command Service",
+        "Global::Event Sourcing"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted command service and event-sourcing component together represent the command-side responsibilities, including write operations and event-sourced persistence. Both remain in the global architecture scope."
+    },
+    {
+      "gt_nodes": [
+        "Global::Query Side"
+      ],
+      "predicted_nodes": [
+        "Global::Query Service",
+        "Global::H2 Materialized View"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted query service and H2 materialized view together represent the query side, including read operations and optimized materialized data. The boundary attribution is consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::rabbitmq"
+      ],
+      "predicted_nodes": [
+        "Global::Message Broker"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "RabbitMQ is the message broker used for asynchronous event-driven communication. The predicted generic name is functionally equivalent and remains in the correct global scope."
+    },
+    {
+      "gt_nodes": [
+        "Global::mongodb"
+      ],
+      "predicted_nodes": [
+        "Global::MongoDB Event Store"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both represent MongoDB persistence for event-sourced command-side data. The predicted node provides a more specific role description without changing the boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::discovery"
+      ],
+      "predicted_nodes": [
+        "Global::Discovery Service"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both represent the service discovery and registry capability, such as Netflix Eureka. The global placement is correct."
     }
   ],
   "unmatched_gt_nodes": [
     "Global::common"
   ],
-  "unmatched_predicted_nodes": []
+  "unmatched_predicted_nodes": [
+    "Global::Data Synchronization",
+    "Global::Database per service",
+    "Global::CQRS Implementation"
+  ]
 }

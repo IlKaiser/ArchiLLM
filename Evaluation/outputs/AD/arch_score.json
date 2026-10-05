@@ -1,21 +1,21 @@
 {
-  "chain_of_thought": "The diagram covers most named functional areas, including accounts, achievement claiming, literature retrieval, scholar profiles, comments, messaging, recommendation, and data collection. Completeness is reduced because external crawler/API sources, explicit filtering/sorting behavior, following/cooperation functionality, and moderation or review flow are not clearly represented. Accuracy is reduced by numerous unsubstantiated services, databases, caches, event-sourcing/CQRS choices, and questionable service relationships. The topology is generally deployable and layered, but the recommendation service direction and some synchronous/event dependencies are problematic. Package boundaries and ownership annotations provide strong structural organization.",
+  "chain_of_thought": "The diagram covers the major visible PRD capabilities: accounts and authentication, scholar and achievement management, claiming, literature ingestion and retrieval, recommendations, comments, private messaging, and external literature sources. Completeness is reduced by the lack of explicit modeling for moderation, scholar following, crawler/API distinctions, and possibly notification or audit-specific capabilities. Accuracy is reduced by several unsupported architectural claims and components, including analytics storage, event sourcing, CQRS read models, recommendation caching, and saga coordination, as well as event arrows that appear directionally reversed. The topology is generally deployable with service-owned databases and an API gateway, though direct service-to-service event links without an explicit broker and some questionable dependency directions weaken rationality. Package boundaries, notes, and the legend make the PlantUML structurally clear.",
   "scores": {
     "completeness": {
       "score": 4,
-      "reasoning": "The core platform skeleton and most major functional modules are present, including account management, achievements, literature, scholar profiles, comments, messaging, recommendations, and data collection. However, external crawler/API integrations and several explicit behaviors such as retrieval filtering/sorting, scholar following/cooperation, and comment review are not clearly modeled."
+      "reasoning": "The core functional skeleton is present, including user access, literature search and ingestion, scholar and achievement management, claiming, comments, messaging, recommendations, and external sources. Some supporting requirements are not explicit, such as moderation workflow, scholar following, and distinct crawler/API collection mechanisms."
     },
     "accuracy": {
-      "score": 2,
-      "reasoning": "The diagram contains many components and architectural mechanisms not established by the PRD, including Institution, Appeal, Semantic, CQRS, Event Sourcing, caches, event stores, and a concept graph. Several relationships are also questionable, especially Recommendation Service calling the API Gateway and unrelated or weakly justified domain-event links."
+      "score": 3,
+      "reasoning": "The diagram includes obvious architectural inventions not established by the PRD, such as CQRS, event sourcing, a recommendation cache, analytics services, and saga coordination. Several event relationships are also questionable or reversed, notably literature/recommendation dependencies on ingestion or domain data."
     },
     "rationality": {
       "score": 4,
-      "reasoning": "The service-per-database structure, gateway entry point, and separation of synchronous and asynchronous communication are generally rational. The recommendation service has an awkward outbound dependency on the gateway rather than being clearly exposed through it, and some cross-service calls and event directions create avoidable coupling."
+      "reasoning": "The API gateway, service-owned databases, and separation of domain services form a generally workable architecture. However, direct service-to-service event arrows without a broker or event backbone, plus questionable dependency directions and tight synchronous coupling, introduce moderate architectural weaknesses."
     },
     "readability": {
-      "score": 4,
-      "reasoning": "The PlantUML is syntactically organized with meaningful packages, ownership sections, dependency sections, notes, and a legend. The grouping by architectural patterns is somewhat confusing because individual services are scattered across pattern packages and cross-participation is expressed mainly through notes rather than a simpler domain-oriented hierarchy."
+      "score": 5,
+      "reasoning": "The code is well organized into meaningful packages for API composition, CQRS, Saga, domain aggregates, and domain events, with descriptive notes, datastore grouping, labeled relationships, and a useful legend. The structure is easy to scan and understand."
     }
   }
 }

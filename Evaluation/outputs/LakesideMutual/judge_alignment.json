@@ -2,80 +2,57 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Policy Management Backend",
-        "Global::PolicyDB",
-        "Global::ActiveMQ",
-        "Global::RiskMgmtClient",
-        "Global::Risk Management Server"
+        "Global::CustomerDB"
       ],
       "predicted_nodes": [
-        "Global::Saga - Policy Creation with Risk Assessment"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted saga represents the policy-creation workflow and its risk-assessment integration. It aggregates the policy management service, policy persistence, messaging infrastructure, risk-management client, and risk-management server. All corresponding GT nodes are global application components, so no incorrect boundary attribution is introduced."
-    },
-    {
-      "gt_nodes": [
-        "Global::Customer Self-Service Backend",
-        "Global::UserDB"
-      ],
-      "predicted_nodes": [
-        "Global::Database per Service - Self-Service Portal"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted self-service portal database-per-service concept corresponds to the self-service backend's isolated data ownership and its user database. The prediction is less granular but remains within the correct global self-service system scope."
-    },
-    {
-      "gt_nodes": [
-        "Global::Customer Core"
-      ],
-      "predicted_nodes": [
-        "Global::Aggregate - Customer Domain"
+        "Global::customer_core_db"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the central customer-domain model and business logic. The aggregate terminology is a more DDD-specific description of the GT customer core, and both are assigned to the global domain scope."
+      "reasoning": "The predicted node represents the customer-core data store, which is functionally equivalent to the GT customer database. Both are assigned to the global system scope, so there is no boundary attribution error."
     },
     {
       "gt_nodes": [
-        "Global::SpringBootAdmin"
+        "Global::PolicyDB"
       ],
       "predicted_nodes": [
-        "Global::Monitoring - Service Health"
+        "Global::policy_management_db"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted monitoring node represents the service-health monitoring responsibility provided by Spring Boot Admin. The functional responsibility and global system boundary are consistent."
+      "reasoning": "The predicted policy-management database corresponds to the GT policy database. The global attribution is consistent with the GT scope."
     },
     {
       "gt_nodes": [
-        "Global::CustomerMgmtFrontend",
-        "Global::PolicyMgmtFrontend",
-        "Global::CustomerSelfServiceFrontend"
+        "Global::ActiveMQ"
       ],
       "predicted_nodes": [
-        "Global::API Composition - Gateway & Frontends"
+        "Global::activemq_broker"
       ],
-      "match_type": "1:N",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the customer-facing and employee-facing frontend surfaces behind an API-composition concept. It is less detailed than the GT but does not place the frontends in an incorrect architectural boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::Customer Management Backend",
-        "Global::CustomerDB",
-        "Global::InteractionLogDB"
-      ],
-      "predicted_nodes": [
-        "Global::API Composition - Customer Management"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted customer-management composition represents the customer-management API and its associated customer and interaction-history data responsibilities. It aggregates several GT nodes but remains within the customer-management system scope."
+      "reasoning": "The ActiveMQ broker is the same messaging infrastructure component as the GT ActiveMQ node. The global boundary attribution is correct."
     }
   ],
-  "unmatched_gt_nodes": [],
-  "unmatched_predicted_nodes": []
+  "unmatched_gt_nodes": [
+    "Global::Customer Core",
+    "Global::Risk Management Server",
+    "Global::Customer Management Backend",
+    "Global::Customer Self-Service Backend",
+    "Global::InteractionLogDB",
+    "Global::RiskMgmtClient",
+    "Global::UserDB",
+    "Global::SpringBootAdmin",
+    "Global::Policy Management Backend",
+    "Global::CustomerDB",
+    "Global::CustomerMgmtFrontend",
+    "Global::CustomerSelfServiceFrontend",
+    "Global::PolicyMgmtFrontend"
+  ],
+  "unmatched_predicted_nodes": [
+    "Global::Querying",
+    "Global::Asynchronous Coordination",
+    "Global::risk_management_db",
+    "Global::Data Isolation"
+  ]
 }

@@ -1,22 +1,33 @@
 {
-  "matched_pairs": [],
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Web"
+      ],
+      "predicted_nodes": [
+        "Global::Frontend Aggregation (API Composition)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the frontend/web layer responsible for presenting the shopping experience and aggregating backend service interactions. Although the predicted name emphasizes the API composition pattern rather than the web application itself, the attribution remains within the global frontend system boundary."
+    }
+  ],
   "unmatched_gt_nodes": [
-    "Global::Dispatch",
-    "Global::User",
-    "Global::Load Generator",
-    "Global::MongoDB",
-    "Global::Catalogue",
-    "Global::Cart",
-    "Global::MySQL",
     "Global::RabbitMQ",
+    "Global::Catalogue",
     "Global::Ratings",
+    "Global::Redis",
+    "Global::Cart",
     "Global::Istio Gateway",
-    "Global::Web",
-    "Global::Shipping",
     "Global::Payment",
-    "Global::Redis"
+    "Global::Dispatch",
+    "Global::Load Generator",
+    "Global::MySQL",
+    "Global::Shipping",
+    "Global::MongoDB",
+    "Global::User"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Architectural pattern: Database per Service (each microservice owns a private datastore)"
+    "Global::Private Data Ownership (Database per Service)"
   ]
 }

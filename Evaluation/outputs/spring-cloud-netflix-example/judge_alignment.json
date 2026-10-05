@@ -1,19 +1,42 @@
 {
-  "matched_pairs": [],
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::RabbitMQ"
+      ],
+      "predicted_nodes": [
+        "Global::rabbitmq_queue"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the RabbitMQ message-broker infrastructure. The naming differs, but the functionality and global attribution are consistent."
+    },
+    {
+      "gt_nodes": [
+        "Global::Zuul Gateway"
+      ],
+      "predicted_nodes": [
+        "Global::API Gateway Composition"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the API gateway entry point responsible for composing or routing client requests. Although the predicted name emphasizes API composition rather than Zuul specifically, the global boundary is consistent."
+    }
+  ],
   "unmatched_gt_nodes": [
+    "Global::Service A",
     "Global::Service B",
     "Global::ZipKin",
-    "Global::Service A",
-    "Global::Eureka Server",
-    "Global::Zuul Gateway",
-    "Global::RabbitMQ",
     "Global::Hystrix Dashboard",
+    "Global::Eureka Server",
     "Global::Config Server",
     "Global::Admin Dashboard"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Private per-service persistence\\n(Database per Service)",
-    "Global::Asynchronous business events\\n(Domain Event)",
-    "Global::Gateway data aggregation\\n(API Composition)"
+    "Global::Trace Event Store",
+    "Global::Asynchronous Order/Event Processing",
+    "Global::Independent Persistence",
+    "Global::Domain Event Publishing",
+    "Global::Tracing and Monitoring Views"
   ]
 }

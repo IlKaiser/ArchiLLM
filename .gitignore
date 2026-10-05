@@ -42,5 +42,13 @@ docker-compose copy.yml
 
 # Dashboard: ship the generator code, not the per-machine generated state
 dashboard/index.html
+dashboard/compare.html
+dashboard/spotlight.html
+dashboard/compare_microservice.html
 dashboard/run_progress/
 dashboard/__pycache__/
+
+# Per-machine sync helper (hardcoded local path + this Mac's remote host) — not portable
+dashboard/sync_remote.sh
+# Local run logs (multi-MB, per-machine)
+logs/
