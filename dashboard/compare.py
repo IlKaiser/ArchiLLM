@@ -190,6 +190,7 @@ MICROSERVICE_DATASET_MODELS = [
     ("deepseek", "DeepSeek-Flash", "results/reports/microservice_dataset_report.csv", "results/microservice_dataset"),
     ("kimi", "Kimi K2.7-Code", "results/reports/microservice_dataset_kimi_report.csv", "results/microservice_dataset_kimi"),
     ("gemma", "Gemma-4-26B-A4B", "results/reports/microservice_dataset_gemma_report.csv", "results/microservice_dataset_gemma"),
+    ("qwen", "Qwen3.8-27B", "results/reports/qwen38_27b_microservice_dataset_report.csv", "results/qwen38_27b/microservice_dataset"),
 ]
 
 
