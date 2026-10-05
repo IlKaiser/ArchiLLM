@@ -2,54 +2,47 @@
   "matched_pairs": [
     {
       "gt_nodes": [
+        "Global::Tracking Service"
+      ],
+      "predicted_nodes": [
+        "Global::Dashboard Read Model",
+        "Global::Multi-Service Dashboard Queries"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": true,
+      "reasoning": "Both predicted nodes represent the read/query responsibilities of the tracking capability: maintaining dashboard-oriented vehicle status data and serving cross-service dashboard queries. The predicted nodes split the tracking service into finer-grained responsibilities, and their Global attribution is consistent with the GT attribution."
+    },
+    {
+      "gt_nodes": [
         "Global::Event Sourcing Middleware"
       ],
       "predicted_nodes": [
-        "Global::Event Sourcing (Append-only Ledger)"
+        "Global::State Change Ledger"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both represent the event-sourcing capability used to record system state changes and maintain an append-only history. The predicted node uses a more storage-oriented description, but it remains in the global system architecture boundary and does not introduce a context or layer-crossing error."
+      "reasoning": "The state change ledger represents the event-sourcing responsibility of recording system state changes and maintaining an audit history. Although the name emphasizes stored events rather than middleware processing, the functionality and Global attribution are consistent."
     },
     {
       "gt_nodes": [
         "Global::RabbitMQ"
       ],
       "predicted_nodes": [
-        "Global::Domain Event Propagation"
+        "Global::Inter-Service Notifications"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Domain event propagation corresponds to the asynchronous messaging capability implemented by RabbitMQ in the ground truth. Both are attributed globally, so the boundary placement is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::Ping Service",
-        "Global::Customer Service",
-        "Global::Vehicle Service"
-      ],
-      "predicted_nodes": [
-        "Global::DDD Aggregates (Command Side)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The command-side DDD aggregates broadly cover the domain operations performed by the Ping, Customer, and Vehicle services, including receiving vehicle updates and managing customer and vehicle state. The predicted node is more abstract and aggregates several ground-truth services, but it remains in the global backend/domain boundary."
-    },
-    {
-      "gt_nodes": [
-        "Global::Tracking Service"
-      ],
-      "predicted_nodes": [
-        "Global::CQRS & API Composition (Query Side)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The Tracking Service provides query-oriented vehicle status retrieval and filtering, which corresponds to the query side of CQRS and API composition. The abstraction is broader than the ground-truth service, but there is no incorrect boundary attribution."
+      "reasoning": "Inter-service notifications correspond to the asynchronous message-broker communication provided by RabbitMQ. The predicted node uses a functional description rather than the specific technology name, and both are attributed globally."
     }
   ],
   "unmatched_gt_nodes": [
     "Global::Redis Cache",
-    "Global::SQL Server"
+    "Global::Vehicle Service",
+    "Global::SQL Server",
+    "Global::Customer Service",
+    "Global::Ping Service"
   ],
-  "unmatched_predicted_nodes": []
+  "unmatched_predicted_nodes": [
+    "Global::Core Service Isolation"
+  ]
 }

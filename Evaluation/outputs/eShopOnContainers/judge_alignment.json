@@ -4,12 +4,10 @@
     "Global::Repository Archive"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Read model projection (CQRS)",
-    "Global::Order Placement Saga (orchestration)",
-    "Global::Core services (Database per Service)",
-    "Global::Client-facing view composition (API Composition)",
-    "Global::line.",
-    "Global::Domain Aggregates (DDD)",
-    "Global::with a plain"
+    "Global::API Gateway Pattern",
+    "Global::CQRS Pattern",
+    "Global::Event Sourcing Pattern",
+    "Global::Database per Service",
+    "Global::Saga Pattern"
   ]
 }

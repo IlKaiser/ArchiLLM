@@ -2,37 +2,26 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Order Service"
-      ],
-      "predicted_nodes": [
-        "Global::Saga (Order Orchestration)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted node represents saga-based order orchestration, which is functionally associated with the Order Service. Both are placed in the global service architecture scope, so there is no boundary attribution error."
-    },
-    {
-      "gt_nodes": [
         "Global::Order History Service"
       ],
       "predicted_nodes": [
-        "Global::CQRS (Order History Read Model)"
+        "Global::Query Optimization (CQRS)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted CQRS read model corresponds to the Order History Service, whose stated responsibility is order history querying. The global attribution is consistent."
+      "reasoning": "CQRS is explicitly required for optimized order-history querying, so the predicted node corresponds functionally to the Order History Service. Both are attributed globally, and no boundary conflict is present."
     },
     {
       "gt_nodes": [
-        "Global::API Gateway",
-        "Global::graphqlgateway"
+        "Global::graphqlgateway",
+        "Global::API Gateway"
       ],
       "predicted_nodes": [
-        "Global::API Composition (Gateways)"
+        "Global::Data Aggregation (API Composition)"
       ],
-      "match_type": "N:1",
+      "match_type": "2:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted API Composition node aggregates the gateway responsibilities represented by both the API Gateway and GraphQL gateway. This is an aggregation of gateway components, and all nodes have the same global architectural attribution."
+      "reasoning": "API Composition is implemented through the API gateway layer, including the GraphQL gateway and the general API Gateway. The predicted node aggregates these gateway responsibilities, and all nodes are placed in the global gateway scope without a boundary-crossing error."
     },
     {
       "gt_nodes": [
@@ -40,21 +29,45 @@
         "Global::dynamodb"
       ],
       "predicted_nodes": [
-        "Global::Domain Aggregates (Database per Service)"
+        "Global::Data Isolation (Database per Service)"
       ],
-      "match_type": "N:1",
+      "match_type": "2:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node describes domain data ownership and the database-per-service pattern, which encompasses the separately represented MySQL and DynamoDB stores. Although the prediction abstracts away the specific database technologies, its global data-layer attribution is not incorrectly assigned."
+      "reasoning": "The database-per-service pattern is represented by the independent MySQL and DynamoDB data stores. The prediction aggregates the database-isolation responsibility, and the global attribution is consistent with the GT attribution."
+    },
+    {
+      "gt_nodes": [
+        "Global::Accounting Service"
+      ],
+      "predicted_nodes": [
+        "Global::State Management (Event Sourcing)"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The PRD explicitly identifies event sourcing as a state-management approach used by the accounting service. The predicted abstraction therefore corresponds to the Accounting Service, and both are globally attributed."
+    },
+    {
+      "gt_nodes": [
+        "Global::kafka"
+      ],
+      "predicted_nodes": [
+        "Global::event_store_kafka"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node explicitly identifies Kafka as the event-store or event-log technology, matching the GT Kafka messaging infrastructure. Both nodes have the same global attribution."
     }
   ],
   "unmatched_gt_nodes": [
+    "Global::cdcservice",
+    "Global::Order Service",
     "Global::Consumer Service",
-    "Global::kafka",
-    "Global::Accounting Service",
     "Global::Kitchen Service",
     "Global::zookeeper",
-    "Global::Restaurant Service",
-    "Global::cdcservice"
+    "Global::Restaurant Service"
   ],
-  "unmatched_predicted_nodes": []
+  "unmatched_predicted_nodes": [
+    "Global::Distributed Transactions (Saga)",
+    "Global::Event Communication (Domain Event)"
+  ]
 }

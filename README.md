@@ -23,7 +23,10 @@ ARCHILLMv2/
 ├── Evaluation/
 │   ├── metrics_calculator.py  # Node F1, Edge F1, GED, Boundary Accuracy
 │   ├── llm_judge.py           # LLM alignment judge (matched pairs, boundary correctness)
-│   └── arch_scorer.py         # LLM rubric scorer (completeness, accuracy, rationality, readability)
+│   ├── arch_scorer.py         # LLM rubric scorer (completeness, accuracy, rationality, readability)
+│   ├── modifiability.py       # Modifiability analysis over future-change scenarios
+│   └── pattern_judge.py       # LLM judge for architectural pattern application quality (1–5)
+├── dashboard/                 # Static results dashboards (index, compare, spotlight) + generators
 ├── app.py                     # Streamlit GUI (project picker, live logs, eval dashboard)
 ├── run_headless.py            # Headless batch runner with CSV reporting + charts
 ├── repo_to_puml.py            # Bootstrap: fetch GitHub repos → generate input.txt / diagram.puml
@@ -254,18 +257,32 @@ ARTHUR evaluates generated diagrams on two axes:
 
 Results are written to `headless_report.csv` and visualised as bar charts + a radar chart (`--visualize`).
 
-### Results Dashboard
+### Pattern-Application Judge
 
-`dashboard/index.html` is a self-contained, static results dashboard covering every dataset run plus modifiability analysis — no server needed, just open the file. It embeds all metrics inline and links to the actual rendered diagrams under `results/`, so it only makes sense from within a checkout that has those outputs on disk (not portable on its own). Click any project row for its full score breakdown — judge reasoning, semantic alignment, or (for modifiability) every scenario's before/after diagram.
+`Evaluation/pattern_judge.py` scores, per generated `architecture.json`, how correctly each architectural pattern was applied to the system (1–5), judged against its canonical description in `src/prompt.py`'s `KNOWLEDGE_BASE`. Scores are averaged per project and per model and written next to each project's outputs as `pattern_scores.json`. It reuses the judge credentials (`LLM_JUDGE_KEY` / `LLM_JUDGE_URL` / `JUDGE_MODEL`).
 
-Regenerate it after a new run:
 ```bash
+python Evaluation/pattern_judge.py --output-dir results/student_projects [--dataset-dir dataset/student_projects] [--project A,B]
+```
+
+### Results Dashboards
+
+Three self-contained, static HTML dashboards live under `dashboard/` — no server needed, just open the file. They embed all metrics inline and link to the rendered diagrams under `results/`, so they only make sense from within a checkout that has those outputs on disk. The generated `.html` files are gitignored; only the generators and templates are versioned.
+
+| Page | Generator | Content |
+|---|---|---|
+| `dashboard/index.html` | `generate.py` | Live run progress for every local (`dashboard/run_progress/*.json`) and remote (`dashboard/run_progress/remote/*.json`) run, with per-project status, diagrams, and vLLM throughput / ETA |
+| `dashboard/compare.html`, `dashboard/compare_microservice.html` | `compare.py` | Cross-model comparison on `student_projects` and `MicroserviceDataset`: baseline generation quality (structural + LLM-judge metrics), modifiability score, and pattern fidelity |
+| `dashboard/spotlight.html` | `spotlight.py` | Deep dive on one `student_projects` project's modifiability results across all actor models (defaults to the project with the lowest average modifiability score; override with `--project NAME`) |
+
+Regenerate after a new run:
+```bash
+python dashboard/render_scenario_diagrams.py [results/<model>/<dataset>]  # render any missing baseline/scenario PNGs
 python dashboard/generate.py
+python dashboard/compare.py
+python dashboard/spotlight.py [--project NAME]
 ```
-This reads `results/reports/*.csv` and `results/*/modifiability/report.json`; it doesn't render diagrams itself. If a modifiability scenario is missing its PNG (only the `.puml` is written during a run), render them first:
-```bash
-python dashboard/render_scenario_diagrams.py
-```
+The generators read `results/reports/*.csv`, `results/*/modifiability/report.json`, and `pattern_scores.json`; they don't render diagrams themselves (only `.puml` is written during a modifiability run, hence `render_scenario_diagrams.py`). Results from a remote runner can be pulled in with a local, untracked `dashboard/sync_remote.sh` that rsyncs progress JSON, reports, and diagrams into the same relative paths, then re-runs the three generators.
 
 ---
 

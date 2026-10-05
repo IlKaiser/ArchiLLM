@@ -467,6 +467,39 @@ def _deterministic_puml_repair(filepath: str) -> None:
     )
     lines = [l for l in lines if not stray_pat.match(l) and not invalid_kw_pat.match(l)]
 
+    # 4b. Convert "# comment text" lines to PlantUML's real comment marker
+    # (') — a shell/Python-style "#" comment isn't valid PlantUML syntax and
+    # breaks parsing for the rest of the file. Scoped to "# " (hash + space)
+    # so it doesn't touch legitimate inline "#RRGGBB" hex color codes, which
+    # are never followed by a space.
+    hash_comment_pat = re.compile(r'^(\s*)#\s+(.*)$')
+    lines = [hash_comment_pat.sub(r"\1' \2", l) for l in lines]
+
+    # 4c. Drop "!define <reserved-word>" preprocessor macros that shadow a
+    # PlantUML keyword the file goes on to actually use (e.g. "!define
+    # legend" followed by a real "legend ... endlegend" block) — the macro
+    # redefinition breaks the keyword's real meaning for the rest of the
+    # file. Nothing in this pipeline's generated diagrams intentionally
+    # needs a custom preprocessor macro, so it's always safe to drop.
+    reserved_define_pat = re.compile(
+        r'^\s*!define\s+(legend|endlegend|package|frame|rectangle|database|component|note|end\s*note)\b',
+        re.IGNORECASE,
+    )
+    lines = [l for l in lines if not reserved_define_pat.match(l)]
+
+    # 4d. A bare `note "text"` line with no anchor — no "as alias", no
+    # "left of X" / "right of X" — isn't reliably valid, especially nested
+    # inside a package block. The note text is decorative, not structural,
+    # so drop it as a comment rather than try to invent a valid anchor.
+    # (If this pairs with a multi-line-style "end note" closer, that gets
+    # cleaned up separately in step 6e below, once the block's own interior
+    # lines have also gone through the other line-level repairs.)
+    bare_note_pat = re.compile(r'^(\s*)note\s+"[^"]*"\s*$', re.IGNORECASE)
+    lines = [
+        bare_note_pat.sub(lambda m, l=l: f"{m.group(1)}' {l.strip()}", l)
+        for l in lines
+    ]
+
     # 4b. Strip trailing garbage after @enduml (e.g. "@enduml>")
     lines = [
         re.sub(r'^(\s*@enduml).*$', r'\1', l) if re.match(r'^\s*@enduml.+', l) else l
@@ -492,11 +525,113 @@ def _deterministic_puml_repair(filepath: str) -> None:
         for l in lines
     ]
 
+    # 6b. PlantUML aliases can't contain hyphens when used unquoted (e.g. as
+    # an arrow endpoint: "game-service -> challenge-service"); normalize to
+    # underscores everywhere at once so every usage — declarations, arrows,
+    # "as" clauses — stays consistent with each other after the rename. Must
+    # run before 6c/6d below, whose regexes match on \w+ (hyphen-free).
+    hyphenated_ids = set()
+    for l in lines:
+        if not l.strip().startswith("'"):
+            hyphenated_ids.update(re.findall(r'\b[A-Za-z][\w]*(?:-[\w]+)+\b', l))
+    if hyphenated_ids:
+        # Longest-first avoids a shorter id's replacement corrupting a
+        # longer id that contains it as a substring.
+        for ident in sorted(hyphenated_ids, key=len, reverse=True):
+            safe = ident.replace("-", "_")
+            lines = [
+                re.sub(rf'\b{re.escape(ident)}\b', safe, l) if not l.strip().startswith("'") else l
+                for l in lines
+            ]
+
+    # 6c. Fix invalid ways of attaching a human-readable label directly to a
+    # component declaration. Models reach for several different invalid
+    # forms for the same intent ("name this component X"); all of them
+    # break the PlantUML parser (it misreads the stray quoted string as a
+    # class-diagram field) and none of them are needed — the alias/name
+    # already identifies the component, so the label is simply dropped
+    # rather than relocated:
+    #   [alias] "text" [as alias2]   -> [alias] [as alias2]
+    #   [alias] as alias2 "text"     -> [alias] as alias2   (as BEFORE the quote)
+    #   [alias] : "text"             -> [alias]
+    #   alias : "text"               -> alias   (bare, no brackets)
+    #   database alias "text"        -> database alias   (keyword + alias + text, no "as")
+    bracket_label_fix = re.compile(r'^(\s*\[\w+\])\s+"[^"]*"(\s+as\s+\w+)?')
+    bracket_as_label_fix = re.compile(r'^(\s*\[\w+\]\s+as\s+\w+)\s+"[^"]*"\s*$')
+    colon_label_fix = re.compile(r'^(\s*[\[\]\w]+)\s*:\s*"[^"]*"\s*$')
+    keyword_label_fix = re.compile(
+        r'^(\s*(?:database|component|interface|actor|queue|node)\s+\w+)\s+"[^"]*"\s*$'
+    )
+    # "database bare_id "Label" as alias" — three components (bare id + label
+    # + as-alias) where valid syntax wants at most two; keep the keyword and
+    # the real alias from "as", drop the redundant bare id and label.
+    keyword_as_label_fix = re.compile(
+        r'^(\s*(?:database|component|interface|actor|queue|node))\s+\w+\s+"[^"]*"\s+as\s+(\w+)\s*$'
+    )
+    lines = [
+        bracket_label_fix.sub(r'\1\2', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+    lines = [
+        bracket_as_label_fix.sub(r'\1', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+    lines = [
+        colon_label_fix.sub(r'\1', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+    lines = [
+        keyword_label_fix.sub(r'\1', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+    lines = [
+        keyword_as_label_fix.sub(r'\1 \2', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+
+    # 6d. "identifier [Keyword]" or "identifier [Keyword "label"]" — a bare
+    # word followed by a bracketed type marker (optionally with a quoted
+    # label crammed inside) isn't valid PlantUML either. If the type word is
+    # "database" the model means a database element (real syntax: `database
+    # "Label" as alias`); anything else (Component, etc.) means a regular
+    # component, whose real syntax is just the bracket alone: `[alias]`.
+    db_marker_fix = re.compile(r'^(\s*)(\w+)\s+\[database(?:\s+"[^"]*")?\]\s*$', re.IGNORECASE)
+    generic_marker_fix = re.compile(r'^(\s*)(\w+)\s+\[\w+(?:\s+"[^"]*")?\]\s*$')
+    lines = [db_marker_fix.sub(r'\1database "\2" as \2', l) for l in lines]
+    lines = [
+        generic_marker_fix.sub(r'\1[\2]', l) if not l.strip().startswith("'") else l
+        for l in lines
+    ]
+
     result_lines = []
     open_braces = 0
+    in_legend = False
+    bullet_pat = re.compile(r'^\s*\*\s')
 
     for line in lines:
         stripped_line = line.strip()
+        # 6a. "* text" bullet syntax is only valid inside a legend...endlegend
+        # block; the same bullet marker used elsewhere (e.g. inside a
+        # package, as a stand-in for a real component/note) isn't valid
+        # PlantUML there and breaks parsing. Track legend state and convert
+        # any bullet line seen outside one into a real comment.
+        if re.match(r'^\s*legend\b', stripped_line, re.IGNORECASE) and not re.match(r'^\s*endlegend\b', stripped_line, re.IGNORECASE):
+            in_legend = True
+        elif re.match(r'^\s*endlegend\b', stripped_line, re.IGNORECASE):
+            in_legend = False
+        elif not in_legend and bullet_pat.match(line) and not stripped_line.startswith("'"):
+            line = re.sub(r'^(\s*)\*\s', r"\1' ", line)
+            stripped_line = line.strip()
+        # 6a2. A line that is nothing but a single bare word (no brackets,
+        # no keyword, no arrow, no colon) isn't a valid PlantUML statement
+        # anywhere outside a legend — it shows up when a model tries to
+        # list which components belong to a pattern grouping by just
+        # re-mentioning their bare names with no connecting syntax. Since
+        # the component is already declared elsewhere, the bare re-mention
+        # carries no information PlantUML can use; drop it as a comment.
+        elif not in_legend and re.fullmatch(r'\s*\w+\s*', line) and stripped_line not in ("legend", "endlegend"):
+            line = re.sub(r'^(\s*)(\w+)\s*$', r"\1' \2", line)
+            stripped_line = line.strip()
         # 6. Fix unclosed double-quotes on non-comment lines
         if not stripped_line.startswith("'") and not stripped_line.startswith("/'"):
             if line.count('"') % 2 != 0:
@@ -509,6 +644,31 @@ def _deterministic_puml_repair(filepath: str) -> None:
                 result_lines.append(f"' [moved-out] {stripped_line}")
                 continue
         result_lines.append(line)
+
+    # 6e. Drop any "end note" that has no matching real (uncommented) open
+    # "note" block before it. Two forms legitimately open a multi-line note
+    # needing "end note": bare "note" alone, and "note left/right/top/bottom
+    # of X" (the standard anchored form) — anything else is a note-opening
+    # form this function itself strips down to a comment (step 4d above),
+    # which leaves exactly this kind of dangling closer behind. By this
+    # point any interior content between a *stripped* opener and its closer
+    # has also already been commented out by the other line-level repairs
+    # above, so a real note block is never mistaken for a stripped one.
+    real_note_open_pat = re.compile(
+        r'^\s*note\s*(?:(?:left|right|top|bottom)\s+of\s+\w+)?\s*$', re.IGNORECASE
+    )
+    end_note_pat = re.compile(r'^\s*end\s*note\s*$', re.IGNORECASE)
+    open_notes = 0
+    for i, line in enumerate(result_lines):
+        if line.strip().startswith("'"):
+            continue
+        if real_note_open_pat.match(line):
+            open_notes += 1
+        elif end_note_pat.match(line):
+            if open_notes > 0:
+                open_notes -= 1
+            else:
+                result_lines[i] = re.sub(r'^(\s*)', r"\1' ", line)
 
     # 8. Close any unclosed { blocks before @enduml
     open_braces = sum(l.count("{") - l.count("}") for l in result_lines)
@@ -537,7 +697,16 @@ def _deterministic_puml_repair(filepath: str) -> None:
         for _ in range(legend_opens - legend_closes):
             result_lines.insert(enduml_idx, "endlegend")
 
-    # 10. Remove duplicate alias definitions — keep only the first occurrence
+    # 10. Remove duplicate alias definitions — keep only the first occurrence.
+    # `\[(\w+)\]` alone can't tell a real declaration ("[auth_service]
+    # <<component>>") from a dependency edge that merely references an
+    # already-declared alias ("[auth_service] --> [profile_service] :
+    # REST") — both start with "[name]". Matching the edge line as a
+    # "duplicate declaration" and commenting it out silently deletes every
+    # dependency edge in the diagram once each component's first mention is
+    # seen. An edge line always contains an arrow; a declaration never does,
+    # so skip the dedup check entirely on any line with one.
+    arrow_pattern = re.compile(r'-->|\.\.>|->|--')
     alias_pattern = re.compile(
         r'^\s*'
         r'(?:'
@@ -548,7 +717,7 @@ def _deterministic_puml_repair(filepath: str) -> None:
     seen_aliases: set[str] = set()
     deduped_lines = []
     for line in result_lines:
-        m = alias_pattern.match(line)
+        m = None if arrow_pattern.search(line) else alias_pattern.match(line)
         if m:
             alias = m.group(1) or m.group(2)
             if alias:
@@ -901,6 +1070,8 @@ def run(
         reasoning_effort = "high"
         litellm_extra_body = {}
         max_agent_iterations = 500
+        request_timeout = 1200
+        request_retries = 2
 
     condenser_llm = LLM(
         model=primary_model,

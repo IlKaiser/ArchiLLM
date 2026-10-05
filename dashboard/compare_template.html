@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArchiLLM Model Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F5F6F9; --surface:#FFFFFF; --surface-alt:#EEF0F5; --border:#DCE0E8;
+    --ink:#12151C; --ink-secondary:#565F70; --ink-muted:#8890A0;
+    --accent:#3548C4; --accent-soft:#E7E9FB;
+    --font-sans:'IBM Plex Sans',-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Consolas,monospace;
+    --m-deepseek:#3548C4; --m-kimi:#B4680C; --m-gemma:#14875A; --m-qwen:#9A3EBD;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1116; --surface:#161A22; --surface-alt:#1E232D; --border:#2A3040;
+      --ink:#EDEFF4; --ink-secondary:#A7AFC0; --ink-muted:#6B7385;
+      --accent:#8593FF; --accent-soft:#232B55;
+      --m-deepseek:#8593FF; --m-kimi:#E8A23A; --m-gemma:#3FCB93; --m-qwen:#D48BF0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1116; --surface:#161A22; --surface-alt:#1E232D; --border:#2A3040;
+    --ink:#EDEFF4; --ink-secondary:#A7AFC0; --ink-muted:#6B7385;
+    --accent:#8593FF; --accent-soft:#232B55;
+    --m-deepseek:#8593FF; --m-kimi:#E8A23A; --m-gemma:#3FCB93; --m-qwen:#D48BF0;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);margin:0;padding-inline:20px;padding-block:32px 64px;}
+  .wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:28px;}
+  header .eyebrow{font:600 12px/1 var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 8px;}
+  h1{font:700 28px/1.15 var(--font-sans);letter-spacing:-.01em;margin:0;text-wrap:balance;}
+  header p.sub{margin:6px 0 0;color:var(--ink-secondary);font-size:14.5px;max-width:70ch;}
+
+  section.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px 22px;}
+  .panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:16px;}
+  .panel-title h2{font:600 16px var(--font-sans);margin:0;}
+  .panel-title code{font:500 12.5px var(--font-mono);color:var(--ink-muted);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;font:500 12.5px var(--font-sans);}
+  .legend .item{display:inline-flex;align-items:center;gap:6px;color:var(--ink-secondary);}
+  .legend .swatch{width:10px;height:10px;border-radius:3px;flex:none;}
+
+  .metric-group{margin-bottom:22px;}
+  .metric-group:last-child{margin-bottom:0;}
+  .metric-group h3{font:600 13.5px var(--font-sans);margin:0 0 10px;display:flex;align-items:baseline;gap:8px;}
+  .metric-group h3 .hint{font:400 11.5px var(--font-mono);color:var(--ink-muted);font-weight:400;}
+  .bar-row{display:grid;grid-template-columns:110px 1fr 64px;align-items:center;gap:10px;margin-bottom:7px;}
+  .bar-row .m-label{font:500 12.5px var(--font-sans);color:var(--ink-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bar-track{height:14px;border-radius:4px;background:var(--surface-alt);overflow:hidden;position:relative;}
+  .bar-fill{height:100%;border-radius:4px;transition:width .3s;}
+  .bar-row .m-value{font:600 12.5px var(--font-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);}
+  .bar-row .m-value small{color:var(--ink-muted);font-weight:400;}
+  .no-data{font:400 12px var(--font-sans);color:var(--ink-muted);font-style:italic;padding:6px 0;}
+
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px;}
+  th{text-align:left;font:600 11px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);padding:0 10px 8px;border-bottom:1px solid var(--border);}
+  th.num{text-align:right;}
+  td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;font-variant-numeric:tabular-nums;}
+  td.num{text-align:right;font-family:var(--font-mono);color:var(--ink-secondary);}
+  td.model{font:600 12.5px var(--font-sans);}
+  tr:last-child td{border-bottom:none;}
+  .pct-badge{font:500 11px var(--font-mono);color:var(--ink-muted);}
+
+  footer{color:var(--ink-muted);font:400 12px var(--font-mono);}
+
+  .bar-row.clickable{cursor:pointer;border-radius:6px;transition:background .12s;}
+  .bar-row.clickable:hover{background:var(--surface-alt);}
+
+  .overlay{position:fixed;inset:0;background:rgba(10,12,16,.5);display:flex;justify-content:flex-end;z-index:50;}
+  .overlay[hidden]{display:none;}
+  .detail{background:var(--surface);width:min(720px,100%);height:100%;overflow-y:auto;padding:24px 26px 60px;box-shadow:-8px 0 30px rgba(0,0,0,.15);}
+  .detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;}
+  .detail-head h2{margin:0 0 4px;font:700 20px var(--font-sans);}
+  .detail-head p{margin:0;color:var(--ink-secondary);font:400 13px var(--font-mono);}
+  .close-btn{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;font-size:16px;line-height:1;cursor:pointer;color:var(--ink-secondary);flex:none;}
+  .close-btn:hover{color:var(--ink);}
+  .proj-block{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+  .proj-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;}
+  .proj-head .name{font:600 13.5px var(--font-sans);}
+  .proj-head .score{font:600 13px var(--font-mono);color:var(--ink);}
+  .pat-row{padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;}
+  .proj-block .pat-row:first-of-type{border-top:none;}
+  .pat-row .pat-head{display:flex;justify-content:space-between;gap:8px;font:600 12.5px var(--font-sans);margin-bottom:3px;}
+  .pat-row .pat-score{font-family:var(--font-mono);color:var(--ink);}
+  .pat-row .reasoning{color:var(--ink-secondary);}
+  .no-patterns{color:var(--ink-muted);font-size:12px;font-style:italic;}
+
+  @media (max-width:560px){
+    h1{font-size:22px;}
+    .bar-row{grid-template-columns:80px 1fr 56px;}
+    .detail{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">ArchiLLM / ARTHUR &middot; model comparison</p>
+    <h1>Baseline &amp; modifiability across models</h1>
+    <p class="sub" id="sub-line">Comparing DeepSeek-Flash, Kimi K2.7-Code, Gemma-4-26B-A4B and Qwen3.8-27B on the same dataset/student_projects set. Structural &amp; judge scores only cover the projects that have a ground-truth reference diagram; modifiability covers every project with a scored report.</p>
+  </header>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Structural metrics</h2><code>Node F1 / Edge F1 / Boundary Accuracy &mdash; higher is better</code></div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div id="structural-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>LLM judge scores</h2><code>gpt-5.6-luna rubric, 1&ndash;5 &mdash; higher is better</code></div>
+    </div>
+    <div id="judge-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Pattern application fidelity</h2><code>gpt-5.6-luna rubric, 1&ndash;5 per pattern, from src/prompt.py's knowledge base &mdash; higher is better</code></div>
+    </div>
+    <p style="color:var(--ink-secondary);font-size:12.5px;margin:0 0 14px">For every architectural pattern a model claims to use in a project (Saga, CQRS, API Composition, etc.), the judge scores 1&ndash;5 how correctly that pattern was applied to this specific system against its canonical definition. Scores average per project (across that project's patterns), then per model (across all projects) &mdash; not the same as the general judge scores above, which grade the diagram as a whole rather than pattern-by-pattern.</p>
+    <div id="pattern-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-title"><h2>Modifiability</h2><code>avg weighted GED across 5 future-change scenarios &mdash; lower is cheaper to modify</code></div>
+    </div>
+    <div id="mod-body"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div class="panel-title"><h2>Full comparison table</h2></div></div>
+    <div class="table-scroll" id="table-body"></div>
+  </section>
+
+  <footer>
+    <span>Regenerate with <span style="font-family:var(--font-mono)">python dashboard/compare.py</span></span>
+    &middot; <span id="footer-generated"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="detail" id="detail-panel"></div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const COLORS = {deepseek:'var(--m-deepseek)', kimi:'var(--m-kimi)', gemma:'var(--m-gemma)', qwen:'var(--m-qwen)'};
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function fmt(v, d=3){ return v==null ? '—' : Number(v).toFixed(d); }
+
+function barRow(model, value, maxValue, decimals, n, total, clickKey){
+  const pct = (value==null || !maxValue) ? 0 : Math.max(2, Math.min(100, 100*value/maxValue));
+  const color = COLORS[model.key] || 'var(--accent)';
+  const nBadge = (n!=null && total!=null) ? ` <small>(n=${n}/${total})</small>` : '';
+  const clickable = clickKey ? ` clickable" data-detail="${esc(clickKey)}" data-model-key="${esc(model.key)}` : '';
+  return `<div class="bar-row${clickable}">
+    <span class="m-label">${esc(model.label)}</span>
+    <div class="bar-track">${value!=null ? `<div class="bar-fill" style="width:${pct}%;background:${color}"></div>` : ''}</div>
+    <span class="m-value">${fmt(value, decimals)}${nBadge}</span>
+  </div>`;
+}
+
+function metricGroup(title, hint, field, maxValue, decimals){
+  const rows = DATA.models.map(m => {
+    const metric = m.baseline.metrics[field];
+    return barRow(m, metric.mean, maxValue, decimals, metric.n, DATA.dataset_total);
+  }).join('');
+  const anyData = DATA.models.some(m => m.baseline.metrics[field].n > 0);
+  return `<div class="metric-group">
+    <h3>${esc(title)} ${hint ? `<span class="hint">${esc(hint)}</span>` : ''}</h3>
+    ${anyData ? rows : '<div class="no-data">No projects with ground-truth diagrams evaluated for this metric yet.</div>'}
+  </div>`;
+}
+
+function render(){
+  const modelNames = DATA.models.map(m => m.label);
+  const modelList = modelNames.length > 1
+    ? modelNames.slice(0, -1).join(', ') + ' and ' + modelNames[modelNames.length - 1]
+    : (modelNames[0] || '');
+  document.getElementById('sub-line').textContent =
+    `Comparing ${modelList} on the same ${DATA.dataset_total}-project set (${DATA.dataset_label || ''}). ` +
+    'Structural & judge scores only cover the projects that have a ground-truth reference diagram; ' +
+    'modifiability covers every project with a scored report.';
+
+  document.getElementById('legend').innerHTML = DATA.models.map(m =>
+    `<span class="item"><span class="swatch" style="background:${COLORS[m.key]}"></span>${esc(m.label)}</span>`).join('');
+
+  document.getElementById('structural-body').innerHTML =
+    metricGroup('Node F1', '0–1', 'node_f1', 1, 3) +
+    metricGroup('Edge F1', '0–1', 'edge_f1', 1, 3) +
+    metricGroup('Boundary Accuracy', '0–1', 'boundary_accuracy', 1, 3) +
+    metricGroup('Graph Edit Distance (GED)', 'lower is better', 'ged', Math.max(1, ...DATA.models.map(m=>m.baseline.metrics.ged.mean||0)), 1);
+
+  document.getElementById('judge-body').innerHTML =
+    metricGroup('Completeness', '1–5', 'completeness', 5, 2) +
+    metricGroup('Accuracy', '1–5', 'accuracy', 5, 2) +
+    metricGroup('Rationality', '1–5', 'rationality', 5, 2) +
+    metricGroup('Readability', '1–5', 'readability', 5, 2);
+
+  const maxScore = Math.max(1, ...DATA.models.map(m => m.modifiability.score.mean || 0));
+  document.getElementById('mod-body').innerHTML =
+    `<div class="metric-group"><h3>Modifiability score <span class="hint">avg weighted GED, lower = cheaper</span></h3>
+      ${DATA.models.map(m => barRow(m, m.modifiability.score.mean, maxScore, 2, m.modifiability.done, m.modifiability.total)).join('')}
+    </div>
+    <div class="metric-group"><h3>Normalized modifiability score <span class="hint">0–1+ scale, lower = cheaper</span></h3>
+      ${DATA.models.map(m => barRow(m, m.modifiability.normalized.mean, Math.max(1, ...DATA.models.map(x=>x.modifiability.normalized.mean||0)), 3, m.modifiability.done, m.modifiability.total)).join('')}
+    </div>`;
+
+  document.getElementById('pattern-body').innerHTML =
+    `<div class="metric-group">
+      ${DATA.models.map(m => barRow(m, m.pattern_fidelity.mean, 5, 1, m.pattern_fidelity.n, m.pattern_fidelity.total, 'pattern')).join('')}
+      <p style="color:var(--ink-muted);font-size:11.5px;margin:8px 0 0">Click a model for the per-project, per-pattern breakdown.</p>
+    </div>`;
+
+  const rows = DATA.models.map(m => {
+    const b = m.baseline, mo = m.modifiability, met = b.metrics, pf = m.pattern_fidelity;
+    return `<tr>
+      <td class="model">${esc(m.label)}</td>
+      <td class="num">${b.generated}/${b.total}</td>
+      <td class="num">${fmt(met.node_f1.mean,3)}</td>
+      <td class="num">${fmt(met.edge_f1.mean,3)}</td>
+      <td class="num">${fmt(met.ged.mean,1)}</td>
+      <td class="num">${fmt(met.boundary_accuracy.mean,3)}</td>
+      <td class="num">${fmt(met.completeness.mean,2)}</td>
+      <td class="num">${fmt(met.accuracy.mean,2)}</td>
+      <td class="num">${fmt(met.rationality.mean,2)}</td>
+      <td class="num">${fmt(met.readability.mean,2)}</td>
+      <td class="num">${fmt(pf.mean,1)} <span class="pct-badge">(${pf.n}/${pf.total})</span></td>
+      <td class="num">${fmt(mo.score.mean,2)} <span class="pct-badge">(${mo.done}/${mo.total})</span></td>
+      <td class="num">${fmt(mo.normalized.mean,3)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('table-body').innerHTML = `<table>
+    <thead><tr>
+      <th>Model</th><th class="num">Generated</th>
+      <th class="num">Node F1</th><th class="num">Edge F1</th><th class="num">GED</th><th class="num">Boundary Acc.</th>
+      <th class="num">Complete</th><th class="num">Accurate</th><th class="num">Rational</th><th class="num">Readable</th>
+      <th class="num">Pattern fidelity</th>
+      <th class="num">Mod. score</th><th class="num">Mod. normalized</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+
+  document.getElementById('footer-generated').textContent = 'generated ' + new Date(DATA.generated_at).toLocaleString();
+
+  document.querySelectorAll('.bar-row.clickable[data-detail="pattern"]').forEach(row => {
+    row.addEventListener('click', () => openPatternDetail(row.dataset.modelKey));
+  });
+}
+
+function openDetail(html){
+  document.getElementById('detail-panel').innerHTML = html;
+  document.getElementById('overlay').hidden = false;
+}
+function closeDetail(){ document.getElementById('overlay').hidden = true; }
+document.getElementById('overlay').addEventListener('click', e => { if(e.target.id==='overlay') closeDetail(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeDetail(); });
+
+function openPatternDetail(modelKey){
+  const m = DATA.models.find(x => x.key === modelKey);
+  if(!m) return;
+  const pf = m.pattern_fidelity;
+  const projectNames = Object.keys(pf.projects).sort();
+  const blocks = projectNames.map(name => {
+    const p = pf.projects[name];
+    const patRows = (p.patterns || []).map(pat => `
+      <div class="pat-row">
+        <div class="pat-head"><span>${esc(pat.group_name || pat.kb_slug)} <span style="color:var(--ink-muted);font-weight:400">(${esc(pat.kb_slug)})</span></span><span class="pat-score">${pat.score ?? '—'}/5</span></div>
+        <div class="reasoning">${esc(pat.reasoning || '')}</div>
+      </div>`).join('');
+    return `<div class="proj-block">
+      <div class="proj-head">
+        <span class="name">${esc(name)}</span>
+        <span class="score">${fmt(p.project_score,1)} <span class="pct-badge">(n=${p.n_patterns})</span></span>
+      </div>
+      ${patRows || '<p class="no-patterns">No KB-matched patterns for this project.</p>'}
+    </div>`;
+  }).join('');
+  openDetail(`
+    <div class="detail-head">
+      <div><h2>${esc(m.label)} &mdash; pattern fidelity</h2><p>Overall ${fmt(pf.mean,1)} &middot; ${pf.n}/${pf.total} projects &middot; ${pf.n_patterns_total} patterns scored</p></div>
+      <button class="close-btn" onclick="closeDetail()" aria-label="Close">&times;</button>
+    </div>
+    ${blocks || '<p class="no-patterns">No pattern scores available for this model yet.</p>'}
+  `);
+}
+render();
+</script>
+</body></html>

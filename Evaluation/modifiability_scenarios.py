@@ -262,12 +262,17 @@ def _complete(
     litellm/the underlying provider SDK apply NO timeout by default — a
     stalled connection hangs forever rather than raising, which a caller
     can't distinguish from "still legitimately working." Defaults to
-    LLM_REQUEST_TIMEOUT (env, seconds) or 180.0.
+    LLM_REQUEST_TIMEOUT (env, seconds), falling back to LOCAL_LLM_TIMEOUT
+    (the same env var diagram_agent.py uses for local vLLM models, which
+    legitimately need much longer than a fast cloud API) or 180.0 if
+    neither is set.
     """
     model = model or os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-5-20250929")
     api_key = api_key or os.getenv("LLM_API_KEY")
     base_url = base_url or os.getenv("LLM_BASE_URL")
-    timeout = timeout if timeout is not None else float(os.getenv("LLM_REQUEST_TIMEOUT", "180"))
+    timeout = timeout if timeout is not None else float(
+        os.getenv("LLM_REQUEST_TIMEOUT") or os.getenv("LOCAL_LLM_TIMEOUT") or "180"
+    )
     request_kwargs = dict(
         model=model,
         api_key=api_key,

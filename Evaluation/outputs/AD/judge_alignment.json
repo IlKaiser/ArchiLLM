@@ -2,49 +2,60 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Storage / Database Layer"
-      ],
-      "predicted_nodes": [
-        "CQRS::search_result_cache\\n(cache)",
-        "Global::Event Sourcing"
-      ],
-      "match_type": "1:N",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted search-result cache and event-sourcing mechanism represent data persistence and storage concerns, which are semantically consistent with the GT storage/database layer."
-    },
-    {
-      "gt_nodes": [
         "Global::Network / Gateway Layer"
       ],
       "predicted_nodes": [
         "API Composition::API Gateway",
-        "Global::API Composition"
+        "Global::API Composition",
+        "Global::external_literature_sources"
       ],
       "match_type": "1:N",
       "is_boundary_correct": true,
-      "reasoning": "The predicted API Gateway and API Composition components provide request routing and aggregation responsibilities, matching the GT network/gateway layer."
+      "reasoning": "These nodes represent the platform entry point, API composition/gateway responsibilities, and interaction with external literature sources. They are semantically consistent with the network and gateway layer."
+    },
+    {
+      "gt_nodes": [
+        "Global::Storage / Database Layer"
+      ],
+      "predicted_nodes": [
+        "Domain Aggregates::Scholar DB",
+        "Domain Aggregates::Comment DB",
+        "Domain Aggregates::Achievement DB",
+        "Domain Aggregates::User DB",
+        "API Composition::Analytics DB",
+        "Domain Events::Message DB",
+        "CQRS::Literature Store",
+        "CQRS::Search Index",
+        "CQRS::Ingestion Store",
+        "CQRS::Recommendation Cache"
+      ],
+      "match_type": "1:N",
+      "is_boundary_correct": false,
+      "reasoning": "All listed nodes are functionally storage, database, indexing, or caching components and therefore match the GT storage layer. However, the AI placed them under domain aggregates, API composition, domain events, or CQRS packages rather than a storage/database boundary. These package attributions introduce a layer or context mismatch."
     },
     {
       "gt_nodes": [
         "Global::Service / Backend Layer"
       ],
       "predicted_nodes": [
-        "CQRS::Literature Search Service",
-        "Global::Saga",
-        "Global::Domain Event",
-        "Domain Event::Scholar Profile Service",
-        "Saga::Institution Service",
-        "Event Sourcing::Achievement Service",
-        "Event Sourcing::Appeal Service",
-        "Domain Event::Data Collection Service",
-        "Saga::User Account Service",
+        "Domain Aggregates::Comment Service",
+        "Saga::Security Service",
+        "Domain Aggregates::Achievement Service",
+        "Domain Aggregates::User Service",
+        "Domain Events::Messaging Service",
         "CQRS::Recommendation Service",
-        "Domain Event::Comment Service",
-        "Global::CQRS"
+        "CQRS::Literature Service",
+        "API Composition::Analytics Service",
+        "CQRS::Data Ingestion Service",
+        "Domain Aggregates::Scholar Service",
+        "Global::Domain Aggregates",
+        "Global::Domain Events",
+        "Global::CQRS",
+        "Global::Saga"
       ],
       "match_type": "1:N",
       "is_boundary_correct": true,
-      "reasoning": "The predicted domain services, account, institution, achievement, appeal, data collection, recommendation, comment, search, saga, domain-event, event-sourcing, and CQRS components are all backend business or application-layer capabilities. Their more specific architectural package names do not indicate a context or layer violation."
+      "reasoning": "These nodes collectively implement domain services, messaging, security, recommendation, literature, analytics, ingestion, domain-event, saga, CQRS, and aggregate-processing responsibilities. Despite being divided into multiple architectural patterns and domain packages, they are all semantically within the backend service layer."
     }
   ],
   "unmatched_gt_nodes": [

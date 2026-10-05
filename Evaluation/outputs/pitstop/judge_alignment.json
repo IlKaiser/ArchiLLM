@@ -1,26 +1,43 @@
 {
-  "matched_pairs": [],
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::WebApp"
+      ],
+      "predicted_nodes": [
+        "API Composition::Web Application"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": false,
+      "reasoning": "Both nodes represent the web-based frontend application, but the predicted node is placed under the API Composition boundary. The ground-truth web application is a standalone frontend component, while API composition is an integration/API aggregation concern rather than the correct frontend boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Workshop Management Event Handler"
+      ],
+      "predicted_nodes": [
+        "Global::Event Sourcing & CQRS"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node represents the event-sourcing and CQRS implementation associated with workshop management, which is functionally aligned with the workshop management event handler. Both are attributed globally, so there is no boundary-crossing error."
+    }
+  ],
   "unmatched_gt_nodes": [
-    "Global::Time Service",
     "Global::Invoice Service",
-    "Global::Auditlog Service",
-    "Global::WebApp",
     "Global::RabbitMQ",
-    "Global::Notification Service",
-    "Global::MailDev",
+    "Global::SQL Server",
+    "Global::Time Service",
     "Global::Vehicle Management API",
     "Global::Seq",
-    "Global::SQL Server",
+    "Global::Auditlog Service",
+    "Global::Notification Service",
     "Global::Workshop Management API",
-    "Global::Workshop Management Event Handler",
+    "Global::MailDev",
     "Global::Customer Management API"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Domain-driven Aggregates Pattern",
-    "Global::API Composition Pattern",
-    "Global::Database per Service Pattern",
-    "Global::Saga Pattern",
-    "Global::Event Sourcing + CQRS Pattern",
-    "Global::Client Layer"
+    "Global::API Composition",
+    "Global::Saga"
   ]
 }

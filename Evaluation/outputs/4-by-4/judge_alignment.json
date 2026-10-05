@@ -2,28 +2,20 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::Application Layer / Backend Services"
+        "Global::Global::Data Layer / Storage"
       ],
       "predicted_nodes": [
-        "Domain event::Match History Service\\n(completed matches & replays)",
-        "Event sourcing::Game Service\\n(authoritative real-time engine)",
-        "CQRS::Statistics Service\\n(aggregate read model)",
-        "API Composition::API Gateway\\n(single client entry point)"
+        "Global::Private data ownership (Database per Service)"
       ],
-      "match_type": "1:N",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted nodes decompose the GT's generic backend-services layer into specific backend components for gameplay, match history, statistics, and API access. Although the predicted package names use architectural patterns rather than the GT's broad layer name, all four components remain semantically within the application/backend boundary."
+      "reasoning": "The predicted node describes a data-storage architecture pattern in which each service owns its private database, which is functionally and architecturally aligned with the GT Data Layer / Storage node. Both use a global system-level attribution, and no frontend, user, or application-layer confusion is present."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Data Layer / Storage",
-    "Global::Presentation Layer / Frontend",
-    "Global::User Layer / Client Layer"
+    "Global::User Layer / Client Layer",
+    "Global::Application Layer / Backend Services",
+    "Global::Presentation Layer / Frontend"
   ],
-  "unmatched_predicted_nodes": [
-    "Global::Event sourcing",
-    "Global::Domain event",
-    "Global::API Composition",
-    "Global::CQRS"
-  ]
+  "unmatched_predicted_nodes": []
 }

@@ -1,47 +1,15 @@
 {
-  "matched_pairs": [
-    {
-      "gt_nodes": [
-        "Global::turbine"
-      ],
-      "predicted_nodes": [
-        "Infrastructure Services::Monitoring Service"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both represent the monitoring and metrics aggregation capability used for centralized service monitoring. The predicted node uses a broader monitoring-service name, and its infrastructure-services boundary is semantically appropriate for Turbine."
-    },
-    {
-      "gt_nodes": [
-        "Global::eureka"
-      ],
-      "predicted_nodes": [
-        "Infrastructure Services::Service Registry"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Eureka is the service registry in the ground-truth architecture, and the predicted Service Registry represents the same discovery function. Placement under Infrastructure Services is semantically correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::zuul"
-      ],
-      "predicted_nodes": [
-        "API Composition::API Gateway"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Zuul is the API gateway in the ground-truth design, and the predicted API Gateway represents the same routing and cross-cutting entry-point function. The API Composition boundary is semantically consistent with the gateway role."
-    }
-  ],
+  "matched_pairs": [],
   "unmatched_gt_nodes": [
+    "Global::eureka",
+    "Global::turbine",
     "Global::Catalog Service",
+    "Global::zuul",
     "Global::Customer Service",
     "Global::Order Service"
   ],
   "unmatched_predicted_nodes": [
-    "Global::API Composition",
-    "Global::Aggregate",
-    "Global::Infrastructure Services"
+    "Global::Data Isolation",
+    "Global::Client Access"
   ]
 }

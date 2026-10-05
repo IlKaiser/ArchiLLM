@@ -821,6 +821,7 @@ def write_csv_report(results: list[dict], report_path: str, mode: str = "a"):
     # Load existing CSV rows so we can merge rather than overwrite
     existing: dict[str, dict] = {}
     report_file = Path(report_path)
+    report_file.parent.mkdir(parents=True, exist_ok=True)
     if report_file.exists():
         with open(report_path, "r", newline="") as f:
             for row in csv.DictReader(f):

@@ -5,36 +5,40 @@
         "Global::API Gateway"
       ],
       "predicted_nodes": [
-        "Global::API Gateway composition and routing"
+        "Global::Gateway composition (API Composition)"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node represents the API Gateway's routing and composition responsibilities, matching the GT API Gateway. Both are assigned to the global architecture scope."
+      "reasoning": "Both nodes represent the API gateway responsibility of serving as the unified entry point and composing or routing requests to backend services. Both are attributed globally, so the boundary placement is semantically correct."
     },
     {
       "gt_nodes": [
+        "Global::Discovery Server",
         "Global::Prometheus",
-        "Global::Grafana",
         "Global::Admin Server",
+        "Global::Grafana",
         "Global::Config Server",
-        "Global::Tracing Server",
-        "Global::Discovery Server"
+        "Global::Tracing Server"
       ],
       "predicted_nodes": [
-        "Global::Supporting Infrastructure Services"
+        "Global::Infrastructure services"
       ],
       "match_type": "N:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the supporting infrastructure capabilities represented by Prometheus, Grafana, Admin Server, Config Server, Tracing Server, and Discovery Server. Although less granular, the grouping is semantically consistent and remains in the global infrastructure scope."
+      "reasoning": "The predicted node aggregates the application's platform and operational infrastructure, which corresponds to the discovery, configuration, monitoring, administration, visualization, and tracing services in the GT. The global infrastructure attribution is semantically consistent."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Visits Service",
+    "Global::Vets Service",
     "Global::GenAI Service",
     "Global::Customers Service",
-    "Global::Vets Service"
+    "Global::Visits Service"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Private data per business service"
+    "Global::Cross-service notifications (Domain event)",
+    "Global::Private data ownership (Database per service)",
+    "Global::Visit scheduling consistency (Saga)",
+    "Global::Read-optimized views (CQRS)",
+    "Global::Domain modeling (Aggregate)"
   ]
 }

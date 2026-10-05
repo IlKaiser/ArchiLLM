@@ -1,26 +1,56 @@
 {
-  "matched_pairs": [],
+  "matched_pairs": [
+    {
+      "gt_nodes": [
+        "Global::Gate",
+        "Global::Deck"
+      ],
+      "predicted_nodes": [
+        "Global::Client & API Gateway Composition"
+      ],
+      "match_type": "N:1",
+      "is_boundary_correct": true,
+      "reasoning": "The predicted node aggregates the client-facing Deck UI and Gate API gateway responsibilities. Although it is a broader architectural abstraction rather than a direct service name, the functionality corresponds to these two GT components and remains in the global application architecture boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Echo"
+      ],
+      "predicted_nodes": [
+        "Global::Domain-Driven Events"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Echo is responsible for event-driven pipeline triggers, event handling, and notifications, which is functionally aligned with the predicted domain-event component. Both are attributed to the global service architecture boundary."
+    },
+    {
+      "gt_nodes": [
+        "Global::Orca"
+      ],
+      "predicted_nodes": [
+        "Global::Cross-Service Pipeline Execution Saga"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Orca orchestrates pipeline execution across multiple services and stages, which corresponds to the predicted cross-service saga orchestration concept. The predicted node is an architectural abstraction of Orca's role, and its global boundary attribution is correct."
+    }
+  ],
   "unmatched_gt_nodes": [
-    "Global::Clouddriver",
-    "Global::Igor",
-    "Global::Rosco",
     "Global::S3/GCS",
-    "Global::Deck",
-    "Global::Echo",
+    "Global::Clouddriver",
     "Global::Front50",
+    "Global::Fiat",
     "Global::SQL Database",
-    "Global::Orca",
-    "Global::Gate",
-    "Global::Kayenta",
-    "Global::Redis",
     "Global::Keel",
-    "Global::Fiat"
+    "Global::Redis",
+    "Global::Kayenta",
+    "Global::Igor",
+    "Global::Rosco"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Saga — Cross-Service Pipeline Execution Consistency",
-    "Global::Domain Event — Event Publication from State Changes",
-    "Global::Database per Service — Independent Service Data Ownership",
-    "Global::API Composition — Unified Client Access & Aggregated Views",
-    "Global::CQRS — Read-Optimized Views for Queries"
+    "Global::Audit and Pipeline Event Sourcing",
+    "Global::Security & Observability",
+    "Global::Command-Query Responsibility Segregation (CQRS)",
+    "Global::DDD Aggregates"
   ]
 }

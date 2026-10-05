@@ -1,58 +1,17 @@
 {
-  "matched_pairs": [
-    {
-      "gt_nodes": [
-        "Global::RabbitMQ"
-      ],
-      "predicted_nodes": [
-        "Global::Asynchronous Domain Event Flow (domain event)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted asynchronous domain event flow represents the asynchronous messaging infrastructure provided by RabbitMQ. Both nodes are attributed globally, so the boundary placement is consistent."
-    },
-    {
-      "gt_nodes": [
-        "Global::EdgeServer"
-      ],
-      "predicted_nodes": [
-        "Global::Edge Gateway (api gateway)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the API gateway or edge entry point for routing external requests to backend services. The global attribution is correct."
-    },
-    {
-      "gt_nodes": [
-        "Global::CardStatementComposite"
-      ],
-      "predicted_nodes": [
-        "Global::Unified Card-Statement Composition (api composition)"
-      ],
-      "match_type": "1:1",
-      "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the composite service that aggregates card and statement information into a unified API. The global boundary attribution is consistent."
-    },
-    {
-      "gt_nodes": [
-        "Global::CardService",
-        "Global::StatementService"
-      ],
-      "predicted_nodes": [
-        "Global::Card and Statement Aggregates (aggregate)"
-      ],
-      "match_type": "N:1",
-      "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the card and statement business capabilities represented by the two separate GT services. Although the AI merged them into one conceptual node, the global attribution does not introduce a boundary or layer error."
-    }
-  ],
+  "matched_pairs": [],
   "unmatched_gt_nodes": [
+    "Global::RabbitMQ",
+    "Global::StatementService",
+    "Global::CardService",
     "Global::ConfigServer",
-    "Global::DiscoveryService",
+    "Global::EdgeServer",
     "Global::Turbine",
-    "Global::MonitorDashboard"
+    "Global::DiscoveryService",
+    "Global::MonitorDashboard",
+    "Global::CardStatementComposite"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Private Database per Service (database per service)"
+    "Global::Private Database per Microservice"
   ]
 }

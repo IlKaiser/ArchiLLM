@@ -2,42 +2,80 @@
   "matched_pairs": [
     {
       "gt_nodes": [
-        "Global::API Gateway"
+        "Global::OrdersDb"
       ],
       "predicted_nodes": [
-        "Global::Gateway API Composition"
+        "Global::Order DB"
       ],
       "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "Both nodes represent the centralized gateway responsible for composing or aggregating API requests and routing them to backend services. Both are placed in the global system boundary, so the attribution is correct."
+      "reasoning": "Both nodes represent the database used by the Orders domain. The naming differs, but the functional role and global boundary attribution are consistent."
     },
     {
       "gt_nodes": [
-        "Global::CustomersDb",
-        "Global::OrdersDb",
+        "Global::CustomersDb"
+      ],
+      "predicted_nodes": [
+        "Global::Customer DB"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent the customer-service database. The predicted name is a minor naming variation, and the global boundary is correct."
+    },
+    {
+      "gt_nodes": [
         "Global::ShipmentsDb"
       ],
       "predicted_nodes": [
-        "Global::Private Database per Service"
+        "Global::Shipment DB"
       ],
-      "match_type": "N:1",
+      "match_type": "1:1",
       "is_boundary_correct": true,
-      "reasoning": "The predicted node aggregates the three service-specific databases represented separately in the ground truth. The private-database-per-service concept is functionally consistent with CustomersDb, OrdersDb, and ShipmentsDb, and the global attribution does not introduce a boundary or layer error."
+      "reasoning": "Both nodes represent the shipment-service database. The predicted node is correctly attributed to the global architecture scope."
+    },
+    {
+      "gt_nodes": [
+        "Global::AuthDb"
+      ],
+      "predicted_nodes": [
+        "Global::Identity DB"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "Both nodes represent persistence for authentication and identity management. The identity-oriented name is semantically equivalent to the authentication database, and the boundary attribution is correct."
+    },
+    {
+      "gt_nodes": [
+        "Global::RabbitMQ"
+      ],
+      "predicted_nodes": [
+        "Global::Inter-service Communication"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "RabbitMQ provides the inter-service asynchronous communication mechanism described by the predicted node. The predicted name is broader, but it refers to the same architectural communication role and has no conflicting boundary attribution."
+    },
+    {
+      "gt_nodes": [
+        "Global::Angular App"
+      ],
+      "predicted_nodes": [
+        "Global::Client Access"
+      ],
+      "match_type": "1:1",
+      "is_boundary_correct": true,
+      "reasoning": "The Angular application is the client-facing access layer of the system. Although the predicted name is less technology-specific, its functional role and global placement are consistent."
     }
   ],
   "unmatched_gt_nodes": [
-    "Global::Shipments Service",
-    "Global::Authentication Service",
-    "Global::RabbitMQ",
+    "Global::API Gateway",
     "Global::Orders Service",
-    "Global::Angular App",
-    "Global::AuthDb",
-    "Global::Customers Service"
+    "Global::Authentication Service",
+    "Global::Customers Service",
+    "Global::Shipments Service"
   ],
   "unmatched_predicted_nodes": [
-    "Global::Domain Aggregates",
-    "Global::Order Fulfilment Saga",
-    "Global::Order Query CQRS Read Model",
-    "Global::Integration Domain Events"
+    "Global::Data Modeling",
+    "Global::Data Isolation"
   ]
 }
