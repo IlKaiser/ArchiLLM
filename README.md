@@ -1,10 +1,10 @@
-# ARTHUR — Architecture Through Hybrid UML Reasoning
+# ArchiLLM — Architecture Through Hybrid UML Reasoning
 
-ARTHUR is a research framework that automatically generates **PlantUML component diagrams** from natural-language project requirements (PRDs). It uses multi-agent LLM pipelines (via the OpenHands SDK) to extract microservice architectures and render them as structured UML diagrams, then evaluates the quality of those diagrams against ground-truth references.
+ArchiLLM is a research framework that automatically generates **PlantUML component diagrams** from natural-language project requirements (PRDs). It uses multi-agent LLM pipelines (via the OpenHands SDK) to extract microservice architectures and render them as structured UML diagrams, then evaluates the quality of those diagrams against ground-truth references.
 
 ## Overview
 
-Given a project's `input.txt` (system description + user stories), ARTHUR:
+Given a project's `input.txt` (system description + user stories), ArchiLLM:
 
 1. **Extracts** the microservice architecture into a structured `architecture.json`
 2. **Renders** it as a PlantUML component diagram (`component_diagram.puml`) + Markdown summary
@@ -241,7 +241,7 @@ Requires `ANTHROPIC_API_KEY` and optionally `GITHUB_TOKEN` (raises rate limit fr
 
 ## Evaluation
 
-ARTHUR evaluates generated diagrams on two axes:
+ArchiLLM evaluates generated diagrams on two axes:
 
 **Structural metrics** (computed via LLM alignment + graph comparison):
 - **Node F1** — precision/recall of matched microservice nodes
