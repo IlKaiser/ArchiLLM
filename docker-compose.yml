@@ -123,7 +123,7 @@ services:
       QUICKWIT_INGEST_URL: http://lmnr-quickwit:7281
       QUICKWIT_SPANS_INDEX_ID: spans_v2
 
-  # ── ARTHUR agent orchestrator (Streamlit UI) ───────────────────────────
+  # ── ARCHI agent orchestrator (Streamlit UI) ───────────────────────────
   agent-orchestrator:
     build: .
     container_name: arthur-orchestrator
@@ -168,7 +168,7 @@ services:
               capabilities: [gpu]
     restart: unless-stopped
 
-  # ── ARTHUR headless batch runner ───────────────────────────────────────
+  # ── ARCHI headless batch runner ───────────────────────────────────────
   # Opt-in only: not started by `docker compose up`. Enable with
   # `docker compose --profile headless run headless` (or set
   # COMPOSE_PROFILES=headless in your .env to include it by default).
@@ -242,7 +242,7 @@ services:
           $$LOCAL_FLAGS \
           $$HEADLESS_EXTRA_ARGS
 
-  # ── ARTHUR modifiability batch runner ──────────────────────────────────
+  # ── ARCHI modifiability batch runner ──────────────────────────────────
   # Companion to `headless`: scores the already-generated baseline diagrams
   # against 5 LLM-generated future scenarios each. Opt-in, same profile.
   # Run after (or alongside, since it polls) the matching `headless` run —

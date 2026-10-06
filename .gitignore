@@ -52,3 +52,9 @@ dashboard/__pycache__/
 dashboard/sync_remote.sh
 # Local run logs (multi-MB, per-machine)
 logs/
+
+# Derived from the third-party R2ABench release (scripts/r2a_to_dataset.py) — regenerate, do not version
+dataset/R2A/
+R2ABench 2/
+dashboard/compare_r2a.html
+tools/

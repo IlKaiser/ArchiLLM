@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run the full ARTHUR pipeline (diagram generation + evaluation + modifiability
+# Run the full ARCHI pipeline (diagram generation + evaluation + modifiability
 # analysis) across every dataset available in the repo, using DeepSeek V4.1
 # Flash as the primary LLM:
 #   - dataset/student_projects

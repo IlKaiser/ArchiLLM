@@ -1,0 +1,22 @@
+{
+  "source": "Li et al., 'Benchmarking Requirement-to-Architecture Generation with Hybrid Evaluation', arXiv:2604.06683v3 (9 Sep 2026), Table V — pooled over E-R2A + G-R2A (68 projects).",
+  "columns": ["SV", "NodeCov", "GenPrec", "EdgeF1", "GEDAcc", "Layer", "Orphan", "Comp", "Faith", "Rat", "Trace", "Read"],
+  "rows": [
+    {"model": "gpt-5", "framework": "direct",         "values": [0.8971, 0.7945, 0.5347, 0.0791, 38.19, 0.7496, 0.0588, 3.87, 2.72, 3.39, 2.57, 3.89]},
+    {"model": "gpt-5", "framework": "metagpt-custom", "values": [0.9559, 0.8332, 0.5112, 0.1047, 46.38, 0.8047, 0.0258, 3.25, 2.17, 2.97, 2.05, 3.77]},
+    {"model": "gpt-5", "framework": "mini-swe-agent", "values": [0.8382, 0.7696, 0.6193, 0.1320, 49.31, 0.7785, 0.0713, 3.42, 2.51, 3.16, 2.16, 3.96]},
+    {"model": "gpt-5", "framework": "openhands",      "values": [0.9265, 0.7721, 0.6147, 0.0909, 45.49, 0.7677, 0.1063, 3.67, 2.60, 3.32, 2.35, 3.95]},
+    {"model": "claude-sonnet-4-6", "framework": "direct",         "values": [0.9706, 0.8490, 0.5196, 0.0804, 43.52, 0.8707, 0.1034, 3.68, 2.47, 3.20, 2.38, 3.76]},
+    {"model": "claude-sonnet-4-6", "framework": "metagpt-custom", "values": [0.8971, 0.8201, 0.5771, 0.1008, 48.26, 0.7887, 0.0320, 3.39, 2.23, 3.13, 2.15, 3.79]},
+    {"model": "claude-sonnet-4-6", "framework": "mini-swe-agent", "values": [0.9118, 0.7850, 0.5225, 0.1243, 48.84, 0.7472, 0.0396, 3.24, 2.21, 2.94, 2.05, 3.87]},
+    {"model": "claude-sonnet-4-6", "framework": "openhands",      "values": [1.0000, 0.7541, 0.8949, 0.1582, 51.89, 0.8964, 0.1370, 3.60, 2.41, 3.14, 2.23, 3.91]},
+    {"model": "deepseek-v3.2", "framework": "direct",         "values": [0.7059, 0.7882, 0.4958, 0.1091, 44.59, 0.7628, 0.1300, 3.29, 2.19, 3.00, 2.06, 3.90]},
+    {"model": "deepseek-v3.2", "framework": "metagpt-custom", "values": [0.7647, 0.7910, 0.5969, 0.1405, 50.27, 0.7670, 0.0675, 2.77, 2.02, 2.63, 1.79, 3.46]},
+    {"model": "deepseek-v3.2", "framework": "mini-swe-agent", "values": [0.7647, 0.8437, 0.5092, 0.0704, 45.93, 0.8297, 0.5570, 3.08, 2.08, 2.85, 1.94, 3.60]},
+    {"model": "deepseek-v3.2", "framework": "openhands",      "values": [0.4853, 0.8261, 0.9063, 0.0987, 43.61, 0.9259, 0.3596, 3.16, 2.04, 2.92, 2.04, 3.71]},
+    {"model": "qwen3-coder-480b-a35b-instruct", "framework": "direct",         "values": [0.5735, 0.7981, 0.6105, 0.0877, 47.85, 0.7984, 0.1067, 3.08, 2.26, 2.95, 1.95, 3.95]},
+    {"model": "qwen3-coder-480b-a35b-instruct", "framework": "metagpt-custom", "values": [0.7206, 0.7284, 0.5617, 0.1057, 49.12, 0.7789, 0.1204, 2.67, 1.98, 2.39, 1.63, 3.41]},
+    {"model": "qwen3-coder-480b-a35b-instruct", "framework": "mini-swe-agent", "values": [0.7794, 0.6694, 0.6413, 0.1060, 51.76, 0.7549, 0.0689, 2.66, 2.06, 2.68, 1.70, 3.92]},
+    {"model": "qwen3-coder-480b-a35b-instruct", "framework": "openhands",      "values": [0.5441, 0.7926, 0.9116, 0.1758, 52.82, 0.9228, 0.0454, 2.97, 2.14, 2.84, 1.86, 3.95]}
+  ]
+}

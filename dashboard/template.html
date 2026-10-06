@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARTHUR Batch Dashboard</title>
+<title>ARCHI Batch Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -167,7 +167,7 @@
 <div class="wrap">
   <header>
     <div>
-      <p class="eyebrow">ArchiLLM / ARTHUR &middot; batch results</p>
+      <p class="eyebrow">ArchiLLM / ARCHI &middot; batch results</p>
       <h1>Diagram-generation &amp; evaluation dashboard</h1>
       <p class="sub">Full results for <code style="font-family:var(--font-mono)">run_all_datasets.sh</code>: diagram generation, LLM evaluation, and modifiability scenario analysis. Click any project row for the full breakdown and rendered diagrams.</p>
     </div>
@@ -260,9 +260,18 @@ function openLightbox(src){
   document.getElementById('lightbox').hidden = false;
 }
 
+// Human-readable name for a run's phase. plain_prompt_baseline is the single-
+// prompt reference run (scripts/plain_prompt_baseline.py); everything else
+// that isn't modifiability is the ARCHI agent pipeline.
+function runPhaseName(run){
+  if(run.phase==='modifiability') return 'Modifiability';
+  if(run.phase==='plain_prompt_baseline') return 'Baseline (plain prompt)';
+  return 'ARCHI generation';
+}
+
 function generationDetailHtml(p, run){
   return `<div class="detail-head">
-    <div><h2>${esc(p.name)}</h2><p>${esc(run.model)} · ${run.phase==='modifiability'?'Modifiability':'Microservice generation'}</p></div>
+    <div><h2>${esc(p.name)}</h2><p>${esc(run.model)} · ${runPhaseName(run)}</p></div>
     <button class="close-btn" onclick="closeDetail()" aria-label="Close">&times;</button>
   </div>
   <div class="metric-grid">
@@ -336,7 +345,7 @@ function renderGenerationRuns(){
     if(/deepseek/i.test(model||'')) return 'DeepSeek';
     return model || 'Unknown model';
   };
-  const phaseLabel = run => run.phase==='modifiability' ? 'Modifiability' : 'Baseline';
+  const phaseLabel = runPhaseName;
   const groupKey = run => `${shortModel(run.model)}::${run.phase||'baseline'}`;
   const tabDefs = [{key:'all', label:'All runs'}];
   const seenTabs = new Set();
@@ -424,7 +433,7 @@ function renderGenerationRuns(){
     }).join('');
     return `<div style="margin-bottom:22px">
       <div class="panel-frac" style="display:flex;justify-content:space-between;gap:12px;margin-bottom:7px">
-        <span><span class="origin-badge ${run.is_remote?'remote':'local'}">${run.is_remote?'remote':'local'}</span> <b style="color:var(--ink)">${esc(run.model)}</b> · ${run.phase==='modifiability'?'Modifiability':'Microservice generation'} · ${esc(run.backend)} · <code>${esc(run.dataset)}</code></span>
+        <span><span class="origin-badge ${run.is_remote?'remote':'local'}">${run.is_remote?'remote':'local'}</span> <b style="color:var(--ink)">${esc(run.model)}</b> · ${runPhaseName(run)} · ${esc(run.backend)} · <code>${esc(run.dataset)}</code></span>
         <span>${complete}/${run.total} (${pct}%) · avg ${fmtSec(avgTime)} / project${running.length?` · ${running.length} running`:''}${failed?` · ${failed} failed`:''}${run.vllm_stats?.output_tokens_per_second?` · ${run.vllm_stats.output_tokens_per_second.toFixed(1)} tok/s`:''}${run.estimated_remaining_seconds!=null&&pct<100?` · ETA ${fmtSec(run.estimated_remaining_seconds)}`:''}</span>
       </div>
       <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${run.status==='running'?'var(--running)':'var(--accent)'}"></div></div>
