@@ -1,10 +1,10 @@
-# ArchiLLM — Architecture Through Hybrid UML Reasoning
+# ARCHI
 
-ArchiLLM is a research framework that automatically generates **PlantUML component diagrams** from natural-language project requirements (PRDs). It uses multi-agent LLM pipelines (via the OpenHands SDK) to extract microservice architectures and render them as structured UML diagrams, then evaluates the quality of those diagrams against ground-truth references.
+ARCHI is a research framework that automatically generates **PlantUML component diagrams** from natural-language project requirements (PRDs). It uses multi-agent LLM pipelines (via the OpenHands SDK) to extract microservice architectures and render them as structured UML diagrams, then evaluates the quality of those diagrams against ground-truth references.
 
 ## Overview
 
-Given a project's `input.txt` (system description + user stories), ArchiLLM:
+Given a project's `input.txt` (system description + user stories), ARCHI:
 
 1. **Extracts** the microservice architecture into a structured `architecture.json`
 2. **Renders** it as a PlantUML component diagram (`component_diagram.puml`) + Markdown summary
@@ -108,7 +108,7 @@ streamlit run app.py
 streamlit run app.py          # or: docker compose up agent-orchestrator
 ```
 
-Select a project, optionally enable **Multi-Agent (EffortRouter)** or **Validation Agent**, then click **Run Diagram Pipeline**. The sidebar also has a **⚡ Use Local Model** toggle for Ollama, HuggingFace TGI, and vLLM inference.
+Select a project, optionally enable **Multi-Agent (EffortRouter)**, **Validation Agent** or **Also show services-only view**, then click **Run Diagram Pipeline**. The sidebar also has a **⚡ Use Local Model** toggle for Ollama, HuggingFace TGI, and vLLM inference.
 
 ### Headless Batch Runner
 
@@ -153,6 +153,15 @@ python run_headless.py --charts-only --report headless_report.csv
 | `--skip-existing` | off | Skip projects that already have outputs |
 | `--force` | off | Regenerate even if outputs exist |
 | `--visualize` | off | Generate charts after run |
+| `--services-view` | off | Also write `component_diagram_services.puml/.png`: only the microservices and their service-to-service dependencies (no datastores or pattern groups), derived from `architecture.json` |
+| `--prd-max-chars` | `3000` | Characters of the requirements given to the LLM judges; `0` = no limit (use for long SRS inputs such as R2ABench) |
+
+Judge artifacts (`judge_alignment.json`, `arch_score.json`) are written to `<output>/<project>/eval/`, next to the prediction they score.
+
+The services view can also be produced afterwards for any existing run, with no LLM call:
+```bash
+python src/services_view.py results/<run>/<dataset>
+```
 
 ### Docker Compose — Headless Runner
 
@@ -241,7 +250,7 @@ Requires `ANTHROPIC_API_KEY` and optionally `GITHUB_TOKEN` (raises rate limit fr
 
 ## Evaluation
 
-ArchiLLM evaluates generated diagrams on two axes:
+ARCHI evaluates generated diagrams on two axes:
 
 **Structural metrics** (computed via LLM alignment + graph comparison):
 - **Node F1** — precision/recall of matched microservice nodes
@@ -264,6 +273,31 @@ Results are written to `headless_report.csv` and visualised as bar charts + a ra
 ```bash
 python Evaluation/pattern_judge.py --output-dir results/student_projects [--dataset-dir dataset/student_projects] [--project A,B]
 ```
+
+### Plain-Prompt Baseline
+
+`scripts/plain_prompt_baseline.py` is a standalone reference point (standard library only, imports nothing from this repo): one DeepSeek call per project with a single prompt asking for a PlantUML microservice component diagram from the description/user stories, no agents and no repair. The prompt is saved as `prompt.txt` in the output folder; the run shows up on the dashboard as **Baseline (plain prompt)**.
+
+```bash
+python scripts/plain_prompt_baseline.py --dataset dataset/student_projects \
+  --output results/deepseek_plain_baseline/student_projects [--skip-existing] [--project A,B]
+python dashboard/generate.py   # refresh index.html
+```
+
+### R2ABench Cross-Evaluation
+
+R2ABench projects (local release in `R2ABench 2/`) can be run through ARCHI and scored, together with R2ABench's released views, by **one** evaluator (same judge, same node selection), so the numbers are comparable across systems — not with the R2ABench paper's own tables.
+
+```bash
+python scripts/r2a_to_dataset.py --r2a "R2ABench 2" --out dataset/R2A   # SRS -> input.txt, reference -> ref.wsd
+python run_headless.py --dataset dataset/R2A/G-R2A --output results/arthur_r2a/deepseek_flash/G-R2A --workers 4
+uv run --with openai --with networkx --with pandas --with python-dotenv --with scipy --with tabulate \
+  python Evaluation/cross_eval.py freeze-ms    # fix the R2A-MS (service-based reference) subset first
+#   ... cross_eval.py score       -> results/r2a_cross_eval/scores.csv
+#   ... cross_eval.py summarize   -> results/r2a_cross_eval/summary.md
+```
+
+A view is valid only if it parses and renders on the PlantUML server (R2ABench L0-style). Each valid view is scored on the **full** diagram and, for R2A-MS projects, on a **services** view (judge-labelled service nodes, edges lifted to their service and routed through brokers/gateways). The summary reports validity, means, paired ARCHI-vs-configuration Wilcoxon tests (Holm-corrected) and a calibration of this evaluator against R2ABench's own L1 scores.
 
 ### Results Dashboards
 

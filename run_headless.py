@@ -74,6 +74,7 @@ if _EVAL_DIR not in sys.path:
     sys.path.insert(0, _EVAL_DIR)
 
 from src.prompt import DiagramPrompt, KNOWLEDGE_BASE
+from src.services_view import write_services_view
 
 
 class RunProgress:
@@ -216,6 +217,13 @@ def setup_arg_parser() -> argparse.ArgumentParser:
         help="Enable Validation Agent (Agent 3)",
     )
     parser.add_argument(
+        "--services-view",
+        action="store_true",
+        help="Also write component_diagram_services.puml/.png: the microservices and "
+             "their service-to-service dependencies only (no datastores or pattern groups), "
+             "derived from architecture.json",
+    )
+    parser.add_argument(
         "--eval",
         action="store_true",
         help="Run evaluation against ground truth and generate report",
@@ -285,6 +293,13 @@ def setup_arg_parser() -> argparse.ArgumentParser:
             "overshoot the budget by up to N-1 in-flight projects before new "
             "ones stop being started."
         ),
+    )
+    parser.add_argument(
+        "--prd-max-chars",
+        type=int,
+        default=3000,
+        help="Characters of the requirements text given to the LLM judges (default 3000, "
+             "the historical limit; 0 = no limit — use for long SRS inputs such as R2ABench)",
     )
     parser.add_argument(
         "--metrics",
@@ -584,8 +599,13 @@ def evaluate_project(
     judge_model: str,
     metrics: str = "all",
     verbose: bool = False,
+    prd_max_chars: int = 3000,
 ) -> dict:
     """Run evaluation against ground truth.
+
+    Judge artifacts (judge_alignment.json, arch_score.json) are written to
+    <output_dir>/<project>/eval/, next to the prediction they score, so runs of
+    different models/methods on the same project never overwrite each other.
     
     Args:
         metrics: Comma-separated list of metrics to compute:
@@ -655,7 +675,7 @@ def evaluate_project(
         
         # Phase 2 & 3: LLM evaluation (structural + judge)
         if llm_judge_key and (compute_structural or compute_judge):
-            eval_out = Path(_EVAL_DIR) / "outputs" / project_name
+            eval_out = output_path / "eval"
             eval_out.mkdir(parents=True, exist_ok=True)
             
             j_cache = eval_out / "judge_alignment.json"
@@ -666,7 +686,9 @@ def evaluate_project(
             if not input_path.exists():
                 input_path = base_path / "input.txt"
             
-            prd_text = input_path.read_text(encoding="utf-8")[:3000] if input_path.exists() else ""
+            prd_text = input_path.read_text(encoding="utf-8") if input_path.exists() else ""
+            if prd_max_chars > 0:
+                prd_text = prd_text[:prd_max_chars]
             
             # Phase 2: Structural metrics with LLM alignment
             if compute_structural:
@@ -987,6 +1009,10 @@ def process_one_project(
             if needs_render:
                 if render_puml_to_png(puml_path):
                     print(f"  ✓ PNG updated → {png_path}")
+        if args.services_view:
+            services_puml = write_services_view(Path(args.output) / project)
+            if services_puml and render_puml_to_png(services_puml):
+                print(f"  ✓ Services view → {services_puml.with_suffix('.png')}")
 
     if args.eval and result["status"] in ("success", "skipped"):
         print(f"  → Running evaluation...")
@@ -999,6 +1025,7 @@ def process_one_project(
             judge_model=judge_model,
             metrics=args.metrics,
             verbose=args.verbose,
+            prd_max_chars=args.prd_max_chars,
         )
         result["evaluation"] = eval_data
         if eval_data.get("eval_cost"):
@@ -1030,13 +1057,22 @@ def _run_one_project_in_subprocess(
     import os
     import tempfile
 
-    log_path = Path(tempfile.gettempdir()) / f"arthur_worker_{os.getpid()}_{i}.log"
+    # Own subdirectory: agent sandboxes also live under the temp dir and an
+    # agent's shell cleanup there once deleted a sibling worker's log, which
+    # then crashed the whole batch when the parent tried to read it back.
+    log_dir = Path(tempfile.gettempdir()) / "arthur_worker_logs"
+    log_dir.mkdir(exist_ok=True)
+    log_path = log_dir / f"arthur_worker_{os.getpid()}_{i}.log"
     with open(log_path, "w", encoding="utf-8") as f, contextlib.redirect_stdout(f):
         result = process_one_project(
             project, dataset_path, args, llm_judge_key, llm_judge_url, judge_model, local_llm_config,
         )
-    log_text = log_path.read_text(encoding="utf-8", errors="replace")
-    log_path.unlink(missing_ok=True)
+    try:
+        log_text = log_path.read_text(encoding="utf-8", errors="replace")
+        log_path.unlink(missing_ok=True)
+    except FileNotFoundError:
+        # Losing the captured log must never lose the project's result.
+        log_text = f"(worker log {log_path} was removed during the run; result kept)\n"
     return i, project, log_text, result
 
 
@@ -1120,6 +1156,7 @@ def main():
                 judge_model=judge_model,
                 metrics=args.metrics,
                 verbose=args.verbose,
+                prd_max_chars=args.prd_max_chars,
             )
             eval_time = time.time() - eval_start
             

@@ -17,6 +17,8 @@ _EVAL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Evaluation
 if _EVAL_DIR not in sys.path:
     sys.path.insert(0, _EVAL_DIR)
 
+from src.services_view import write_services_view
+
 st.set_page_config(page_title="ARCHIv2 — Diagram Generator", layout="wide")
 
 
@@ -93,6 +95,9 @@ use_multi_agent = st.sidebar.checkbox("Use Multi-Agent (EffortRouter)", value=Fa
 use_validator = st.sidebar.checkbox("Enable Validation Agent (Agent 3)", value=False, key="chk_validator")
 override = st.sidebar.checkbox("Override existing outputs", value=False, key="chk_override",
     help="If unchecked, skips diagram generation when outputs already exist and skips LLM eval when cache is present")
+show_services_view = st.sidebar.checkbox("Also show services-only view", value=False, key="chk_services_view",
+    help="Adds a reduced diagram with just the microservices and their service-to-service "
+         "dependencies (no datastores or pattern groups), derived from architecture.json")
 
 st.sidebar.markdown("---")
 st.sidebar.title("🔑 LLM Configuration")
@@ -327,6 +332,20 @@ if st.session_state.get("is_running", False) or st.session_state.get("show_resul
                     st.code(puml_text, language="text")
             else:
                 st.warning("component_diagram.puml not found in output folder.")
+
+            # ── Services-only view (opt-in) ───────────────────────────────
+            if show_services_view:
+                services_puml = write_services_view(run_folder)
+                if services_puml:
+                    services_text = services_puml.read_text(encoding="utf-8")
+                    st.subheader("🧩 Services View")
+                    st.caption("Microservices and their service-to-service dependencies only.")
+                    st.image(f"https://www.plantuml.com/plantuml/png/{plantuml_encode(services_text)}",
+                             use_container_width=True)
+                    with st.expander("View services PlantUML source"):
+                        st.code(services_text, language="text")
+                else:
+                    st.info("No services view: architecture.json is missing or lists no microservices.")
 
             # ── Architecture summary ───────────────────────────────────────
             summary_path = os.path.join(run_folder, "architecture_summary.md")

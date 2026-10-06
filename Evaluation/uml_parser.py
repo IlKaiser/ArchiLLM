@@ -75,9 +75,21 @@ class UMLParser:
             ),
         }
 
+        # Arrow alternatives, most specific first. The first three cover PlantUML's
+        # single-dash forms ("<->", "->", "-down->", "-[#red]->", "<-"), which the
+        # double-dash-only alternatives after them used to miss — silently
+        # dropping every edge of diagrams written in that style.
         self.edge_pattern = re.compile(
-            r'(?i)(.+?)\s*(?:--+(?:up|down|left|right)?-*>|\.\.+>|<--+>|<--+|\.\.-+|--+(?:up|down|left|right)?--+|(?<!\w)--+(?!\w))\s*(.*)'
+            r'(?i)(.+?)\s*(?:'
+            r'<-+(?:\[[^\]]*\])?-*>'
+            r'|-+(?:\[[^\]]*\])?(?:up|down|left|right|u|d|l|r)?-*>'
+            r'|<-+(?:\[[^\]]*\])?(?:up|down|left|right|u|d|l|r)?-*(?![->])'
+            r'|--+(?:up|down|left|right)?-*>|\.\.+>|<--+>|<--+|\.\.-+|--+(?:up|down|left|right)?--+|(?<!\w)--+(?!\w)'
+            r')\s*(.*)'
         )
+        # Trailing colour/style tokens after a declaration's name/alias, e.g.
+        # 'rectangle "Postman" as Postman #2EC7CC' or '... <<svc>> #line:red'.
+        self.trailing_style_pattern = re.compile(r'(\s+#[\w#;:.\-]+)+\s*$')
 
     def parse(self, puml_code: str):
         nodes = set()
@@ -115,7 +127,12 @@ class UMLParser:
                 continue
             # Skip multi-line note blocks
             if re.match(r'(?i)^\s*note\s+(right|left|top|bottom|of)\b', line):
-                in_note = True
+                # "note right of X : text" / "note right: text" is a complete
+                # single-line note; only the colon-less form opens a block that
+                # runs to "end note". Treating both as blocks swallowed every
+                # line after the first inline note.
+                if ":" not in line:
+                    in_note = True
                 continue
             if line.lower().strip() == "end note":
                 in_note = False
@@ -147,9 +164,14 @@ class UMLParser:
                 continue
 
             # ---------- leaf node ----------
+            # Strip trailing colour tokens, but only after the last quote so a
+            # "#" inside a quoted label is never touched.
+            head, quote, tail = line.rpartition('"')
+            decl = head + quote + self.trailing_style_pattern.sub("", tail) if quote else \
+                self.trailing_style_pattern.sub("", line)
             matched_leaf = False
             for node_type, pattern in self.leaf_patterns.items():
-                m = pattern.match(line)
+                m = pattern.match(decl)
                 if not m:
                     continue
 
