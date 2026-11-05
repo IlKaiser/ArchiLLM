@@ -48,7 +48,7 @@ from openai import OpenAI
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from arch_scorer import ArchScorer  # noqa: E402
+from arch_scorer import ARCHI_SCOPE_PROMPT_PATH, ArchScorer  # noqa: E402
 from llm_judge import LLMJudge  # noqa: E402
 from metrics_calculator import MetricsCalculator  # noqa: E402
 from uml_parser import UMLParser  # noqa: E402
@@ -61,6 +61,7 @@ R2A_OUT = "R2ABench 2/Output/{r2a_subset}/{workflow}/deepseek-v4.1-flash/{projec
 DEFAULT_CONFIGS = {
     "arthur": "results/arthur_r2a/deepseek_flash/{subset}/{project}/component_diagram.puml",
     "plain-prompt": "results/plain_r2a/deepseek_flash/{subset}/{project}/component_diagram.puml",
+    "archi-lite": "results/archi_lite_r2a/deepseek_flash/{subset}/{project}/component_diagram.puml",  # run_headless.py --lite (src/archi_lite.py)
     **{f"r2a-{wf}": R2A_OUT.replace("{workflow}", wf)
        for wf in ("direct", "metagpt-custom", "mini-swe-agent", "openhands")},
 }
@@ -148,6 +149,14 @@ class Evaluator:
             result.pop("_usage", None)
             return ArchScorer.extract_scores(result)
         return self._cached("rubric", json.dumps([prd, puml]), compute)
+
+    def rubric_archi_scope(self, prd: str, puml: str) -> dict:
+        """Rubric restricted to ARCHI's scope (Evaluation/prompt_archi_scope.md), with the judge's reasons."""
+        def compute():
+            scorer = ArchScorer(self.key, self.url, self.model, prompt_path=ARCHI_SCOPE_PROMPT_PATH)
+            result = scorer.score(prd_text=prd, predicted_puml=puml) or {}
+            return {**ArchScorer.extract_scores(result), **ArchScorer.extract_reasons(result)}
+        return self._cached("rubric_archi_scope", json.dumps([prd, puml]), compute)
 
 
 def plantuml_encode(text: str) -> str:

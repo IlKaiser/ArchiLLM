@@ -58,3 +58,12 @@ dataset/R2A/
 R2ABench 2/
 dashboard/compare_r2a.html
 tools/
+dashboard/gallery.html
+dashboard/adr.html
+
+# PENTION consortium material: never publish (removed from history 2026-11-04)
+dataset/pention/
+dataset/student_projects/PENTION/
+docs/modifiability_case_studies/pention/
+docs/modifiability_case_studies/index.html
+dashboard/pention.html

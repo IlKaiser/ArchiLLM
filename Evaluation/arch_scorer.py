@@ -5,13 +5,17 @@ from openai import OpenAI
 
 # Get prompt.md path relative to this file's location
 PROMPT_TEMPLATE_PATH = Path(__file__).parent / "prompt.md"
+# Same rubric restricted to ARCHI's output scope (services, their datastores,
+# inter-service dependencies): actors, UIs, gateways, brokers, external systems
+# and interfaces are neither required nor credited.
+ARCHI_SCOPE_PROMPT_PATH = Path(__file__).parent / "prompt_archi_scope.md"
 
 
 class ArchScorer:
-    def __init__(self, api_key: str, base_url: str, model_name: str):
+    def __init__(self, api_key: str, base_url: str, model_name: str, prompt_path: Path = PROMPT_TEMPLATE_PATH):
         self.client = OpenAI(api_key=api_key, base_url=base_url)
         self.model_name = model_name
-        with open(PROMPT_TEMPLATE_PATH, "r", encoding="utf-8") as f:
+        with open(prompt_path, "r", encoding="utf-8") as f:
             self.prompt_template = f.read()
 
     def _build_prompt(self, prd_text: str, predicted_puml: str) -> str:
@@ -65,3 +69,9 @@ class ArchScorer:
             "Score_Rationality":  scores.get("rationality",  {}).get("score"),
             "Score_Readability":  scores.get("readability",  {}).get("score"),
         }
+
+    @staticmethod
+    def extract_reasons(result: dict) -> dict:
+        scores = result.get("scores", {})
+        return {f"Reason_{k.title()}": scores.get(k, {}).get("reasoning")
+                for k in ("completeness", "accuracy", "rationality", "readability")}
